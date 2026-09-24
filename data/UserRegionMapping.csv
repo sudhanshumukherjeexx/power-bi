@@ -1,0 +1,13 @@
+UserEmail,RegionKey,AccessLevel
+dana.whitfield@northwind.example,1,Manager
+marcus.bell@northwind.example,2,Manager
+priya.raman@northwind.example,3,Manager
+tomas.ekberg@northwind.example,4,Manager
+nina.kowalski@northwind.example,1,Analyst
+nina.kowalski@northwind.example,3,Analyst
+grace.hollis@northwind.example,0,All
+rosa.delgado@northwind.example,1,Rep
+amara.diallo@northwind.example,2,Rep
+bea.lindqvist@northwind.example,3,Rep
+victor.ilunga@northwind.example,4,Rep
+ken.osei@northwind.example,1,Rep

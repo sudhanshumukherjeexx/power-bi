@@ -1,0 +1,5 @@
+RegionKey,RegionName,Country,RegionManager,ManagerEmail,TargetMultiplier
+1,West,USA,Dana Whitfield,dana.whitfield@northwind.example,1.1
+2,South,USA,Marcus Bell,marcus.bell@northwind.example,1
+3,East,USA,Priya Raman,priya.raman@northwind.example,1.05
+4,Central,USA,Tomas Ekberg,tomas.ekberg@northwind.example,0.95

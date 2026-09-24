@@ -1,0 +1,13 @@
+StoreCode,StoreName,RegionKey,Jan-2026,Feb-2026,Mar-2026,Target-2026
+ST01,Seattle Flagship,1,4.6,4.5,4.7,4.5
+ST02,Portland Pearl,1,4.2,4.4,4.3,4.5
+ST03,Denver Union,1,3.9,4.1,4.4,4.5
+ST04,Austin Domain,2,4.4,4.3,4.5,4.5
+ST05,Atlanta Ponce,2,4,4,4.2,4.5
+ST06,Miami Wynwood,2,4.7,4.8,4.6,4.5
+ST07,Boston Seaport,3,4.3,4.5,4.6,4.5
+ST08,NYC SoHo,3,4.1,4,4.3,4.5
+ST09,Philly Center,3,3.8,3.9,4.1,4.5
+ST10,Chicago Loop,4,4.5,4.4,4.6,4.5
+ST11,Minneapolis Mall,4,4.2,4.3,4.2,4.5
+ST12,Detroit Corktown,4,3.7,4,4.2,4.5

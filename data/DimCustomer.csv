@@ -1,0 +1,31 @@
+CustomerKey,CustomerName,Segment,City,State,RegionKey,JoinDate,LoyaltyTier,Email
+100,Ava Patel,Small Business,Seattle,WA,1,2024-07-17,Platinum,ava.patel@example.com
+101,Liam Nguyen,Consumer,Portland,OR,1,2024-01-18,Silver,liam.nguyen@example.com
+102,Noah Garcia,Consumer,Denver,CO,1,2024-11-19,Gold,noah.garcia@example.com
+103,Emma Okafor,Consumer,Boise,ID,1,2022-03-12,Silver,emma.okafor@example.com
+104,Mia Schmidt,Consumer,Austin,TX,2,2024-02-17,Silver,mia.schmidt@example.com
+105,Ethan Rossi,Small Business,Atlanta,GA,2,2026-03-09,Silver,ethan.rossi@example.com
+106,Olivia Kim,Small Business,Miami,FL,2,2023-01-28,Bronze,olivia.kim@example.com
+107,Lucas Silva,Consumer,Nashville,TN,2,2022-09-16,Silver,lucas.silva@example.com
+108,Zoe Brown,Outfitter,Boston,MA,3,2026-01-23,Silver,zoe.brown@example.com
+109,Mason Haddad,Outfitter,New York,NY,3,2022-01-14,Silver,mason.haddad@example.com
+110,Isla Larsen,Small Business,Philadelphia,PA,3,2023-07-03,Silver,isla.larsen@example.com
+111,Leo Meyer,Small Business,Burlington,VT,3,2022-06-28,Silver,leo.meyer@example.com
+112,Nora Ortiz,Consumer,Chicago,IL,4,2024-05-21,Silver,nora.ortiz@example.com
+113,Aiden Singh,Consumer,Minneapolis,MN,4,2025-04-10,Platinum,aiden.singh@example.com
+114,Ruby Tanaka,Small Business,Detroit,MI,4,2022-02-18,Bronze,ruby.tanaka@example.com
+115,Owen Walsh,Outfitter,Milwaukee,WI,4,2023-05-24,Silver,owen.walsh@example.com
+116,Chloe Novak,Consumer,Seattle,WA,1,2024-12-13,Bronze,chloe.novak@example.com
+117,Eli Reyes,Outfitter,Portland,OR,1,2024-01-09,Silver,eli.reyes@example.com
+118,Hana Dube,Small Business,Denver,CO,1,2022-01-16,Silver,hana.dube@example.com
+119,Jack Fischer,Small Business,Boise,ID,1,2022-07-25,Platinum,jack.fischer@example.com
+120,Maya Costa,Consumer,Austin,TX,2,2024-08-14,Bronze,maya.costa@example.com
+121,Finn Ali,Outfitter,Atlanta,GA,2,2025-08-20,Bronze,finn.ali@example.com
+122,Lena Moore,Outfitter,Miami,FL,2,2022-08-10,Platinum,lena.moore@example.com
+123,Kai Byrne,Small Business,Nashville,TN,2,2023-10-02,Bronze,kai.byrne@example.com
+124,Sara Chen,Small Business,Boston,MA,3,2025-06-07,Gold,sara.chen@example.com
+125,Theo Adler,Consumer,New York,NY,3,2023-02-11,Bronze,theo.adler@example.com
+126,Ivy Lund,Small Business,Philadelphia,PA,3,2026-03-01,Silver,ivy.lund@example.com
+127,Max Rana,Small Business,Burlington,VT,3,2026-02-18,Bronze,max.rana@example.com
+128,Nia Hughes,Consumer,Chicago,IL,4,2024-06-23,Bronze,nia.hughes@example.com
+129,Cole Bakr,Small Business,Minneapolis,MN,4,2022-12-20,Platinum,cole.bakr@example.com

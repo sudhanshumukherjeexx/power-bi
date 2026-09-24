@@ -1,0 +1,25 @@
+ProductKey,ProductName,Category,SubCategory,Brand,UnitCost,ListPrice,Discontinued,LaunchDate
+1,Ridgeline 2P Tent,Camping,Tents,Summit,95,199.99,FALSE,2023-03-01
+2,Alpine Down Sleeping Bag,Camping,Sleep,Summit,82,179.99,FALSE,2022-09-15
+3,Trail Chef Stove,Camping,Cooking,Ember,18.5,49.99,FALSE,2021-05-10
+4,Ember Titanium Pot Set,Camping,Cooking,Ember,22,59.99,FALSE,2023-11-20
+5,Basecamp Camp Chair,Camping,Furniture,Northwind,14,39.99,TRUE,2019-04-01
+6,Glacier Headlamp 400,Camping,Lighting,Lumen,9,29.99,FALSE,2024-02-14
+7,Summit 65L Backpack,Hiking,Packs,Summit,70,169.99,FALSE,2022-01-05
+8,Daytrip 22L Pack,Hiking,Packs,Northwind,19,54.99,FALSE,2023-06-01
+9,Carbon Trekking Poles,Hiking,Poles,Summit,31,89.99,FALSE,2021-08-19
+10,Ridge Runner Boots,Hiking,Footwear,Terra,58,149.99,FALSE,2022-03-10
+11,Trailflex Sandals,Hiking,Footwear,Terra,21,64.99,TRUE,2018-05-22
+12,Merino Hiking Sock,Hiking,Apparel,Terra,5.5,19.99,FALSE,2020-10-01
+13,Stormshell Rain Jacket,Apparel,Outerwear,Northwind,48,129.99,FALSE,2023-09-01
+14,Puffpack Insulated Vest,Apparel,Outerwear,Northwind,36,99.99,FALSE,2024-08-15
+15,Quickdry Trail Shirt,Apparel,Tops,Terra,12,39.99,FALSE,2022-04-04
+16,Convertible Hike Pant,Apparel,Bottoms,Terra,24,74.99,FALSE,2021-03-15
+17,Sunrise Cap,Apparel,Accessories,Northwind,4,17.99,FALSE,2020-06-30
+18,Fleece Beanie,Apparel,Accessories,Northwind,3.5,14.99,FALSE,2020-06-30
+19,Riverstone Kayak 10,Water,Kayaks,Current,310,699.99,FALSE,2023-04-20
+20,Drift Paddle Board,Water,Boards,Current,260,599.99,FALSE,2024-05-01
+21,Dry Bag 20L,Water,Accessories,Current,6,24.99,FALSE,2021-07-07
+22,Type III Life Vest,Water,Safety,Current,28,79.99,FALSE,2022-02-28
+23,Hydro Filter Bottle,Water,Hydration,Ember,11,34.99,FALSE,2024-01-10
+24,Neoprene Water Shoe,Water,Footwear,Current,13,44.99,TRUE,2019-03-03

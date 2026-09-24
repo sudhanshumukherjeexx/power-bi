@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
+<title>The Power BI Holy Grail — Practical path from beginner to 5-year senior</title>
+<meta name="description" content="A practical path from Power BI beginner to 5-year senior: 73 hands-on assignments with worked solutions, interview flashcards, datasets and cheat sheets.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+<style>
+:root{
+  --bg:#EEF1F5;--panel:#FFFFFF;--panel-2:#F6F8FA;--ink:#1B2430;--ink-2:#4A5568;--ink-3:#7A8594;
+  --line:#D9DEE6;--line-2:#C4CBD6;--yellow:#F2C811;--yellow-ink:#7A6200;--yellow-soft:#FFF3BF;
+  --code-bg:#1B2430;--code-ink:#E8ECF2;--ok:#1F7A4D;--ok-soft:#DDF3E6;--bad:#B23A2E;--bad-soft:#FAE1DE;
+  --beg:#2E7BC4;--int:#7A4FBF;--adv:#C2410C;--radius:6px;--sans:'IBM Plex Sans',ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif;--mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12171E;--panel:#1A212B;--panel-2:#212A36;--ink:#E9EDF3;--ink-2:#B4BDCA;--ink-3:#7F8A99;
+  --line:#2C3644;--line-2:#3A4655;--yellow:#F2C811;--yellow-ink:#F2C811;--yellow-soft:#3A3212;
+  --code-bg:#0D1117;--code-ink:#E8ECF2;--ok:#5FD08F;--ok-soft:#173224;--bad:#F08B80;--bad-soft:#3A1F1C;
+  --beg:#6FB0EC;--int:#B396EB;--adv:#F0925A;
+}}
+:root[data-theme="dark"]{
+  --bg:#12171E;--panel:#1A212B;--panel-2:#212A36;--ink:#E9EDF3;--ink-2:#B4BDCA;--ink-3:#7F8A99;
+  --line:#2C3644;--line-2:#3A4655;--yellow:#F2C811;--yellow-ink:#F2C811;--yellow-soft:#3A3212;
+  --code-bg:#0D1117;--code-ink:#E8ECF2;--ok:#5FD08F;--ok-soft:#173224;--bad:#F08B80;--bad-soft:#3A1F1C;
+  --beg:#6FB0EC;--int:#B396EB;--adv:#F0925A;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+code,pre,kbd{font-family:var(--mono)}
+code{background:var(--panel-2);border:1px solid var(--line);padding:.05em .35em;border-radius:4px;font-size:.9em}
+pre{background:var(--code-bg);color:var(--code-ink);padding:14px 16px;border-radius:var(--radius);overflow-x:auto;font-size:.85rem;line-height:1.5;margin:10px 0}
+pre code{background:none;border:0;padding:0;color:inherit;font-size:inherit}
+h1,h2,h3,h4{line-height:1.2;margin:0 0 .4em;font-weight:600}
+h1{font-size:clamp(2.2rem,5vw,3.6rem);letter-spacing:-.02em;font-weight:700}
+h2{font-size:1.75rem;letter-spacing:-.01em}
+h3{font-size:1.2rem}
+h4{font-size:1rem}
+p{margin:0 0 .8em}
+.muted{color:var(--ink-2)}
+.small{font-size:.875rem}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+
+/* layout */
+.shell{display:grid;grid-template-columns:270px 1fr;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--panel);border-right:1px solid var(--line);padding:22px 18px 40px}
+.main{padding:0 0 80px;min-width:0}
+.wrap{max-width:960px;margin:0 auto;padding:0 32px}
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .side{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+  .wrap{padding:0 18px}
+}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:22px;font-weight:700;font-size:1.05rem}
+.brand .mark{width:26px;height:26px;background:var(--yellow);border-radius:4px;display:grid;place-items:center;color:#1B2430;font-weight:700;font-size:.8rem}
+.side nav a{display:block;text-decoration:none;padding:6px 8px;border-radius:4px;color:var(--ink-2);font-size:.92rem}
+.side nav a:hover{background:var(--panel-2);color:var(--ink)}
+.side nav .lvl{margin:16px 0 4px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:8px;padding:4px 8px}
+.side nav .lvl .dot{width:10px;height:10px;border-radius:50%;flex:none}
+.side nav details.grp>summary{list-style:none;cursor:pointer;border-radius:4px;user-select:none}
+.side nav details.grp>summary::-webkit-details-marker{display:none}
+.side nav details.grp>summary:hover{background:var(--panel-2)}
+.side nav details.grp>summary .cnt{margin-left:auto;font-family:var(--mono);font-size:.72rem;font-weight:400;color:var(--ink-3)}
+.side nav details.grp>summary::after{content:"";width:7px;height:7px;border-right:2px solid var(--ink-3);border-bottom:2px solid var(--ink-3);transform:rotate(-45deg);transition:transform .15s;margin:0 4px 0 2px;flex:none}
+.side nav details.grp[open]>summary::after{transform:rotate(45deg)}
+.side nav details.grp>.sub{margin-bottom:6px}
+.side nav .sub{padding-left:14px;border-left:2px solid var(--line);margin-left:12px}
+.side .prog{margin-top:22px;padding:12px;background:var(--panel-2);border-radius:var(--radius);font-size:.85rem}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--yellow);width:0}
+.side .tools{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line-2);background:var(--panel);padding:6px 12px;border-radius:4px;font-size:.85rem}
+.btn:hover{border-color:var(--ink-3)}
+.btn.primary{background:var(--yellow);border-color:var(--yellow);color:#1B2430;font-weight:600}
+.btn.sm{padding:3px 9px;font-size:.78rem}
+
+/* hero */
+.hero{padding:64px 0 36px;border-bottom:1px solid var(--line)}
+.hero .kicker{font-family:var(--mono);font-size:.85rem;color:var(--ink-2);margin-bottom:14px}
+.hero h1 .hl{color:var(--hl-ink)}
+.hero p.lead{font-size:1.15rem;max-width:62ch;color:var(--ink-2);margin-top:14px}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:26px}
+.rules div{background:var(--panel);border:1px solid var(--line);padding:12px 14px;border-radius:var(--radius);font-size:.92rem}
+.rules b{display:block;margin-bottom:2px}
+
+/* roadmap */
+.road{padding:40px 0;border-bottom:1px solid var(--line)}
+.road ol{list-style:none;padding:0;margin:14px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;counter-reset:yr}
+.road ol>li{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;position:relative;font-size:.92rem}
+.road li b{display:block;font-size:1rem;margin-bottom:4px}
+.road li .yr{font-family:var(--mono);font-size:.78rem;color:var(--yellow-ink);margin-bottom:6px}
+.road li ul{margin:6px 0 0;padding-left:18px;color:var(--ink-2)}
+.road li ul li{margin-bottom:2px}
+
+/* level & topic */
+section.level{padding:44px 0 10px}
+.lvlhead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.lvlhead .tag{font-family:var(--mono);font-size:.8rem;padding:3px 9px;border-radius:3px;color:#fff}
+.tag.beg{background:var(--beg)}.tag.int{background:var(--int)}.tag.adv{background:var(--adv)}
+section.level>.wrap>p.lead{max-width:70ch;color:var(--ink-2);margin-bottom:22px}
+.topic{background:var(--panel);border:1px solid var(--line);border-radius:8px;margin:0 0 26px;overflow:hidden}
+.topic>header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.topic>header h3{margin:0}
+.topic>header .ds{font-size:.82rem;color:var(--ink-2)}
+.topic>header .ds code{cursor:pointer}
+.tabs{display:flex;border-bottom:1px solid var(--line);background:var(--panel-2)}
+.tabs button{flex:0 0 auto;padding:10px 16px;border:0;background:none;color:var(--ink-2);border-bottom:2px solid transparent;font-size:.9rem}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--yellow);font-weight:600;background:var(--panel)}
+.tabs button .n{font-family:var(--mono);font-size:.75rem;color:var(--ink-3);margin-left:6px}
+.pane{padding:6px 20px 18px}
+.pane[hidden]{display:none}
+
+/* assignment */
+.asg{padding:16px 0;border-bottom:1px dashed var(--line)}
+.asg:last-child{border-bottom:0}
+.asg .top{display:flex;gap:12px;align-items:flex-start}
+.asg input[type=checkbox]{width:20px;height:20px;margin-top:3px;accent-color:var(--yellow);flex:none}
+.asg h4{margin:0 0 4px}
+.asg .meta{font-size:.8rem;color:var(--ink-2);font-family:var(--mono);margin-bottom:8px}
+.asg ol{margin:6px 0 8px;padding-left:20px}
+.asg ol li{margin-bottom:4px}
+.expect{background:var(--yellow-soft);border-left:3px solid var(--yellow);padding:8px 12px;border-radius:0 4px 4px 0;font-size:.9rem;margin-top:8px}
+.expect b{color:var(--yellow-ink)}
+details{margin-top:8px}
+summary{cursor:pointer;font-size:.88rem;color:var(--ink-2);user-select:none}
+summary:hover{color:var(--ink)}
+details[open] summary{margin-bottom:6px}
+
+/* interview */
+.qa{border-bottom:1px dashed var(--line);padding:10px 0}
+.qa:last-child{border-bottom:0}
+.qa summary{font-size:.98rem;color:var(--ink);font-weight:500;list-style:none;display:flex;gap:10px}
+.qa summary::before{content:"+";font-family:var(--mono);color:var(--ink-3);width:14px;flex:none}
+.qa[open] summary::before{content:"–"}
+.qa .a{color:var(--ink-2);font-size:.93rem;padding-left:24px}
+.qa .a pre{margin:8px 0}
+
+/* assessment */
+.quiz{padding:14px 0;border-bottom:1px dashed var(--line)}
+.quiz:last-child{border-bottom:0}
+.quiz .q{font-weight:500;margin-bottom:8px}
+.quiz .opts{display:grid;gap:6px}
+.quiz .opts label{display:flex;gap:10px;align-items:flex-start;padding:7px 10px;border:1px solid var(--line);border-radius:4px;cursor:pointer;font-size:.93rem}
+.quiz .opts label:hover{border-color:var(--ink-3)}
+.quiz .opts label.ok{background:var(--ok-soft);border-color:var(--ok)}
+.quiz .opts label.bad{background:var(--bad-soft);border-color:var(--bad)}
+.quiz .why{margin-top:8px;font-size:.88rem;color:var(--ink-2);display:none}
+.quiz.answered .why{display:block}
+.quiz .task{background:var(--panel-2);border:1px solid var(--line);padding:10px 12px;border-radius:4px;font-size:.92rem}
+.quiz .task .lbl{font-family:var(--mono);font-size:.75rem;color:var(--ink-3);margin-bottom:4px}
+.score{margin-top:12px;font-size:.88rem;color:var(--ink-2)}
+
+/* datasets */
+section.data{padding:44px 0}
+.dsgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:16px 0 26px}
+.dsgrid a{display:block;text-decoration:none;background:var(--panel);border:1px solid var(--line);padding:10px 12px;border-radius:var(--radius);font-size:.9rem}
+.dsgrid a:hover{border-color:var(--ink-3)}
+.dsgrid a span{display:block;color:var(--ink-3);font-family:var(--mono);font-size:.75rem}
+.dataset{background:var(--panel);border:1px solid var(--line);border-radius:8px;margin-bottom:22px;overflow:hidden}
+.dataset>header{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.dataset>header h3{margin:0;font-size:1.05rem}
+.dataset>header .desc{font-size:.85rem;color:var(--ink-2);flex:1 1 100%}
+.dataset .acts{display:flex;gap:8px}
+.tblwrap{overflow-x:auto;max-height:420px;overflow-y:auto}
+table{border-collapse:collapse;width:100%;font-size:.8rem;font-family:var(--mono)}
+th,td{padding:5px 10px;border-bottom:1px solid var(--line);white-space:nowrap;text-align:left}
+th{position:sticky;top:0;background:var(--panel-2);font-weight:500;color:var(--ink-2)}
+tbody tr:nth-child(even){background:color-mix(in srgb,var(--panel-2) 50%,transparent)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:4px;font-size:.85rem;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+.foot{padding:30px 0;color:var(--ink-3);font-size:.82rem;border-top:1px solid var(--line)}
+.load-note{margin:14px 0 0;background:var(--panel-2);border:1px solid var(--line);padding:10px 14px;border-radius:var(--radius);font-size:.88rem}
+
+/* ---------- mobile, iPhone and iPad ---------- */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{-webkit-tap-highlight-color:transparent}
+.shell{min-height:100dvh}
+.side{height:100dvh;padding-left:calc(18px + env(safe-area-inset-left,0px))}
+.main{padding-right:env(safe-area-inset-right,0px);padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+[id]{scroll-margin-top:12px}
+.tabs{overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tblwrap{-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+pre{-webkit-overflow-scrolling:touch}
+.toast{bottom:calc(20px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 32px);text-align:center}
+.foot{padding-bottom:calc(30px + env(safe-area-inset-bottom,0px))}
+.side .fclink{display:flex;align-items:center;gap:8px;margin-top:16px;padding:10px 12px;border:1px solid var(--yellow);background:var(--yellow-soft);border-radius:var(--radius);text-decoration:none;font-weight:600;font-size:.9rem}
+.side .fclink span{font-weight:400;color:var(--ink-2);font-size:.8rem;display:block}
+.hero .load-note a{font-weight:600}
+.dataset .acts a.btn{text-decoration:none;display:inline-flex;align-items:center}
+.mbar,.scrim{display:none}
+.themefab{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));right:calc(16px + env(safe-area-inset-right,0px));z-index:45;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:0 6px;box-shadow:0 4px 14px rgb(0 0 0 / .12)}
+.side nav a.pagelink{font-size:.8rem;color:var(--yellow-ink);font-weight:600}
+.lvlhead .lvlpage{margin-left:auto;font-size:.85rem;font-weight:600;color:var(--yellow-ink);text-decoration:none;border:1px solid var(--line-2);border-radius:999px;padding:4px 12px;background:var(--panel)}
+.lvlhead .lvlpage:hover{border-color:var(--ink-3)}
+.side .sidesearch{width:100%;margin:0 0 14px;justify-content:flex-start;color:var(--ink-2);min-height:38px}
+.side .more{margin-top:10px;display:grid;gap:2px}
+.side .more a{display:flex;align-items:center;gap:8px}
+.side .tools .btn[hidden]{display:none}
+.mbar .iconbtn{min-width:44px;min-height:44px;display:inline-grid;place-items:center;border:1px solid var(--line-2);background:var(--panel);border-radius:6px;padding:0}
+.mbar .iconbtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+.topic>header .hright{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.flash{animation:flash 1.6s ease-out}
+@keyframes flash{0%,30%{box-shadow:0 0 0 3px var(--yellow);border-radius:6px}100%{box-shadow:0 0 0 3px transparent}}
+/* touch screens: bigger tap targets (Apple recommends ~44px) */
+@media (pointer:coarse){
+  .btn{min-height:40px;padding:8px 14px}
+  .btn.sm{min-height:36px;padding:6px 12px;font-size:.82rem}
+  .side nav a{padding:10px 10px}
+  .tabs button{padding:12px 16px;min-height:44px}
+  .quiz .opts label{padding:11px 12px;min-height:44px}
+  .asg input[type=checkbox]{width:24px;height:24px;margin-top:1px}
+  .quiz .opts input[type=radio]{width:20px;height:20px;flex:none;margin-top:2px}
+  .qa summary{padding:6px 0;min-height:40px}
+  .topic>header .ds code{display:inline-block;padding:4px 8px;margin:2px 0}
+}
+/* hover styles stick after a tap on touch screens, so neutralise them there */
+@media (hover:none){
+  .btn:hover{border-color:var(--line-2)}
+  .dsgrid a:hover,.quiz .opts label:hover{border-color:var(--line)}
+}
+/* iPad landscape and small laptops: slimmer sidebar */
+@media (min-width:901px) and (max-width:1180px){
+  .shell{grid-template-columns:240px 1fr}
+  .wrap{padding:0 24px}
+}
+/* phones and iPad portrait: sidebar becomes a slide-in drawer under a top bar */
+@media (max-width:900px){
+  .mbar{display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:40;background:var(--panel);border-bottom:1px solid var(--line);padding:calc(6px + env(safe-area-inset-top,0px)) calc(12px + env(safe-area-inset-right,0px)) 6px calc(12px + env(safe-area-inset-left,0px))}
+  .mbar .navbtn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;border:1px solid var(--line-2);background:var(--panel);border-radius:6px;font-weight:600;font-size:.9rem}
+  .mbar .navbtn svg{width:18px;height:18px}
+  .mbar .brand{margin:0;flex:1;min-width:0;font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mbar .mprog{font-family:var(--mono);font-size:.75rem;color:var(--ink-2);white-space:nowrap}
+  .mbar a.btn{min-height:40px;display:inline-flex;align-items:center;text-decoration:none;font-weight:600}
+  .themefab{display:none}
+  .side{position:fixed;top:0;left:0;bottom:0;z-index:60;width:min(86vw,330px);height:100dvh;border-right:1px solid var(--line);border-bottom:0;padding-top:calc(22px + env(safe-area-inset-top,0px));padding-bottom:calc(40px + env(safe-area-inset-bottom,0px));transform:translateX(-105%);visibility:hidden;transition:transform .25s ease,visibility 0s linear .25s;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-shadow:0 0 40px rgb(0 0 0 / .25)}
+  .side.open{transform:none;visibility:visible;transition:transform .25s ease}
+  .scrim{display:block;position:fixed;inset:0;z-index:50;background:rgb(10 14 20 / .5)}
+  .scrim[hidden]{display:none}
+  body.navopen{overflow:hidden}
+  [id]{scroll-margin-top:calc(72px + env(safe-area-inset-top,0px))}
+  .hero{padding:32px 0 26px}
+  .hero p.lead{font-size:1.05rem}
+  h2{font-size:1.5rem}
+  .road,section.level,section.data{padding-top:32px}
+  .topic>header{padding:14px 16px}
+  .pane{padding:4px 16px 16px}
+  .tblwrap{max-height:60vh}
+}
+/* iPad portrait: 2 x 2 intro cards instead of 3 + 1 */
+@media (min-width:561px) and (max-width:900px){.rules{grid-template-columns:repeat(2,1fr)}}
+/* phones */
+@media (max-width:560px){
+  .wrap{padding:0 calc(16px + env(safe-area-inset-right,0px)) 0 calc(16px + env(safe-area-inset-left,0px))}
+  .mbar .mprog{display:none}
+  .mbar .brand .bt{display:none}
+  .rules,.road ol{grid-template-columns:1fr}
+  .dsgrid{grid-template-columns:1fr 1fr}
+  .dsgrid a{padding:10px}
+  .topic{border-radius:6px;margin-bottom:20px}
+  .topic>header h3{font-size:1.1rem}
+  .tabs button{padding:12px 12px;font-size:.86rem}
+  .tabs button .n{margin-left:4px}
+  .pane{padding:4px 14px 14px}
+  .asg .top{gap:10px}
+  .asg ol{padding-left:18px}
+  .qa .a{padding-left:0}
+  pre{font-size:.78rem;padding:12px}
+  .dataset>header{padding:12px 14px}
+  .dataset .acts{flex-wrap:wrap}
+  .lvlhead h2{margin-bottom:0}
+}
+@media (max-width:360px){
+  .dsgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="mbar">
+  <button class="navbtn" id="navBtn" aria-controls="side" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Menu</button>
+  <div class="brand"><span class="mark">BI</span> <span class="bt">Power BI Holy Grail</span></div>
+  <span class="mprog" id="mprog"></span>
+  <button class="iconbtn" type="button" data-open-search aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+  <a class="btn sm" href="flashcards.html">Flashcards</a>
+</div>
+<div class="themefab" data-theme-toggle-slot></div>
+<div class="scrim" id="scrim" hidden></div>
+<div class="shell">
+  <aside class="side" id="side">
+    <div class="brand"><span class="mark">BI</span> Power BI Holy Grail</div>
+    <button class="btn searchbtn sidesearch" type="button" data-open-search><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>Search everything<kbd>/</kbd></button>
+    <nav id="nav"></nav>
+    <a class="fclink" href="flashcards.html">🃏 <div>Interview flashcards<span>188 cards · no Power BI needed</span></div></a>
+    <nav class="more" aria-label="More study tools">
+      <a href="flashcards.html#mock">⏱ Mock interview</a>
+      <a href="glossary.html">📖 Glossary</a>
+      <a href="cheatsheet.html">🖨 Cheat sheets</a>
+    </nav>
+    <div class="prog">Assignments completed<div class="bar"><i id="progbar"></i></div><div id="progtxt" style="margin-top:6px"></div></div>
+    <div class="tools">
+      <button class="btn sm" id="resetBtn">Reset progress</button>
+      <button class="btn sm" type="button" data-export title="Save your ticks, quiz answers and flashcard progress to a file">Export progress</button>
+      <button class="btn sm" type="button" data-import title="Load a progress file on this device">Import progress</button>
+      <button class="btn sm" type="button" data-install hidden>Install app</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="hero"><div class="wrap">
+      <div class="kicker">Zero theory. Zero videos. Zero links. Only work you do with your hands.</div>
+      <h1>Build the reflexes of a <span class="hl">5-year Power BI developer</span> by shipping, breaking and fixing real reports.</h1>
+      <p class="lead">Three levels, seventeen topics, 73 hands-on assignments, 68 assessment items, 90 interview questions and 14 ready-to-paste datasets. Every assignment ends with a checkable expected result so you know whether you actually got it right.</p>
+      <div class="rules">
+        <div><b>How to use it</b>Copy a dataset, paste it into Power BI Desktop with Get Data → Enter Data (or into Excel and save as CSV). Then do the assignment and compare with the expected result.</div>
+        <div><b>How to pass a level</b>Every assignment box ticked, every assessment answered, and you can answer each interview question out loud in under 90 seconds without notes.</div>
+        <div><b>Tooling you need</b>Power BI Desktop (free), a free Power BI account for Service topics, DAX Studio and Tabular Editor 2 (both free) from Intermediate onward, a Fabric trial for the last Advanced topics.</div>
+        <div><b>Your progress stays here</b>Ticks and quiz answers are saved in this browser only. Use Reset progress to start over.</div>
+      </div>
+      <div class="load-note"><b>Not at your computer?</b> Study with the <a href="flashcards.html">interview flashcards</a>. There are 188 question-and-answer cards in plain English, built for phones and tablets, and you don't need Power BI to use them. Try a timed <a href="flashcards.html#mock">mock interview</a>, look up jargon in the <a href="glossary.html">glossary</a> (or tap any dotted-underlined term), or print a <a href="cheatsheet.html">cheat sheet</a>. Moving to another device? Use <b>Export progress</b> in the menu.</div>
+    </div></header>
+
+    <section class="road" id="roadmap"><div class="wrap">
+      <h2>The five-year road</h2>
+      <p class="muted">What a hiring manager expects at each stage, and which topics on this page get you there.</p>
+      <ol id="road"></ol>
+    </div></section>
+
+    <section class="paths" id="paths"><div class="wrap">
+      <h2>Pick your path</h2>
+      <p class="muted" style="max-width:70ch">Choose the job you're aiming for. The course highlights the topics that job interviews test and fades the rest back. Nothing is hidden, so you can still open any topic.</p>
+      <div class="pathgrid" id="pathgrid"></div>
+      <div class="pathnote" id="pathnote"></div>
+    </div></section>
+
+    <section class="certs" id="certs"><div class="wrap">
+      <h2>Certification map</h2>
+      <p class="muted" style="max-width:70ch">Where each exam skill area is covered in this course and in the flashcards. The readiness figure combines your ticked assignments, multiple-choice answers and flashcards for those topics.</p>
+      <div class="certtabs" id="certtabs"></div>
+      <div id="certbody"></div>
+      <p class="small muted" style="margin-top:10px">Skill-area weights come from Microsoft's study guides at the time of writing. Microsoft revises exams regularly, so check the current study guide on Microsoft Learn before booking.</p>
+    </div></section>
+
+    <div id="levels"></div>
+
+    <section class="starter" id="starter"><div class="wrap">
+      <h2>Starter Power BI project</h2>
+      <p class="muted" style="max-width:70ch">Want to skip ahead to DAX? This Power BI project has 12 clean tables loaded, typed and related in a star schema, with DimDate marked as the date table. The Beginner modeling topic asks you to build this model yourself, so use the starter only to skip ahead. RawOrdersExport and SurveyWide aren't included: cleaning them is part of the Power Query topics.</p>
+      <div class="startergrid">
+        <div><b>1. Download and unzip</b>Unzip into <code>C:\PowerBI\</code> so the data sits at <code>C:\PowerBI\northwind-starter\data\</code>.<div style="margin-top:10px"><a class="btn primary" href="starter/northwind-starter.zip" download>Download starter (.zip)</a></div></div>
+        <div><b>2. Open and refresh</b>Open <code>Northwind Starter.pbip</code> in Power BI Desktop (2024 or later) and click <b>Refresh</b>. You get 12 tables and 11 relationships (ShipDate → DimDate is inactive, ready for USERELATIONSHIP), with no measures, because writing those is your job.</div>
+        <div><b>Unzipped somewhere else?</b>Transform data → Edit parameters → <b>DataFolder</b>. Paste your folder path (ending in <code>\</code>), or this site's own data address so it refreshes from the web:<div class="urlbox"><code id="dataUrl"></code><button class="btn sm" type="button" id="copyDataUrl">Copy</button></div></div>
+      </div>
+    </div></section>
+
+    <section class="data" id="datasets"><div class="wrap">
+      <h2>Datasets</h2>
+      <p class="muted" style="max-width:70ch">One coherent fictional company, <b>Northwind Outdoors</b>, sells outdoor gear across four regions. All tables join to each other, so any assignment can grow into a full model. Every table is 100 rows or fewer. Use <b>Copy CSV</b> then paste into Excel (save as .csv) or straight into Power BI Desktop via Get Data → Enter Data → paste.</p>
+      <p class="muted" style="max-width:70ch">Every table is also saved as a CSV file in this project's <code>data/</code> folder. Use <b>Download .csv</b> on any table, or point Power BI at the whole folder with Get Data → Folder. Because the files are online, Get Data → Web with a file's address also works, and it refreshes in the Service without a gateway.</p>
+      <div class="dsgrid" id="dsgrid"></div>
+      <div id="dslist"></div>
+    </div></section>
+
+    <footer class="foot"><div class="wrap">Northwind Outdoors is a fictional company. All figures are synthetic and generated deterministically so everyone working from this page sees identical numbers, which is what makes the expected results checkable.</div></footer>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="assets/js/content.js"></script>
+<script src="assets/js/solutions.js"></script>
+<script src="assets/js/paths.js"></script>
+<script src="assets/js/cards.js"></script>
+<script src="assets/js/glossary.js"></script>
+<script src="assets/js/site.js"></script>
+<script src="assets/js/course.js"></script>
+<script>
+/* ---------- course state (shared with the level pages through course.js) ---------- */
+const state=Course.state,save=Course.save,cardState=Course.cardState,esc=Course.esc,copyText=Course.copyText;
+const toast=PBI.toast;
+
+function updateReadiness(){Course.updateReadiness();renderCerts();renderPathNote()}
+Course.onChange(()=>{updateProgress();renderCerts();renderPathNote()});
+
+let totalAsg=0;
+function render(){
+  totalAsg=0;
+  document.getElementById('road').innerHTML=ROAD.map(r=>`<li><div class="yr">${r.yr}</div><b>${esc(r.t)}</b><ul>${r.pts.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></li>`).join('');
+  const nav=document.getElementById('nav');
+  let navHtml='<a href="#roadmap">The five-year road</a><a href="#paths">Pick your path</a><a href="#certs">Certification map</a>';
+  let lv='';
+  LEVELS.forEach(L=>{
+    navHtml+=`<details class="grp" data-grp="${L.id}"${state.navOpen[L.id]?' open':''}><summary class="lvl"><span class="dot" style="background:var(--${L.cls})"></span>${L.name}<span class="cnt">${L.topics.length}</span></summary><div class="sub"><a class="pagelink" href="${L.id}.html">Open ${L.name} page ↗</a>${L.topics.map(t=>`<a href="#${t.id}">${esc(t.name)}<span class="rp"></span></a>`).join('')}</div></details>`;
+    lv+=`<section class="level" id="${L.id}"><div class="wrap"><div class="lvlhead"><h2>${L.name}</h2><span class="tag ${L.cls}">${L.years}</span><a class="lvlpage" href="${L.id}.html">Open as a page ↗</a></div><p class="lead">${esc(L.intro)}</p>`;
+    L.topics.forEach(T=>{totalAsg+=T.asg.length;lv+=Course.topicHtml(T)});
+    lv+='</div></section>';
+  });
+  nav.innerHTML=navHtml+`<details class="grp" data-grp="resources"${state.navOpen.resources?' open':''}><summary class="lvl"><span class="dot" style="background:var(--yellow)"></span>Resources<span class="cnt">2</span></summary><div class="sub"><a class="pagelink" href="resources.html">Open Resources page ↗</a><a href="#starter">Starter Power BI project</a><a href="#datasets">Datasets</a></div></details>`;
+  openNavFor(location.hash);
+  document.getElementById('levels').innerHTML=lv;
+  document.getElementById('dsgrid').innerHTML=Course.datasetsGridHtml();
+  document.getElementById('dslist').innerHTML=Course.datasetsListHtml();
+  renderPaths();applyPath();
+  updateProgress();Course.updateScores();updateReadiness();
+  Course.linkTerms(document.getElementById('levels'));
+}
+
+/* ---------- paths ---------- */
+function renderPaths(){
+  const all={id:null,name:'Everything',tag:'The full five-year road',desc:'All 17 topics, Beginner to Advanced, in order.',core:LEVELS.flatMap(L=>L.topics.map(t=>t.id))};
+  document.getElementById('pathgrid').innerHTML=[...ROLES,all].map(r=>`<button type="button" class="pathcard" data-path="${r.id||''}" aria-pressed="${(state.path||null)===r.id}"><span class="ptag">${esc(r.tag)}</span><span class="pt">${esc(r.name)}</span><span class="pdesc">${esc(r.desc)}</span><span class="pmeta">${r.core.length} core topics</span></button>`).join('');
+}
+function currentRole(){return ROLES.find(r=>r.id===state.path)||null}
+function applyPath(){
+  const role=currentRole();
+  document.querySelectorAll('.topic').forEach(a=>{
+    const core=!role||role.core.includes(a.id);
+    a.classList.toggle('offpath',!core);
+    a.querySelector('.pathslot').innerHTML=role?`<span class="pathtag ${core?'':'opt'}">${core?'Core for '+esc(role.name):'Optional for your path'}</span>`:'';
+  });
+  document.querySelectorAll('.side nav .sub a[href^="#"]').forEach(a=>a.classList.toggle('core',!!role&&role.core.includes(a.getAttribute('href').slice(1))));
+  document.querySelectorAll('.pathcard').forEach(b=>b.setAttribute('aria-pressed',(b.dataset.path||null)===(state.path||null)));
+  renderPathNote();
+}
+function renderPathNote(){
+  const el=document.getElementById('pathnote');if(!el)return;const role=currentRole();
+  if(!role){el.innerHTML='No path selected: every topic is shown at full strength.';return}
+  const topics=LEVELS.flatMap(L=>L.topics).filter(t=>role.core.includes(t.id));
+  const avg=Math.round(topics.reduce((a,t)=>a+PBI.readiness(t,state,cardState).pct,0)/topics.length);
+  const next=topics.find(t=>PBI.readiness(t,state,cardState).pct<80);
+  el.innerHTML=`<b>${esc(role.name)}:</b> ${topics.length} core topics, average readiness <b>${avg}%</b>.${next?` Next up: <a href="#${next.id}">${esc(next.name)}</a>.`:' Every core topic is above 80% 🎉'} Flashcard focus: ${role.cards.map(c=>`<a href="flashcards.html#deck=concepts&cat=${encodeURIComponent(c)}">${esc(c)}</a>`).join(', ')}.`;
+}
+
+/* ---------- certification map ---------- */
+let certSel='pl300';
+function renderCerts(){
+  const tabs=document.getElementById('certtabs'),body=document.getElementById('certbody');if(!tabs)return;
+  tabs.innerHTML=CERTS.map(c=>`<button type="button" class="btn" data-cert="${c.id}" aria-pressed="${c.id===certSel}">${c.code}</button>`).join('');
+  const c=CERTS.find(x=>x.id===certSel);const topics=Object.fromEntries(LEVELS.flatMap(L=>L.topics.map(t=>[t.id,t])));const lvlOf=Object.fromEntries(LEVELS.flatMap(L=>L.topics.map(t=>[t.id,L.name.slice(0,3)])));
+  body.innerHTML=`<div class="cert"><header><h3>${c.code} · ${esc(c.name)}</h3><p>${esc(c.blurb)}</p></header>${c.areas.map(a=>{
+    const ts=a.topics.map(id=>topics[id]);const avg=Math.round(ts.reduce((s,t)=>s+PBI.readiness(t,state,cardState).pct,0)/ts.length);
+    const mid=a.w.match(/\d+/g).map(Number);const w=(mid[0]+(mid[1]||mid[0]))/2;
+    return `<div class="area"><div><div class="an">${esc(a.n)}</div><div class="ar">Your readiness: ${avg}%</div></div><div class="aw">${a.w}<div class="wb"><i style="width:${w*2}%"></i></div></div><div class="links">${ts.map(t=>`<a href="#${t.id}">${esc(t.name.split(':')[0])} <span class="lvtag">${lvlOf[t.id]}</span></a>`).join('')}${a.cards.map(k=>`<a class="fc" href="flashcards.html#deck=concepts&cat=${encodeURIComponent(k)}">🃏 ${esc(k)}</a>`).join('')}</div></div>`}).join('')}</div>`;
+}
+
+function updateProgress(){const n=Object.values(state.done).filter(Boolean).length;document.getElementById('progbar').style.width=(100*n/totalAsg)+'%';document.getElementById('progtxt').textContent=`${n} of ${totalAsg}`;document.getElementById('mprog').textContent=`${n}/${totalAsg} done`}
+
+/* sidebar groups: remember which are open, and open the group of whatever you jump to */
+function openNavFor(hash){
+  const id=decodeURIComponent((hash||'').slice(1)).split(':')[0];if(!id)return;
+  const a=document.querySelector(`.side nav .sub a[href="#${id}"]`)||(id.startsWith('ds-')&&document.querySelector('.side nav .sub a[href="#datasets"]'));
+  const g=a&&a.closest('details.grp');if(g&&!g.open){g.open=true;state.navOpen[g.dataset.grp]=true;save()}
+}
+addEventListener('hashchange',()=>openNavFor(location.hash));
+document.getElementById('nav').addEventListener('toggle',e=>{const g=e.target;if(g.matches&&g.matches('details.grp')){state.navOpen[g.dataset.grp]=g.open;save()}},true);
+
+document.addEventListener('click',e=>{
+  const pc=e.target.closest('[data-path]');if(pc){state.path=pc.dataset.path||null;save();applyPath();toast(state.path?'Path: '+currentRole().name:'Showing every topic');return}
+  const ce=e.target.closest('[data-cert]');if(ce){certSel=ce.dataset.cert;renderCerts();return}
+  if(e.target.closest('#copyDataUrl')){copyText(document.getElementById('dataUrl').textContent,'Data address copied');return}
+});
+document.getElementById('resetBtn').addEventListener('click',()=>{if(confirm('Clear all ticks and quiz answers?')){state.done={};state.quiz={};state.sol={};save();render()}});
+PBI.initThemeToggles(next=>{state.theme=next;save()});
+document.getElementById('dataUrl').textContent=new URL('data/',location.href).href;
+render();
+Course.scrollToHash();
+Course.goHash();
+
+/* ---------- mobile drawer (phones and iPad portrait) ---------- */
+(function(){
+  const side=document.getElementById('side'),btn=document.getElementById('navBtn'),scrim=document.getElementById('scrim');
+  const isOpen=()=>side.classList.contains('open');
+  function setNav(open){
+    side.classList.toggle('open',open);scrim.hidden=!open;
+    btn.setAttribute('aria-expanded',open);document.body.classList.toggle('navopen',open);
+    if(open){const a=side.querySelector('nav a');if(a)a.focus({preventScroll:true})}
+  }
+  btn.addEventListener('click',()=>setNav(!isOpen()));
+  scrim.addEventListener('click',()=>setNav(false));
+  side.addEventListener('click',e=>{if(isOpen()&&e.target.closest('a'))setNav(false)});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&isOpen()){setNav(false);btn.focus()}});
+  /* close it if the screen is rotated or resized to the desktop layout */
+  matchMedia('(min-width:901px)').addEventListener('change',e=>{if(e.matches&&isOpen())setNav(false)});
+  /* swipe left to close on touch screens */
+  let sx=null;
+  side.addEventListener('touchstart',e=>{sx=e.touches[0].clientX},{passive:true});
+  side.addEventListener('touchend',e=>{if(sx!==null&&e.changedTouches[0].clientX-sx<-60)setNav(false);sx=null},{passive:true});
+})();
+</script>
+</body>
+</html>

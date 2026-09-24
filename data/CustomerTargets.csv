@@ -1,0 +1,21 @@
+Segment,LoyaltyTier,Quarter,TargetRevenue
+Consumer,Bronze,2026-Q1,4500
+Consumer,Silver,2026-Q1,3050
+Consumer,Gold,2026-Q1,3900
+Consumer,Platinum,2026-Q1,2650
+Small Business,Bronze,2026-Q1,3200
+Small Business,Silver,2026-Q1,2250
+Small Business,Gold,2026-Q1,4400
+Small Business,Platinum,2026-Q1,4950
+Outfitter,Bronze,2026-Q1,3150
+Outfitter,Silver,2026-Q1,5350
+Outfitter,Gold,2026-Q1,2500
+Outfitter,Platinum,2026-Q1,2150
+Consumer,Bronze,2026-Q2,2750
+Consumer,Silver,2026-Q2,3950
+Consumer,Gold,2026-Q2,2500
+Consumer,Platinum,2026-Q2,2500
+Small Business,Bronze,2026-Q2,5650
+Small Business,Silver,2026-Q2,2900
+Small Business,Gold,2026-Q2,2200
+Small Business,Platinum,2026-Q2,2950
