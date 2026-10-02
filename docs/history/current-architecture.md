@@ -1,5 +1,7 @@
 # Current architecture (audit, 2026-10-01)
 
+> **Historical record** from the 2.0.0 redesign (October 2026), kept for context. It is not updated as the project changes: for how the project works today, see [CONTRIBUTING.md](../../CONTRIBUTING.md).
+
 This describes the site **before** the apprenticeship-simulator redesign (commit `2d8ce83`). It is the baseline the migration plan protects.
 
 ## 1. Runtime architecture

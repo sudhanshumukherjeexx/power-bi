@@ -1,5 +1,7 @@
 # QA report: 2.0.0
 
+> **Historical record** from the 2.0.0 redesign (October 2026), kept for context. It is not updated as the project changes: for how the project works today, see [CONTRIBUTING.md](../../CONTRIBUTING.md).
+
 Date: 2026-10-01. This covers phase 8 of the [migration plan](migration-plan.md).
 
 ## Automated checks

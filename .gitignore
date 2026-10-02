@@ -1,5 +1,26 @@
+# Enterprise-scale data is generated on your machine (npm run enterprise); it is too big for Git
 enterprise-data/
 node_modules/
+
+# Power BI Desktop leftovers
 *.pbix.bak
-.pbi/localSettings.json
-.pbi/cache.abf
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# Secrets and local configuration: credentials come from environment variables, never from the repo
+.env
+.env.*
+*.secret
+
+# OS and editor clutter
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*~
+
+# Logs
+*.log
+npm-debug.log*
