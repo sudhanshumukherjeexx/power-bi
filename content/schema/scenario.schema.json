@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scenario.schema.json",
+  "title": "Experience Mode scenario (brief, evidence, work, hints, rubric). The answer key lives in solution.json next to it.",
+  "description": "Any string may contain {{fact|format}} placeholders. tools/build.js fills them from tools/lib/company-facts.js, so numbers in the text always match the generated data. Never type a number from the data by hand.",
+  "type": "object",
+  "required": ["id", "slug", "type", "stage", "order", "title", "summary", "minutes", "skills", "ticket", "impact", "messages", "evidence", "tasks", "deliverables", "hints", "rubric", "retro"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string", "pattern": "^(s|d)\\d{2}$" },
+    "slug": { "type": "string", "pattern": "^(s|d)\\d{2}-[a-z0-9-]+$" },
+    "type": { "enum": ["sprint", "drill"] },
+    "stage": { "enum": ["analyst", "developer", "senior", "engineer", "architect"] },
+    "order": { "type": "integer" },
+    "title": { "type": "string" },
+    "seo": { "type": "string" },
+    "summary": { "type": "string" },
+    "minutes": { "type": "integer" },
+    "skills": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "prereq": { "type": "array", "items": { "type": "string" } },
+    "next": { "type": "string" },
+    "verified": { "type": "object", "required": ["date"], "properties": { "date": { "type": "string" }, "context": { "type": "string" }, "review_after_days": { "type": "integer" } } },
+    "ticket": {
+      "type": "object", "required": ["id", "kind", "reporter", "opened"], "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" }, "kind": { "enum": ["ticket", "incident", "change", "review", "decision", "uat"] },
+        "severity": { "enum": ["SEV1", "SEV2", "SEV3", "SEV4"] }, "priority": { "type": "string" }, "status": { "type": "string" },
+        "reporter": { "type": "string" }, "opened": { "type": "string" }, "due": { "type": "string" }, "labels": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "story": { "type": "string", "description": "What happened before, for connected scenarios" },
+    "impact": { "type": "string", "description": "Why a real company would care" },
+    "messages": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["from", "via", "at", "body"], "additionalProperties": false, "properties": { "from": { "type": "string" }, "to": { "type": "string" }, "via": { "enum": ["email", "chat", "ticket", "call", "meeting", "alert", "pr"] }, "at": { "type": "string" }, "subject": { "type": "string" }, "body": { "type": "array", "items": { "type": "string" } } } } },
+    "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidence" } },
+    "tasks": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "deliverables": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["id", "t"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "t": { "type": "string" }, "artifact": { "type": "string" } } } },
+    "hints": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "rubric": { "type": "array", "minItems": 2, "items": { "type": "object", "required": ["id", "n", "w", "good"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "n": { "type": "string" }, "w": { "type": "integer", "minimum": 1 }, "good": { "type": "string" } } } },
+    "decision": { "type": "object", "required": ["adr", "title", "question", "options"], "properties": { "adr": { "type": "string" }, "title": { "type": "string" }, "question": { "type": "string" }, "options": { "type": "array", "minItems": 2, "items": { "type": "object", "required": ["id", "t"], "properties": { "id": { "type": "string" }, "t": { "type": "string" }, "d": { "type": "string" } } } } } },
+    "earlier": { "type": "array", "items": { "type": "object", "required": ["scenario", "intro", "consequences"], "properties": { "scenario": { "type": "string" }, "intro": { "type": "string" }, "consequences": { "type": "object", "additionalProperties": { "type": "string" } }, "none": { "type": "string" } } } },
+    "interactive": { "type": "object", "required": ["type"], "properties": { "type": { "enum": ["questions", "assessment", "choice", "review"] } } },
+    "retro": { "type": "array", "items": { "type": "string" } },
+    "refs": { "type": "array", "items": { "type": "object", "required": ["title", "url"], "properties": { "title": { "type": "string" }, "url": { "type": "string", "pattern": "^https://" } } } }
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object", "required": ["id", "kind", "title"], "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" }, "kind": { "enum": ["file", "doc", "code", "table", "log", "diff", "chat"] }, "title": { "type": "string" },
+        "file": { "type": "string", "description": "path from the site root, e.g. data/experience/company/orders.csv" },
+        "lang": { "type": "string" }, "desc": { "type": "string" },
+        "body": { "anyOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }] },
+        "cols": { "type": "array", "items": { "type": "string" } }, "rows": { "type": "array", "items": { "type": "array" } }
+      }
+    }
+  }
+}

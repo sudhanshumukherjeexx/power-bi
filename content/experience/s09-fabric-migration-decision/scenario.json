@@ -1,0 +1,95 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "s09",
+  "slug": "s09-fabric-migration-decision",
+  "type": "sprint",
+  "stage": "architect",
+  "order": 1,
+  "title": "Should Northwind move to Fabric, and how?",
+  "seo": "Microsoft Fabric architecture decision exercise: Import vs DirectQuery vs Direct Lake on OneLake vs Direct Lake on SQL, Lakehouse vs Warehouse, mirroring. Write an architecture decision record under real constraints.",
+  "summary": "The Premium capacity is being retired at renewal. Choose a target architecture for the company's models (Import, DirectQuery, Direct Lake, Lakehouse, Warehouse, mirroring) and record the decision as ADR-009.",
+  "minutes": 300,
+  "skills": ["architecture", "fabric", "performance", "governance", "communication"],
+  "prereq": ["s05", "s08"],
+  "next": "s10",
+  "verified": { "date": "2026-10-01", "context": "Direct Lake overview (2026-09-02), How Direct Lake works (2026-09-09), Mirroring SQL Server (updated 2026-07-06), Premium-to-Fabric migration guidance", "review_after_days": 90 },
+  "ticket": { "id": "ARCH-009", "kind": "decision", "priority": "High", "status": "Open", "reporter": "elena", "opened": "Mon 6 Jul 2026, 09:00", "due": "Architecture board, Thu 23 Jul", "labels": ["fabric", "architecture", "direct-lake", "adr"] },
+  "story": "The certified model from Sprint 05 now serves 140 people. Refresh takes 74 minutes and is creeping up; the operations dashboard still uses DirectQuery against the warehouse management system, and Sprint 08 showed how fragile the on-premises chain is.",
+  "impact": "This decision fixes the platform, cost and skills the BI team will live with for three to five years. Getting it wrong means either an expensive migration that changes nothing for users, or a cheap one that hits a wall in a year.",
+  "messages": [
+    { "from": "elena", "to": "you", "via": "email", "at": "Mon 6 Jul, 09:00", "subject": "ADR-009: target architecture", "body": [
+      "Our P1 capacity won't be renewed in December: Microsoft is retiring Premium per-capacity SKUs, and the equivalent is an F64 Fabric capacity. That forces a decision, so let's make a good one.",
+      "Please write ADR-009 for the architecture board on the 23rd: options, constraints, trade-offs, your recommendation, consequences, risks and what would make us revisit it. Everything you need is in the folder.",
+      "I don't want the most modern option. I want the one this team can run."
+    ] },
+    { "from": "kenji", "to": "you", "via": "chat", "at": "Mon 6 Jul, 10:15", "body": [
+      "If we go Fabric I'd love to stop running nightly ETL into NorthwindDW and Power BI separately. Mirroring could replicate NorthwindDW into OneLake continuously. But nobody here knows Spark, and I'm not learning it by December."
+    ] },
+    { "from": "sarah", "to": "you", "via": "email", "at": "Mon 6 Jul, 11:30", "subject": "Cost", "body": [
+      "Whatever you propose: no increase in platform spend next year unless there's a business case I can defend. And Finance's access rules must not get weaker."
+    ] },
+    { "from": "jordan", "to": "you", "via": "chat", "at": "Mon 6 Jul, 12:02", "body": [
+      "Ops says they need everything real time. I need my sales numbers faster than 'tomorrow' too. Can Fabric do real time for everything?"
+    ] }
+  ],
+  "evidence": [
+    { "id": "estate", "kind": "file", "title": "current_estate.csv", "file": "data/experience/s09/current_estate.csv", "desc": "Today's main models: storage mode, size, refresh, consumers, latency needed." },
+    { "id": "cons", "kind": "file", "title": "constraints.csv", "file": "data/experience/s09/constraints.csv" },
+    { "id": "load", "kind": "file", "title": "refresh_and_load.csv", "file": "data/experience/s09/refresh_and_load.csv", "desc": "Refresh duration and source load over the last four weeks." },
+    { "id": "modes", "kind": "table", "title": "Storage options in Fabric (summary checked 1 Oct 2026)", "cols": ["Option", "How data reaches the model", "Fallback", "Notes"], "rows": [
+      ["Import", "Copied at refresh", "n/a", "Power Query in the model; works on any licence"],
+      ["DirectQuery", "Query sent to the source each time", "n/a", "Load on the source; latency = source"],
+      ["Direct Lake on OneLake", "Delta tables in OneLake loaded on demand; refresh = framing", "Never: errors instead", "Recommended for new models; can combine Fabric sources and Import tables; no non-materialised SQL views; capacity only"],
+      ["Direct Lake on SQL endpoint", "Same, discovered through one SQL analytics endpoint", "Falls back to DirectQuery (views, SQL RLS/OLS, guardrails)", "Single source; can't mix with DirectQuery/Dual tables in one model"],
+      ["Mirroring (SQL Server 2016–2025)", "Continuous replication into OneLake (CDC through a gateway)", "n/a", "Replication compute free; read-only copy with a SQL analytics endpoint"]
+    ] }
+  ],
+  "tasks": [
+    "Frame the decision: what is actually forced (and by when), and what is optional?",
+    "List the constraints and the real latency needs per workload. Challenge \"real time for everything\".",
+    "Compare at least three options with pros, cons, costs and risks, against the constraints.",
+    "Record your decision (Your work → Decision) and write ADR-009.",
+    "Explain the recommendation to the CFO in five sentences and to Kenji in technical terms."
+  ],
+  "deliverables": [
+    { "id": "adr", "t": "ADR-009: context, constraints, options, recommendation, consequences, risks, revisit trigger", "artifact": "adr" },
+    { "id": "lat", "t": "Latency and workload table: what each consumer really needs" },
+    { "id": "plan", "t": "Phased migration plan with a rollback at each phase", "artifact": "release-notes" },
+    { "id": "exec", "t": "Five-sentence recommendation for the CFO" }
+  ],
+  "decision": {
+    "adr": "ADR-009",
+    "title": "Target analytics architecture for 2027",
+    "question": "Which option do you recommend to the architecture board?",
+    "options": [
+      { "id": "a", "t": "Lift and shift: same Import and DirectQuery models on an F64 capacity", "d": "Lowest effort and risk. Nothing changes for users or the team." },
+      { "id": "b", "t": "Phased: lift to F64 first, then mirror NorthwindDW into OneLake, build gold tables in a Fabric Warehouse (T-SQL) and move Sales to Direct Lake on OneLake; Finance stays Import", "d": "Two steps. Uses the team's SQL skills, removes the long Sales refresh and the WMS DirectQuery load." },
+      { "id": "c", "t": "Big bang: Lakehouse with Spark notebooks and a medallion architecture; every model to Direct Lake by December", "d": "The most modern stack, all at once." },
+      { "id": "d", "t": "DirectQuery everywhere against the on-premises SQL Servers for freshness; no Fabric items", "d": "Real time for everyone, no refresh at all." }
+    ]
+  },
+  "hints": [
+    "Separate the forced decision (P1 is retired in December, so something must run on F capacity) from the optional one (how far to go beyond lift and shift, and when).",
+    "Rewrite each latency requirement as a number with an owner. Only one workload needs minutes; the rest are hours or daily. Which option serves that one without putting load back on the WMS?",
+    "Score the options against the team (no Spark), the budget (no increase without a case), security (Finance must not weaken) and Direct Lake's rules (views, SQL RLS and fallback). The recommendation can be phased."
+  ],
+  "rubric": [
+    { "id": "frame", "n": "Problem framing", "w": 15, "good": "Separates the forced capacity change from the optional modernisation, with dates." },
+    { "id": "cons", "n": "Constraints identified", "w": 15, "good": "Skills, budget, security, latency per workload, source load and growth are all named and quantified." },
+    { "id": "trade", "n": "Trade-off analysis", "w": 25, "good": "At least three options compared honestly, including Direct Lake on OneLake vs on SQL endpoint, mirroring, and what each does to cost, skills, security and latency." },
+    { "id": "tech", "n": "Technical viability", "w": 20, "good": "The design respects current product rules: no views in Direct Lake on OneLake, RLS in the semantic model rather than SQL, guardrails, gateway needs for mirroring." },
+    { "id": "risk", "n": "Risk analysis", "w": 10, "good": "Risks have mitigations and a revisit trigger (e.g. refresh > 90 min, CU usage > 80%)." },
+    { "id": "rec", "n": "Recommendation quality", "w": 15, "good": "One clear recommendation, phased, with a rollback per phase, explained to the CFO without jargon." }
+  ],
+  "retro": [
+    "Which constraint drove your decision most? Would a different team have chosen differently?",
+    "What evidence would make you revisit ADR-009 in a year?",
+    "How did you handle \"real time for everything\"?"
+  ],
+  "refs": [
+    { "title": "Direct Lake overview", "url": "https://learn.microsoft.com/en-us/fabric/fundamentals/direct-lake-overview" },
+    { "title": "Mirroring SQL Server in Fabric", "url": "https://learn.microsoft.com/en-us/fabric/mirroring/sql-server" },
+    { "title": "Power BI Premium to Fabric migration overview", "url": "https://learn.microsoft.com/en-us/power-bi/support/premium-migration-overview" },
+    { "title": "Fabric decision guide: choose a data store", "url": "https://learn.microsoft.com/en-us/fabric/fundamentals/decision-guide-data-store" }
+  ]
+}

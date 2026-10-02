@@ -1,0 +1,166 @@
+{
+  "$schema": "../../schema/scenario-solution.schema.json",
+  "summary": "Two security weaknesses, neither visible in the app. First, the RLS filter sits on DimRegion, but the relationship from DimEmployee to DimRegion is inactive, so the filter never reaches FactPayroll: a regional manager sees all {{s03_payroll_all|money0}} of Q1 payroll instead of their region's share (West: {{s03_payroll_west|money0}}). The app only looked secure because of a page-level filter, which is presentation, not security. Second, the Sales Rep role has no object-level security, so reps can query colleagues' pay in their region. Contain by removing Build permission and the payroll page from the app until the model is fixed.",
+  "root_cause": [
+    "relationships.csv: DimEmployee[HomeRegionKey] → DimRegion[RegionKey] is inactive (IsActive = FALSE). Power BI made it inactive because DimRegion → FactSales and DimRegion → DimEmployee → FactSales would be two paths. RLS uses active relationships only, so payroll is not filtered.",
+    "report_page_filters.csv: \"Payroll by region\" has a page filter RegionName = West added for the West audience. Analyze in Excel, Explore data and any new report ignore it.",
+    "roles.tmdl: the Sales Rep role filters regions but has no table or column permission on FactPayroll, so a rep sees pay for everyone in their region (activity_log.csv shows a rep using Explore data)."
+  ],
+  "steps": [
+    "Contain (first 30 minutes): remove Build permission from SG-Sales-Managers and SG-Sales-Reps on the model and hide the payroll page from app audiences. Sales pages keep working. Write the time down.",
+    "Preserve evidence: export the activity log, roles and relationships before changing anything.",
+    "Reproduce: in Desktop or the Service, View as role 'Regional Manager' with user dana.whitfield@…: a payroll table by region shows all five regions. That's the bug, proven.",
+    "Diagnose the path: the role filters DimRegion; FactPayroll → DimEmployee is active but DimEmployee → DimRegion is inactive. No active path, so no filter.",
+    "Fix 1: add the region rule to DimEmployee as well (DimEmployee[HomeRegionKey] IN the user's regions) in the Regional Manager role. This doesn't create ambiguity and filters FactPayroll through the active relationship. Don't just activate the relationship: it would create two paths to FactSales.",
+    "Fix 2: object-level security: in the Sales Rep role set FactPayroll to None (or the GrossPay and Bonus columns), so payroll doesn't exist for reps.",
+    "Remove the page filter that pretended to be security, so the report shows what the role allows. Otherwise the report would still hide problems.",
+    "Run the test matrix (below) as each user. Only then restore Build permission, and only to the groups that need it.",
+    "Exposure statement for Ava: from the app's publication date until containment, members of SG-Sales-Managers with Build permission could see all regions' payroll; members of SG-Sales-Reps could see their region's payroll. The activity log shows who actually ran queries."
+  ],
+  "numbers": {
+    "title": "RLS / OLS test matrix (Q1 2026 payroll, gross + bonus)",
+    "cols": [
+      "User",
+      "Role",
+      "Should see regions",
+      "Forbidden",
+      "Payroll visible?",
+      "Expected payroll",
+      "Before fix",
+      "Result"
+    ],
+    "rows": [
+      [
+        "dana.whitfield@",
+        "Regional Manager",
+        "West",
+        "South, East, Central, Europe",
+        "Yes",
+        "{{s03_payroll_west|money0}}",
+        "{{s03_payroll_all|money0}}",
+        "Fail → Pass"
+      ],
+      [
+        "marcus.bell@",
+        "Regional Manager",
+        "South",
+        "all others",
+        "Yes",
+        "{{s03_payroll_south|money0}}",
+        "{{s03_payroll_all|money0}}",
+        "Fail → Pass"
+      ],
+      [
+        "lea.brandt@",
+        "Regional Manager",
+        "Europe",
+        "all US regions",
+        "Yes",
+        "{{s03_payroll_europe|money0}}",
+        "{{s03_payroll_all|money0}}",
+        "Fail → Pass"
+      ],
+      [
+        "bea.lindqvist@",
+        "Sales Rep",
+        "East",
+        "all others",
+        "No (OLS)",
+        "table not available",
+        "{{s03_payroll_all|money0}}",
+        "Fail → Pass"
+      ],
+      [
+        "nina.kowalski@",
+        "Finance",
+        "all",
+        "none",
+        "Yes",
+        "{{s03_payroll_all|money0}}",
+        "{{s03_payroll_all|money0}}",
+        "Pass"
+      ],
+      [
+        "grace.hollis@",
+        "Executive",
+        "all",
+        "none",
+        "Yes",
+        "{{s03_payroll_all|money0}}",
+        "{{s03_payroll_all|money0}}",
+        "Pass"
+      ],
+      [
+        "someone.new@ (in no group)",
+        "none",
+        "none",
+        "all",
+        "No",
+        "access denied",
+        "access denied",
+        "Pass"
+      ]
+    ],
+    "note": "\"Before fix\" for a rep is what Explore data returned: every region, because the region rule never reached payroll either. Regional totals: West {{s03_payroll_west|money0}}, South {{s03_payroll_south|money0}}, East {{s03_payroll_east|money0}}, Central {{s03_payroll_central|money0}}, Europe {{s03_payroll_europe|money0}}, head office {{s03_payroll_hq|money0}}."
+  },
+  "artifacts": [
+    {
+      "title": "TMDL: corrected roles",
+      "lang": "TMDL",
+      "body": [
+        "role 'Regional Manager'",
+        "\tmodelPermission: read",
+        "",
+        "\ttablePermission DimRegion =",
+        "\t\t\tDimRegion[RegionKey] IN CALCULATETABLE ( VALUES ( SecurityUserRegion[RegionKey] ), SecurityUserRegion[UserEmail] = USERPRINCIPALNAME () )",
+        "",
+        "\t/// the DimEmployee → DimRegion relationship is inactive, so payroll needs its own rule",
+        "\ttablePermission DimEmployee =",
+        "\t\t\tDimEmployee[HomeRegionKey] IN CALCULATETABLE ( VALUES ( SecurityUserRegion[RegionKey] ), SecurityUserRegion[UserEmail] = USERPRINCIPALNAME () )",
+        "",
+        "\tmember 'SG-Sales-Managers'",
+        "",
+        "role 'Sales Rep'",
+        "\tmodelPermission: read",
+        "",
+        "\ttablePermission DimRegion =",
+        "\t\t\tDimRegion[RegionKey] IN CALCULATETABLE ( VALUES ( SecurityUserRegion[RegionKey] ), SecurityUserRegion[UserEmail] = USERPRINCIPALNAME () )",
+        "",
+        "\t/// object-level security: payroll does not exist for reps",
+        "\ttablePermission FactPayroll",
+        "\t\tmetadataPermission: none",
+        "",
+        "\tmember 'SG-Sales-Reps'"
+      ]
+    },
+    {
+      "title": "DAX query to run the matrix (DAX query view, \"View as\" each user)",
+      "lang": "DAX",
+      "body": [
+        "EVALUATE",
+        "SUMMARIZECOLUMNS (",
+        "    DimRegion[RegionName],",
+        "    \"Payroll\", SUM ( FactPayroll[GrossPay] ) + SUM ( FactPayroll[Bonus] ),",
+        "    \"Employees\", DISTINCTCOUNT ( FactPayroll[EmployeeKey] )",
+        ")"
+      ]
+    }
+  ],
+  "communication": {
+    "executive": "A security setting on the payroll report didn't work the way we thought. Managers who used Excel could see other regions' salaries, and sales reps could see colleagues' pay. We closed access within the hour, fixed the model, tested every role and will run those tests before every future release.",
+    "engineer": "RLS on DimRegion didn't propagate to FactPayroll (DimEmployee→DimRegion inactive to avoid ambiguity with FactSales). Fixed with a second table permission on DimEmployee[HomeRegionKey]; OLS FactPayroll = none for Sales Rep. Page filter RegionName=West removed. Matrix of 7 users × expected payroll attached, all passing."
+  },
+  "pitfalls": [
+    "Activating the inactive relationship. It creates an ambiguous path to FactSales; Power BI will refuse or deactivate another one.",
+    "Fixing the report instead of the model (more page filters, hiding visuals). Anything with Build permission bypasses the report.",
+    "Testing only Dana's role. The rep problem would have shipped again.",
+    "Deleting the activity log or the old model before Compliance has the evidence.",
+    "Not checking side effects of the fix. The new DimEmployee rule also filters FactSales through EmployeeKey: a West manager now sees West sales made by West reps only. If reps sell across regions, agree that with Sales, or give payroll its own employee dimension so the sales view is untouched. Re-run the sales part of the matrix too."
+  ],
+  "review": {
+    "junior": "Adds a page filter for each region and tells Dana it's fixed in the app.",
+    "competent": "Finds the inactive relationship, fixes the role for managers and checks Dana with View as role.",
+    "senior": "Contains first (Build permission), preserves evidence, finds both weaknesses, fixes them in the model, removes the fake security, runs a full role × user matrix with expected totals, and gives Compliance a precise exposure window.",
+    "architect": "Questions whether payroll belongs in a sales model at all. Proposes a separate HR model with its own security owner, the test matrix as an automated release gate, and a rule that Build permission on sensitive models is granted per person, not by broad group."
+  }
+}

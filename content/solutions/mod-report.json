@@ -1,0 +1,14 @@
+{
+  "mod-report-0": {
+    "s": ["Alt text: Visual → General → Alt text; use a measure for dynamic text (\"Net sales {value}, {change} vs last year\").", "Tab order: View → Selection pane → Tab order; hide decorative shapes from tab order.", "Colour: add icons, data labels or text for status; check contrast with a checker.", "Test: keyboard (Ctrl+F6 to the page, Tab between visuals, Ctrl+Right to enter), then Narrator/NVDA."],
+    "check": "Alt text everywhere, logical tab order, no colour-only meaning, keyboard-only use works."
+  },
+  "mod-report-1": {
+    "s": ["View → Mobile layout; drag the 3–5 visuals managers need, headline numbers first.", "Slicers at the top, large enough to tap; consider a single region slicer.", "Test in the Power BI mobile app (or the emulator)."],
+    "check": "Portrait, prioritised, touch-friendly, no horizontal scrolling."
+  },
+  "mod-report-2": {
+    "s": ["Paginated: customer statements, store price list, commission statements (fixed layout, many pages, per-recipient, subscriptions).", "Interactive: the regional exploration dashboard."],
+    "check": "3 paginated, 1 interactive."
+  }
+}

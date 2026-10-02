@@ -1,0 +1,19 @@
+{
+  "$schema": "../../schema/scenario-solution.schema.json",
+  "summary": "Same facts, different order and words: the executive version leads with impact and the ask; the engineering version leads with evidence and mechanism.",
+  "steps": [
+    "Executive: problem in one sentence, impact in business terms, what we're doing, what it costs, what we need from her.",
+    "Engineer: the measurements, the two mechanisms, the options with cost and risk, the decision and how you'll monitor it.",
+    "Check: no promise in one that the other contradicts (e.g. \"no extra cost\" vs \"F128 next month\")."
+  ],
+  "communication": {
+    "executive": "Reports slow down between 8:30 and 9:30 because two things now run at the same time: a data update that was moved to 8:00 by mistake, and a new marketing report that asks for far more than it needs. We're moving the update back to its early-morning slot today at no cost, and redesigning the marketing report this week. That should fix it without buying more capacity, which would double the cost. We'll check the trend in four weeks. Nothing needed from you unless it persists.",
+    "engineer": "F64 peaks at 96% CU 08:30–09:30 with throttling on 3 mornings. Causes: Sales model refresh moved from 05:30 to 08:00, overlapping interactive peak; new Marketing report with 40 unfiltered visuals per page. Actions: refresh back to 05:30 today; Marketing page redesign (filters, fewer visuals, bookmarks for detail) over 2 days. F128 deferred: doubles cost and hides the design issue. Monitoring: Capacity Metrics app, alert at 80% sustained 15 min; review in 4 weeks."
+  },
+  "review": {
+    "junior": "Sends the engineering version to Grace.",
+    "competent": "Writes two versions but the executive one still says \"CU\" and \"throttling\".",
+    "senior": "Two clear, consistent versions; each reader can act without a follow-up.",
+    "architect": "Uses the same structure in every stakeholder update and teaches it to the team."
+  }
+}

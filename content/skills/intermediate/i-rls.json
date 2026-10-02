@@ -1,0 +1,152 @@
+{
+  "id": "i-rls",
+  "name": "Row-level security",
+  "ds": [
+    "UserRegionMapping",
+    "DimRegion",
+    "FactSales",
+    "DimEmployee"
+  ],
+  "skills": [
+    "security"
+  ],
+  "stage": "developer",
+  "why": {
+    "matters": "Security is the one defect a company cannot fix with an apology: a manager seeing another region's payroll is a reportable incident.",
+    "failure": "A page filter or a hidden visual is used as \"security\"; anyone with Build permission or Analyze in Excel sees everything.",
+    "use": "Whenever different people may see different rows of the same model.",
+    "avoid": "When groups need entirely different models anyway, or when security must hold for direct SQL access too (secure the source as well)."
+  },
+  "verified": {
+    "date": "2026-10-01",
+    "context": "Row-level security docs, Sept 2026",
+    "cert": "PL-300 (2026-04-20)",
+    "review_after_days": 120
+  },
+  "refs": [
+    {
+      "title": "Row-level security with Power BI",
+      "url": "https://learn.microsoft.com/en-us/fabric/security/service-admin-row-level-security"
+    },
+    {
+      "title": "RLS guidance",
+      "url": "https://learn.microsoft.com/en-us/power-bi/guidance/rls-guidance"
+    }
+  ],
+  "asg": [
+    {
+      "t": "Static roles",
+      "time": "20 min",
+      "ds": "DimRegion",
+      "guidance": "A",
+      "steps": [
+        "Manage roles → new role \"West\" with DAX filter on DimRegion: [RegionName] = \"West\". Create South, East, Central the same way.",
+        "View as → West. Note that the Region slicer now shows only West.",
+        "Publish, add a test user to the West role in the Service, open the report as them."
+      ],
+      "exp": "Cards show West totals only. The user cannot see other regions even by editing the report."
+    },
+    {
+      "t": "Dynamic RLS with a mapping table",
+      "time": "40 min",
+      "ds": "UserRegionMapping, DimRegion",
+      "guidance": "A",
+      "steps": [
+        "Load UserRegionMapping. Relate UserRegionMapping[RegionKey] → DimRegion[RegionKey]? No: the mapping is many rows per user, so relate DimRegion (1) → UserRegionMapping (*) and set the relationship to bi-directional with \"Apply security filter in both directions\" on.",
+        "Role \"Dynamic\": filter on UserRegionMapping: [UserEmail] = USERPRINCIPALNAME().",
+        "Handle the \"All\" row: change the DimRegion filter instead: VAR u = USERPRINCIPALNAME() RETURN CONTAINS(UserRegionMapping, UserRegionMapping[UserEmail], u, UserRegionMapping[RegionKey], DimRegion[RegionKey]) || CALCULATE(COUNTROWS(FILTER(UserRegionMapping, [UserEmail] = u && [AccessLevel] = \"All\"))) > 0",
+        "View as → Other user → nina.kowalski@northwind.example. Then grace.hollis@."
+      ],
+      "exp": "Nina sees West and East only. Grace sees all four. Dana sees West."
+    },
+    {
+      "t": "RLS by org hierarchy",
+      "time": "30 min",
+      "ds": "DimEmployee, FactSales",
+      "guidance": "A",
+      "steps": [
+        "Role \"MyTeam\": filter DimEmployee with PATHCONTAINS(DimEmployee[Path], LOOKUPVALUE(DimEmployee[EmployeeKey], DimEmployee[Email], USERPRINCIPALNAME())).",
+        "View as dana.whitfield@: she should see herself and everyone under her.",
+        "View as lily.chang@: she sees only herself."
+      ],
+      "exp": "Dana: 5 employees' sales. Lily: 1."
+    },
+    {
+      "t": "Test that RLS cannot be bypassed",
+      "time": "15 min",
+      "ds": "Full model",
+      "guidance": "A",
+      "steps": [
+        "As the restricted user, try Analyze in Excel and try building a new report on the model (needs Build). Confirm RLS still applies.",
+        "Add a measure CALCULATE([Net Sales], ALL(DimRegion)) and confirm it still returns only the allowed regions.",
+        "Publish to a second workspace and note that role membership does not travel with it."
+      ],
+      "exp": "ALL does not remove RLS filters; role membership must be reassigned in each workspace."
+    }
+  ],
+  "int": [
+    {
+      "q": "Why can ALL() not bypass RLS?",
+      "a": "RLS filters are applied at the storage layer before any DAX runs; they are not part of the filter context DAX manipulates."
+    },
+    {
+      "q": "Static vs dynamic RLS: trade-offs.",
+      "a": "Static: simple, one role per group, membership managed in the Service, breaks when groups change. Dynamic: one role, mapping table maintained by the business, needs USERPRINCIPALNAME and a bi-directional security filter, and the mapping must be refreshed."
+    },
+    {
+      "q": "What happens if a user is in two roles?",
+      "a": "Filters are combined with OR: they see the union. Roles never intersect."
+    },
+    {
+      "q": "Does RLS apply to workspace Admins, Members and Contributors?",
+      "a": "No. It applies only to users with Viewer role or with read permission via app/share. Anyone who can edit the model is exempt."
+    },
+    {
+      "q": "How does RLS interact with a bi-directional relationship?",
+      "a": "Security filters only flow through a bi-directional relationship if \"Apply security filter in both directions\" is checked; otherwise the mapping-table role filters nothing on the fact side."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "A user is in roles West and East. They see:",
+      "o": [
+        "Nothing",
+        "West only",
+        "West and East",
+        "Everything"
+      ],
+      "a": 2,
+      "why": "Multiple roles combine with OR."
+    },
+    {
+      "type": "mcq",
+      "q": "USERPRINCIPALNAME() in Desktop returns:",
+      "o": [
+        "Blank",
+        "Your signed-in Desktop account email",
+        "The workspace owner",
+        "\"admin\""
+      ],
+      "a": 1,
+      "why": "It returns the current user; View as → Other user lets you impersonate."
+    },
+    {
+      "type": "task",
+      "q": "Implement dynamic RLS for UserRegionMapping including the \"All\" row. Prove Nina sees exactly two regions with a screenshot of View as.",
+      "hint": "If Nina sees all regions, the \"All\" check is missing a filter on AccessLevel; if she sees none, the relationship isn't bi-directional for security."
+    },
+    {
+      "type": "mcq",
+      "q": "Workspace Member opens an RLS-secured report. They see:",
+      "o": [
+        "Their role's rows",
+        "Everything",
+        "Nothing",
+        "An error"
+      ],
+      "a": 1,
+      "why": "Edit-capable roles bypass RLS."
+    }
+  ]
+}

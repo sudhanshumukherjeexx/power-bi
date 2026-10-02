@@ -1,0 +1,20 @@
+WorkspaceID,Name,Department,Admins,Members,Capacity,DeploymentPipeline
+WS01,Sales Reporting,Sales,3,34,F64,No
+WS02,SALES - Prod,Finance,6,15,Pro,Yes
+WS03,sales dev (old),Operations,2,14,Pro,No
+WS04,Finance,Marketing,1,39,F64,No
+WS05,Finance Board Pack,HR,4,26,Pro,Yes
+WS06,Ops Dashboards,Supply Chain,3,20,Pro,No
+WS07,Operations Team,Ecommerce,1,27,F64,No
+WS08,Marketing Analytics,Sales,4,34,Pro,No
+WS09,Mktg Campaigns 2024,Finance,2,14,Pro,No
+WS10,HR People Analytics,Operations,2,7,F64,No
+WS11,Supply Chain,Marketing,2,23,Pro,No
+WS12,Ecom Insights,HR,6,8,Pro,No
+WS13,Ecommerce Prod,Supply Chain,5,28,F64,Yes
+WS14,Executive,Ecommerce,3,15,Pro,No
+WS15,Test Workspace,Sales,3,29,Pro,No
+WS16,Dana W (personal share),Finance,1,5,F64,No
+WS17,Data Team Sandbox,Operations,2,36,Pro,No
+WS18,Regional Reports,Marketing,6,31,Pro,No
+WS19,Analytics CoE,HR,5,38,F64,No

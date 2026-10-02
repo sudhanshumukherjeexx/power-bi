@@ -1,0 +1,148 @@
+{
+  "id": "i-service",
+  "name": "Service: gateways, refresh, workspaces and apps",
+  "ds": [
+    "FactSales"
+  ],
+  "skills": [
+    "service",
+    "governance"
+  ],
+  "stage": "developer",
+  "verified": {
+    "date": "2026-10-01",
+    "context": "Gateway, workspace and refresh docs, Sept 2026",
+    "cert": "PL-300 (2026-04-20)",
+    "review_after_days": 120
+  },
+  "refs": [
+    {
+      "title": "What is an on-premises data gateway?",
+      "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/service-gateway-onprem"
+    },
+    {
+      "title": "Workspaces in Power BI",
+      "url": "https://learn.microsoft.com/en-us/power-bi/collaborate-share/service-new-workspaces"
+    },
+    {
+      "title": "Troubleshoot refresh scenarios",
+      "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-troubleshooting-refresh-scenarios"
+    }
+  ],
+  "asg": [
+    {
+      "t": "Install and use a gateway",
+      "time": "40 min",
+      "ds": "A local CSV or SQL Express",
+      "guidance": "A",
+      "steps": [
+        "Install the on-premises data gateway (standard mode) on your machine. Register it.",
+        "Add a data source (File or SQL). Map the report's data source to it in the semantic model settings.",
+        "Schedule refresh. Then stop the gateway service and trigger refresh: read the exact error.",
+        "Add a second admin to the gateway."
+      ],
+      "exp": "Refresh succeeds with gateway online and fails with a gateway-offline message when it is not."
+    },
+    {
+      "t": "Workspace strategy",
+      "time": "20 min",
+      "ds": "Your report",
+      "guidance": "A",
+      "steps": [
+        "Create workspaces Northwind-Dev, Northwind-Test, Northwind-Prod. Publish to Dev.",
+        "Move the semantic model to a separate workspace \"Northwind-Models\" and make the report connect live to it (Desktop → Get Data → Power BI semantic models). Republish.",
+        "Grant Build on the model to a colleague and have them create a report in their own workspace."
+      ],
+      "exp": "One model, two reports in different workspaces. Deleting the report does not delete the model."
+    },
+    {
+      "t": "Refresh diagnostics",
+      "time": "20 min",
+      "ds": "Any",
+      "guidance": "A",
+      "steps": [
+        "Open refresh history and download the refresh log.",
+        "Set failure notifications to a colleague.",
+        "Configure refresh 8 times a day and note the Pro limit; then read the capacity limit in the settings tooltip."
+      ],
+      "exp": "You can name the daily refresh limit for Pro and for capacity."
+    },
+    {
+      "t": "App with audiences",
+      "time": "20 min",
+      "ds": "Your report",
+      "guidance": "A",
+      "steps": [
+        "Create an App with two audiences: Managers (all pages) and Reps (one page only).",
+        "Add a navigation section and a link to an external page.",
+        "Publish, then update one visual, republish the report, update the App. Observe the difference."
+      ],
+      "exp": "Rep audience cannot see the manager page even by URL."
+    }
+  ],
+  "int": [
+    {
+      "q": "Personal mode vs standard mode gateway.",
+      "a": "Personal: one user, no sharing, no DirectQuery, no dataflows. Standard: shared, clustered, supports DirectQuery/live and dataflows, needs a service account and admins."
+    },
+    {
+      "q": "How do you avoid 50 reports each with their own copy of the model?",
+      "a": "Publish one certified semantic model in a models workspace, give Build to authors, and have every report live-connect to it. Use endorsement (Promoted/Certified) so authors find it."
+    },
+    {
+      "q": "Scheduled refresh keeps failing at 6:00 but works manually. Where do you look?",
+      "a": "Gateway online status at that hour, source maintenance windows, credential expiry, the log around that time, timezone of the schedule, and whether the manual refresh used a different (cached) credential."
+    },
+    {
+      "q": "What is the difference between \"Update app\" and \"Republish\"?",
+      "a": "Republish from Desktop updates the workspace content; Update app pushes workspace content to app consumers. Both are needed for consumers to see a change."
+    },
+    {
+      "q": "Where do you put a shared date table and shared measures so every team reuses them?",
+      "a": "In the shared semantic model. Reports live-connected to it can add report-level measures but not tables, which forces consistency."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "A DirectQuery report to on-prem SQL requires:",
+      "o": [
+        "Personal gateway",
+        "Standard gateway",
+        "No gateway",
+        "A dataflow"
+      ],
+      "a": 1,
+      "why": "DirectQuery is not supported by personal mode."
+    },
+    {
+      "type": "mcq",
+      "q": "Live connection to a shared model lets you:",
+      "o": [
+        "Add tables",
+        "Add report-level measures",
+        "Edit Power Query",
+        "Change relationships"
+      ],
+      "a": 1,
+      "why": "Live connections are read-only on the model except report measures."
+    },
+    {
+      "type": "task",
+      "q": "Set up gateway refresh for a local CSV, break it, fix it, and document the three settings you had to touch in the Service.",
+      "hint": "Gateway mapping, data source credentials, schedule."
+    },
+    {
+      "type": "mcq",
+      "q": "Which workspace role is the minimum to publish an App?",
+      "o": [
+        "Viewer",
+        "Contributor",
+        "Member",
+        "Admin"
+      ],
+      "a": 2,
+      "why": "Contributors can publish reports but not apps by default."
+    }
+  ]
+}

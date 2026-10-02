@@ -1,0 +1,38 @@
+{
+  "dw-facts-0": {
+    "s": ["Pivot the events: one MAX(CASE WHEN Event = 'Shipped' THEN EventTimeUTC END) per milestone, grouped by OrderID.", "Lags in hours from the timestamps (JULIANDAY in SQLite, DATEDIFF in SQL Server).", "Delivered-within-5-days as a 0/1 flag so it can be averaged.", "In a warehouse, MERGE the snapshot nightly: new orders insert, existing ones update the milestones they reached."],
+    "code": [
+      {
+        "lang": "SQL", "title": "Fulfilment snapshot (SQLite date functions; see the note for SQL Server)", "dialect": "sqlite",
+        "src": [
+          "WITH snap AS (",
+          "    SELECT OrderID,",
+          "           MAX(CASE WHEN Event = 'Placed'    THEN EventTimeUTC END) AS PlacedAt,",
+          "           MAX(CASE WHEN Event = 'Picked'    THEN EventTimeUTC END) AS PickedAt,",
+          "           MAX(CASE WHEN Event = 'Shipped'   THEN EventTimeUTC END) AS ShippedAt,",
+          "           MAX(CASE WHEN Event = 'Delivered' THEN EventTimeUTC END) AS DeliveredAt",
+          "    FROM order_events GROUP BY OrderID",
+          ")",
+          "SELECT COUNT(*) AS Orders,",
+          "       COUNT(ShippedAt) AS Shipped,",
+          "       COUNT(DeliveredAt) AS Delivered,",
+          "       ROUND(AVG((JULIANDAY(ShippedAt) - JULIANDAY(PlacedAt)) * 24), 1) AS AvgHoursToShip,",
+          "       SUM(CASE WHEN DeliveredAt IS NOT NULL AND (JULIANDAY(DeliveredAt) - JULIANDAY(PlacedAt)) * 24 <= 120 THEN 1 ELSE 0 END) AS DeliveredWithin5Days",
+          "FROM snap;"
+        ],
+        "expect": { "cols": ["Orders", "Shipped", "Delivered", "AvgHoursToShip", "DeliveredWithin5Days"], "rows": [["{{dw_snapshot_orders|int}}", "{{dw_shipped|int}}", "{{dw_delivered|int}}", "{{dw_avg_hours_to_ship|dec1}}", "{{dw_delivered_within_5d|int}}"]] }
+      }
+    ],
+    "check": "{{dw_snapshot_orders|int}} orders, {{dw_shipped|int}} shipped, {{dw_delivered|int}} delivered; {{dw_avg_hours_to_ship|dec1}} h to ship on average; {{dw_delivered_within_5d|int}} of {{dw_delivered|int}} ({{dw_delivered_within_5d_pct|pct0}}) within 5 days.",
+    "note": "SQL Server: DATEDIFF(minute, PlacedAt, ShippedAt) / 60.0 instead of JULIANDAY. DuckDB: date_diff('minute', PlacedAt, ShippedAt) / 60.0.",
+    "verify": "Executed in CI against SQLite (SQLite date functions)."
+  },
+  "dw-facts-1": {
+    "s": ["Find the last snapshot date per month, then sum stock for that date only.", "The naive SUM adds every weekly snapshot: wrong for any period longer than one snapshot.", "Additive across products and warehouses; semi-additive over time (last value, or average for \"average stock\")."],
+    "check": "January {{dw_stock_jan|int}}, February {{dw_stock_feb|int}}, March {{dw_stock_mar|int}}; naive sum {{dw_stock_sum_wrong|int}} over {{dw_snapshots|int}} snapshots."
+  },
+  "dw-facts-2": {
+    "s": ["Tickets have a lifecycle with milestones (opened, assigned, resolved): accumulating snapshot, one row per ticket, lags as measures.", "Balances are levels at a point in time: periodic snapshot, customer × month, semi-additive.", "Promotion coverage must record products that didn't sell: factless fact at product × store × promotion × day.", "Page views are events: transaction fact at one row per view (high volume; aggregate tables for reporting)."],
+    "tbl": [["Request", "Fact type", "Grain", "Additive", "Not fully additive"], ["Support tickets", "Accumulating snapshot", "Ticket", "Count of tickets, SLA breaches", "Lags (average, not sum)"], ["Account balances", "Periodic snapshot", "Customer × month", "—", "Balance (semi-additive)"], ["Promotion coverage", "Factless", "Product × store × promotion × day", "Count of rows", "—"], ["Page views", "Transaction", "One view", "Views, sessions (count)", "Distinct visitors"]]
+  }
+}

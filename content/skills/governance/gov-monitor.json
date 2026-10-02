@@ -1,0 +1,59 @@
+{
+  "id": "gov-monitor",
+  "name": "Monitoring, lineage, usage and retirement",
+  "ds": ["ApiReports", "ApiViews"],
+  "skills": ["governance", "service", "automation"],
+  "stage": "architect",
+  "why": {
+    "matters": "Content accumulates. Usage and lineage tell you what to invest in, what to fix first and what to retire safely.",
+    "failure": "A \"clean-up\" deletes a model with no report views; the monthly commission paginated report that depended on it fails on payroll day.",
+    "use": "Usage metrics and activity events for what's used, lineage and impact analysis for what depends on what, capacity metrics for cost, and a retirement process with notice and a read-only period.",
+    "avoid": "Deleting based on view counts alone."
+  },
+  "verified": { "date": "2026-10-01", "context": "Usage metrics, lineage/impact analysis, Capacity Metrics app docs (Microsoft Learn, Sept 2026)", "review_after_days": 120 },
+  "refs": [
+    { "title": "Monitor usage metrics", "url": "https://learn.microsoft.com/en-us/power-bi/collaborate-share/service-modern-usage-metrics" },
+    { "title": "Lineage and impact analysis", "url": "https://learn.microsoft.com/en-us/fabric/governance/impact-analysis" },
+    { "title": "Fabric Capacity Metrics app", "url": "https://learn.microsoft.com/en-us/fabric/enterprise/metrics-app" }
+  ],
+  "asg": [
+    {
+      "t": "Find retirement candidates, safely",
+      "time": "35 min",
+      "ds": "reports.json, activity_views.json",
+      "guidance": "B",
+      "brief": "From the mock activity events, list the reports nobody viewed in 90 days and the most-viewed one, then say what you must check before retiring any of them.",
+      "req": ["Unused reports from the activity data.", "The most-viewed report and its views.", "The checks before retirement (lineage, subscriptions, paginated reports, Excel connections, owners)."],
+      "exp": "{{api_reports_unused|int}} of {{api_reports|int}} reports had no views in 90 days; the most viewed is \"{{api_top_report}}\" with {{api_top_report_views|int}} views. Before retiring: impact analysis, subscriptions, dashboard tiles, Analyze in Excel connections, owner contact, then read-only for 30 days."
+    },
+    {
+      "t": "What should a BI monitoring page show?",
+      "time": "30 min",
+      "ds": "—",
+      "guidance": "C",
+      "brief": "Design one page Elena can check every Monday that shows the health of the estate. Choose at most eight numbers and justify each.",
+      "req": ["Refresh, usage, capacity, ownership and quality signals.", "Which numbers have thresholds and who acts on them."],
+      "exp": "For example: failed refreshes (7 days), certified-model refresh duration trend, capacity peak utilisation and throttling, views on certified vs uncertified content, items without owner, retirement candidates, data-quality test failures, open incidents. Each with an owner and a threshold."
+    },
+    {
+      "t": "Run a retirement",
+      "time": "20 min",
+      "ds": "data/experience/d05",
+      "guidance": "B",
+      "brief": "Write the retirement runbook your team will use, based on the Regional Sales Weekly drill (D05).",
+      "req": ["Steps with timing.", "Who's notified at each step.", "What makes you stop and roll back."],
+      "exp": "Check dependencies → notify owner and recent viewers → banner and move subscriptions/tiles → read-only 30 days → archive → delete after 90 days; stop if a dependency or an objection appears; restore from archive if needed."
+    }
+  ],
+  "int": [
+    { "q": "What's the difference between usage metrics and activity events?", "a": "Usage metrics reports show views and viewers for content in a workspace. Activity events (admin API or audit log) record what every user did across the tenant (views, exports, shares, edits), which is what you need for tenant-wide analysis and audits." },
+    { "q": "What does impact analysis show?", "a": "Downstream items that depend on an item (reports, dashboards, other models, dataflows) across workspaces, and how many people use them, so you can notify owners before a breaking change or retirement." },
+    { "q": "Why can a model with zero report views still be important?", "a": "It may feed paginated reports, subscriptions, composite models, Analyze in Excel workbooks or other tools that usage metrics for reports don't capture." },
+    { "q": "What does the Capacity Metrics app tell you?", "a": "How much of the capacity each item and operation uses over time, interactive vs background, and when throttling happens: the evidence for optimising or resizing." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "A model has no report views in 90 days. Before deleting it you should check:", "o": ["Nothing", "Lineage/impact analysis, subscriptions, paginated reports and Excel connections, and ask the owner", "Only its size", "The tenant settings"], "a": 1, "why": "Views on reports aren't the only way content is used." },
+    { "type": "mcq", "q": "Which source tells you who exported data to Excel last week across the tenant?", "o": ["Report usage metrics", "Activity events / audit log", "Refresh history", "Lineage view"], "a": 1, "why": "Exports are activity events." },
+    { "type": "task", "q": "Build the Monday health page from your design using the inventory and refresh data from the automation track.", "hint": "Load inventory.csv and the refresh history into a small model; one card per signal with a threshold-based colour." }
+  ]
+}

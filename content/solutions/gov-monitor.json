@@ -1,0 +1,27 @@
+{
+  "gov-monitor-0": {
+    "s": ["Set of report IDs with at least one ViewReport event; reports not in it are unused.", "Count events per report for the most viewed.", "Before retiring: impact analysis in the Service, subscriptions, dashboard tiles, paginated reports and Analyze in Excel on the model, owner contact, read-only period."],
+    "code": [
+      { "lang": "Python", "title": "Unused and most-viewed reports", "src": [
+        "import json, collections",
+        "reports = json.load(open('data/tracks/automation/reports.json'))['value']",
+        "views = json.load(open('data/tracks/automation/activity_views.json'))['activityEventEntities']",
+        "count = collections.Counter(v['ReportId'] for v in views if v['Activity'] == 'ViewReport')",
+        "unused = [r['name'] for r in reports if r['id'] not in count]",
+        "top_id, top_n = count.most_common(1)[0]",
+        "print(len(unused), 'unused of', len(reports))",
+        "print('most viewed:', next(r['name'] for r in reports if r['id'] == top_id), top_n)"
+      ] }
+    ],
+    "check": "{{api_reports_unused|int}} unused of {{api_reports|int}}; most viewed \"{{api_top_report}}\" ({{api_top_report_views|int}} views).",
+    "verify": "Script run locally against the mock files; counts match the build's computed values."
+  },
+  "gov-monitor-1": {
+    "s": ["Pick signals that lead to an action: failed refreshes, duration trend, capacity peak and throttling, certified share of views, unowned items, retirement candidates, data-quality failures, open incidents.", "Give each a threshold and an owner; leave out anything nobody would act on."],
+    "check": "≤ 8 actionable signals, each with threshold and owner."
+  },
+  "gov-monitor-2": {
+    "s": ["Day 0: impact analysis, subscriptions, tiles, Excel/paginated dependencies; identify owner.", "Day 1: notify owner and viewers of the last 90 days with the replacement and dates.", "Day 7: banner on the report; move subscriptions and tiles.", "Day 14: read-only (remove build/edit), keep viewing.", "Day 45: archive (export PBIP to the archive repo), remove from apps.", "Day 90: delete. Stop at any step if a dependency or objection appears."],
+    "check": "Staged retirement with notice, read-only, archive and delete, and explicit stop conditions."
+  }
+}

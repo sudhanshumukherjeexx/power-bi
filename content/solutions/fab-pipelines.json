@@ -1,0 +1,14 @@
+{
+  "fab-pipelines-0": {
+    "s": ["New Dataflow Gen2 → paste the Beginner M (Advanced editor) → set the source to the CSV (OneLake file or web).", "Data destination → Lakehouse (or Warehouse) → new table orders_clean → choose column types explicitly.", "Schedule the dataflow; point two semantic models (or a Direct Lake model and an Import model) at orders_clean.", "Change a rule in the dataflow; both models pick it up after the next run."],
+    "check": "orders_clean has 27 rows and 8 columns; one fix, two consumers."
+  },
+  "fab-pipelines-1": {
+    "s": ["Bronze: mirrored database (NorthwindDW) plus raw files; immutable; owner data engineering.", "Silver: deduplicated order lines (ROW_NUMBER), typed, test customer flagged, EUR converted with the monthly rate; tests: key uniqueness, FK, ranges.", "Gold: Warehouse star schema materialised (no views for the model); owner BI team; read by Direct Lake on OneLake.", "Promotion silver → gold only if tests pass."],
+    "check": "Three owned layers, tests between them, materialised gold for the model."
+  },
+  "fab-pipelines-2": {
+    "s": ["Pipeline activities: Dataflow (or a wait on mirroring freshness) → Stored procedure (DQ checks raise errors) → Stored procedure (gold load) → Semantic model refresh → Web/notebook activity running test queries → Teams/Outlook notification.", "On failure: downstream activities don't run; failure path notifies the team; the model keeps the last good data."],
+    "check": "Ordered, test-gated, notifying pipeline."
+  }
+}

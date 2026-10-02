@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/scenario-solution.schema.json",
+  "summary": "Not a defect. The report credits sales to the selling region (the company definition); Nina's Excel sums by the customer's home region. {{uat_cross_orders|int}} Q1 orders were sold in a different region from the customer's home, so US regions swap revenue while the total and Europe (no cross-region selling) match. Close it as a requirement mismatch, add the customer-region view if Finance needs it, and label the existing one \"by selling region\".",
+  "steps": [
+    "Rebuild the report's totals by SalesRegionKey and Nina's by the customer's HomeRegionKey: both reproduce exactly.",
+    "Totals equal and Europe equal is the signature of reallocation between regions, not missing or extra data.",
+    "Check the documented definition: the wiki says sales are credited to the selling region.",
+    "Record UAT-017 as \"requirement mismatch / clarification\", not \"defect\"; agree with Nina whether Finance also needs the home-region view.",
+    "If yes: add a role-playing relationship (customer region) and a clearly labelled measure or a field parameter to switch views."
+  ],
+  "numbers": { "title": "Q1 2026 gross sales by region: both definitions", "cols": ["Region", "Report (selling region)", "Nina (customer home region)"], "rows": [
+    ["West", "{{uat_sales_west|money0}}", "{{uat_home_west|money0}}"], ["South", "{{uat_sales_south|money0}}", "{{uat_home_south|money0}}"], ["East", "{{uat_sales_east|money0}}", "{{uat_home_east|money0}}"], ["Central", "{{uat_sales_central|money0}}", "{{uat_home_central|money0}}"], ["Europe", "{{uat_sales_europe|money0}}", "{{uat_home_europe|money0}}"]
+  ] },
+  "artifacts": [{ "title": "UAT log entry", "lang": "md", "body": [
+    "| Test case | Expected | Actual | Evidence | Status | Owner | Notes |",
+    "|---|---|---|---|---|---|---|",
+    "| UAT-017 Region totals match Excel | Excel (customer home region) | Report (selling region) | Both rebuilt from orders.csv; {{uat_cross_orders|int}} cross-region orders | Closed: requirement mismatch | Nina / you | Report label changed to \"by selling region\"; home-region view added on request |"
+  ] }],
+  "review": {
+    "junior": "Changes the report to match Excel, breaking the company definition for everyone else.",
+    "competent": "Finds the two region columns and explains the difference.",
+    "senior": "Reproduces both to the dollar, classifies it correctly with the documented definition, records the UAT outcome and improves labelling.",
+    "architect": "Adds region definitions to the KPI dictionary and makes the role-playing dimension standard in the certified model."
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "id": "qa-security",
+  "name": "Security tests",
+  "ds": ["UserRegionMapping", "FactSales", "DimRegion"],
+  "skills": ["testing", "security"],
+  "stage": "developer",
+  "why": {
+    "matters": "Security that isn't tested is a hope. An RLS test matrix with expected numbers per user is the only evidence Compliance can rely on, and it catches regressions when someone changes a relationship.",
+    "failure": "A relationship is made inactive to fix an ambiguity; RLS silently stops reaching one fact table (Sprint 03).",
+    "use": "A matrix of users × roles × expected visible data, run with View as (or DAX queries executed as the user) on every release, including tools that bypass the report.",
+    "avoid": "Checking that the report \"looks filtered\". Page filters and hidden visuals aren't security."
+  },
+  "verified": { "date": "2026-10-01", "context": "RLS and OLS testing docs (View as roles), Sept 2026", "review_after_days": 180 },
+  "refs": [
+    { "title": "Validate roles in Power BI Desktop and the service", "url": "https://learn.microsoft.com/en-us/fabric/security/service-admin-row-level-security" },
+    { "title": "RLS guidance", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/rls-guidance" }
+  ],
+  "asg": [
+    {
+      "t": "An RLS test matrix with expected numbers",
+      "time": "40 min",
+      "ds": "UserRegionMapping, FactSales, DimRegion",
+      "guidance": "B",
+      "brief": "Using the dynamic RLS from Intermediate (UserRegionMapping with USERPRINCIPALNAME), write and run a test matrix that would satisfy Compliance.",
+      "req": ["Every user in the mapping table plus one user who isn't in it.", "Expected net sales per user, computed independently (SQL or Excel), not from the report.", "Actual result with View as, and pass/fail."],
+      "exp": "Dana {{qa_rls_dana|money}}, Marcus {{qa_rls_marcus|money}}, Nina (West + East) {{qa_rls_nina|money}}, Grace (All) {{qa_rls_grace|money}}; the unmapped user sees nothing. {{qa_rls_users|int}} users and {{qa_rls_rows|int}} mapping rows in total."
+    },
+    {
+      "t": "Break the security on purpose",
+      "time": "30 min",
+      "ds": "starter project",
+      "guidance": "C",
+      "brief": "Make three changes that a well-meaning colleague might make, rerun your matrix after each, and record which ones it catches: make a relationship bi-directional, make the Region relationship inactive, and remove a user's row from the mapping table.",
+      "req": ["Record the matrix result after each change.", "Add a test that would have caught anything your matrix missed."],
+      "exp": "Inactive relationship: every regional user sees all regions (caught). Removed mapping row: that user sees nothing (caught only if every user is in the matrix). Bi-directional relationship: filters can leak into other tables; caught only if the matrix also checks a dimension list or another fact."
+    },
+    {
+      "t": "Test what the report hides",
+      "time": "20 min",
+      "ds": "starter project",
+      "guidance": "B",
+      "brief": "Show that page filters and hidden visuals aren't security, and add tests that use the tools a user with Build permission has.",
+      "req": ["Test with Analyze in Excel or a new report on the model, not just the published report.", "Test object-level security (a hidden Salary column) separately from RLS."],
+      "exp": "The page filter disappears in Analyze in Excel; RLS still applies; OLS makes the column not exist for the restricted role (visuals using it error)."
+    }
+  ],
+  "int": [
+    { "q": "How do you test RLS?", "a": "View as role (and as a specific user for dynamic RLS) in Desktop and the Service, with a matrix of users, expected visible rows or totals computed independently, and actual results. Include a user with no role, a user with two roles, and tools that bypass report filters." },
+    { "q": "What happens when a user is in two roles?", "a": "Roles are additive: the user sees the union of what each role allows. Test multi-role users explicitly, because adding a broad role to someone can quietly widen their access." },
+    { "q": "Does RLS apply to workspace Admins, Members and Contributors?", "a": "No. RLS applies to users with Viewer role (or app/sharing access). Workspace Admins, Members and Contributors can see all data in the model, so keep them few and don't use workspace roles for consumers." },
+    { "q": "Why aren't page filters security?", "a": "They're part of the report definition. Anyone with Build permission, Analyze in Excel or a new report on the same model doesn't see them. Only roles in the model (RLS/OLS) are enforced by the engine." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "A report author is a workspace Member. With RLS on the model, they see:", "o": ["Only their region", "All data: RLS doesn't apply to Members", "Nothing", "Only aggregated data"], "a": 1, "why": "RLS only restricts Viewers and users accessing through apps or sharing." },
+    { "type": "mcq", "q": "A user is in the West role and the East role. They see:", "o": ["West only", "East only", "West and East", "Neither"], "a": 2, "why": "Roles combine as a union." },
+    { "type": "task", "q": "Write the security matrix for Sprint 03 (payroll) as a reusable template your team can apply to any model.", "hint": "Columns: user, role(s), should see, must not see, sensitive objects visible?, test query, expected, actual, pass. See Templates → RLS / OLS test matrix." }
+  ]
+}

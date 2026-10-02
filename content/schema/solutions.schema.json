@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "solutions.schema.json",
+  "title": "Worked solutions for one topic",
+  "description": "Keys are assignment ids (topicId-index). Answer keys live apart from the assignments and are only shown after the learner ticks the assignment or explicitly reveals them.",
+  "type": "object",
+  "additionalProperties": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "s": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "approach, step by step"
+      },
+      "code": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "lang",
+            "title",
+            "src"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "lang": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "src": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "expect": {
+              "type": "object",
+              "required": [
+                "cols",
+                "rows"
+              ],
+              "description": "Expected result of the query. tests/sql.test.js runs SQL blocks that have one against SQLite and compares.",
+              "properties": {
+                "cols": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "rows": {
+                  "type": "array",
+                  "items": {
+                    "type": "array"
+                  }
+                }
+              }
+            },
+            "dialect": {
+              "enum": [
+                "portable",
+                "tsql",
+                "sqlite",
+                "duckdb"
+              ],
+              "description": "portable = runs on SQL Server, SQLite and DuckDB (tested in CI); tsql = SQL Server only (not executed)"
+            }
+          }
+        }
+      },
+      "tbl": {
+        "type": "array",
+        "items": {
+          "type": "array"
+        }
+      },
+      "check": {
+        "type": "string",
+        "description": "values to compare against; numbers are covered by tests/curriculum/assertions.json"
+      },
+      "note": {
+        "type": "string",
+        "description": "common mistake or caveat"
+      },
+      "verify": {
+        "type": "string",
+        "description": "how this solution was verified"
+      }
+    }
+  }
+}

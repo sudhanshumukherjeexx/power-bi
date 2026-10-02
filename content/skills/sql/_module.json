@@ -1,0 +1,14 @@
+{
+  "id": "sql",
+  "kind": "track",
+  "order": 1,
+  "cls": "sql",
+  "name": "SQL for BI",
+  "tag": "Track",
+  "tagline": "The SQL behind every model: grain, joins, window functions, loading facts and making slow source queries fast.",
+  "seo": "SQL for Power BI developers: practice joins, grain, CTEs, window functions, deduplication, views, incremental extraction and query tuning on a realistic company dataset, with answers checked automatically.",
+  "intro": "Not database administration: the SQL a BI developer writes and reads every week. Everything runs on the Northwind company pack. Use SQL Server Developer or Express (closest to most jobs), DuckDB (no install: it reads the CSVs directly) or SQLite. The model answers are written in portable SQL and executed in our CI against SQLite, so their numbers are guaranteed to match the expected results.",
+  "setup": "Load the seven CSVs from data/experience/company/ as tables named orders, order_lines, returns, customers, products, regions and fx_rates. DuckDB: CREATE TABLE orders AS SELECT * FROM 'orders.csv'; and so on. SQL Server: Import Flat File wizard in SSMS.",
+  "stage": "engineer",
+  "topics": ["sql-query", "sql-window", "sql-load", "sql-tune"]
+}

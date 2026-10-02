@@ -1,0 +1,60 @@
+{
+  "id": "api-rest",
+  "name": "REST APIs, service principals and a tenant inventory",
+  "ds": ["ApiGroups", "ApiDatasets", "ApiReports", "ApiRefreshes", "ApiViews"],
+  "skills": ["automation", "governance", "security"],
+  "stage": "engineer",
+  "why": {
+    "matters": "You can't govern what you can't see. A scripted inventory answers \"what do we have, who owns it, is it used, is it healthy\" in minutes, every week, without asking anyone.",
+    "failure": "An inventory script authenticates with a developer's personal account; when they leave, it stops, and nobody notices for a month.",
+    "use": "A service principal (app registration) in a security group allowed by the tenant settings, least-privilege workspace access, secrets outside the code, and the Power BI or Fabric REST APIs (admin APIs or the scanner API for tenant-wide views).",
+    "avoid": "Hard-coded secrets, personal credentials, and admin APIs when workspace-level permissions would do."
+  },
+  "verified": { "date": "2026-10-01", "context": "Fabric developer tenant settings (Microsoft Learn, updated 2026-09-29); Power BI REST API reference", "review_after_days": 120 },
+  "refs": [
+    { "title": "Developer admin settings (service principals)", "url": "https://learn.microsoft.com/en-us/fabric/admin/service-admin-portal-developer" },
+    { "title": "Power BI REST API: Groups", "url": "https://learn.microsoft.com/en-us/rest/api/power-bi/groups" },
+    { "title": "Run metadata scanning (scanner API)", "url": "https://learn.microsoft.com/en-us/fabric/governance/metadata-scanning-overview" },
+    { "title": "Microsoft Fabric REST API", "url": "https://learn.microsoft.com/en-us/rest/api/fabric/articles/" }
+  ],
+  "asg": [
+    {
+      "t": "Build a workspace inventory from API responses",
+      "time": "45 min",
+      "ds": "groups.json, datasets.json, reports.json, refreshes.json, activity_views.json",
+      "guidance": "B",
+      "brief": "Write a script that turns the API responses into one inventory table: workspace, semantic model, owner, reports, last refresh status, endorsement, and whether each report was viewed in the last 90 days.",
+      "req": ["Read the five JSON files (they have the same shape as the real API responses).", "One row per report, with its model and workspace.", "Summary counts for the governance review.", "Structure it so the file-reading part can be swapped for real API calls."],
+      "exp": "{{api_workspaces|int}} workspaces, {{api_datasets|int}} semantic models, {{api_reports|int}} reports. {{api_reports_unused|int}} reports had no views in 90 days; {{api_unendorsed|int}} models have no endorsement ({{api_certified|int}} certified); {{api_last_failed|int}} model's latest refresh failed."
+    },
+    {
+      "t": "Set up a service principal properly",
+      "time": "30 min",
+      "ds": "—",
+      "guidance": "B",
+      "brief": "Write the setup checklist your team will follow to give the inventory script its own identity instead of a person's account.",
+      "req": ["App registration and client secret or certificate, and where the secret lives.", "Security group, and the tenant settings that must allow it.", "Workspace access (which role, which workspaces) or read-only admin API access, and why.", "Token request: authority, scope and flow."],
+      "exp": "An app registration in an allowed security group; \"Service principals can call Fabric public APIs\" enabled for that group (plus read-only admin API access only if you need tenant-wide data); Viewer or Member access only on the workspaces it inventories; secret in a key vault or pipeline secret, never in code; client-credentials flow with scope https://analysis.windows.net/powerbi/api/.default."
+    },
+    {
+      "t": "The secret in the repository",
+      "time": "20 min",
+      "ds": "—",
+      "guidance": "C",
+      "brief": "Sam pushed the inventory script to the team's GitHub repository with the client secret in a variable. The repository is internal, but 40 people can read it. What do you do, in order?",
+      "req": ["Containment first.", "Clean-up of the repository and its history.", "Prevention."],
+      "exp": "Rotate (revoke) the secret immediately, check sign-in logs for the app, then remove it from code and history (and treat it as compromised regardless), move it to a secret store, and add secret scanning and a pre-commit hook. Rewriting history alone isn't enough: the secret was already exposed."
+    }
+  ],
+  "int": [
+    { "q": "What is a service principal and why use one for automation?", "a": "The identity of an app registration in Microsoft Entra ID. Automation runs as the app, not as a person, so it doesn't break when someone leaves, its permissions can be limited precisely, and its actions are auditable." },
+    { "q": "Which tenant settings control service principals in Fabric?", "a": "Under Developer settings: \"Service principals can call Fabric public APIs\" (CRUD on items protected by the Fabric permission model) and \"Service principals can create workspaces, connections, and deployment pipelines\". Both can be limited to security groups. Read-only admin APIs have their own admin API setting." },
+    { "q": "Admin APIs vs regular APIs?", "a": "Regular APIs see what the identity has access to (its workspaces). Admin APIs and the scanner API see the whole tenant and need admin rights or read-only admin API permission. Use the narrowest one that answers the question." },
+    { "q": "How would you inventory every workspace in a large tenant?", "a": "The scanner API: list modified workspaces, request scans in batches (getInfo), poll scanStatus, then fetch scanResult with lineage and datasource details. It's built for tenant-wide metadata without calling per-item APIs thousands of times." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "Your inventory script should authenticate with:", "o": ["The BI lead's account", "A service principal in an allowed security group, secret in a key vault", "A shared password in the script", "Anonymous access"], "a": 1, "why": "An app identity with least privilege, and secrets outside code." },
+    { "type": "mcq", "q": "To read metadata for every workspace in the tenant efficiently, use:", "o": ["GET /groups for each user", "The admin scanner API (getInfo, scanStatus, scanResult)", "Export to Excel from the portal", "XMLA on each model"], "a": 1, "why": "The scanner API is designed for tenant-wide metadata in batches." },
+    { "type": "task", "q": "Extend your inventory with each model's data sources and gateway (datasources endpoint, or the scanner API's datasourceInstances).", "hint": "GET /groups/{groupId}/datasets/{datasetId}/datasources; group sources by server to see which models depend on which systems." }
+  ]
+}

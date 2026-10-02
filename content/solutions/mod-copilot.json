@@ -1,0 +1,14 @@
+{
+  "mod-copilot-0": {
+    "s": ["Descriptions: copy from the KPI dictionary (or use Copilot to draft them, then edit).", "Names: business words; hide keys, sort columns and helper measures.", "Synonyms in the Q&A/linguistic setup: revenue, turnover, sales → the intended measure.", "One target per concept: if there are three revenue measures, their names and descriptions must make the difference explicit."],
+    "check": "No visible measure without a description; \"revenue\" resolves to one measure."
+  },
+  "mod-copilot-1": {
+    "s": ["Use questions with known answers (Q1 2026 net sales, top product, Europe's sales).", "Grade each answer; record which measure and period Copilot used.", "Review drafted DAX: filters, totals, time intelligence; run it and compare.", "Guidance: Copilot drafts; certified reports and the KPI dictionary decide."],
+    "check": "A graded table with causes for each wrong answer."
+  },
+  "mod-copilot-2": {
+    "s": ["Prerequisites: F2+/P1+ capacity, tenant setting enabled (per security group), supported region; data boundary setting if outside US/EU.", "Billing: Copilot CU on the capacity (or a Fabric Copilot capacity); monitor in the Capacity Metrics app.", "Readiness: only certified, prepared models in the pilot.", "Measure: answer accuracy on a test set, CU per week, user feedback; decide after a month."],
+    "check": "Pilot group, prepared models, cost monitoring, success criteria."
+  }
+}

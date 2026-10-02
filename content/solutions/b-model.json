@@ -1,0 +1,75 @@
+{
+  "b-model-0": {
+    "s": [
+      "Load the five CSVs. Model view → select every relationship line → Delete.",
+      "Drag DimProduct[ProductKey] onto FactSales[ProductKey], and do the same for CustomerKey and RegionKey. Drag DimDate[Date] onto FactSales[OrderDate].",
+      "Double-click each line: Cardinality = Many to one (*:1), Cross filter direction = Single.",
+      "Select DimDate → Table tools → Mark as date table → Date column = Date.",
+      "In FactSales, select the four key columns and OrderDate → Properties → Is hidden = On."
+    ],
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Row count check measure",
+        "src": [
+          "Order Lines = COUNTROWS ( FactSales )"
+        ]
+      }
+    ],
+    "check": "Four relationships, all arrows pointing at FactSales. Card shows 100.",
+    "note": "If a relationship won't create, check that both columns have the same data type (Date vs Date/Time, or Text vs Whole Number)."
+  },
+  "b-model-1": {
+    "s": [
+      "Modeling → New table, paste the DAX below.",
+      "Select MonthName → Column tools → Sort by column → MonthNumber.",
+      "Table tools → Mark as date table → Date. Relate Dates[Date] → FactSales[OrderDate], then delete DimDate."
+    ],
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Dates table",
+        "src": [
+          "Dates =",
+          "ADDCOLUMNS (",
+          "    CALENDAR ( DATE ( 2025, 1, 1 ), DATE ( 2026, 12, 31 ) ),",
+          "    \"Year\", YEAR ( [Date] ),",
+          "    \"MonthNumber\", MONTH ( [Date] ),",
+          "    \"MonthName\", FORMAT ( [Date], \"mmm\" ),",
+          "    \"YearMonth\", YEAR ( [Date] ) & \"-\" & FORMAT ( MONTH ( [Date] ), \"00\" ),",
+          "    \"Quarter\", \"Q\" & QUARTER ( [Date] ),",
+          "    \"IsWeekend\", WEEKDAY ( [Date], 2 ) > 5",
+          ")"
+        ]
+      }
+    ],
+    "check": "730 rows. Quantity by month: Jan 141, Feb 120, Mar 72, shown in that order.",
+    "note": "Without Sort by column the axis goes Feb, Jan, Mar (alphabetical)."
+  },
+  "b-model-2": {
+    "s": [
+      "Create DimRegion → FactSales[RegionKey] (active) and DimRegion → DimCustomer[RegionKey]. The second one becomes dashed (inactive), because two active paths from DimRegion to FactSales would be ambiguous.",
+      "Swap which one is active (double-click → Make this relationship active) and compare the table.",
+      "Keep FactSales[RegionKey] active: it is where the sale happened (the rep's region)."
+    ],
+    "check": "Quantity by sales region: West 99, Central 98, East 76, South 60. By the customer's home region: South 109, West 105, East 96, Central 23. The totals are equal (333); only the split changes.",
+    "note": "FactSales[RegionKey] is the region of the rep who made the sale, not the customer's home region, which is why 79 of the 100 lines disagree. Neither relationship is wrong; they answer different questions, so name the measure after the one it answers."
+  },
+  "b-model-3": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Shipped quantity through the inactive relationship",
+        "src": [
+          "Shipped Qty =",
+          "CALCULATE (",
+          "    SUM ( FactSales[Quantity] ),",
+          "    USERELATIONSHIP ( Dates[Date], FactSales[ShipDate] )",
+          ")"
+        ]
+      }
+    ],
+    "check": "Ordered vs shipped: Jan 141 / 114, Feb 120 / 147, Mar 72 / 69. Because Dates now runs to Dec 2026, an Apr row appears with 3 shipped units and no orders.",
+    "note": "USERELATIONSHIP only works if the relationship already exists (inactive). It can't create one."
+  }
+}

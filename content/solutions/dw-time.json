@@ -1,0 +1,82 @@
+{
+  "dw-time-0": {
+    "s": ["UTC = local − offset (an offset of −07:00 means add 7 hours).", "Group by the date part of each.", "Report daily operational KPIs in UTC (one global day) or in the company's home time zone, stated on the report; use local time for behaviour questions (time of day people shop)."],
+    "code": [
+      {
+        "lang": "SQL", "title": "Local vs UTC dates (SQLite datetime; SQL Server: SWITCHOFFSET / AT TIME ZONE)", "dialect": "sqlite",
+        "src": [
+          "WITH s AS (",
+          "    SELECT SessionID, StartLocal,",
+          "           datetime(StartLocal,",
+          "                    (CASE WHEN SUBSTRING(UtcOffset, 1, 1) = '-' THEN '+' ELSE '-' END)",
+          "                    || CAST(CAST(SUBSTRING(UtcOffset, 2, 2) AS INTEGER) AS TEXT) || ' hours') AS StartUTC",
+          "    FROM web_sessions_local",
+          ")",
+          "SELECT COUNT(*) AS Sessions,",
+          "       SUM(CASE WHEN SUBSTRING(StartUTC, 1, 10) <> SUBSTRING(StartLocal, 1, 10) THEN 1 ELSE 0 END) AS DateChanged,",
+          "       SUM(CASE WHEN SUBSTRING(StartLocal, 1, 10) = '2026-04-07' THEN 1 ELSE 0 END) AS Local0407,",
+          "       SUM(CASE WHEN SUBSTRING(StartUTC, 1, 10) = '2026-04-07' THEN 1 ELSE 0 END) AS Utc0407",
+          "FROM s;"
+        ],
+        "expect": { "cols": ["Sessions", "DateChanged", "Local0407", "Utc0407"], "rows": [["{{dw_sessions|int}}", "{{dw_sessions_date_shift|int}}", "{{dw_sessions_local_0407|int}}", "{{dw_sessions_utc_0407|int}}"]] }
+      }
+    ],
+    "check": "{{dw_sessions_date_shift|int}} sessions change date; 7 April: {{dw_sessions_local_0407|int}} local vs {{dw_sessions_utc_0407|int}} UTC.",
+    "note": "The offsets here are whole hours. Real offsets can be +05:30 or +05:45; store the offset in minutes or use the IANA time zone with AT TIME ZONE, and remember the offset changes with daylight saving.",
+    "verify": "Executed in CI against SQLite."
+  },
+  "dw-time-1": {
+    "s": ["EUR amount: sum the line values in the transaction currency.", "USD at the monthly average: multiply each line by its order month's rate (the agreed rule from Sprint 01).", "USD at the March rate: multiply the EUR total by the March rate. The gap is pure translation."],
+    "code": [
+      {
+        "lang": "SQL", "title": "Europe Q1 2026 in EUR and USD", "dialect": "portable",
+        "src": [
+          "WITH lines AS (SELECT DISTINCT * FROM order_lines),",
+          "eu AS (",
+          "    SELECT ROUND(l.Qty * l.UnitPrice * (100 - l.DiscountPct) / 100.0, 2) AS GrossEUR,",
+          "           fx.USDPerUnit",
+          "    FROM lines AS l",
+          "    JOIN orders AS o ON o.OrderID = l.OrderID",
+          "    JOIN fx_rates AS fx ON fx.Month = SUBSTRING(CAST(o.OrderDate AS VARCHAR(10)), 1, 7) AND fx.Currency = o.Currency",
+          "    WHERE o.Status = 'Completed' AND o.CustomerID <> 'C19999' AND o.Currency = 'EUR'",
+          "      AND o.OrderDate >= '2026-01-01' AND o.OrderDate < '2026-04-01'",
+          ")",
+          "SELECT ROUND(SUM(GrossEUR), 2) AS GrossEUR,",
+          "       ROUND(SUM(ROUND(GrossEUR * USDPerUnit, 2)), 2) AS GrossUSDMonthly,",
+          "       ROUND(SUM(GrossEUR) * (SELECT USDPerUnit FROM fx_rates WHERE Month = '2026-03' AND Currency = 'EUR'), 2) AS GrossUSDAtMarch",
+          "FROM eu;"
+        ],
+        "expect": { "cols": ["GrossEUR", "GrossUSDMonthly", "GrossUSDAtMarch"], "rows": [["{{dw_eur_q1_local|num2}}", "{{dw_eur_q1_usd|num2}}", "{{dw_eur_q1_usd_at_q1end|num2}}"]] }
+      }
+    ],
+    "check": "€{{dw_eur_q1_local|usd}}; {{dw_eur_q1_usd|money0}} at monthly rates; {{dw_eur_q1_usd_at_q1end|money0}} at the March rate.",
+    "verify": "Executed in CI against SQLite."
+  },
+  "dw-time-2": {
+    "s": ["FY2026 week number = days since 28 Dec 2025 ÷ 7 + 1; quarter = (week − 1) ÷ 13 + 1; period = 3 × (quarter − 1) + (1, 2 or 3 depending on whether the week within the quarter is 1–4, 5–8 or 9–13).", "Add the columns to the existing date table (Power Query or the date view); relationships stay on Date.", "Sum gross sales by FiscalPeriod and compare with the calendar months: the boundaries move."],
+    "code": [
+      {
+        "lang": "SQL", "title": "Fiscal periods 1–3 of FY2026 (SQLite JULIANDAY; SQL Server: DATEDIFF(day, '2025-12-28', OrderDate))", "dialect": "sqlite",
+        "src": [
+          "WITH lines AS (SELECT DISTINCT * FROM order_lines),",
+          "f AS (",
+          "    SELECT CAST((JULIANDAY(o.OrderDate) - JULIANDAY('2025-12-28')) / 7 AS INTEGER) + 1 AS FyWeek,",
+          "           ROUND(ROUND(l.Qty * l.UnitPrice * (100 - l.DiscountPct) / 100.0, 2) * COALESCE(fx.USDPerUnit, 1), 2) AS GrossUSD",
+          "    FROM lines AS l",
+          "    JOIN orders AS o ON o.OrderID = l.OrderID",
+          "    LEFT JOIN fx_rates AS fx ON fx.Month = SUBSTRING(CAST(o.OrderDate AS VARCHAR(10)), 1, 7) AND fx.Currency = o.Currency",
+          "    WHERE o.Status = 'Completed' AND o.CustomerID <> 'C19999'",
+          "      AND o.OrderDate >= '2025-12-28' AND o.OrderDate <= '2026-03-28'",
+          ")",
+          "SELECT CASE WHEN FyWeek <= 4 THEN 1 WHEN FyWeek <= 8 THEN 2 ELSE 3 END AS FiscalPeriod,",
+          "       ROUND(SUM(GrossUSD), 2) AS GrossUSD",
+          "FROM f GROUP BY CASE WHEN FyWeek <= 4 THEN 1 WHEN FyWeek <= 8 THEN 2 ELSE 3 END",
+          "ORDER BY FiscalPeriod;"
+        ],
+        "expect": { "cols": ["FiscalPeriod", "GrossUSD"], "rows": [["1", "{{cr4_p1|num2}}"], ["2", "{{cr4_p2|num2}}"], ["3", "{{cr4_p3|num2}}"]] }
+      }
+    ],
+    "check": "P1 {{cr4_p1|money0}}, P2 {{cr4_p2|money0}}, P3 {{cr4_p3|money0}}; fiscal Q1 {{cr4_gross_q1|money0}} vs calendar Q1 {{q1_2026_gross|money0}}.",
+    "verify": "Executed in CI against SQLite."
+  }
+}

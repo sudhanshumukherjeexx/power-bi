@@ -1,0 +1,102 @@
+{
+  "a-composite-0": {
+    "s": [
+      "Load FactSalesBig to SQL (SQL Server Express + Import Flat File wizard, or a Fabric Warehouse). Get Data → SQL Server → DirectQuery. Import the dimensions (set them to Dual later).",
+      "Performance Analyzer → Start recording → Refresh visuals → expand a visual → Copy query. For the SQL, use DAX Studio's \"Server Timings\" or SQL Profiler / Query Store on the source.",
+      "Relationship → Assume referential integrity = On."
+    ],
+    "code": [
+      {
+        "lang": "SQL",
+        "title": "What changes with Assume referential integrity (simplified)",
+        "src": [
+          "-- Off (default): keeps fact rows with unknown keys",
+          "SELECT d.Category, SUM(f.Quantity)",
+          "FROM FactSalesBig f",
+          "LEFT OUTER JOIN DimProduct d ON f.ProductKey = d.ProductKey",
+          "GROUP BY d.Category;",
+          "",
+          "-- On: Power BI trusts every key matches and uses a faster join",
+          "SELECT d.Category, SUM(f.Quantity)",
+          "FROM FactSalesBig f",
+          "INNER JOIN DimProduct d ON f.ProductKey = d.ProductKey",
+          "GROUP BY d.Category;"
+        ]
+      }
+    ],
+    "check": "You have the before/after SQL and can explain that INNER JOIN silently drops rows with unknown keys if the promise is false."
+  },
+  "a-composite-1": {
+    "s": [
+      "Desktop → Get Data → Power BI semantic models → Northwind → status bar \"Make changes to this model\" → Add a local model.",
+      "Get Data → Excel → your targets → relate to the remote DimRegion (the relationship shows limited-relationship brackets).",
+      "Delete a column in the source model, republish it, refresh the composite report."
+    ],
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Measure mixing remote and local tables",
+        "src": [
+          "Target Attainment = DIVIDE ( [Net Sales], SUM ( RegionTargets[Target] ) )"
+        ]
+      }
+    ],
+    "check": "The error names the missing column. Changes to the upstream model can break every composite built on it, so treat shared models as contracts."
+  },
+  "a-composite-2": {
+    "s": [
+      "Table (DirectQuery source) → Incremental refresh → tick \"Get the latest data in real time with DirectQuery (Premium only)\".",
+      "Publish to a capacity/PPU workspace → Refresh → inspect partitions via XMLA (SSMS or Tabular Editor).",
+      "INSERT a row with today's date in SQL → refresh the report page (not the model)."
+    ],
+    "check": "Import partitions for history plus one DirectQuery partition for the current period. Today's row appears without a data refresh."
+  },
+  "a-composite-3": {
+    "tbl": [
+      [
+        "Mode",
+        "Size",
+        "Latency",
+        "DAX limits",
+        "RLS",
+        "Refresh"
+      ],
+      [
+        "Import",
+        "Compressed model up to 1 GB on Pro; larger on PPU/capacity",
+        "As of the last refresh",
+        "None",
+        "Full",
+        "Scheduled (8/day Pro, 48/day capacity)"
+      ],
+      [
+        "DirectQuery",
+        "Source-limited",
+        "Near real-time",
+        "Some functions limited; 1M-row limit on intermediate results",
+        "Full, plus optional source SSO",
+        "None for data"
+      ],
+      [
+        "Dual",
+        "Like Import (keeps a copy)",
+        "Import when possible, DirectQuery when joined to DQ tables",
+        "None",
+        "Full",
+        "Scheduled (for the import copy)"
+      ],
+      [
+        "Direct Lake",
+        "Capacity guardrails per SKU",
+        "Minutes after the Delta table changes",
+        "Calculated columns/tables on Direct Lake tables restricted",
+        "Full in the model; RLS on the SQL endpoint forces DirectQuery fallback",
+        "Framing (metadata only, seconds)"
+      ]
+    ],
+    "s": [
+      "DimProduct → Properties → Advanced → Storage mode → Dual."
+    ],
+    "check": "Dual lets a dimension join Import aggregations in memory and still join the DirectQuery fact at the source, with no limited relationships and no double work."
+  }
+}

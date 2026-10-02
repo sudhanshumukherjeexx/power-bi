@@ -1,0 +1,30 @@
+name: Content error (wrong number, outdated fact, unclear instruction)
+description: An expected result, solution, scenario or explanation is wrong, outdated or unclear.
+labels: [content]
+body:
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: Assignment ID (e.g. b-dax-3), scenario ticket (e.g. BI-1057), flashcard question or page address
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of problem
+      options:
+        - A number doesn't match what I get from the data
+        - A product fact is outdated (Fabric, Service, licensing, certification)
+        - The instruction is unclear or ambiguous
+        - The solution is wrong or incomplete
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: What's wrong, and what you think is right
+      description: For numbers, say how you computed yours (DAX, SQL, Power Query). For product facts, link the current Microsoft Learn page.
+    validations:
+      required: true

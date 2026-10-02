@@ -1,0 +1,40 @@
+{
+  "@odata.context": "https://api.powerbi.com/v1.0/myorg/$metadata#groups",
+  "value": [
+    {
+      "id": "a1f4c2e0-0001-4a1e-9c11-000000000001",
+      "name": "Sales Analytics",
+      "isReadOnly": false,
+      "isOnDedicatedCapacity": true,
+      "type": "Workspace"
+    },
+    {
+      "id": "a1f4c2e0-0002-4a1e-9c11-000000000002",
+      "name": "Finance Board Pack",
+      "isReadOnly": false,
+      "isOnDedicatedCapacity": true,
+      "type": "Workspace"
+    },
+    {
+      "id": "a1f4c2e0-0003-4a1e-9c11-000000000003",
+      "name": "Ops Dashboards",
+      "isReadOnly": false,
+      "isOnDedicatedCapacity": false,
+      "type": "Workspace"
+    },
+    {
+      "id": "a1f4c2e0-0004-4a1e-9c11-000000000004",
+      "name": "Marketing Analytics",
+      "isReadOnly": false,
+      "isOnDedicatedCapacity": false,
+      "type": "Workspace"
+    },
+    {
+      "id": "a1f4c2e0-0005-4a1e-9c11-000000000005",
+      "name": "Sandbox - Sam",
+      "isReadOnly": false,
+      "isOnDedicatedCapacity": false,
+      "type": "Workspace"
+    }
+  ]
+}

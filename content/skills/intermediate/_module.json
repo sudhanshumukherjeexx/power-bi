@@ -1,0 +1,19 @@
+{
+  "id": "intermediate",
+  "kind": "level",
+  "order": 2,
+  "cls": "int",
+  "name": "Intermediate",
+  "years": "Year 1 – 3",
+  "tagline": "Filter context, time intelligence, row-level security, gateways and the Service.",
+  "seo": "Intermediate Power BI practice: M functions, many-to-many models, CALCULATE and filter context, time intelligence, RLS and refresh. Assignments with checkable results and worked solutions.",
+  "intro": "Now you write M and DAX by hand and you start using DAX Studio and Tabular Editor. The goal of this level is that filter context stops being magic. Every measure you write here should be one you can explain line by line.",
+  "topics": [
+    "i-pq",
+    "i-model",
+    "i-dax",
+    "i-viz",
+    "i-rls",
+    "i-service"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "qa-break-0": {
+    "s": ["Break 1: with DimCustomer → FactSales bi-directional and DimCustomer → DimRegion added, DimRegion can reach FactSales directly and through DimCustomer: an ambiguous path. Power BI makes one relationship inactive (or refuses). Diagnose in Model view (dashed lines) and with Manage relationships.", "Fix: single direction; if both regions are needed, keep one active and use USERELATIONSHIP or a separate Customer Region dimension.", "Break 2: inactive FactSales → DimRegion: no filter reaches the fact; every region row shows the grand total. Diagnose: same value on every row is the classic sign of a missing or inactive relationship.", "Checks: a BPA rule flagging bi-directional relationships; a test that the sum of regional totals equals the grand total and that at least two regions differ."],
+    "check": "Ambiguity → relationship deactivated or refused; inactive relationship → grand total on every row."
+  },
+  "qa-break-1": {
+    "s": ["Iterator: SUMX(FactSales, [Net Sales]) forces a context transition per row; DAX Studio shows FE-heavy time and many SE queries or a CallbackDataID. Fix: aggregate with columns (SUMX over FactSales with column arithmetic, or SUM of a precomputed column).", "Calculated column: a text timestamp per row creates a huge dictionary; VertiPaq Analyzer shows it near the top of the model size. Fix: remove it or compute what you need upstream at a low cardinality.", "Broken folding: a custom function before a filter makes View Native Query unavailable and refresh reads everything. Fix: filter first, move the function after, or push it into the source view."],
+    "check": "Each break measurably slows the model; each fix returns it to the baseline."
+  },
+  "qa-break-2": {
+    "s": ["Rename a column in the CSV: refresh fails with \"The column '…' of the table wasn't found\". Diagnose from the error's table and step. Fix the step or the source; prevent with a data contract and change notification.", "Incremental with >= on both ends: boundary rows load twice; totals for the boundary days are inflated. With a non-folding filter: every refresh scans the whole source. Fix: >= RangeStart and < RangeEnd on a date column that folds; check the native query."],
+    "check": "Schema drift → named column error; boundary bug → duplicates on boundary days; no folding → full scans."
+  }
+}

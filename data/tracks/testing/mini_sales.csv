@@ -1,0 +1,9 @@
+LineID,OrderDate,ShipDate,Customer,Product,Qty,UnitPrice,Channel
+L1,2025-03-03,2025-03-05,A,Tent,2,100,Online
+L2,2025-03-15,2025-03-18,B,Boots,1,150,Store
+L3,2026-01-10,2026-01-12,A,Tent,1,100,Online
+L4,2026-01-10,2026-01-12,A,Boots,2,150,Online
+L5,2026-02-20,2026-02-27,C,Kayak,1,700,Store
+L6,2026-03-03,2026-03-04,B,Tent,3,100,Online
+L7,2026-03-31,2026-04-02,C,Boots,1,150,Store
+L8,2026-03-31,2026-04-01,D,Tent,-1,100,Online

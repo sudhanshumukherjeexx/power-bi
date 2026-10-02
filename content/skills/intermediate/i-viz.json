@@ -1,0 +1,153 @@
+{
+  "id": "i-viz",
+  "name": "Interactive reports: bookmarks, drillthrough, tooltips, field parameters",
+  "ds": [
+    "FactSales",
+    "DimProduct",
+    "DimCustomer"
+  ],
+  "skills": [
+    "visuals",
+    "communication"
+  ],
+  "stage": "developer",
+  "refs": [
+    {
+      "title": "Drillthrough",
+      "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-drillthrough"
+    },
+    {
+      "title": "Field parameters",
+      "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/power-bi-field-parameters"
+    }
+  ],
+  "asg": [
+    {
+      "t": "Drillthrough with a back button",
+      "time": "25 min",
+      "ds": "Full star",
+      "guidance": "A",
+      "steps": [
+        "Create page \"Customer Detail\" with a drillthrough field CustomerName. Add a table of their orders, a card for their Net Sales, and a line chart by date.",
+        "Turn on \"Keep all filters\". Add a back button (auto-created) and style it.",
+        "From the summary page, right-click a customer bar → Drillthrough. Verify the Region slicer selection is carried over.",
+        "Add a second drillthrough field ProductName to the same page and observe it now requires either."
+      ],
+      "exp": "Right-click menu shows \"Customer Detail\". Back button returns to the source page."
+    },
+    {
+      "t": "Report page tooltip",
+      "time": "20 min",
+      "ds": "Full star",
+      "guidance": "A",
+      "steps": [
+        "New page, Page information → Allow use as tooltip, size Tooltip.",
+        "Add a card Net Sales, a small bar chart of SubCategory, and a text measure \"X orders, Y customers\".",
+        "On the summary page, set the Category bar chart Tooltip → Report page → your page."
+      ],
+      "exp": "Hovering over \"Water\" shows Water-only numbers inside the tooltip."
+    },
+    {
+      "t": "Field parameters for a self-service chart",
+      "time": "20 min",
+      "ds": "Full star",
+      "guidance": "A",
+      "steps": [
+        "Modeling → New parameter → Fields. Add Net Sales, Orders, Margin %, Total Qty as one parameter \"Measure Picker\".",
+        "Create a second field parameter \"Axis Picker\" with Category, RegionName, Segment, MonthName.",
+        "One clustered bar chart driven by both parameters, two slicers to switch them."
+      ],
+      "exp": "Sixteen chart combinations from one visual. Look at the generated DAX for the parameter table and explain the third column."
+    },
+    {
+      "t": "Bookmark toggle done right",
+      "time": "25 min",
+      "ds": "Full star",
+      "guidance": "A",
+      "steps": [
+        "Two visuals stacked exactly on top of each other: a column chart and a table of the same data.",
+        "Two bookmarks \"Show chart\" / \"Show table\" that only change Display (Data and Current page unchecked), created with the Selection pane.",
+        "Two buttons whose visible state is swapped by the same bookmarks so the active one looks pressed.",
+        "Group the four objects and name the group; ungroup and note what happens to the bookmarks."
+      ],
+      "exp": "Clicking either button never resets slicers. Bookmarks have Data unchecked."
+    },
+    {
+      "t": "Dynamic titles and formatting measures",
+      "time": "15 min",
+      "ds": "Full star",
+      "guidance": "A",
+      "steps": [
+        "Title measure = \"Net sales for \" & IF(ISFILTERED(DimRegion[RegionName]), SELECTEDVALUE(DimRegion[RegionName], \"multiple regions\"), \"all regions\") & \" – \" & FORMAT(MAX(Dates[Date]), \"MMM yyyy\").",
+        "Use it as the fx title on a chart.",
+        "Colour measure = IF([Margin %] < 0.4, \"#B23A2E\", \"#1F7A4D\") used as fx on a bar colour."
+      ],
+      "exp": "Title changes with the slicer. Bars change colour without conditional formatting rules."
+    }
+  ],
+  "int": [
+    {
+      "q": "Bookmark \"Data\" checkbox: when do you leave it on, when off?",
+      "a": "On when the bookmark is meant to restore a filter state (a saved view). Off when it only toggles visibility or a visual swap; otherwise the user's slicer selections reset every time they click the button."
+    },
+    {
+      "q": "Drillthrough vs tooltip vs drill down: when each?",
+      "a": "Drill down: same visual, hierarchy levels. Drillthrough: navigate to a detail page for one item. Tooltip page: peek at detail without leaving. Choose the least disruptive one that answers the question."
+    },
+    {
+      "q": "What is the hidden third column in a field parameter table used for?",
+      "a": "It is the sort/order column (and there is also the field reference stored via NAMEOF). You can add more columns, e.g. a group column, to build grouped slicers."
+    },
+    {
+      "q": "How do you conditionally show a visual based on a slicer selection?",
+      "a": "Field parameters or a measure-driven visual filter (e.g. a measure returning 1 or 0 as a visual-level filter) or bookmarks. Visuals cannot be hidden by a measure directly; use a transparent overlay shape whose fill is a colour measure with 0% alpha, or the page-navigation trick."
+    },
+    {
+      "q": "Why is a 30-visual page slow even though the model is small?",
+      "a": "Each visual issues at least one query and they compete for the formula engine; slicers with cross-filtering issue queries per interaction. Reduce visuals, combine cards into one multi-row card or matrix, disable unnecessary interactions."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "\"Keep all filters\" on drillthrough means:",
+      "o": [
+        "Slicers on the target page are locked",
+        "Filters from the source page context are carried over",
+        "The target page ignores filters",
+        "Filters are saved to a bookmark"
+      ],
+      "a": 1,
+      "why": "It passes the full filter context of the clicked data point, not only the drillthrough field."
+    },
+    {
+      "type": "mcq",
+      "q": "A field parameter is:",
+      "o": [
+        "A Power Query parameter",
+        "A calculated table with NAMEOF references usable in visuals",
+        "A what-if slider",
+        "A bookmark group"
+      ],
+      "a": 1,
+      "why": "Field parameters are calculated tables with special metadata."
+    },
+    {
+      "type": "task",
+      "q": "Build a page where one button toggles between \"Actual\" and \"Budget\" in a single matrix without resetting any slicer. Prove it by selecting Region = East, toggling twice, and confirming East stays selected.",
+      "hint": "Two bookmarks with Data unchecked, or one field parameter slicer styled as buttons."
+    },
+    {
+      "type": "mcq",
+      "q": "Which formatting property can be driven by a measure returning a hex colour?",
+      "o": [
+        "Only background of cells",
+        "Most colour properties with an fx button, including bar colours and titles",
+        "None",
+        "Only conditional formatting rules"
+      ],
+      "a": 1,
+      "why": "Any property with fx accepts a field value."
+    }
+  ]
+}

@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/app.css">
 <style>
 :root{
   --bg:#EEF1F5;--panel:#FFFFFF;--panel-2:#F6F8FA;--ink:#1B2430;--ink-2:#4A5568;--ink-3:#7A8594;
@@ -79,15 +80,17 @@ h1 .hl{color:var(--hl-ink)}
 </style>
 </head>
 <body>
-<header class="top"><div class="in">
-  <a class="brand" href="index.html"><span class="mark">BI</span>Glossary</a>
+<a class="skip" href="#main">Skip to content</a>
+<!--nav:learn-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="learn.html" aria-current="true">Learn</a><a href="experience.html">Practice</a><a href="flashcards.html">Interview</a><a href="progress.html">Progress</a></nav>
   <span class="sp"></span>
-  <button class="btn iconbtn" type="button" data-open-search aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
-  <a class="btn" href="flashcards.html">🃏 <span class="clabel">Flashcards</span></a>
-  <a class="btn" href="index.html">← <span class="clabel">Course</span></a>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
   <span data-theme-toggle-slot></span>
 </div></header>
-<main class="wrap">
+<!--/nav-->
+<main class="wrap" id="main" tabindex="-1">
   <h1>Power BI in <span class="hl">plain English</span></h1>
   <p class="lead" id="lead"></p>
   <div class="filters">
@@ -96,7 +99,7 @@ h1 .hl{color:var(--hl-ink)}
     <nav class="az" id="az" aria-label="Jump to letter"></nav>
   </div>
   <div id="list"></div>
-  <footer class="foot">Tap any dotted-underlined word in the <a href="index.html">course</a> or the <a href="flashcards.html">flashcards</a> to see its definition without leaving the page.</footer>
+  <footer class="foot">Tap any dotted-underlined word in a <a href="learn.html">lesson</a> or the <a href="flashcards.html">flashcards</a> to see its definition without leaving the page.</footer>
 </main>
 <div class="toast" id="toast" role="status"></div>
 <script src="assets/js/content.js"></script>

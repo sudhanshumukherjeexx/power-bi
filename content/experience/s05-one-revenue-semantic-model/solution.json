@@ -1,0 +1,73 @@
+{
+  "$schema": "../../schema/scenario-solution.schema.json",
+  "summary": "All three numbers are correct for what they measure, so the fix is naming and ownership, not arithmetic. One certified \"Northwind Sales & Finance\" model holds four clearly named measures: Gross Sales (orders) {{rev_sales_model|money0}}, Net Sales (orders), Net Revenue (ledger) {{rev_finance_model|money0}} and Shipped Value {{rev_ops_model|money0}}. Net Revenue (ledger), owned by the CFO, is the company's headline \"Revenue\". Reports migrate one by one as thin reports, the three old models become read-only and are retired after 30 days, and each definition has a business owner.",
+  "root_cause": [
+    "Sales Model: order date, after discount, all channels, no returns. It is a selling measure, the right one for pipeline and commissions.",
+    "Finance GL: posting period, net of returns and shipping refunds, no staff purchases. It is the accounting measure and the one the board and auditors see.",
+    "Ops Fulfilment: ship date, value of what left the warehouse. It is the right one for staffing and logistics.",
+    "All three were published as \"Revenue\", with no description and no owner, in three workspaces. The spread between them is {{rev_spread|money0}} for one quarter."
+  ],
+  "steps": [
+    "Inventory before designing: models, measures, the date each uses, owners, reports and viewers (report_inventory.csv). Note the report with no owner and the one that doesn't use revenue at all.",
+    "Reconcile the three numbers by definition, as in Sprint 02. If you can't reproduce each one from the same data, you're not ready to consolidate.",
+    "Design one model at order-line grain: FactSales (orders), FactReturns, FactShipments (ship date), GL bridge for posting, shared dimensions, existing RLS by region.",
+    "Name measures by meaning and add descriptions: Gross Sales (orders), Net Sales (orders), Net Revenue (ledger), Shipped Value. No measure is called just \"Revenue\". Put the headline in a display folder called \"Company KPIs\".",
+    "Agree owners: CFO for Net Revenue (ledger), VP Sales for the order measures, Head of Ops for Shipped Value. The BI team is the technical owner and certifies the model after each owner signs off.",
+    "Migrate as thin reports in this order: low-risk reports first (Customer Returns, Regional Performance), then Executive Summary, then Finance (after a parallel run at month end), then Ops, then Commission Calculator last, after a payroll-cycle parallel run.",
+    "For each report: repoint to the shared model, compare values against the old report, get the owner's sign-off, switch the app link, keep the old one read-only for 30 days for rollback.",
+    "Retire the old models only when no report or Analyze in Excel connection uses them (lineage view and usage metrics). Marketing ROI has no owner: find one or retire it."
+  ],
+  "numbers": {
+    "title": "Q1 2026: one quarter, three meanings",
+    "cols": ["Old model", "Old name", "What it measures", "Value", "New name in the shared model", "Owner"],
+    "rows": [
+      ["Sales Model", "Revenue", "Ordered value after discount, by order date", "{{rev_sales_model|money0}}", "Gross Sales (orders)", "VP Sales"],
+      ["Finance GL", "Revenue", "Ledger revenue by posting period, net of returns and shipping refunds", "{{rev_finance_model|money0}}", "Net Revenue (ledger)", "CFO"],
+      ["Ops Fulfilment", "Revenue", "Value shipped, by ship date", "{{rev_ops_model|money0}}", "Shipped Value", "Head of Operations"]
+    ]
+  },
+  "tables": [
+    { "title": "Ownership matrix (RACI)", "cols": ["Item", "Responsible", "Accountable", "Consulted", "Informed"], "rows": [
+      ["Net Revenue (ledger) definition", "Nina (Finance)", "Sarah (CFO)", "BI team", "All report owners"],
+      ["Order-based measures", "BI team", "Jordan (VP Sales)", "Finance", "Sales managers"],
+      ["Shipped Value", "Kenji (Data Eng.)", "Head of Ops", "BI team", "Ops managers"],
+      ["Shared model (technical)", "You", "Elena (BI Lead)", "Kenji", "Report authors"],
+      ["Certification", "Elena", "Elena", "Definition owners", "Everyone"]
+    ] }
+  ],
+  "artifacts": [
+    { "title": "TMDL: measures with meaning in their names", "lang": "TMDL", "body": [
+      "measure 'Net Revenue (ledger)' = [Ledger Sales] - [Ledger Returns]",
+      "\tformatString: \\$#,0",
+      "\tdisplayFolder: Company KPIs",
+      "\tdescription: Revenue as recognised in the general ledger (posting period, net of returns and shipping refunds, excluding staff purchases). Owner: CFO. Matches the board pack.",
+      "",
+      "measure 'Gross Sales (orders)' = SUM ( FactSales[GrossUSD] )",
+      "\tformatString: \\$#,0",
+      "\tdisplayFolder: Sales",
+      "\tdescription: Value ordered in the period, after line discounts, by order date. Not revenue for accounting. Owner: VP Sales.",
+      "",
+      "measure 'Shipped Value' = SUM ( FactShipments[ShippedUSD] )",
+      "\tformatString: \\$#,0",
+      "\tdisplayFolder: Operations",
+      "\tdescription: Value of goods shipped, by ship date. Use for staffing and logistics. Owner: Head of Operations."
+    ] }
+  ],
+  "communication": {
+    "executive": "From July there will be one certified source. \"Revenue\" will mean the ledger figure in every report, owned by Sarah. Sales and Operations keep their own measures, renamed so nobody mistakes them for revenue. Reports move over one at a time and the old versions stay available for a month in case anything is wrong.",
+    "engineer": "Consolidate three Import models into one certified model at order-line grain with FactSales, FactReturns, FactShipments and a posting-date relationship. Measures renamed (no bare \"Revenue\"), descriptions and owners in metadata, RLS by region preserved. Thin reports repointed with a value comparison per report; old models read-only 30 days, then removed once lineage shows no consumers."
+  },
+  "pitfalls": [
+    "Picking the \"right\" number and deleting the others. Commissions and warehouse staffing depend on the other definitions.",
+    "Keeping a measure called just Revenue in the shared model.",
+    "Big-bang migration of all reports on one day.",
+    "Certifying the model before the definition owners have signed off.",
+    "Forgetting Analyze in Excel users when retiring the old models."
+  ],
+  "review": {
+    "junior": "Picks the Finance number, changes the other two models to match and breaks commissions and staffing.",
+    "competent": "Builds one shared model with the three measures and repoints the reports.",
+    "senior": "Explains the three definitions with numbers, names measures by meaning, assigns owners, plans a staged migration with parallel runs and rollback, and retires old models using lineage.",
+    "architect": "Turns the outcome into policy: certified models are the only source for company KPIs, definitions live in a KPI dictionary with owners, and new models that duplicate a certified one need a design review. Records it as an ADR."
+  }
+}

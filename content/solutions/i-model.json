@@ -1,0 +1,81 @@
+{
+  "i-model-0": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Bridge dimensions and measures",
+        "src": [
+          "DimCategory = DISTINCT ( DimProduct[Category] )",
+          "",
+          "DimMonth = DISTINCT ( Dates[YearMonth] )",
+          "",
+          "Budget = SUM ( FactBudget[BudgetAmount] )",
+          "",
+          "Variance % = DIVIDE ( [Net Sales] - [Budget], [Budget] )"
+        ]
+      }
+    ],
+    "s": [
+      "Relationships: DimCategory[Category] 1→* DimProduct[Category] and 1→* FactBudget[Category]. DimMonth[YearMonth] 1→* Dates[YearMonth] and 1→* FactBudget[YearMonth]. DimRegion 1→* FactBudget[RegionKey].",
+      "Use DimCategory[Category] and DimMonth[YearMonth] on the matrix, not the columns from DimProduct or Dates, because only the shared dimensions filter both facts."
+    ],
+    "check": "Budget total $112,710 (Jan 38,500 · Feb 35,350 · Mar 38,860). By category: Water 36,320 · Camping 29,940 · Hiking 26,320 · Apparel 20,130.",
+    "note": "Actuals are a 100-line sample, so every cell is far below budget. The point is that both numbers appear in the same cell."
+  },
+  "i-model-1": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Bridge on Segment + LoyaltyTier",
+        "src": [
+          "BridgeSegTier =",
+          "ADDCOLUMNS (",
+          "    SUMMARIZE ( DimCustomer, DimCustomer[Segment], DimCustomer[LoyaltyTier] ),",
+          "    \"SegTierKey\", DimCustomer[Segment] & \"|\" & DimCustomer[LoyaltyTier]",
+          ")",
+          "",
+          "-- calculated column on DimCustomer and on CustomerTargets",
+          "SegTierKey = DimCustomer[Segment] & \"|\" & DimCustomer[LoyaltyTier]"
+        ]
+      }
+    ],
+    "s": [
+      "Relate BridgeSegTier[SegTierKey] 1→* DimCustomer[SegTierKey] (cross filter: Both) and 1→* CustomerTargets[SegTierKey] (Single).",
+      "Filter CustomerTargets[Quarter] = 2026-Q1, or targets for two quarters get added together."
+    ],
+    "check": "Per Segment × Tier row, Net Sales and TargetRevenue appear side by side. The *:* version gives the same row values.",
+    "note": "If Power BI reports a circular dependency, build the bridge in Power Query instead: Reference DimCustomer → keep Segment and LoyaltyTier → Remove Duplicates → add the key column. Also check CustomerTargets for combinations with no customers: a bridge built only from DimCustomer drops their targets."
+  },
+  "i-model-2": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Flatten the hierarchy and roll sales up",
+        "src": [
+          "Path = PATH ( DimEmployee[EmployeeKey], DimEmployee[ManagerKey] )",
+          "",
+          "Level1 = LOOKUPVALUE ( DimEmployee[EmployeeName], DimEmployee[EmployeeKey], PATHITEM ( DimEmployee[Path], 1, INTEGER ) )",
+          "Level2 = LOOKUPVALUE ( DimEmployee[EmployeeName], DimEmployee[EmployeeKey], PATHITEM ( DimEmployee[Path], 2, INTEGER ) )",
+          "Level3 = LOOKUPVALUE ( DimEmployee[EmployeeName], DimEmployee[EmployeeKey], PATHITEM ( DimEmployee[Path], 3, INTEGER ) )",
+          "Level4 = LOOKUPVALUE ( DimEmployee[EmployeeName], DimEmployee[EmployeeKey], PATHITEM ( DimEmployee[Path], 4, INTEGER ) )",
+          "",
+          "Team Sales =",
+          "VAR Boss = SELECTEDVALUE ( DimEmployee[EmployeeKey] )",
+          "RETURN",
+          "    CALCULATE (",
+          "        [Net Sales],",
+          "        FILTER ( ALL ( DimEmployee ), PATHCONTAINS ( DimEmployee[Path], Boss ) )",
+          "    )"
+        ]
+      }
+    ],
+    "check": "Grace Hollis = $33,391.13 (grand total). Dana Whitfield = $12,164.13 (West: Rosa, Ken, Lily, Jonah and Dana). Nina Kowalski = blank.",
+    "note": "FactSales[EmployeeKey] must be related to DimEmployee[EmployeeKey]. Shorter branches leave Level3/Level4 blank, which gives a ragged hierarchy. Hide the blank members or fill them with the parent's name."
+  },
+  "i-model-3": {
+    "check": "Sum of QuantityOnHand = 5,791, which is 10 weekly snapshots added together. The real stock is the last snapshot: 682 units on 8 Mar 2026.",
+    "s": [
+      "Suggested sentence: \"Stock is a snapshot, so across time we must take the last snapshot date in the period, not the sum.\""
+    ]
+  }
+}

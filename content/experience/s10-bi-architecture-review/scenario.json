@@ -1,0 +1,89 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "s10",
+  "slug": "s10-bi-architecture-review",
+  "type": "sprint",
+  "stage": "architect",
+  "order": 2,
+  "title": "Architecture review: {{s10_reports|int}} reports, {{s10_models|int}} models, no owner",
+  "seo": "Power BI governance and architecture review exercise: assess a messy tenant (reports, semantic models, workspaces), design the target architecture, governance model, consolidation plan and executive recommendation.",
+  "summary": "The new CEO-sponsored data programme starts with a question: what do we actually have, and what should it look like in a year? You lead the review.",
+  "minutes": 360,
+  "skills": ["architecture", "governance", "security", "communication", "service"],
+  "prereq": ["s09"],
+  "ticket": { "id": "ARCH-012", "kind": "review", "priority": "High", "status": "Open", "reporter": "grace", "opened": "Mon 14 Sep 2026, 09:00", "due": "Leadership offsite, Fri 9 Oct", "labels": ["governance", "architecture", "consolidation", "roadmap"] },
+  "story": "You are now leading BI architecture at Northwind. The shared revenue model (Sprint 05), the deployment checks (Sprint 07), the incident process (Sprint 08) and ADR-009 (Sprint 09) all exist, but only for the parts of the estate the BI team touches.",
+  "impact": "Every unmanaged copy of a model is a possible wrong number, a possible data leak and a refresh that costs capacity. The offsite will decide the data programme's budget; a vague review gets a vague budget.",
+  "messages": [
+    { "from": "grace", "to": "you", "via": "email", "at": "Mon 14 Sep, 09:00", "subject": "What do we have?", "body": [
+      "I keep hearing we have \"hundreds\" of reports and nobody knows which to trust. Before the offsite I want a short, honest picture of where we are, where we should be in a year, and what it takes to get there.",
+      "One page for the leadership team, the detail behind it for Elena. Grace"
+    ] },
+    { "from": "elena", "to": "you", "via": "chat", "at": "Mon 14 Sep, 09:30", "body": [
+      "I exported the tenant inventory: workspaces, semantic models, reports with 90-day views. It's messy. Don't propose deleting things you haven't checked; people get very upset about \"their\" report.",
+      "And please don't produce a 40-page governance framework nobody reads."
+    ] },
+    { "from": "ava", "to": "you", "via": "email", "at": "Mon 14 Sep, 11:10", "subject": "Ownership", "body": [
+      "From a compliance point of view my main concern is items with personal or financial data that have no named owner. Please flag those."
+    ] }
+  ],
+  "earlier": [
+    { "scenario": "s09", "intro": "In ADR-009 you chose the target platform. This review has to be consistent with it.",
+      "consequences": {
+        "a": "You kept the existing models on F64 as they are. The review must therefore tackle duplication model by model: no platform change will consolidate anything for you.",
+        "b": "Phase 2 of your plan creates one gold layer in OneLake. Use it: consolidation targets for Sales, Ops and Customer data can all land on the mirrored and gold tables instead of each model loading its own copy.",
+        "c": "Your big-bang Lakehouse plan is behind schedule and the team is learning Spark. Be realistic about how much consolidation the same team can do this year.",
+        "d": "DirectQuery everywhere has increased load on every source system, and the DBAs now want to restrict BI access. Address this before adding more models.",
+        "default": "Most architecture boards choose the phased option (lift to F64, then a gold layer in OneLake). If you haven't recorded ADR-009, assume that."
+      },
+      "none": "You haven't recorded ADR-009 yet (Sprint 09)."
+    }
+  ],
+  "evidence": [
+    { "id": "ws", "kind": "file", "title": "workspaces.csv", "file": "data/experience/s10/workspaces.csv" },
+    { "id": "sm", "kind": "file", "title": "semantic_models.csv", "file": "data/experience/s10/semantic_models.csv", "desc": "Owner, endorsement, revenue measure name, customer table name, RLS and last refresh status." },
+    { "id": "rp", "kind": "file", "title": "reports.csv", "file": "data/experience/s10/reports.csv", "desc": "Every report with its model and views in the last 90 days." },
+    { "id": "maturity", "kind": "doc", "title": "What already exists from earlier work", "body": [
+      "- Certified shared sales model with a KPI dictionary (BI-1103).\n- Deployment pipeline with post-deployment checks for the BI team's workspaces (INC-2058).\n- Incident severity guide and on-call alerts for certified models (INC-2071).\n- ADR-009 on the target platform."
+    ] }
+  ],
+  "tasks": [
+    "Assess the current state with numbers: duplication, ownership, endorsement, usage, refresh health, revenue and customer definitions.",
+    "Design the target: workspace strategy, model consolidation, endorsement and ownership, security, and how it fits ADR-009.",
+    "Define a light governance model that people will actually follow.",
+    "Plan a 12-month roadmap with phases, owners and risks. Nothing is deleted without checking dependencies and telling owners.",
+    "Write the one-page executive recommendation for the offsite."
+  ],
+  "deliverables": [
+    { "id": "cur", "t": "Current-state assessment with numbers" },
+    { "id": "tgt", "t": "Target architecture and workspace strategy", "artifact": "adr" },
+    { "id": "gov", "t": "Governance model: roles, endorsement criteria, ownership rules", "artifact": "ownership-matrix" },
+    { "id": "cons", "t": "Consolidation and retirement plan", "artifact": "release-notes" },
+    { "id": "road", "t": "12-month roadmap with risks" },
+    { "id": "exec", "t": "One-page executive recommendation" }
+  ],
+  "hints": [
+    "Count before you judge: reports with zero views in 90 days, models without an owner, how many different names Revenue has, how many different customer tables exist, how concentrated usage is.",
+    "Usage is very concentrated: a few models serve most viewers. Consolidation should start from what people use, not from what is messy.",
+    "Governance that works is short: a few roles, a few rules, and making the certified path the easiest one. Retirement needs a process (owner contact, read-only period, archive), not a delete button."
+  ],
+  "rubric": [
+    { "id": "frame", "n": "Problem framing", "w": 15, "good": "States the core problem (no ownership and duplicated definitions) rather than listing symptoms." },
+    { "id": "cons", "n": "Evidence and constraints", "w": 15, "good": "Current state quantified from the inventory; personal and financial data without owners flagged." },
+    { "id": "trade", "n": "Trade-off analysis", "w": 25, "good": "Central vs federated workspaces, consolidation vs leave alone, strict vs light governance, weighed honestly." },
+    { "id": "tech", "n": "Technical viability", "w": 20, "good": "Target fits ADR-009 and current platform features (endorsement, domains, lineage, usage metrics, deployment pipelines)." },
+    { "id": "risk", "n": "Risk analysis", "w": 10, "good": "Change resistance, hidden dependencies, capacity and team capacity are addressed with mitigations." },
+    { "id": "rec", "n": "Recommendation quality", "w": 15, "good": "One page, three decisions for leadership, a budget ask and a measurable target for 12 months." }
+  ],
+  "retro": [
+    "Which number from the inventory will persuade the leadership team most, and why?",
+    "Where did you choose federation over central control, and what would make you change that?",
+    "What is the first thing you'd do on Monday after the offsite?"
+  ],
+  "refs": [
+    { "title": "Power BI implementation planning: governance", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/powerbi-implementation-planning-governance" },
+    { "title": "Fabric domains", "url": "https://learn.microsoft.com/en-us/fabric/governance/domains" },
+    { "title": "Endorsement overview", "url": "https://learn.microsoft.com/en-us/fabric/governance/endorsement-overview" },
+    { "title": "Lineage in Fabric", "url": "https://learn.microsoft.com/en-us/fabric/governance/lineage" }
+  ]
+}

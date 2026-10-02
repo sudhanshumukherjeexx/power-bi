@@ -1,0 +1,39 @@
+{
+  "tool": "Tabular Editor 2 Best Practice Analyzer",
+  "rulesVersion": "BPARules.json (team copy, 2026-03)",
+  "model": "Sales.SemanticModel",
+  "results": [
+    {
+      "rule": "Provide a description for visible measures",
+      "severity": 2,
+      "objects": [
+        "'Gross Sales'",
+        "Refunds",
+        "'Net Sales'",
+        "'Net Sales LY'"
+      ]
+    },
+    {
+      "rule": "Measures should have a format string",
+      "severity": 2,
+      "objects": []
+    },
+    {
+      "rule": "Avoid floating point data types",
+      "severity": 2,
+      "objects": [
+        "FactSales[UnitPriceUSD]"
+      ]
+    },
+    {
+      "rule": "Use DIVIDE instead of the / operator",
+      "severity": 2,
+      "objects": []
+    },
+    {
+      "rule": "Avoid bi-directional relationships against high-cardinality columns",
+      "severity": 3,
+      "objects": []
+    }
+  ]
+}

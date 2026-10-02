@@ -1,0 +1,159 @@
+{
+  "id": "i-pq",
+  "name": "Advanced Power Query and M",
+  "ds": [
+    "SurveyWide",
+    "RawOrdersExport",
+    "ExchangeRates",
+    "FactSales"
+  ],
+  "skills": [
+    "power-query"
+  ],
+  "stage": "developer",
+  "refs": [
+    {
+      "title": "Power Query M function reference",
+      "url": "https://learn.microsoft.com/en-us/powerquery-m/power-query-m-function-reference"
+    },
+    {
+      "title": "Query folding guidance",
+      "url": "https://learn.microsoft.com/en-us/power-query/query-folding-basics"
+    }
+  ],
+  "asg": [
+    {
+      "t": "Unpivot the wide survey",
+      "time": "20 min",
+      "ds": "SurveyWide",
+      "guidance": "A",
+      "steps": [
+        "Load SurveyWide. Select StoreCode, StoreName, RegionKey → Unpivot Other Columns.",
+        "Split Attribute on \"-\" into Month and Year. Build a real date (first of month) from them.",
+        "Move Target-2026 into its own query (it is not a month) before unpivoting, then merge it back as a column.",
+        "Open Advanced Editor and read the generated M top to bottom. Rename every step so the pipeline reads like a sentence."
+      ],
+      "exp": "36 rows (12 stores × 3 months) with a MonthDate column and a Target column repeated per row."
+    },
+    {
+      "t": "Write a custom function",
+      "time": "30 min",
+      "ds": "RawOrdersExport",
+      "guidance": "A",
+      "steps": [
+        "Create a blank query with this function: (t as text) as nullable number => let s = Text.Remove(t, {\"$\",\" \",\"U\",\"S\",\"D\"}), n = try Number.From(s) otherwise null in n",
+        "Name it fnCleanMoney. Invoke it on Unit Price via Add Column → Invoke Custom Function.",
+        "Write a second function fnParseDate that tries three cultures in order: \"en-US\", \"en-GB\", then Date.FromText with no culture.",
+        "Apply it to Order Dt and verify every row."
+      ],
+      "exp": "Zero errors; \"N/A\" becomes null; \"09-01-2026\" becomes 9 Jan 2026 or 1 Sep 2026, and you can state which and why (order of cultures tried)."
+    },
+    {
+      "t": "Parameters and a switchable environment",
+      "time": "20 min",
+      "ds": "Any",
+      "guidance": "A",
+      "steps": [
+        "Create a text parameter Environment with values Dev, Test, Prod.",
+        "Create a query Config with a table mapping Environment → source path (use three copies of a CSV in three OneDrive folders).",
+        "Make the main source step read the path from Config via a lookup on the parameter.",
+        "Switch the parameter and refresh. Then publish and change the parameter in the Service (Settings → Parameters)."
+      ],
+      "exp": "One PBIX, three environments, no code edits."
+    },
+    {
+      "t": "Look up the last known exchange rate",
+      "time": "30 min",
+      "ds": "FactSales, ExchangeRates",
+      "guidance": "A",
+      "steps": [
+        "Rates only exist on Mondays. For each FactSales row you need the EUR rate from the most recent Monday on or before OrderDate.",
+        "Approach A (M): add WeekStart = Date.StartOfWeek([OrderDate], Day.Monday) to FactSales and merge on WeekStart = RateDate and Currency = \"EUR\".",
+        "Approach B (M, harder): buffer ExchangeRates with Table.Buffer, then per row List.Max of dates ≤ OrderDate. Compare refresh time.",
+        "Add Net Sales EUR = Net Sales × rate."
+      ],
+      "exp": "99 of the 100 rows get a rate. The one order placed before the first Monday rate (5 Jan 2026) stays null until the business agrees on a fallback. Approach B is noticeably slower even at 100 rows; write down the two timings."
+    },
+    {
+      "t": "Folding-safe incremental pattern",
+      "time": "20 min",
+      "ds": "FactSales via a SQL source if you have one, otherwise any date-filtered CSV",
+      "guidance": "A",
+      "steps": [
+        "Create RangeStart and RangeEnd Date/Time parameters.",
+        "Filter FactSales: OrderDate >= RangeStart and OrderDate < RangeEnd.",
+        "Check View Native Query at that step. If it folds, you are ready for incremental refresh; if not, move the filter earlier."
+      ],
+      "exp": "You know which of your steps break folding (Table.AddColumn with a custom function usually does)."
+    }
+  ],
+  "int": [
+    {
+      "q": "What is the difference between Table.Buffer and List.Buffer and when do they help?",
+      "a": "Both load a table/list into memory once so repeated per-row lookups don't re-evaluate the source. They help in Table.AddColumn with lookups against a small table. They hurt when they stop folding on a large source."
+    },
+    {
+      "q": "Explain \"each\" in M.",
+      "a": "each is syntactic sugar for a one-parameter function (_) => ..., and _ is the current row/item. each [Qty] * 2 equals (r) => r[Qty] * 2."
+    },
+    {
+      "q": "How do you handle a merge where the key has different casing or trailing spaces?",
+      "a": "Normalise both sides before the merge (Text.Trim, Text.Lower) or use the comparer Comparer.OrdinalIgnoreCase as the key comparer argument of Table.NestedJoin. Never merge on raw text."
+    },
+    {
+      "q": "When does a query stop folding? Give five common breakers.",
+      "a": "Custom functions per row, Table.Buffer, Text operations not supported by the source, adding an index column, changing type to a type the source doesn't map, merging with a non-foldable query, Table.Distinct on some sources, and anything after a step that already broke folding."
+    },
+    {
+      "q": "Why does \"Enter Data\" not scale and what do you replace it with?",
+      "a": "It is a JSON blob embedded in the PBIX, cannot refresh, cannot be shared, has a size cap. Replace with a SharePoint list, a CSV in OneDrive, a Dataflow, or a proper database table."
+    },
+    {
+      "q": "What is the difference between Table.SelectRows with a date filter and applying the filter on a parameter for incremental refresh?",
+      "a": "Functionally the same, but the Service rewrites RangeStart/RangeEnd per partition. If the filter uses any other expression, the partitions all load everything."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "After unpivoting SurveyWide correctly (Target excluded), row count is:",
+      "o": [
+        "12",
+        "36",
+        "48",
+        "24"
+      ],
+      "a": 1,
+      "why": "12 stores × 3 month columns."
+    },
+    {
+      "type": "mcq",
+      "q": "try Number.From(\"N/A\") otherwise null returns:",
+      "o": [
+        "0",
+        "an error",
+        "null",
+        "\"N/A\""
+      ],
+      "a": 2,
+      "why": "try…otherwise catches the conversion error."
+    },
+    {
+      "type": "task",
+      "q": "Write an M function that takes a table and a list of column names and returns the table with those columns trimmed, cleaned and capitalized. Apply it to RawOrdersExport.",
+      "hint": "Table.TransformColumns with List.Transform to build the transform list."
+    },
+    {
+      "type": "mcq",
+      "q": "Which step is most likely to stop query folding on SQL Server?",
+      "o": [
+        "Filter rows",
+        "Rename column",
+        "Add index column",
+        "Remove column"
+      ],
+      "a": 2,
+      "why": "There is no deterministic SQL equivalent for a row index without an ORDER BY."
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "governance",
+  "kind": "track",
+  "order": 5,
+  "cls": "gov",
+  "name": "Governance",
+  "tag": "Track",
+  "tagline": "Workspaces, domains and ownership; endorsement; sensitivity labels, OLS and export controls; monitoring, lineage and retirement.",
+  "seo": "Power BI and Fabric governance practice: workspace strategy, domains, ownership, endorsement and certification, sensitivity labels, object-level security, export and tenant settings, usage monitoring, lineage and report retirement.",
+  "intro": "Governance done well is invisible: people find the trusted model first, sensitive data stays where it should, and unused content quietly disappears. Done badly it's a gate everyone routes around. This track is about the light-touch version that works, practised on Northwind's tenant from Sprint 10.",
+  "setup": "A Power BI or Fabric trial tenant helps for the Service steps, but every assignment has evidence files (data/experience/s10 and data/tracks/automation) so you can do the analysis without one.",
+  "stage": "architect",
+  "topics": ["gov-workspace", "gov-protect", "gov-monitor"]
+}

@@ -1,0 +1,1374 @@
+{
+  "note": "Each claim ties a sentence in an expected result (in: exp) or a worked-solution check (in: check) to a fact recomputed from the CSVs by tests/curriculum/facts.js. The test formats the computed value with fmt, puts it where {} is in text, and requires that exact sentence fragment to appear in the content. Numbers in expected results that are not data claims (time limits, product limits) are listed under ignore with a reason.",
+  "claims": [
+    {
+      "id": "b-pq-0",
+      "in": "exp",
+      "text": "{} rows, 8 columns",
+      "fact": "cleanRows",
+      "fmt": "int"
+    },
+    {
+      "id": "b-pq-0",
+      "in": "exp",
+      "text": "27 rows, {} columns",
+      "fact": "cleanCols",
+      "fmt": "int"
+    },
+    {
+      "id": "b-pq-0",
+      "in": "exp",
+      "text": "Qty column shows {} nulls",
+      "fact": "qtyNulls",
+      "fmt": "int"
+    },
+    {
+      "id": "b-pq-0",
+      "in": "exp",
+      "text": "Exactly {} distinct Region values",
+      "fact": "regions",
+      "fmt": "int"
+    },
+    {
+      "id": "b-pq-0",
+      "in": "check",
+      "text": "{} rows × 8 columns",
+      "fact": "cleanRows",
+      "fmt": "int"
+    },
+    {
+      "id": "b-pq-0",
+      "in": "note",
+      "text": "The {} Qty nulls",
+      "fact": "qtyNulls",
+      "fmt": "int"
+    },
+    {
+      "id": "b-pq-2",
+      "in": "exp",
+      "text": "All {} rows keep a Category",
+      "fact": "cleanRows",
+      "fmt": "int"
+    },
+    {
+      "id": "b-pq-2",
+      "in": "exp",
+      "text": "loses {} row before the fix",
+      "fact": "productMismatchBeforeFix",
+      "fmt": "int"
+    },
+    {
+      "id": "b-pq-2",
+      "in": "check",
+      "text": "Inner = {} rows",
+      "fact": "innerRowsBeforeFix",
+      "fmt": "int"
+    },
+    {
+      "id": "b-pq-2",
+      "in": "check",
+      "text": "with {} null Category",
+      "fact": "productMismatchBeforeFix",
+      "fmt": "int"
+    },
+    {
+      "id": "b-pq-3",
+      "in": "check",
+      "text": "Qty: {} valid",
+      "fact": "qtyValid",
+      "fmt": "int"
+    },
+    {
+      "id": "b-pq-3",
+      "in": "check",
+      "text": "valid ({})",
+      "fact": "qtyValidPct",
+      "fmt": "pct0"
+    },
+    {
+      "id": "b-pq-3",
+      "in": "check",
+      "text": "{} empty",
+      "fact": "qtyNulls",
+      "fmt": "int"
+    },
+    {
+      "id": "b-pq-3",
+      "in": "check",
+      "text": "empty ({})",
+      "fact": "qtyEmptyPct",
+      "fmt": "pct0"
+    },
+    {
+      "id": "b-pq-3",
+      "in": "check",
+      "text": "{} distinct non-null values",
+      "fact": "qtyDistinct",
+      "fmt": "int"
+    },
+    {
+      "id": "b-pq-3",
+      "in": "check",
+      "text": "and {} of them are unique",
+      "fact": "qtyUnique",
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-0",
+      "in": "exp",
+      "text": "COUNTROWS(FactSales) = {}",
+      "fact": "factRows",
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-1",
+      "in": "exp",
+      "text": "{} rows in Dates",
+      "fact": "dateTableRows",
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-1",
+      "in": "check",
+      "text": "Jan {}, Feb",
+      "fact": "qtyByOrderMonth",
+      "args": [
+        "2026-01"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-1",
+      "in": "check",
+      "text": "Feb {}, Mar",
+      "fact": "qtyByOrderMonth",
+      "args": [
+        "2026-02"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-1",
+      "in": "check",
+      "text": "Mar {}, shown",
+      "fact": "qtyByOrderMonth",
+      "args": [
+        "2026-03"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-2",
+      "in": "exp",
+      "text": "grand total ({} units)",
+      "fact": "totalQty",
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-2",
+      "in": "exp",
+      "text": "{} of the 100 sales lines",
+      "fact": "regionMismatchLines",
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-2",
+      "in": "check",
+      "text": "West {}, Central",
+      "fact": "qtyBySalesRegion",
+      "args": [
+        "West"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-2",
+      "in": "check",
+      "text": "Central {}, East",
+      "fact": "qtyBySalesRegion",
+      "args": [
+        "Central"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-2",
+      "in": "check",
+      "text": "East {}, South 60",
+      "fact": "qtyBySalesRegion",
+      "args": [
+        "East"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-2",
+      "in": "check",
+      "text": "South {}. By",
+      "fact": "qtyBySalesRegion",
+      "args": [
+        "South"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-2",
+      "in": "check",
+      "text": "South {}, West",
+      "fact": "qtyByHomeRegion",
+      "args": [
+        "South"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-2",
+      "in": "check",
+      "text": "West {}, East 96",
+      "fact": "qtyByHomeRegion",
+      "args": [
+        "West"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-2",
+      "in": "check",
+      "text": "East {}, Central 23",
+      "fact": "qtyByHomeRegion",
+      "args": [
+        "East"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-2",
+      "in": "check",
+      "text": "Central {}. The totals",
+      "fact": "qtyByHomeRegion",
+      "args": [
+        "Central"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-2",
+      "in": "check",
+      "text": "equal ({})",
+      "fact": "totalQty",
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-2",
+      "in": "note",
+      "text": "{} of the 100 lines disagree",
+      "fact": "regionMismatchLines",
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-3",
+      "in": "check",
+      "text": "Jan 141 / {}",
+      "fact": "qtyByShipMonth",
+      "args": [
+        "2026-01"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-3",
+      "in": "check",
+      "text": "Feb 120 / {}",
+      "fact": "qtyByShipMonth",
+      "args": [
+        "2026-02"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-3",
+      "in": "check",
+      "text": "Mar 72 / {}",
+      "fact": "qtyByShipMonth",
+      "args": [
+        "2026-03"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-model-3",
+      "in": "check",
+      "text": "with {} shipped units",
+      "fact": "qtyByShipMonth",
+      "args": [
+        "2026-04"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-0",
+      "in": "check",
+      "text": "Total Qty {}",
+      "fact": "totalQty",
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-0",
+      "in": "check",
+      "text": "Gross Sales {}",
+      "fact": "gross",
+      "fmt": "money"
+    },
+    {
+      "id": "b-dax-0",
+      "in": "check",
+      "text": "Discount Amt {}",
+      "fact": "discount",
+      "fmt": "money"
+    },
+    {
+      "id": "b-dax-0",
+      "in": "check",
+      "text": "Net Sales {}",
+      "fact": "net",
+      "fmt": "money"
+    },
+    {
+      "id": "b-dax-0",
+      "in": "check",
+      "text": "COGS {}",
+      "fact": "cogs",
+      "fmt": "money"
+    },
+    {
+      "id": "b-dax-0",
+      "in": "check",
+      "text": "Margin % {}",
+      "fact": "marginPct",
+      "fmt": "pct1"
+    },
+    {
+      "id": "b-dax-1",
+      "in": "exp",
+      "text": "Order Lines total = {}",
+      "fact": "orderLines",
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-1",
+      "in": "exp",
+      "text": "Orders total = {}",
+      "fact": "orders",
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-1",
+      "in": "exp",
+      "text": "Orders by Channel adds up to {}",
+      "fact": "ordersByChannelSum",
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-1",
+      "in": "exp",
+      "text": "Orders by Category to {}",
+      "fact": "ordersByCategorySum",
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-1",
+      "in": "check",
+      "text": "Orders {} ·",
+      "fact": "orders",
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-1",
+      "in": "check",
+      "text": "Customers Buying {}",
+      "fact": "customersBuying",
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-1",
+      "in": "check",
+      "text": "Avg Order Value {}",
+      "fact": "aov",
+      "fmt": "money"
+    },
+    {
+      "id": "b-dax-1",
+      "in": "check",
+      "text": "Online {}, Store",
+      "fact": "ordersByChannel",
+      "args": [
+        "Online"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-1",
+      "in": "check",
+      "text": "Store {}, Wholesale",
+      "fact": "ordersByChannel",
+      "args": [
+        "Store"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-1",
+      "in": "check",
+      "text": "Wholesale {} (sum",
+      "fact": "ordersByChannel",
+      "args": [
+        "Wholesale"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-1",
+      "in": "check",
+      "text": "(sum {} > 54). Orders by Category",
+      "fact": "ordersByChannelSum",
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-1",
+      "in": "check",
+      "text": "Hiking {}, Camping",
+      "fact": "ordersByCategory",
+      "args": [
+        "Hiking"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-1",
+      "in": "check",
+      "text": "Camping {}, Water",
+      "fact": "ordersByCategory",
+      "args": [
+        "Camping"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-1",
+      "in": "check",
+      "text": "Water {}, Apparel",
+      "fact": "ordersByCategory",
+      "args": [
+        "Water"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-1",
+      "in": "check",
+      "text": "Apparel {} (sum",
+      "fact": "ordersByCategory",
+      "args": [
+        "Apparel"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-1",
+      "in": "check",
+      "text": "(sum {} > 54).",
+      "fact": "ordersByCategorySum",
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-2",
+      "in": "check",
+      "text": "Camping Sales shows {}",
+      "fact": "netByCategory",
+      "args": [
+        "Camping"
+      ],
+      "fmt": "money"
+    },
+    {
+      "id": "b-dax-2",
+      "in": "check",
+      "text": "Water {}, Hiking",
+      "fact": "pctByCategory",
+      "args": [
+        "Water"
+      ],
+      "fmt": "pct1"
+    },
+    {
+      "id": "b-dax-2",
+      "in": "check",
+      "text": "Hiking {}, Camping",
+      "fact": "pctByCategory",
+      "args": [
+        "Hiking"
+      ],
+      "fmt": "pct1"
+    },
+    {
+      "id": "b-dax-2",
+      "in": "check",
+      "text": "Camping {}, Apparel",
+      "fact": "pctByCategory",
+      "args": [
+        "Camping"
+      ],
+      "fmt": "pct1"
+    },
+    {
+      "id": "b-dax-2",
+      "in": "check",
+      "text": "Apparel {}.",
+      "fact": "pctByCategory",
+      "args": [
+        "Apparel"
+      ],
+      "fmt": "pct1"
+    },
+    {
+      "id": "b-dax-3",
+      "in": "exp",
+      "text": "Return count is {}",
+      "fact": "returnLines",
+      "fmt": "int"
+    },
+    {
+      "id": "b-dax-3",
+      "in": "check",
+      "text": "Return lines = {}",
+      "fact": "returnLines",
+      "fmt": "int"
+    },
+    {
+      "id": "b-viz-0",
+      "in": "check",
+      "text": "Return Lines = {}",
+      "fact": "returnLines",
+      "fmt": "int"
+    },
+    {
+      "id": "b-viz-0",
+      "in": "check",
+      "text": "South is behind at {}",
+      "fact": "netBySalesRegion",
+      "args": [
+        "South"
+      ],
+      "fmt": "money"
+    },
+    {
+      "id": "b-viz-0",
+      "in": "check",
+      "text": "vs West {}",
+      "fact": "netBySalesRegion",
+      "args": [
+        "West"
+      ],
+      "fmt": "money"
+    },
+    {
+      "id": "i-pq-0",
+      "in": "exp",
+      "text": "{} rows (12 stores × 3 months)",
+      "fact": "surveyLongRows",
+      "fmt": "int"
+    },
+    {
+      "id": "i-pq-0",
+      "in": "check",
+      "text": "Target = {} on every row",
+      "fact": "surveyTarget",
+      "fmt": "text"
+    },
+    {
+      "id": "i-pq-3",
+      "in": "exp",
+      "text": "{} of the 100 rows get a rate",
+      "fact": "ratesFound",
+      "fmt": "int"
+    },
+    {
+      "id": "i-pq-3",
+      "in": "check",
+      "text": "{} of 100 rows get a rate",
+      "fact": "ratesFound",
+      "fmt": "int"
+    },
+    {
+      "id": "i-model-0",
+      "in": "check",
+      "text": "Budget total {}",
+      "fact": "budgetTotal",
+      "fmt": "money0"
+    },
+    {
+      "id": "i-model-0",
+      "in": "check",
+      "text": "Jan {} ·",
+      "fact": "budgetByMonth",
+      "args": [
+        "2026-01"
+      ],
+      "fmt": "num0"
+    },
+    {
+      "id": "i-model-0",
+      "in": "check",
+      "text": "Feb {} ·",
+      "fact": "budgetByMonth",
+      "args": [
+        "2026-02"
+      ],
+      "fmt": "num0"
+    },
+    {
+      "id": "i-model-0",
+      "in": "check",
+      "text": "Mar {})",
+      "fact": "budgetByMonth",
+      "args": [
+        "2026-03"
+      ],
+      "fmt": "num0"
+    },
+    {
+      "id": "i-model-0",
+      "in": "check",
+      "text": "Water {} ·",
+      "fact": "budgetByCategory",
+      "args": [
+        "Water"
+      ],
+      "fmt": "num0"
+    },
+    {
+      "id": "i-model-0",
+      "in": "check",
+      "text": "Camping {} ·",
+      "fact": "budgetByCategory",
+      "args": [
+        "Camping"
+      ],
+      "fmt": "num0"
+    },
+    {
+      "id": "i-model-0",
+      "in": "check",
+      "text": "Hiking {} ·",
+      "fact": "budgetByCategory",
+      "args": [
+        "Hiking"
+      ],
+      "fmt": "num0"
+    },
+    {
+      "id": "i-model-0",
+      "in": "check",
+      "text": "Apparel {}.",
+      "fact": "budgetByCategory",
+      "args": [
+        "Apparel"
+      ],
+      "fmt": "num0"
+    },
+    {
+      "id": "i-model-2",
+      "in": "check",
+      "text": "Grace Hollis = {}",
+      "fact": "teamSales",
+      "args": [
+        "Grace Hollis"
+      ],
+      "fmt": "money"
+    },
+    {
+      "id": "i-model-2",
+      "in": "check",
+      "text": "Dana Whitfield = {}",
+      "fact": "teamSales",
+      "args": [
+        "Dana Whitfield"
+      ],
+      "fmt": "money"
+    },
+    {
+      "id": "i-model-3",
+      "in": "check",
+      "text": "Sum of QuantityOnHand = {}",
+      "fact": "inventorySum",
+      "fmt": "num0"
+    },
+    {
+      "id": "i-model-3",
+      "in": "check",
+      "text": "last snapshot: {} units",
+      "fact": "stockMonthEnd",
+      "args": [
+        "2026-03"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "i-dax-0",
+      "in": "check",
+      "text": "Sales No Filters = {}",
+      "fact": "net",
+      "fmt": "money"
+    },
+    {
+      "id": "i-dax-1",
+      "in": "check",
+      "text": "Net Sales Jan {}",
+      "fact": "netByMonth",
+      "args": [
+        "2026-01"
+      ],
+      "fmt": "money"
+    },
+    {
+      "id": "i-dax-1",
+      "in": "check",
+      "text": "Feb {} ·",
+      "fact": "netByMonth",
+      "args": [
+        "2026-02"
+      ],
+      "fmt": "money"
+    },
+    {
+      "id": "i-dax-1",
+      "in": "check",
+      "text": "Mar {}.",
+      "fact": "netByMonth",
+      "args": [
+        "2026-03"
+      ],
+      "fmt": "money"
+    },
+    {
+      "id": "i-dax-1",
+      "in": "check",
+      "text": "Feb {}, Mar",
+      "fact": "mom",
+      "args": [
+        "2026-02"
+      ],
+      "fmt": "spct1"
+    },
+    {
+      "id": "i-dax-1",
+      "in": "check",
+      "text": "Mar {}.",
+      "fact": "mom",
+      "args": [
+        "2026-03"
+      ],
+      "fmt": "spct1"
+    },
+    {
+      "id": "i-dax-2",
+      "in": "check",
+      "text": "Avg Sales per Customer = {}",
+      "fact": "avgPerCustomer",
+      "fmt": "money"
+    },
+    {
+      "id": "i-dax-2",
+      "in": "check",
+      "text": "Best Product = {} (",
+      "fact": "bestProductName",
+      "fmt": "text"
+    },
+    {
+      "id": "i-dax-2",
+      "in": "check",
+      "text": "Drift Paddle Board ({})",
+      "fact": "bestProductNet",
+      "fmt": "money"
+    },
+    {
+      "id": "i-dax-2",
+      "in": "check",
+      "text": "Rank 1 = {} (",
+      "fact": "topCustomerName",
+      "fmt": "text"
+    },
+    {
+      "id": "i-dax-2",
+      "in": "check",
+      "text": "Lena Moore ({})",
+      "fact": "topCustomerNet",
+      "fmt": "money"
+    },
+    {
+      "id": "i-dax-2",
+      "in": "check",
+      "text": "Customers Over 500 = {}",
+      "fact": "customersOver500",
+      "fmt": "int"
+    },
+    {
+      "id": "i-dax-3",
+      "in": "check",
+      "text": "across {} orders",
+      "fact": "orders",
+      "fmt": "int"
+    },
+    {
+      "id": "i-dax-4",
+      "in": "check",
+      "text": "full budget ({})",
+      "fact": "budgetTotal",
+      "fmt": "money0"
+    },
+    {
+      "id": "i-viz-1",
+      "in": "check",
+      "text": "Water numbers only ({} net)",
+      "fact": "netByCategory",
+      "args": [
+        "Water"
+      ],
+      "fmt": "money"
+    },
+    {
+      "id": "i-rls-0",
+      "in": "check",
+      "text": "West only: {} net sales",
+      "fact": "netBySalesRegion",
+      "args": [
+        "West"
+      ],
+      "fmt": "money"
+    },
+    {
+      "id": "i-rls-2",
+      "in": "exp",
+      "text": "Dana: {} employees",
+      "fact": "teamSize",
+      "args": [
+        "Dana Whitfield"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "i-rls-2",
+      "in": "exp",
+      "text": "Lily: {}.",
+      "fact": "teamSize",
+      "args": [
+        "Lily Chang"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "i-rls-2",
+      "in": "check",
+      "text": "→ {} employees",
+      "fact": "teamSize",
+      "args": [
+        "Dana Whitfield"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "i-rls-2",
+      "in": "check",
+      "text": "Jonah Pike), {}",
+      "fact": "teamSales",
+      "args": [
+        "Dana Whitfield"
+      ],
+      "fmt": "money"
+    },
+    {
+      "id": "i-rls-2",
+      "in": "check",
+      "text": "only herself, {}",
+      "fact": "ownSales",
+      "args": [
+        "Lily Chang"
+      ],
+      "fmt": "money"
+    },
+    {
+      "id": "a-perf-4",
+      "in": "check",
+      "text": "Sessions {} ·",
+      "fact": "sessions",
+      "fmt": "int"
+    },
+    {
+      "id": "a-perf-4",
+      "in": "check",
+      "text": "Sessions With Purchase {}",
+      "fact": "sessionsWithPurchase",
+      "fmt": "int"
+    },
+    {
+      "id": "a-perf-4",
+      "in": "check",
+      "text": "Conversion Rate {}",
+      "fact": "conversion",
+      "fmt": "pct1"
+    },
+    {
+      "id": "a-perf-4",
+      "in": "check",
+      "text": "Avg Session Minutes {}",
+      "fact": "avgSessionMinutes",
+      "fmt": "dec2"
+    },
+    {
+      "id": "a-dax-0",
+      "in": "exp",
+      "text": "flags {} at the end of January",
+      "fact": "belowReorderNames",
+      "args": [
+        "2026-01"
+      ],
+      "fmt": "text"
+    },
+    {
+      "id": "a-dax-0",
+      "in": "exp",
+      "text": "and {} at the end of February",
+      "fact": "belowReorderNames",
+      "args": [
+        "2026-02"
+      ],
+      "fmt": "text"
+    },
+    {
+      "id": "a-dax-0",
+      "in": "check",
+      "text": "Jan {} (snapshot 25 Jan)",
+      "fact": "stockMonthEnd",
+      "args": [
+        "2026-01"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "a-dax-0",
+      "in": "check",
+      "text": "Feb {} (22 Feb)",
+      "fact": "stockMonthEnd",
+      "args": [
+        "2026-02"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "a-dax-0",
+      "in": "check",
+      "text": "Mar {} (8 Mar)",
+      "fact": "stockMonthEnd",
+      "args": [
+        "2026-03"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "a-dax-0",
+      "in": "check",
+      "text": "plain sum would be {}",
+      "fact": "inventorySum",
+      "fmt": "num0"
+    },
+    {
+      "id": "a-dax-0",
+      "in": "check",
+      "text": "Jan {} (Hydro",
+      "fact": "belowReorderCount",
+      "args": [
+        "2026-01"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "a-dax-0",
+      "in": "check",
+      "text": "Feb {} (Ridge",
+      "fact": "belowReorderCount",
+      "args": [
+        "2026-02"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "a-dax-0",
+      "in": "check",
+      "text": "Mar {}.",
+      "fact": "belowReorderCount",
+      "args": [
+        "2026-03"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "a-dax-2",
+      "in": "check",
+      "text": "converted per day = {}",
+      "fact": "eurPerDay",
+      "args": [
+        "2026-01"
+      ],
+      "fmt": "eur"
+    },
+    {
+      "id": "a-dax-2",
+      "in": "check",
+      "text": "January total ({})",
+      "fact": "netByMonth",
+      "args": [
+        "2026-01"
+      ],
+      "fmt": "money"
+    },
+    {
+      "id": "a-dax-2",
+      "in": "check",
+      "text": "last January rate = {}",
+      "fact": "eurOnce",
+      "args": [
+        "2026-01"
+      ],
+      "fmt": "eur"
+    },
+    {
+      "id": "a-dax-3",
+      "in": "check",
+      "text": "Budget via TREATAS = {}",
+      "fact": "budgetTotal",
+      "fmt": "money0"
+    },
+    {
+      "id": "a-dax-4",
+      "in": "check",
+      "text": "{} buying customers",
+      "fact": "customersBuying",
+      "fmt": "int"
+    },
+    {
+      "id": "a-dax-4",
+      "in": "check",
+      "text": ": {} A,",
+      "fact": "abc",
+      "args": [
+        "A"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "a-dax-4",
+      "in": "check",
+      "text": "{} B,",
+      "fact": "abc",
+      "args": [
+        "B"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "a-dax-4",
+      "in": "check",
+      "text": "{} C.",
+      "fact": "abc",
+      "args": [
+        "C"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "a-dax-4",
+      "in": "check",
+      "text": "last row = {}",
+      "fact": "net",
+      "fmt": "money"
+    },
+    {
+      "id": "a-fabric-2",
+      "in": "check",
+      "text": "PageView {} →",
+      "fact": "funnel",
+      "args": [
+        "PageView"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "a-fabric-2",
+      "in": "check",
+      "text": "ProductView {} →",
+      "fact": "funnel",
+      "args": [
+        "ProductView"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "a-fabric-2",
+      "in": "check",
+      "text": "AddToCart {} →",
+      "fact": "funnel",
+      "args": [
+        "AddToCart"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "a-fabric-2",
+      "in": "check",
+      "text": "Checkout {} →",
+      "fact": "funnel",
+      "args": [
+        "Checkout"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "a-fabric-2",
+      "in": "check",
+      "text": "Purchase {}.",
+      "fact": "funnel",
+      "args": [
+        "Purchase"
+      ],
+      "fmt": "int"
+    },
+    {
+      "id": "qa-data-1",
+      "in": "exp",
+      "text": "{} source rows",
+      "fact": "rawRows",
+      "fmt": "int"
+    },
+    {
+      "id": "qa-data-1",
+      "in": "exp",
+      "text": "= {} kept",
+      "fact": "cleanRows",
+      "fmt": "int"
+    },
+    {
+      "id": "qa-ops-0",
+      "in": "exp",
+      "text": "FactSales has {} rows",
+      "fact": "factRows",
+      "fmt": "int"
+    }
+  ],
+  "ignore": {
+    "b-pq-3": {
+      "numbers": [
+        "1000",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "12",
+        "-1",
+        "8"
+      ],
+      "why": "profiling settings and the list of Qty values themselves"
+    },
+    "b-model-0": {
+      "numbers": [
+        "1"
+      ],
+      "why": "1:* is relationship notation"
+    },
+    "b-model-1": {
+      "numbers": [
+        "31",
+        "2026",
+        "2026"
+      ],
+      "why": "date of the original DimDate end"
+    },
+    "b-model-3": {
+      "numbers": [
+        "2026"
+      ],
+      "why": "year"
+    },
+    "b-dax-0": {
+      "numbers": [
+        "40",
+        "65"
+      ],
+      "why": "a tolerance band, the exact value is in the solution check"
+    },
+    "b-dax-1": {
+      "numbers": [
+        "100",
+        "54"
+      ],
+      "why": "covered by Order Lines / Orders claims"
+    },
+    "b-viz-0": {
+      "numbers": [
+        "5"
+      ],
+      "why": "a five-second readability test"
+    },
+    "i-pq-1": {
+      "numbers": [
+        "09",
+        "01",
+        "2026",
+        "9",
+        "1",
+        "06",
+        "02",
+        "2"
+      ],
+      "why": "date strings under discussion"
+    },
+    "i-pq-3": {
+      "numbers": [
+        "100",
+        "1",
+        "5",
+        "2026"
+      ],
+      "why": "row base and the first Monday date"
+    },
+    "i-model-2": {
+      "numbers": [],
+      "why": ""
+    },
+    "i-dax-1": {
+      "numbers": [
+        "30"
+      ],
+      "why": "rolling window size"
+    },
+    "i-dax-2": {
+      "numbers": [
+        "500",
+        "1"
+      ],
+      "why": "thresholds named by the task"
+    },
+    "i-viz-2": {
+      "numbers": [
+        "4",
+        "16"
+      ],
+      "why": "4 measures × 4 axes is arithmetic on the task, not the data"
+    },
+    "i-viz-4": {
+      "numbers": [
+        "2026"
+      ],
+      "why": "year in a title"
+    },
+    "i-service-2": {
+      "numbers": [
+        "8",
+        "48"
+      ],
+      "why": "product refresh limits, checked under verified metadata"
+    },
+    "a-perf-0": {
+      "numbers": [
+        "100,000"
+      ],
+      "why": "the generated fact size the learner chooses"
+    },
+    "a-perf-1": {
+      "numbers": [
+        "1",
+        "2",
+        "10"
+      ],
+      "why": "version labels and an order of magnitude"
+    },
+    "a-fabric-3": {
+      "numbers": [],
+      "why": ""
+    },
+    "b-dax-2": {
+      "numbers": [
+        "100"
+      ],
+      "why": "100% is the definition of a share of total"
+    },
+    "b-viz-2": {
+      "numbers": [
+        "1",
+        "2"
+      ],
+      "why": "page numbers"
+    },
+    "a-dax-0": {
+      "numbers": [
+        "30"
+      ],
+      "why": "the reorder point from DimProduct, quoted to explain the alert"
+    },
+    "a-dax-4": {
+      "numbers": [
+        "100"
+      ],
+      "why": "100% of customers is the definition of a complete classification"
+    },
+    "a-deploy-2": {
+      "numbers": [
+        "0",
+        "3"
+      ],
+      "why": "BPA error target and number of rules to discuss"
+    },
+    "sql-tune-2": {
+      "numbers": [
+        "1.2"
+      ],
+      "why": "a display format example ($1.2M), not data"
+    },
+    "api-rest-0": {
+      "numbers": [
+        "90",
+        "30",
+        "45",
+        "14",
+        "7"
+      ],
+      "why": "time windows in days, not data"
+    },
+    "gov-monitor-0": {
+      "numbers": [
+        "90",
+        "30",
+        "45",
+        "14",
+        "7"
+      ],
+      "why": "time windows in days, not data"
+    },
+    "gov-monitor-2": {
+      "numbers": [
+        "90",
+        "30",
+        "45",
+        "14",
+        "7"
+      ],
+      "why": "time windows in days, not data"
+    },
+    "mod-viscalc-0": {
+      "numbers": [
+        "100"
+      ],
+      "why": "100% is the definition of a share of a parent"
+    }
+  }
+}

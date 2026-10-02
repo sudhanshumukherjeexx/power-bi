@@ -1,0 +1,107 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "s01",
+  "slug": "s01-executive-sales-dashboard",
+  "type": "sprint",
+  "stage": "analyst",
+  "order": 1,
+  "title": "Executive sales dashboard",
+  "seo": "Power BI practice scenario: a VP of Sales needs to know why Q1 revenue growth is slowing before Monday. Messy export, vague requirements, duplicate rows and currency conversion.",
+  "summary": "The VP of Sales thinks Q1 growth is slowing and needs one slide and a dashboard for Monday's leadership meeting.",
+  "minutes": 300,
+  "skills": ["power-query", "modeling", "dax", "visuals", "testing", "communication"],
+  "prereq": [],
+  "next": "s02",
+  "ticket": { "id": "BI-1042", "kind": "ticket", "priority": "High", "status": "Open", "reporter": "jordan", "opened": "Fri 10 Apr 2026, 16:52", "due": "Mon 13 Apr 2026, 09:00", "labels": ["sales", "dashboard", "leadership"] },
+  "impact": "Leadership decides on Monday whether to cut the Q2 marketing budget or push harder on wholesale. If the number on the slide is wrong in either direction, they make the wrong call, and they stop trusting the BI team.",
+  "messages": [
+    {
+      "from": "jordan", "to": "you", "via": "email", "at": "Fri 10 Apr, 16:52", "subject": "Q1 numbers for Monday",
+      "body": [
+        "Hi, and welcome aboard! I know it's your first week, but I need your help.",
+        "Q1 felt slower than it should have. The ops export says we sold **{{s01_raw|money0}}** in Q1, and last year's board deck had Q1 2025 at **{{naive_q1_2025|money0}}**. That would be {{naive_growth|spct1}}, which is great, but my regional managers keep telling me March was flat or worse. Something doesn't add up.",
+        "For Monday's leadership meeting (9:00) I need to know: is Q1 revenue growth really slowing, where, and why? One slide, plus the dashboard behind it so I can answer follow-up questions.",
+        "Kenji can get you whatever data you need. Thanks! Jordan"
+      ]
+    },
+    {
+      "from": "tomas", "to": "jordan", "via": "email", "at": "Fri 10 Apr, 17:05", "subject": "FW: Q1 numbers for Monday",
+      "body": [
+        "Jordan, for the record: Central had a rough March. Our biggest wholesale account went quiet in February and I haven't got a straight answer from them yet. Tomas"
+      ]
+    },
+    {
+      "from": "kenji", "to": "you", "via": "chat", "at": "Fri 10 Apr, 17:20",
+      "body": [
+        "Hey! The Q1 extract is in the shared folder (company/*.csv), same export the old dashboard used: orders, lines, returns, customers, products, regions, FX. Extracted this morning, 10 Apr.",
+        "Heads-up: the export job had a hiccup in March and we re-ran it. Should be fine 🤞. Prices are in the order currency; Europe sells in EUR."
+      ]
+    },
+    {
+      "from": "elena", "to": "you", "via": "chat", "at": "Fri 10 Apr, 17:31",
+      "body": [
+        "Before you build anything, write down what \"revenue\" means for Jordan and get Jordan to agree to it. Last time someone used gross, Finance used net, and it was a mess.",
+        "And reconcile your total back to the raw file before Monday. I'll review on Sunday evening."
+      ]
+    }
+  ],
+  "evidence": [
+    { "id": "orders", "kind": "file", "title": "orders.csv", "file": "data/experience/company/orders.csv", "desc": "One row per order header: dates, customer, channel, sales region, currency, status." },
+    { "id": "lines", "kind": "file", "title": "order_lines.csv", "file": "data/experience/company/order_lines.csv", "desc": "One row per order line (supposedly): product, quantity, unit price in the order currency, discount %." },
+    { "id": "returns", "kind": "file", "title": "returns.csv", "file": "data/experience/company/returns.csv", "desc": "Returns up to the extract date, linked to the original order line." },
+    { "id": "customers", "kind": "file", "title": "customers.csv", "file": "data/experience/company/customers.csv" },
+    { "id": "products", "kind": "file", "title": "products.csv", "file": "data/experience/company/products.csv" },
+    { "id": "regions", "kind": "file", "title": "regions.csv", "file": "data/experience/company/regions.csv" },
+    { "id": "fx", "kind": "file", "title": "fx_rates.csv", "file": "data/experience/company/fx_rates.csv", "desc": "Monthly average US dollars per euro." },
+    { "id": "wiki", "kind": "doc", "title": "Sales terminology (team wiki, last edited March 2023)", "body": [
+      "**Revenue**: total sales for the period.",
+      "**Net revenue**: revenue after discounts.",
+      "**Bookings**: orders placed in the period.",
+      "**Returns**: handled by Finance.",
+      "**Regions**: West, South, East, Central, Europe. Sales are credited to the region of the store or rep that made the sale."
+    ] },
+    { "id": "deck", "kind": "table", "title": "Slide 4 of last year's board deck (Q1 2025)", "cols": ["Metric", "Q1 2025", "Note"], "rows": [["Revenue", "{{naive_q1_2025|money0}}", "Record quarter"], ["Source", "Ops export", "All orders"]] },
+    { "id": "readme", "kind": "doc", "title": "Export job README (Kenji's team)", "body": [
+      "- orders: OrderID is unique. Status is Completed or Cancelled. PostingDate is the date the ledger recognises the sale. SalesRegionKey is the selling region.\n- order_lines: (OrderID, LineNo) identifies a line. UnitPrice is in the order currency, before the line discount. DiscountPct is a whole number.\n- returns: RefundAmount is in the order currency. ShippingRefund is postage refunded to the customer.\n- fx_rates: monthly average, USD per 1 EUR."
+    ] }
+  ],
+  "tasks": [
+    "List the questions you would ask Jordan before building anything, and the definitions you will use if nobody answers by Sunday.",
+    "Profile the export before trusting it. Write down every rule you apply (what you exclude, fix or convert, and why).",
+    "Build a small star schema in Power BI Desktop and the measures you need.",
+    "Answer the question: is growth slowing, where, and why? Quantify the main drivers.",
+    "Build one executive page and write a three-sentence summary for Jordan's slide.",
+    "Reconcile: show how you get from the raw file's total to your total, adjustment by adjustment."
+  ],
+  "deliverables": [
+    { "id": "req", "t": "requirements.md: the questions, and the definitions Jordan agreed (or you assumed)", "artifact": "requirements" },
+    { "id": "asm", "t": "assumptions.md: every assumption with its impact and who should confirm it", "artifact": "assumptions" },
+    { "id": "kpi", "t": "KPI dictionary for Gross Sales, Net Sales and YoY growth", "artifact": "kpi-dictionary" },
+    { "id": "val", "t": "validation.md: raw-to-model reconciliation with every adjustment", "artifact": "validation-plan" },
+    { "id": "rep", "t": "The report (PBIP) with one executive page" },
+    { "id": "sum", "t": "Three-sentence executive summary for the slide" }
+  ],
+  "hints": [
+    "Before you add anything up, count. How many rows does order_lines.csv have, and how many distinct (OrderID, LineNo) pairs? Then look at Status and at the customer list.",
+    "\"Revenue\" has at least four candidate meanings here: list price or after discount, before or after returns, and in which currency. Pick one, write it down, and compare growth month by month, not just for the quarter.",
+    "Split the year-on-year change by channel, then by customer, then by product. One customer and one product explain most of the slowdown; one new channel hides part of it."
+  ],
+  "rubric": [
+    { "id": "correct", "n": "Technical correctness", "w": 30, "good": "Q1 2026 and Q1 2025 totals match the model answer within 0.5%. Duplicates, cancelled orders and the test account are excluded; euros are converted with the monthly rate." },
+    { "id": "invest", "n": "Investigation quality", "w": 20, "good": "Monthly trend shows where the slowdown starts. Drivers are quantified (customer, product, channel) and they add up to the change." },
+    { "id": "req", "n": "Requirements and assumptions", "w": 15, "good": "Questions are specific: definition, grain, currency, returns, cancelled orders, which date. Assumptions are written down with who must confirm them." },
+    { "id": "valid", "n": "Validation", "w": 15, "good": "A reconciliation from the raw export to the reported total, where every adjustment is named, counted and sums exactly." },
+    { "id": "comm", "n": "Communication", "w": 15, "good": "Three sentences Jordan can say out loud: what happened, why, and what it means for Q2. No jargon." },
+    { "id": "design", "n": "Report design", "w": 5, "good": "One page answers \"is growth slowing and why\" in five seconds." }
+  ],
+  "retro": [
+    "Which of the export's problems would you have missed without counting rows first?",
+    "What would you have told Jordan on Monday if you had used the email's number?",
+    "Which of your assumptions are you least sure about, and who owns the answer?",
+    "What check would you automate so the March export problem can't happen silently again?"
+  ],
+  "refs": [
+    { "title": "Data profiling tools in Power Query", "url": "https://learn.microsoft.com/en-us/power-query/data-profiling-tools" },
+    { "title": "Star schema guidance", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/star-schema" }
+  ]
+}

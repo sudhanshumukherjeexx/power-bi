@@ -1,0 +1,59 @@
+{
+  "id": "mod-ai",
+  "name": "Analytics features: forecasting, anomalies, clustering, AI visuals and auto page refresh",
+  "ds": ["FactSales", "WebEvents", "DimCustomer"],
+  "skills": ["visuals", "communication", "performance"],
+  "stage": "developer",
+  "why": {
+    "matters": "Built-in analytics answer \"what's unusual, what's next, what groups exist\" without a data scientist, and they're part of PL-300. They also produce confident-looking results from too little data.",
+    "failure": "A forecast shaded band on three months of data goes into a board deck as a prediction.",
+    "use": "Forecasting and anomaly detection on line charts with enough history; clustering and grouping for segmentation; Key influencers and Decomposition tree for exploration; automatic page refresh for operational pages on DirectQuery or Direct Lake.",
+    "avoid": "Presenting AI visual output as fact without checking sample size and assumptions; automatic page refresh on Import models or at intervals faster than the data changes."
+  },
+  "verified": { "date": "2026-10-01", "context": "Analytics pane, anomaly detection, AI visuals and automatic page refresh docs (Microsoft Learn, Sept 2026)", "cert": "PL-300 (2026-04-20): Identify patterns and trends; Configure automatic page refresh", "review_after_days": 120 },
+  "refs": [
+    { "title": "Anomaly detection", "url": "https://learn.microsoft.com/en-us/power-bi/visuals/power-bi-visualization-anomaly-detection" },
+    { "title": "Key influencers visual", "url": "https://learn.microsoft.com/en-us/power-bi/visuals/power-bi-visualization-influencers" },
+    { "title": "Automatic page refresh", "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-automatic-page-refresh" }
+  ],
+  "asg": [
+    {
+      "t": "Forecast and find anomalies, then doubt them",
+      "time": "30 min",
+      "ds": "FactSales, Dates",
+      "guidance": "B",
+      "brief": "Add a forecast and anomaly detection to a daily Net Sales line chart of the course data, then decide whether either result is fit to show an executive.",
+      "req": ["Analytics pane → Forecast; Find anomalies on the line.", "Explain what the sensitivity and confidence settings do.", "Judge whether 90 days of data is enough, and what you'd say on the slide."],
+      "exp": "Both features run, but on about three months of daily data with returns and gaps the forecast band is wide and anomalies are mostly normal weekly variation. Not fit for an executive slide without much more history; say \"exploratory\" if shown at all."
+    },
+    {
+      "t": "Segment customers with clustering",
+      "time": "30 min",
+      "ds": "FactSales, DimCustomer",
+      "guidance": "B",
+      "brief": "Create customer segments from Net Sales and Orders with automatic clustering on a scatter chart, and compare them with a rule-based segmentation you can explain.",
+      "req": ["Scatter chart by customer; ... → Automatically find clusters.", "A rule-based grouping (e.g. ABC classes from Advanced).", "Which would you give to Sales, and why?"],
+      "exp": "Clusters appear as a new field; they're harder to explain and can change on refresh. A rule-based segmentation (ABC by cumulative share) is stable and explainable, so it's better for Sales; clusters are good for exploration."
+    },
+    {
+      "t": "Real-time page, or not?",
+      "time": "20 min",
+      "ds": "—",
+      "guidance": "C",
+      "brief": "Operations asks for a warehouse page refreshing every 5 seconds. Decide whether and how to use automatic page refresh, considering storage mode, capacity limits and how often the data actually changes.",
+      "req": ["Which storage modes support it.", "Fixed interval vs change detection.", "Admin limits and capacity cost.", "What interval the decision really needs."],
+      "exp": "Automatic page refresh works with DirectQuery (and Direct Lake) sources, not Import; admins set minimum intervals and can disable it; change detection refreshes only when a measure changes. Agree an interval with Ops based on how quickly they act (minutes, not seconds), and check capacity load."
+    }
+  ],
+  "int": [
+    { "q": "What does anomaly detection in Power BI do?", "a": "On a line chart with a date axis, it flags points outside an expected range learned from the series, with adjustable sensitivity, and can explain anomalies by other fields. It needs enough history to be meaningful." },
+    { "q": "Key influencers vs Decomposition tree?", "a": "Key influencers ranks the factors associated with a metric's value or a category (statistically). Decomposition tree lets users drill into a measure across dimensions, optionally with AI splits picking the highest or lowest next level." },
+    { "q": "When is automatic page refresh appropriate?", "a": "For operational pages on DirectQuery or Direct Lake data that changes frequently and drives quick action. Use change detection where possible, the longest interval the decision allows, and respect the capacity admin's minimum interval." },
+    { "q": "What's the risk of AI visuals in reports?", "a": "They look authoritative. With small samples, correlated fields or changing data, their findings may be noise. Check sample sizes, explain what they show, and don't present associations as causes." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "Automatic page refresh works with:", "o": ["Import only", "DirectQuery (and Direct Lake) sources", "Excel files", "Paginated reports only"], "a": 1, "why": "Import data only changes at refresh, so page refresh wouldn't show new data." },
+    { "type": "mcq", "q": "Key influencers finds that customers on Mobile buy less. This shows:", "o": ["Mobile causes lower spend", "An association worth investigating, not a cause", "A data error", "Nothing"], "a": 1, "why": "AI visuals show statistical associations." },
+    { "type": "task", "q": "Add a Decomposition tree on Net Sales by Region → Category → Product and use AI split once. Explain the result to a non-analyst in two sentences.", "hint": "AI split picks the dimension with the highest (or lowest) value at the next level." }
+  ]
+}

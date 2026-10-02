@@ -1,0 +1,77 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "s05",
+  "slug": "s05-one-revenue-semantic-model",
+  "type": "sprint",
+  "stage": "developer",
+  "order": 2,
+  "title": "Three models, three Revenues",
+  "seo": "Power BI shared semantic model exercise: Sales, Finance and Operations each have a Revenue measure with a different value. Inventory, standardise, certify and migrate thin reports.",
+  "summary": "Sales, Finance and Operations each have a model with a measure called Revenue, and all three disagree. The CEO wants one version of the truth.",
+  "minutes": 360,
+  "skills": ["modeling", "governance", "dax", "service", "communication", "architecture"],
+  "prereq": ["s02"],
+  "next": "s06",
+  "ticket": { "id": "BI-1103", "kind": "ticket", "priority": "High", "status": "Open", "reporter": "grace", "opened": "Mon 11 May 2026, 10:02", "due": "Plan by Fri 22 May; migration by end of June", "labels": ["semantic-model", "certification", "governance"] },
+  "story": "After the Finance dispute (Sprint 02) the sales dashboard shows both Net Sales and the ledger's Net Revenue. Then the leadership meeting got three different Q1 revenue figures from three different reports.",
+  "impact": "When three reports disagree, every meeting starts with an argument about numbers instead of decisions. Each copy of the model also costs refresh time, capacity and maintenance, and each one can drift further.",
+  "messages": [
+    { "from": "grace", "to": "elena", "via": "email", "at": "Mon 11 May, 10:02", "subject": "One number", "body": [
+      "Elena, this morning I saw three different Q1 revenue figures: Jordan's, Sarah's and one from Operations. All three were called \"Revenue\". I don't care which one is right; I care that we have one answer and that everyone uses it.",
+      "Please come back with a plan. Grace"
+    ] },
+    { "from": "elena", "to": "you", "via": "chat", "at": "Mon 11 May, 10:30", "body": [
+      "This is yours. I want an inventory of what exists, a proposal for one certified model, a migration plan for the reports and a clear owner for each definition.",
+      "Careful: \"one number\" doesn't mean one measure. It means nobody can be confused about which measure they're looking at."
+    ] },
+    { "from": "kenji", "to": "you", "via": "chat", "at": "Mon 11 May, 11:12", "body": [
+      "FYI the Ops model reads from the shipments table in the warehouse, not orders. Ops counts revenue when stuff leaves the building. Their dashboard drives the warehouse staffing plan, so don't break it."
+    ] }
+  ],
+  "evidence": [
+    { "id": "values", "kind": "file", "title": "revenue_by_model_q1_2026.csv", "file": "data/experience/s05/revenue_by_model_q1_2026.csv", "desc": "What each model's Revenue measure returns for Q1 2026." },
+    { "id": "measures", "kind": "file", "title": "revenue_measures.tmdl", "file": "data/experience/s05/revenue_measures.tmdl", "desc": "The three Revenue measures, copied from each model's TMDL." },
+    { "id": "reports", "kind": "file", "title": "report_inventory.csv", "file": "data/experience/s05/report_inventory.csv", "desc": "Reports built on the three models." },
+    { "id": "s02", "kind": "doc", "title": "Outcome of BI-1057 (Sprint 02)", "body": [
+      "Finance owns the ledger definition (Net Revenue). Sales keeps Net Sales by order date for pipeline and commission. Anything compared with the board pack uses the ledger measure."
+    ] }
+  ],
+  "tasks": [
+    "Inventory the three models and their reports: what each Revenue measure means, who owns it, who depends on it.",
+    "Explain exactly why the three values differ (definitions, not bugs).",
+    "Design one shared, certified semantic model: its tables, its measures (with unambiguous names) and which one is the company's \"Revenue\".",
+    "Plan the migration of every report to thin reports on the shared model, in an order that never breaks a business process.",
+    "Define ownership: who owns each definition, who maintains the model, who can certify and who approves changes."
+  ],
+  "deliverables": [
+    { "id": "inv", "t": "Inventory of models, measures, reports and owners" },
+    { "id": "kpi", "t": "KPI dictionary with each revenue definition, its owner and its use", "artifact": "kpi-dictionary" },
+    { "id": "design", "t": "Shared model design: tables, grain, measures, security" },
+    { "id": "plan", "t": "Migration plan: report by report, with rollback", "artifact": "release-notes" },
+    { "id": "owner", "t": "Ownership matrix (RACI) for definitions and the model", "artifact": "ownership-matrix" },
+    { "id": "adr", "t": "Short decision record: one shared model vs departmental models", "artifact": "adr" }
+  ],
+  "hints": [
+    "Read the three measures' comments: each uses a different date (order, posting, ship) and a different base table. None is wrong.",
+    "One shared model can hold all three, but they can't all be called Revenue. Name each after what it measures, and decide which one gets to be the company's headline figure (and who decides).",
+    "Migrate in an order that protects processes: what happens to the Commission Calculator and the warehouse staffing plan on migration day? What does a report with no owner tell you?"
+  ],
+  "rubric": [
+    { "id": "frame", "n": "Problem framing", "w": 15, "good": "States that the problem is ambiguous naming and ownership, not three wrong numbers." },
+    { "id": "correct", "n": "Technical correctness", "w": 20, "good": "The three values are explained by definition; the shared model reproduces each one exactly under a distinct name." },
+    { "id": "design", "n": "Design and maintainability", "w": 20, "good": "One model at order-line grain with shipments and the ledger bridge; measures named by meaning; display folders and descriptions; RLS kept." },
+    { "id": "plan", "n": "Migration and risk", "w": 20, "good": "Report-by-report plan with test, cut-over, rollback and deprecation dates; dependent processes (commissions, staffing) protected." },
+    { "id": "own", "n": "Ownership and governance", "w": 15, "good": "Business owner per definition, technical owner for the model, certification criteria, change approval." },
+    { "id": "comm", "n": "Communication", "w": 10, "good": "Grace gets a one-paragraph plan; each department hears what changes for them and when." }
+  ],
+  "retro": [
+    "What would happen if you had simply deleted two of the three measures?",
+    "Who should be allowed to change the definition of the company's Revenue?",
+    "How will you stop a fourth model with a fourth Revenue appearing next year?"
+  ],
+  "refs": [
+    { "title": "Endorsement: promote and certify content", "url": "https://learn.microsoft.com/en-us/fabric/governance/endorsement-overview" },
+    { "title": "Connect to semantic models (thin reports)", "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/service-datasets-discover-across-workspaces" },
+    { "title": "Power BI implementation planning: content ownership", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/powerbi-implementation-planning-content-ownership-and-management" }
+  ]
+}

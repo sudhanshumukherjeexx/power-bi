@@ -1,0 +1,161 @@
+{
+  "id": "i-dax",
+  "name": "DAX: filter context, time intelligence and iterators",
+  "ds": [
+    "FactSales",
+    "DimProduct",
+    "DimCustomer",
+    "FactBudget"
+  ],
+  "skills": [
+    "dax"
+  ],
+  "stage": "developer",
+  "refs": [
+    {
+      "title": "CALCULATE",
+      "url": "https://learn.microsoft.com/en-us/dax/calculate-function-dax"
+    },
+    {
+      "title": "Time intelligence functions",
+      "url": "https://learn.microsoft.com/en-us/dax/time-intelligence-functions-dax"
+    },
+    {
+      "title": "Use variables to improve your DAX formulas",
+      "url": "https://learn.microsoft.com/en-us/dax/best-practices/dax-variables"
+    }
+  ],
+  "asg": [
+    {
+      "t": "CALCULATE modifiers, all of them",
+      "time": "40 min",
+      "ds": "FactSales, DimProduct",
+      "guidance": "A",
+      "steps": [
+        "Write and put side by side in a table by Category with a Region slicer set to West: [Net Sales], CALCULATE([Net Sales], ALL(DimProduct)), CALCULATE([Net Sales], ALLSELECTED(DimProduct)), CALCULATE([Net Sales], ALLEXCEPT(DimProduct, DimProduct[Category])), CALCULATE([Net Sales], REMOVEFILTERS()), CALCULATE([Net Sales], KEEPFILTERS(DimProduct[Category] = \"Water\")).",
+        "Now add a visual-level filter Category ≠ Apparel and watch which columns change.",
+        "Write a one-line comment above each measure describing which filters it keeps."
+      ],
+      "exp": "ALL ignores the visual filter; ALLSELECTED respects it. KEEPFILTERS gives blank on non-Water rows instead of the Water number."
+    },
+    {
+      "t": "Time intelligence set",
+      "time": "40 min",
+      "ds": "FactSales, Dates",
+      "guidance": "A",
+      "steps": [
+        "Extend FactSales mentally: it only spans Jan–Mar 2026, so YoY will be blank. That is fine; you are testing the pattern, not the data.",
+        "Write: Sales MTD = TOTALMTD([Net Sales], Dates[Date]), Sales QTD, Sales PM = CALCULATE([Net Sales], DATEADD(Dates[Date], -1, MONTH)), MoM % = DIVIDE([Net Sales] - [Sales PM], [Sales PM]), Sales Rolling 30 = CALCULATE([Net Sales], DATESINPERIOD(Dates[Date], MAX(Dates[Date]), -30, DAY)).",
+        "Line chart by Date with Net Sales and Sales Rolling 30.",
+        "Break it: remove the \"mark as date table\" flag and observe what happens to Sales PM. Restore it."
+      ],
+      "exp": "Feb MoM % is computed. Sales PM for January is blank. Rolling 30 is smooth. Unmarking the date table does not break these measures because you referenced Dates[Date] directly; then delete the relationship and watch them break."
+    },
+    {
+      "t": "Iterators and row context",
+      "time": "30 min",
+      "ds": "FactSales, DimCustomer",
+      "guidance": "A",
+      "steps": [
+        "Write Avg Sales per Customer = AVERAGEX(VALUES(DimCustomer[CustomerKey]), [Net Sales]) and compare to DIVIDE([Net Sales], [Customers Buying]).",
+        "Write Best Product Sales = MAXX(VALUES(DimProduct[ProductName]), [Net Sales]) and Best Product = the name, using TOPN(1, VALUES(DimProduct[ProductName]), [Net Sales]) wrapped in MAXX to return a text.",
+        "Write Customer Rank = RANKX(ALL(DimCustomer[CustomerName]), [Net Sales], , DESC, DENSE). Put it in a table by CustomerName. Then make it respect the slicer by swapping ALL for ALLSELECTED.",
+        "Write Customers Over 500 = COUNTROWS(FILTER(VALUES(DimCustomer[CustomerKey]), [Net Sales] > 500))."
+      ],
+      "exp": "Rank 1 customer is unique. Customers Over 500 total is not the sum across regions (a customer can appear in two regions if reps cross regions)."
+    },
+    {
+      "t": "Variables and debugging",
+      "time": "20 min",
+      "ds": "FactSales",
+      "guidance": "A",
+      "steps": [
+        "Rewrite MoM % with VAR cur, VAR prev, VAR delta and RETURN. Add a temporary RETURN prev to inspect the intermediate value, then restore.",
+        "Write a measure that returns a text: \"Net \" & FORMAT([Net Sales], \"$#,##0\") & \" across \" & [Orders] & \" orders\". Put it in a card.",
+        "Install DAX Studio, connect to your open PBIX, and run: EVALUATE SUMMARIZECOLUMNS(DimProduct[Category], \"Sales\", [Net Sales]). Then turn on Server Timings and note the SE vs FE split."
+      ],
+      "exp": "You can state the FE and SE milliseconds for one query."
+    },
+    {
+      "t": "Budget variance the right way",
+      "time": "20 min",
+      "ds": "FactBudget, FactSales",
+      "guidance": "A",
+      "steps": [
+        "Budget = SUM(FactBudget[BudgetAmount]). Variance = [Net Sales] - [Budget]. Variance % = DIVIDE([Variance], [Budget]).",
+        "Attainment Status = SWITCH(TRUE(), ISBLANK([Budget]), \"No budget\", [Variance %] >= 0, \"On target\", [Variance %] >= -0.1, \"Watch\", \"Behind\").",
+        "Use Attainment Status for conditional formatting (field value) on a matrix."
+      ],
+      "exp": "Product-level rows show \"No budget\" because budget is only at category grain."
+    }
+  ],
+  "int": [
+    {
+      "q": "ALL vs ALLSELECTED vs REMOVEFILTERS: one sentence each.",
+      "a": "ALL removes filters from the given table/columns. REMOVEFILTERS is ALL restricted to being a CALCULATE modifier (clearer intent, cannot be used as a table). ALLSELECTED restores the filters from outside the visual (slicers) while removing the visual's own row/column filters."
+    },
+    {
+      "q": "Why does a measure inside SUMX need CALCULATE, and why don't you write it?",
+      "a": "Row context does not filter. A measure reference is implicitly wrapped in CALCULATE (context transition), which turns the current row into a filter. That is why AVERAGEX(VALUES(Customer), [Net Sales]) works; writing SUM(FactSales[...]) inside would ignore the row."
+    },
+    {
+      "q": "What does DATEADD do when the previous period has no data, and how does that differ from SAMEPERIODLASTYEAR?",
+      "a": "DATEADD returns the set of shifted dates that exist in the date table; if the fact has no rows the measure is blank. SAMEPERIODLASTYEAR is DATEADD(-1, YEAR). Both require a proper date table. PARALLELPERIOD returns whole periods instead of the same dates."
+    },
+    {
+      "q": "RANKX gives all 1s. Why?",
+      "a": "The second argument is evaluated in the current filter context, so every row ranks against itself. Use ALL/ALLSELECTED on the column being ranked, and make sure the expression is a measure (context transition) not a raw column."
+    },
+    {
+      "q": "What is the difference between VALUES and DISTINCT?",
+      "a": "VALUES includes the blank row created by referential-integrity violations; DISTINCT does not. In iterators over dimension keys the difference can move a total."
+    },
+    {
+      "q": "Explain context transition and one case where it hurts performance.",
+      "a": "When a measure (or CALCULATE) is evaluated in row context, the row values become filters. Inside SUMX over a 10-million-row fact, calling a measure per row causes 10 million context transitions and a huge formula-engine cost; rewrite with column arithmetic or pre-aggregated tables."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "CALCULATE([Net Sales], ALLSELECTED(DimProduct)) in a table by Category with a visual filter Category ≠ Apparel and slicer Region = West shows:",
+      "o": [
+        "All-region, all-category total",
+        "West total excluding Apparel, on every row",
+        "West total including Apparel",
+        "The row's own value"
+      ],
+      "a": 1,
+      "why": "ALLSELECTED keeps slicer and visual filters but removes the row's category."
+    },
+    {
+      "type": "mcq",
+      "q": "TOTALMTD([Net Sales], Dates[Date]) is equivalent to:",
+      "o": [
+        "CALCULATE([Net Sales], DATESMTD(Dates[Date]))",
+        "CALCULATE([Net Sales], ALL(Dates))",
+        "SUMX(Dates, [Net Sales])",
+        "CALCULATE([Net Sales], DATEADD(Dates[Date],-1,MONTH))"
+      ],
+      "a": 0,
+      "why": "TOTALMTD is shorthand for CALCULATE with DATESMTD."
+    },
+    {
+      "type": "task",
+      "q": "Write a measure \"Top 3 Products Sales\" that returns Net Sales for the top 3 products by Net Sales within the current filter context, and a second measure \"Top 3 Share\" = its share of total. Verify Top 3 Share for Camping.",
+      "hint": "CALCULATE([Net Sales], TOPN(3, VALUES(DimProduct[ProductName]), [Net Sales]))."
+    },
+    {
+      "type": "mcq",
+      "q": "A FILTER over FactSales (100 rows) calling [Net Sales] per row performs:",
+      "o": [
+        "100 storage-engine scans, very fast",
+        "100 context transitions, slow at scale",
+        "One scan",
+        "It errors"
+      ],
+      "a": 1,
+      "why": "Each measure call in row context triggers context transition; fine at 100 rows, fatal at 10 million."
+    }
+  ]
+}

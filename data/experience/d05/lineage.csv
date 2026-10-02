@@ -1,0 +1,7 @@
+Item,Type,DependsOn,Notes
+Regional Sales Weekly,Report,Regional Sales (semantic model),The report proposed for retirement
+Regional Sales (semantic model),Semantic model,NorthwindDW,
+Commission Statement,Paginated report,Regional Sales (semantic model),Runs on the 1st of each month for Payroll
+Exec Overview dashboard,Dashboard,Regional Sales Weekly (tile: Region bar),Pinned tile
+Regional targets.xlsx,Excel (Analyze in Excel),Regional Sales (semantic model),Owned by Finance; refreshed weekly by Nina
+Sales Overview,Report,Sales Model (certified),New report most users moved to in April

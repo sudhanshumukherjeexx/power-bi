@@ -1,0 +1,60 @@
+{
+  "id": "mod-report",
+  "name": "Paginated reports, mobile layouts, accessibility and personalization",
+  "ds": ["FactSales", "DimCustomer", "DimProduct"],
+  "skills": ["visuals", "communication", "service"],
+  "stage": "analyst",
+  "why": {
+    "matters": "A report that can't be read on a phone, by a screen-reader user, or printed as a 40-page invoice list fails part of its audience, often the part that matters most.",
+    "failure": "The regional sales report is used on phones in the field, but its mobile layout was never built; managers pinch and zoom, then ask for a PDF every Monday.",
+    "use": "Paginated reports for pixel-perfect, printable, many-page output; mobile layouts for field users; accessibility settings (alt text, tab order, contrast, titles) for everyone; personalization so users adjust visuals without copies.",
+    "avoid": "Colour as the only signal, interactive reports pretending to be printouts, and paginated reports for exploration."
+  },
+  "verified": { "date": "2026-10-01", "context": "Paginated reports, mobile layout, accessibility and personalization docs (Microsoft Learn, Sept 2026)", "cert": "PL-300 (2026-04-20): paginated reports, mobile, personalization, accessibility", "review_after_days": 120 },
+  "refs": [
+    { "title": "When to use paginated reports", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/report-paginated-or-power-bi" },
+    { "title": "Optimize reports for mobile", "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/power-bi-create-mobile-optimized-report-about" },
+    { "title": "Design accessible reports", "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-accessibility-creating-reports" },
+    { "title": "Let users personalize visuals", "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/power-bi-personalize-visuals" }
+  ],
+  "asg": [
+    {
+      "t": "Make the executive page accessible",
+      "time": "40 min",
+      "ds": "your Beginner executive page",
+      "guidance": "B",
+      "brief": "Run the Beginner executive page through an accessibility review and fix what you find.",
+      "req": ["Alt text on every visual (what it shows, not \"bar chart\").", "Tab order and titles; no information conveyed by colour alone; contrast checked.", "Test with keyboard only and with a screen reader (Narrator or NVDA)."],
+      "exp": "Every visual has meaningful alt text (ideally dynamic, from a measure), tab order follows the reading order, status uses icons or text as well as colour, and the page can be used with the keyboard alone."
+    },
+    {
+      "t": "A mobile layout for field managers",
+      "time": "30 min",
+      "ds": "your Beginner report",
+      "guidance": "B",
+      "brief": "Regional managers check sales on their phones between store visits. Build the mobile layout for the page they use.",
+      "req": ["Only the visuals that answer their question, in priority order.", "Slicers usable with a thumb.", "Test in the Power BI mobile app or the phone emulator."],
+      "exp": "A portrait mobile layout with three to five visuals (headline numbers first), slicers at the top, no horizontal scrolling, tested in the mobile app."
+    },
+    {
+      "t": "Paginated or interactive?",
+      "time": "20 min",
+      "ds": "—",
+      "guidance": "C",
+      "brief": "Decide the right report type for four requests and justify each.",
+      "req": ["Monthly customer statements, one PDF per customer.", "An exploratory dashboard of sales by region.", "A 40-page price list printed for stores.", "Commission statements emailed to each rep on the 1st (Sprint D05)."],
+      "exp": "Paginated: statements, the price list and commission statements (fixed layout, many pages, per-recipient output, subscriptions). Interactive Power BI report: the exploratory dashboard."
+    }
+  ],
+  "int": [
+    { "q": "When do you choose a paginated report?", "a": "When the output must be printed or exported with a fixed layout, spans many pages, lists detail rows (invoices, statements), or is generated per recipient. Interactive reports are for exploration and summaries." },
+    { "q": "What makes a Power BI report accessible?", "a": "Alt text on visuals, a logical tab order, titles and labels, sufficient contrast, not relying on colour alone, readable font sizes, and testing with keyboard navigation and a screen reader." },
+    { "q": "What is report personalization?", "a": "A setting that lets viewers change a visual's type, fields or aggregation for themselves and save it as a personal bookmark, without editing the report or making a copy." },
+    { "q": "Why build a mobile layout instead of relying on the phone showing the desktop page?", "a": "The desktop page shrinks to unreadable size. A mobile layout reorders and sizes visuals for portrait use, so the most important numbers appear first and controls are usable by touch." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "Statements must be emailed as one PDF per customer each month. Best fit:", "o": ["Interactive report with bookmarks", "Paginated report with a data-driven subscription or parameters", "Dashboard", "Excel export"], "a": 1, "why": "Fixed layout, per-recipient output." },
+    { "type": "mcq", "q": "A KPI turns red when below target, with no other cue. Accessibility problem?", "o": ["No", "Yes: colour alone conveys the status", "Only on mobile", "Only when printed"], "a": 1, "why": "Add an icon, label or text so colour-blind and screen-reader users get the information." },
+    { "type": "task", "q": "Enable personalization on one report page and test it as a viewer.", "hint": "Report settings → Personalize visuals; viewers see the personalize icon on each visual." }
+  ]
+}

@@ -1,0 +1,18 @@
+[
+  { "id": "requirements", "title": "Requirements and open questions", "summary": "What the requester needs, in numbers, with the questions still open and who answers them.", "used": ["s01", "d01"] },
+  { "id": "assumptions", "title": "Assumptions log", "summary": "Every assumption you made to keep moving, its impact if wrong, and who must confirm it.", "used": ["s01"] },
+  { "id": "kpi-dictionary", "title": "KPI dictionary", "summary": "One entry per business measure: definition, formula, grain, owner, source and caveats.", "used": ["s01", "s02", "s05"] },
+  { "id": "validation-plan", "title": "Validation and reconciliation", "summary": "How you prove the numbers: source-to-report reconciliation, tests, tolerances and results.", "used": ["s01", "s02", "d06"] },
+  { "id": "uat-plan", "title": "UAT plan and log", "summary": "Test cases the business runs before go-live, with expected and actual results and an outcome per case.", "used": ["d02"] },
+  { "id": "rls-test-matrix", "title": "RLS / OLS test matrix", "summary": "Every role and a representative user, what each must and must not see, and the result after each release.", "used": ["s03"] },
+  { "id": "performance-report", "title": "Performance before/after report", "summary": "Baseline, root cause per visual, fix, measured improvement and the budget it now meets.", "used": ["s04"] },
+  { "id": "adr", "title": "Architecture decision record (ADR)", "summary": "Context, constraints, options, decision, consequences, risks and the trigger to revisit.", "used": ["s05", "s09", "s10"] },
+  { "id": "pull-request", "title": "Pull request description", "summary": "What changed, why, how it was tested, the risk and how to roll back.", "used": ["s06", "d03"] },
+  { "id": "release-notes", "title": "Release notes and migration plan", "summary": "What changes for users and when, the steps, the checks and the rollback.", "used": ["s05", "s09", "s10", "d04", "d05", "d06"] },
+  { "id": "deployment-checklist", "title": "Deployment checklist", "summary": "Checks before and after promoting content between environments.", "used": ["s07"] },
+  { "id": "runbook", "title": "Runbook", "summary": "Step-by-step diagnosis and recovery for a known failure, written for whoever is on call.", "used": ["s07", "s08"] },
+  { "id": "incident-report", "title": "Incident report", "summary": "The facts of an incident as it happens: impact, timeline, mitigation, status updates.", "used": ["s02", "s03", "s07", "s08"] },
+  { "id": "postmortem", "title": "Blameless postmortem", "summary": "Why it happened, why it wasn't caught, and the actions that stop it happening again.", "used": ["s03", "s04", "s08"] },
+  { "id": "data-contract", "title": "Data contract", "summary": "What a source team promises a consuming team: schema, meaning, freshness, quality and change notice.", "used": ["s08"] },
+  { "id": "ownership-matrix", "title": "Ownership matrix (RACI)", "summary": "Who is responsible, accountable, consulted and informed for each definition, model and process.", "used": ["s05", "s10", "d07"] }
+]

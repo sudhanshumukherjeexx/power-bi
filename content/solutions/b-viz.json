@@ -1,0 +1,51 @@
+{
+  "b-viz-0": {
+    "s": [
+      "View → Page view / Canvas settings: 16:9. Add a text box title, four cards, a column chart (MonthName, Net Sales), a bar chart (Category, Net Sales, sorted descending), a filled map (State) and a RegionName slicer.",
+      "Select the bar chart → Format → Edit interactions → on the month chart choose Highlight, on each card choose None.",
+      "Filters pane → Filters on this page → drag Line Type, select Sale."
+    ],
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Return count that ignores the page filter",
+        "src": [
+          "Return Lines =",
+          "CALCULATE (",
+          "    COUNTROWS ( FactSales ),",
+          "    REMOVEFILTERS ( FactSales[Line Type] ),",
+          "    FactSales[Line Type] = \"Return\"",
+          ")"
+        ]
+      }
+    ],
+    "check": "Return Lines = 7 even though the page is filtered to Sale. By sales region, South is behind at $3,634.46 vs West $12,164.13.",
+    "note": "A filled map needs a clear geography: set State's Data category to State or Province."
+  },
+  "b-viz-1": {
+    "s": [
+      "Table visual → Net Sales field dropdown → Conditional formatting → Data bars.",
+      "Margin % → Conditional formatting → Background color → Format style: Rules. If value ≥ 0 and < 0.4 → red, ≥ 0.4 and < 0.55 → amber, ≥ 0.55 → green. Use \"Number\", not \"Percent\": percent here means the percentile of the range.",
+      "Margin % → Icons → Rules with the same thresholds. Then remove the data bars."
+    ],
+    "check": "Discontinued products (DimProduct[Discontinued] = TRUE) appear mostly in the red/amber bands. Add Discontinued to the table to verify.",
+    "note": "Choosing \"Percent\" in the rules dialog is the classic mistake: it means percent of the min–max range, not the value 40%."
+  },
+  "b-viz-2": {
+    "s": [
+      "Add three slicers. Date slicer: style Between. LoyaltyTier: style Dropdown, Selection → Multi-select with Ctrl = Off.",
+      "View → Sync slicers → with the Category slicer selected, tick Sync and Visible for page 2.",
+      "Clear all slicers, then View → Bookmarks → Add → rename \"Reset\". Tick Data only. Insert a button → Action → Bookmark → Reset. Or use Insert → Buttons → Clear all slicers, which does the same with no bookmark."
+    ],
+    "check": "Choosing Hiking on page 1 filters page 2. The button clears both pages."
+  },
+  "b-viz-3": {
+    "s": [
+      "Matrix: Rows = Category then SubCategory, Columns = MonthName, Values = Net Sales.",
+      "Format → Row headers → Options → Stepped layout Off. Row subtotals On, per row level. Use the \"Expand all down one level\" icon on the visual header.",
+      "Add Margin %. Format → Values → Options → Switch values to rows = On.",
+      "Conditional formatting → Net Sales → Background color → set \"Apply to\" = Values only."
+    ],
+    "check": "Each Category has a subtotal row above its subcategories. Values show Net Sales and Margin % stacked, like a financial statement."
+  }
+}

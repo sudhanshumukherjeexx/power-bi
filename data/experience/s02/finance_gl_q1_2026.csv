@@ -1,0 +1,10 @@
+Period,Account,AccountName,AmountUSD
+2026-01,4000,Product sales,107546.54
+2026-01,4900,Returns and allowances,-4665.14
+2026-01,4910,Shipping refunds,-209.45
+2026-02,4000,Product sales,70930.60
+2026-02,4900,Returns and allowances,-2739.50
+2026-02,4910,Shipping refunds,-104.93
+2026-03,4000,Product sales,74755.50
+2026-03,4900,Returns and allowances,-3685.71
+2026-03,4910,Shipping refunds,-164.90

@@ -1,0 +1,45 @@
+name: Validate
+
+# Runs on every push and pull request. The site deploys straight from the main branch (GitHub Pages,
+# "Deploy from a branch"), so this workflow is the gate: it fails when generated files are stale,
+# when a dataset or an expected result contradicts the data, or when a link, id or reference is broken.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '17 6 * * 1'   # weekly: catch content whose verification date has expired
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generated data is reproducible
+        run: node tools/generate-data.js --check
+      - name: Generated site files are current
+        run: node tools/build.js --check
+      - name: Content, datasets, curriculum, links, SQL and scripts
+        run: node tests/run.js
+      - name: HTML validity
+        run: npx --yes html-validate@9 "*.html" "experience/*.html"
+
+  external-links:
+    # Informational: official documentation moves. Never blocks a merge.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node tests/external-links.js

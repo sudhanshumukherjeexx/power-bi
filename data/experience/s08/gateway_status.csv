@@ -1,0 +1,5 @@
+Time,Gateway,Member,Status,CPU%,Memory%
+2026-06-08 05:25,GW-PROD-01,gw-prod-01a,Online,12,41
+2026-06-08 05:25,GW-PROD-01,gw-prod-01b,Online,9,38
+2026-06-08 06:15,GW-PROD-01,gw-prod-01a,Online,58,62
+2026-06-08 06:15,GW-PROD-01,gw-prod-01b,Online,11,40

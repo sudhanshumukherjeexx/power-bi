@@ -1,0 +1,5 @@
+Model,StorageMode,Rows,SizeGB,RefreshMin,RefreshesPerDay,Consumers,LatencyNeeded,Source
+Sales (certified),Import,"182,000,000",9.8,74,2,140,4 hours,"NorthwindDW (SQL Server, on-premises)"
+Finance Board Pack,Import,"6,400,000",0.7,12,1,25,"Daily, after close",NorthwindDW + Treasury
+Ops Fulfilment,DirectQuery,"41,000,000",n/a,n/a,n/a,60,15 minutes,"WMS (SQL Server, on-premises)"
+Web Analytics,Import,"96,000,000",4.1,55,1,20,Daily,Clickstream files (blob storage)

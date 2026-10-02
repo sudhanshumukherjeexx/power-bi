@@ -1,0 +1,140 @@
+{
+  "i-dax-0": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Every modifier side by side",
+        "src": [
+          "-- keeps every filter",
+          "Net Sales",
+          "",
+          "-- ignores all filters on DimProduct, including the visual-level filter",
+          "Sales ALL Product = CALCULATE ( [Net Sales], ALL ( DimProduct ) )",
+          "",
+          "-- ignores the row's product filter but respects slicers and visual filters",
+          "Sales ALLSELECTED Product = CALCULATE ( [Net Sales], ALLSELECTED ( DimProduct ) )",
+          "",
+          "-- removes DimProduct filters except Category",
+          "Sales ALLEXCEPT Category = CALCULATE ( [Net Sales], ALLEXCEPT ( DimProduct, DimProduct[Category] ) )",
+          "",
+          "-- removes every filter in the model, including the Region slicer",
+          "Sales No Filters = CALCULATE ( [Net Sales], REMOVEFILTERS () )",
+          "",
+          "-- intersects with the current filter instead of replacing it",
+          "Water Only Keep = CALCULATE ( [Net Sales], KEEPFILTERS ( DimProduct[Category] = \"Water\" ) )"
+        ]
+      }
+    ],
+    "check": "Sales No Filters = $33,391.13 on every row regardless of the West slicer. Water Only Keep is blank on non-Water rows. With Category ≠ Apparel, ALL still includes Apparel in its number and ALLSELECTED doesn't."
+  },
+  "i-dax-1": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Time intelligence set",
+        "src": [
+          "Sales MTD = TOTALMTD ( [Net Sales], Dates[Date] )",
+          "",
+          "Sales QTD = TOTALQTD ( [Net Sales], Dates[Date] )",
+          "",
+          "Sales PM = CALCULATE ( [Net Sales], DATEADD ( Dates[Date], -1, MONTH ) )",
+          "",
+          "MoM % = DIVIDE ( [Net Sales] - [Sales PM], [Sales PM] )",
+          "",
+          "Sales Rolling 30 =",
+          "CALCULATE (",
+          "    [Net Sales],",
+          "    DATESINPERIOD ( Dates[Date], MAX ( Dates[Date] ), -30, DAY )",
+          ")"
+        ]
+      }
+    ],
+    "check": "Net Sales Jan $11,573.97 · Feb $10,327.81 · Mar $11,489.35. MoM %: Jan blank, Feb −10.8%, Mar +11.2%."
+  },
+  "i-dax-2": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Iterators",
+        "src": [
+          "Avg Sales per Customer = AVERAGEX ( VALUES ( DimCustomer[CustomerKey] ), [Net Sales] )",
+          "",
+          "Best Product Sales = MAXX ( VALUES ( DimProduct[ProductName] ), [Net Sales] )",
+          "",
+          "Best Product =",
+          "MAXX (",
+          "    TOPN ( 1, VALUES ( DimProduct[ProductName] ), [Net Sales] ),",
+          "    DimProduct[ProductName]",
+          ")",
+          "",
+          "Customer Rank = RANKX ( ALLSELECTED ( DimCustomer[CustomerName] ), [Net Sales], , DESC, DENSE )",
+          "",
+          "Customers Over 500 = COUNTROWS ( FILTER ( VALUES ( DimCustomer[CustomerKey] ), [Net Sales] > 500 ) )"
+        ]
+      }
+    ],
+    "check": "Avg Sales per Customer = $1,284.27 (both versions agree at the total). Best Product = Drift Paddle Board ($6,659.89). Rank 1 = Lena Moore ($4,464.57). Customers Over 500 = 19.",
+    "note": "TOPN can return several rows on a tie. MAXX then returns the alphabetically last name, which is why it is wrapped."
+  },
+  "i-dax-3": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Variables and a text measure",
+        "src": [
+          "MoM % =",
+          "VAR cur = [Net Sales]",
+          "VAR prev = [Sales PM]",
+          "VAR delta = cur - prev",
+          "RETURN",
+          "    DIVIDE ( delta, prev )      -- temporarily: RETURN prev",
+          "",
+          "Sales Summary = \"Net \" & FORMAT ( [Net Sales], \"$#,##0\" ) & \" across \" & [Orders] & \" orders\""
+        ]
+      },
+      {
+        "lang": "DAX",
+        "title": "DAX Studio query",
+        "src": [
+          "EVALUATE",
+          "SUMMARIZECOLUMNS (",
+          "    DimProduct[Category],",
+          "    \"Sales\", [Net Sales]",
+          ")"
+        ]
+      }
+    ],
+    "check": "Card reads \"Net $33,391 across 54 orders\". In DAX Studio: Home → Server Timings on → Run → read the Total, FE and SE ms on the Server Timings tab."
+  },
+  "i-dax-4": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Budget variance",
+        "src": [
+          "Budget = SUM ( FactBudget[BudgetAmount] )",
+          "",
+          "Variance = [Net Sales] - [Budget]",
+          "",
+          "Variance % = DIVIDE ( [Variance], [Budget] )",
+          "",
+          "Attainment Status =",
+          "SWITCH (",
+          "    TRUE (),",
+          "    ISBLANK ( [Budget] ), \"No budget\",",
+          "    [Variance %] >= 0, \"On target\",",
+          "    [Variance %] >= -0.1, \"Watch\",",
+          "    \"Behind\"",
+          ")",
+          "",
+          "Attainment Colour =",
+          "SWITCH ( [Attainment Status], \"On target\", \"#1F7A4D\", \"Watch\", \"#B7791F\", \"Behind\", \"#B23A2E\", \"#7A8594\" )"
+        ]
+      }
+    ],
+    "s": [
+      "Matrix → Net Sales → Conditional formatting → Font colour → Format style: Field value → Attainment Colour."
+    ],
+    "check": "Product rows show \"No budget\". In this sample every category shows \"Behind\", because 100 lines of actuals sit against a full budget ($112,710)."
+  }
+}

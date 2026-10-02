@@ -1,0 +1,71 @@
+[
+  {
+    "id": "analyst", "label": "Data Analyst", "role": "analyst",
+    "desc": "Turn business questions into correct, trusted reports.",
+    "route": [
+      { "t": "Check where to start", "href": "diagnostic.html", "why": "Ten minutes. Skip what you already know." },
+      { "t": "Beginner level", "href": "beginner.html", "why": "Clean data, a star schema, core DAX, one good page." },
+      { "t": "Sprint 01: Executive sales dashboard", "href": "experience/s01-executive-sales-dashboard.html", "why": "Your first ticket with vague requirements." },
+      { "t": "Sprint 02: Finance disputes the number", "href": "experience/s02-finance-disputes-revenue.html", "why": "Reconcile your own work against Finance." },
+      { "t": "Intermediate level", "href": "intermediate.html", "why": "Filter context, RLS, the Service." },
+      { "t": "Interview practice", "href": "flashcards.html", "why": "Answer out loud on your phone." }
+    ]
+  },
+  {
+    "id": "bidev", "label": "BI Developer", "role": "bidev",
+    "desc": "Own semantic models that other people safely build on.",
+    "route": [
+      { "t": "Check where to start", "href": "diagnostic.html", "why": "Experienced? Skip ahead." },
+      { "t": "Intermediate level", "href": "intermediate.html", "why": "Modeling, DAX context, RLS, gateways." },
+      { "t": "Testing track", "href": "testing.html", "why": "Prove a number before someone else disproves it." },
+      { "t": "Sprints 01–05", "href": "experience.html", "why": "From first dashboard to one shared semantic model." },
+      { "t": "Advanced level", "href": "advanced.html", "why": "Performance, calculation groups, deployment." },
+      { "t": "Interview practice", "href": "flashcards.html", "why": "Modeling, DAX and performance decks." }
+    ]
+  },
+  {
+    "id": "engineer", "label": "Analytics Engineer", "role": "engineer",
+    "desc": "Build the pipeline from raw data to a certified model, with Git and CI.",
+    "route": [
+      { "t": "SQL for BI", "href": "sql.html", "why": "The source query is usually where the time goes." },
+      { "t": "Data warehousing patterns", "href": "warehousing.html", "why": "Keys, SCD2, snapshots, calendars." },
+      { "t": "Fabric track", "href": "fabric.html", "why": "OneLake, Direct Lake, Dataflow Gen2." },
+      { "t": "Sprint 06: PBIP merge conflict", "href": "experience/s06-pbip-merge-conflict.html", "why": "Two developers, one model." },
+      { "t": "Sprint 07: Test works, Prod doesn't", "href": "experience/s07-test-prod-deployment-failure.html", "why": "Environments, rules and bindings." },
+      { "t": "Automation and APIs", "href": "automation.html", "why": "Inventory, refresh and deploy with scripts." }
+    ]
+  },
+  {
+    "id": "lead", "label": "BI Lead / Architect", "role": "lead",
+    "desc": "Make and explain organisational decisions about data and BI.",
+    "route": [
+      { "t": "Governance track", "href": "governance.html", "why": "Ownership, endorsement, labels, retirement." },
+      { "t": "Sprint 05: One definition of Revenue", "href": "experience/s05-one-revenue-semantic-model.html", "why": "Consolidate three competing models." },
+      { "t": "Sprint 08: CFO refresh outage", "href": "experience/s08-cfo-refresh-outage.html", "why": "Run an incident, then write the postmortem." },
+      { "t": "Sprint 09: Fabric migration decision", "href": "experience/s09-fabric-migration-decision.html", "why": "Write an architecture decision record." },
+      { "t": "Sprint 10: Architecture review", "href": "experience/s10-bi-architecture-review.html", "why": "80 reports, 19 models, no owner." },
+      { "t": "Explain it twice", "href": "experience/d08-explain-it-twice.html", "why": "Same problem, CFO and engineer versions." }
+    ]
+  },
+  {
+    "id": "cert", "label": "Certification-focused", "role": null,
+    "desc": "Prepare for PL-300 or DP-600 without stopping at the exam.",
+    "route": [
+      { "t": "Certification map", "href": "learn.html#certs", "why": "The current Microsoft outline, mapped to topics." },
+      { "t": "Beginner and Intermediate", "href": "beginner.html", "why": "Most of PL-300 lives here." },
+      { "t": "Modern Power BI track", "href": "modern.html", "why": "Visual calculations, Copilot, accessibility: new in PL-300." },
+      { "t": "SQL and Fabric tracks", "href": "fabric.html", "why": "For DP-600: SQL, Direct Lake, lifecycle." },
+      { "t": "Mock interview", "href": "flashcards.html#mock", "why": "Timed, out loud." }
+    ]
+  },
+  {
+    "id": "learn", "label": "I just want to learn Power BI", "role": null,
+    "desc": "Start at the beginning and go at your own pace.",
+    "route": [
+      { "t": "Beginner level", "href": "beginner.html", "why": "Everything with the mouse first." },
+      { "t": "Glossary", "href": "glossary.html", "why": "Look up any word that sounds like jargon." },
+      { "t": "Flashcards", "href": "flashcards.html", "why": "Five minutes a day, no computer needed." },
+      { "t": "Sprint 01: your first ticket", "href": "experience/s01-executive-sales-dashboard.html", "why": "When Beginner feels easy." }
+    ]
+  }
+]

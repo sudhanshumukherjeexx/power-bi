@@ -1,0 +1,14 @@
+{
+  "id": "fabric",
+  "kind": "track",
+  "order": 6,
+  "cls": "fab",
+  "name": "Microsoft Fabric for BI developers",
+  "tag": "Track",
+  "tagline": "OneLake, Lakehouse vs Warehouse, the SQL analytics endpoint, Direct Lake on OneLake vs on SQL, framing and fallback, Dataflow Gen2, mirroring and medallion design.",
+  "seo": "Microsoft Fabric practice for Power BI developers: OneLake, Lakehouse, Warehouse, SQL analytics endpoint, shortcuts, Direct Lake on OneLake vs Direct Lake on SQL endpoint, framing, fallback, guardrails, Dataflow Gen2, mirroring and medallion architecture. Verified against current Microsoft documentation.",
+  "intro": "Fabric changes where data preparation happens and how semantic models read data. This track focuses on the decisions a BI developer makes in Fabric, not every Fabric workload. Fabric features change fast: each topic shows when it was last checked against Microsoft's documentation, and the CI flags it when a review is due. A Fabric trial covers every hands-on step; where you can't use one, the conceptual tasks and the Sprint 09 decision still apply.",
+  "setup": "A Fabric trial (or capacity) and a workspace you own. Upload the company pack CSVs to a lakehouse. No Spark knowledge is required: everything can be done with the UI, Dataflow Gen2 and T-SQL.",
+  "stage": "engineer",
+  "topics": ["fab-onelake", "fab-directlake", "fab-pipelines"]
+}

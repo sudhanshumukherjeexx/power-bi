@@ -1,0 +1,206 @@
+[
+  {
+    "key": "NWOrders",
+    "name": "orders.csv",
+    "file": "data/experience/company/orders.csv",
+    "desc": "Company pack: one row per order header (Jan 2025 to Mar 2026).",
+    "rows": 3715,
+    "profile": {
+      "rows": 3715,
+      "unique": [
+        "OrderID"
+      ],
+      "fk": [
+        {
+          "col": "CustomerID",
+          "ref": "customers.CustomerID"
+        }
+      ]
+    }
+  },
+  {
+    "key": "NWOrderLines",
+    "name": "order_lines.csv",
+    "file": "data/experience/company/order_lines.csv",
+    "desc": "Company pack: order lines in the order currency. Contains the March re-export defect.",
+    "rows": 7252,
+    "profile": {
+      "rows": 7252,
+      "duplicateRows": 37,
+      "fk": [
+        {
+          "col": "OrderID",
+          "ref": "orders.OrderID"
+        },
+        {
+          "col": "ProductKey",
+          "ref": "products.ProductKey"
+        }
+      ]
+    }
+  },
+  {
+    "key": "NWReturns",
+    "name": "returns.csv",
+    "file": "data/experience/company/returns.csv",
+    "desc": "Company pack: returns linked to order lines, to 10 Apr 2026.",
+    "rows": 343,
+    "profile": {
+      "rows": 343,
+      "unique": [
+        "ReturnID"
+      ],
+      "fk": [
+        {
+          "col": "OrderID",
+          "ref": "orders.OrderID"
+        }
+      ]
+    }
+  },
+  {
+    "key": "NWCustomers",
+    "name": "customers.csv",
+    "file": "data/experience/company/customers.csv",
+    "desc": "Company pack: customers with segment and home region.",
+    "rows": 421,
+    "profile": {
+      "rows": 421,
+      "unique": [
+        "CustomerID"
+      ]
+    }
+  },
+  {
+    "key": "NWProducts",
+    "name": "products.csv",
+    "file": "data/experience/company/products.csv",
+    "desc": "Company pack: the 24 products with cost and list price.",
+    "rows": 24,
+    "profile": {
+      "rows": 24,
+      "unique": [
+        "ProductKey"
+      ]
+    }
+  },
+  {
+    "key": "NWRegions",
+    "name": "regions.csv",
+    "file": "data/experience/company/regions.csv",
+    "desc": "Company pack: five sales regions and their currency.",
+    "rows": 5,
+    "profile": {
+      "rows": 5,
+      "unique": [
+        "RegionKey"
+      ]
+    }
+  },
+  {
+    "key": "NWFx",
+    "name": "fx_rates.csv",
+    "file": "data/experience/company/fx_rates.csv",
+    "desc": "Company pack: monthly average USD per EUR.",
+    "rows": 16,
+    "profile": {
+      "rows": 16
+    }
+  },
+  {
+    "key": "CustomerChanges",
+    "name": "customer_changes.csv",
+    "file": "data/tracks/warehousing/customer_changes.csv",
+    "desc": "CRM change feed for 120 customers: one row per effective change. Build SCD type 2 from it.",
+    "rows": 200,
+    "profile": {
+      "rows": 200,
+      "duplicateRows": 1
+    }
+  },
+  {
+    "key": "EarlyOrders",
+    "name": "early_orders.csv",
+    "file": "data/tracks/warehousing/early_orders.csv",
+    "desc": "Orders that arrive before their customer exists in the dimension.",
+    "rows": 4,
+    "profile": {
+      "rows": 4,
+      "unique": [
+        "OrderID"
+      ]
+    }
+  },
+  {
+    "key": "OrderEvents",
+    "name": "order_events.csv",
+    "file": "data/tracks/warehousing/order_events.csv",
+    "desc": "Order lifecycle events (Placed, Picked, Shipped, Delivered) for March 2026, in UTC.",
+    "rows": 907,
+    "profile": {
+      "rows": 907
+    }
+  },
+  {
+    "key": "WebSessionsLocal",
+    "name": "web_sessions_local.csv",
+    "file": "data/tracks/warehousing/web_sessions_local.csv",
+    "desc": "Web sessions logged in local time with their UTC offset.",
+    "rows": 240,
+    "profile": {
+      "rows": 240,
+      "unique": [
+        "SessionID"
+      ]
+    }
+  },
+  {
+    "key": "MiniSales",
+    "name": "mini_sales.csv",
+    "file": "data/tracks/testing/mini_sales.csv",
+    "desc": "Eight hand-checkable sales lines for known-input, known-output model tests.",
+    "rows": 8,
+    "profile": {
+      "rows": 8,
+      "unique": [
+        "LineID"
+      ]
+    }
+  },
+  {
+    "key": "SlowQuery",
+    "name": "slow_query.sql",
+    "file": "data/tracks/sql/slow_query.sql",
+    "desc": "The 22-minute source query behind FactSales, with its execution plan summary."
+  },
+  {
+    "key": "ApiGroups",
+    "name": "groups.json",
+    "file": "data/tracks/automation/groups.json",
+    "desc": "Mock GET /groups response: workspaces."
+  },
+  {
+    "key": "ApiDatasets",
+    "name": "datasets.json",
+    "file": "data/tracks/automation/datasets.json",
+    "desc": "Mock datasets (semantic models) across all workspaces."
+  },
+  {
+    "key": "ApiReports",
+    "name": "reports.json",
+    "file": "data/tracks/automation/reports.json",
+    "desc": "Mock reports across all workspaces."
+  },
+  {
+    "key": "ApiRefreshes",
+    "name": "refreshes.json",
+    "file": "data/tracks/automation/refreshes.json",
+    "desc": "Mock refresh history, one week per dataset."
+  },
+  {
+    "key": "ApiViews",
+    "name": "activity_views.json",
+    "file": "data/tracks/automation/activity_views.json",
+    "desc": "Mock activity events (ViewReport) for 90 days."
+  }
+]

@@ -1,0 +1,20 @@
+ModelID,Name,WorkspaceID,SizeMB,RefreshMin,Endorsement,Owner,RevenueMeasure,CustomerTable,RLS,LastRefresh
+SM01,Sales Model,WS01,1007,4,None,kenji.mori,Sales Amount,Customer Master,No,Succeeded
+SM02,Sales Model v2,WS02,218,81,None,,Net Sales,Customer Master,No,Succeeded
+SM03,Finance GL,WS04,719,71,Certified,sam.patel,Total Revenue,DimCustomer,No,Succeeded
+SM04,Board Pack Model,WS05,879,9,Certified,kenji.mori,Sales Amount,Customer Master,No,Succeeded
+SM05,Ops Fulfilment,WS06,498,43,None,hr.analytics,,tblCustomer,No,Succeeded
+SM06,Ops Inventory,WS06,51,32,None,dana.whitfield,,,Yes,Failed
+SM07,Marketing Campaigns,WS08,373,50,Promoted,,,DimCustomer,No,Succeeded
+SM08,Web Analytics,WS08,670,82,None,marketing.ops,,,No,Succeeded
+SM09,HR Headcount,WS10,901,61,None,sam.patel,,,Yes,Succeeded
+SM10,Supply Chain Lead Times,WS11,291,22,Promoted,,,,Yes,Succeeded
+SM11,Ecom Orders,WS12,830,4,Promoted,marketing.ops,Total Revenue,Customer Master,No,Succeeded
+SM12,Ecom Orders (copy),WS13,1973,39,Promoted,,Revenue,DimCustomer,No,Succeeded
+SM13,Executive KPIs,WS14,798,6,None,dana.whitfield,Total Revenue,Customers,Yes,Failed
+SM14,Regional Sales,WS18,1483,63,None,marketing.ops,Total Revenue,tblCustomer,Yes,Succeeded
+SM15,Returns Analysis,WS03,884,17,Promoted,,,tblCustomer,Yes,Succeeded
+SM16,Customer 360,WS19,651,80,Promoted,marketing.ops,Total Revenue,DimCustomer,Yes,Failed
+SM17,Pricing Test,WS17,779,40,None,kenji.mori,,tblCustomer,No,Succeeded
+SM18,Targets 2025,WS15,83,58,Promoted,hr.analytics,,,No,Succeeded
+SM19,Dana Regional,WS16,229,64,None,,Total Revenue,Customer Master,No,Succeeded

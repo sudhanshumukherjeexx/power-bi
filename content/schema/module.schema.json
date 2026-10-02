@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "module.schema.json",
+  "title": "Skill Mode module (level or track)",
+  "type": "object",
+  "required": ["id", "kind", "order", "cls", "name", "intro", "topics"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string", "pattern": "^[a-z]+$", "description": "also the page name: <id>.html" },
+    "kind": { "enum": ["level", "track"] },
+    "order": { "type": "integer", "minimum": 1 },
+    "cls": { "type": "string", "description": "colour token: beg, int, adv or a track colour" },
+    "name": { "type": "string" },
+    "years": { "type": "string", "description": "levels: the band shown as a tag" },
+    "tag": { "type": "string", "description": "tracks: short label shown as a tag" },
+    "tagline": { "type": "string", "description": "one line for hub cards and search" },
+    "seo": { "type": "string", "description": "meta description for the generated page" },
+    "intro": { "type": "string" },
+    "stage": { "type": "string" },
+    "setup": { "type": "string", "description": "what to install or download before starting" },
+    "topics": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "qa-security-0": {
+    "s": ["Compute expected totals outside Power BI: SUM(Quantity × UnitPrice × (1 − Discount)) by region in SQL or Excel, then combine regions per user from the mapping table.", "View as each user (Desktop: Modeling → View as → Other user; or the Service: Security → Test as role).", "Record actual totals and pass/fail; keep the matrix with the PBIP."],
+    "tbl": [["User", "Role", "Should see", "Expected net sales", "Pass"], ["dana.whitfield@", "Region (dynamic)", "West", "{{qa_rls_dana|money}}", "✓"], ["marcus.bell@", "Region (dynamic)", "South", "{{qa_rls_marcus|money}}", "✓"], ["nina.kowalski@", "Region (dynamic)", "West, East", "{{qa_rls_nina|money}}", "✓"], ["grace.hollis@", "Region (dynamic)", "All (RegionKey 0)", "{{qa_rls_grace|money}}", "✓"], ["not.mapped@", "Region (dynamic)", "Nothing", "blank", "✓"]],
+    "check": "Dana {{qa_rls_dana|money}} · Marcus {{qa_rls_marcus|money}} · Nina {{qa_rls_nina|money}} · Grace {{qa_rls_grace|money}} · unmapped: blank."
+  },
+  "qa-security-1": {
+    "s": ["Inactive relationship: the role's filter on DimRegion no longer reaches FactSales, so every row is visible to every role. The matrix fails for all regional users.", "Removed mapping row: that user's total becomes blank. Only caught if the user is in the matrix, so include every mapped user (or a representative per role and a full check of the mapping table).", "Bi-directional relationship: may let filters flow into other tables (e.g. a Customer list shows customers from other regions). Add a test on a dimension list, not only on a fact total.", "Add: a test that DimCustomer row count under each role matches expectation; a test run after every model change in the PR checklist."],
+    "check": "Two of three changes caught by totals; the bi-directional change needs a dimension-level test."
+  },
+  "qa-security-2": {
+    "s": ["Open Analyze in Excel as a test user with Build permission: the page filter is gone; RLS still restricts rows.", "OLS: set the Salary column to None for the restricted role, then build a new visual with Salary as that user: it errors because the column doesn't exist for them.", "Record both in the matrix: tools used, objects tested."],
+    "check": "Page filter bypassed; RLS and OLS enforced by the engine."
+  }
+}

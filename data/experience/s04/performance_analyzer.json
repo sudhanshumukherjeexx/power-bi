@@ -1,0 +1,86 @@
+{
+  "version": "1.1.0",
+  "events": [
+    {
+      "visual": "Card: Net Sales",
+      "id": "v1",
+      "metrics": {
+        "DAX query": 410,
+        "Visual display": 38,
+        "Other": 12
+      },
+      "durationMs": 460
+    },
+    {
+      "visual": "Card: Active Customers",
+      "id": "v2",
+      "metrics": {
+        "DAX query": 690,
+        "Visual display": 41,
+        "Other": 15
+      },
+      "durationMs": 746
+    },
+    {
+      "visual": "Card: Last refreshed",
+      "id": "v3",
+      "metrics": {
+        "DAX query": 2210,
+        "Visual display": 35,
+        "Other": 10
+      },
+      "durationMs": 2255
+    },
+    {
+      "visual": "Line: Net Sales by Month",
+      "id": "v4",
+      "metrics": {
+        "DAX query": 820,
+        "Visual display": 120,
+        "Other": 30
+      },
+      "durationMs": 970
+    },
+    {
+      "visual": "Matrix: Customers above average by Region",
+      "id": "v5",
+      "metrics": {
+        "DAX query": 9840,
+        "Visual display": 310,
+        "Other": 60
+      },
+      "durationMs": 10210
+    },
+    {
+      "visual": "Bar: Store Sales YTD by Category",
+      "id": "v6",
+      "metrics": {
+        "DAX query": 3120,
+        "Visual display": 95,
+        "Other": 25
+      },
+      "durationMs": 3240
+    },
+    {
+      "visual": "Slicer: Customer Segment",
+      "id": "v7",
+      "metrics": {
+        "DAX query": 1180,
+        "Visual display": 22,
+        "Other": 8
+      },
+      "durationMs": 1210
+    },
+    {
+      "visual": "Slicer: Region",
+      "id": "v8",
+      "metrics": {
+        "DAX query": 140,
+        "Visual display": 20,
+        "Other": 6
+      },
+      "durationMs": 166
+    }
+  ],
+  "note": "Captured on the team test machine, cold cache, Monday 08:55, Import model of 31.4M FactSales rows"
+}

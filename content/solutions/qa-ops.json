@@ -1,0 +1,25 @@
+{
+  "qa-ops-0": {
+    "s": ["COUNTROWS(FactSales) vs the source row count (100).", "MAX(FactSales[OrderDate]) vs the expected data date.", "COUNTROWS(FILTER(FactSales, ISBLANK(FactSales[CustomerKey]))) = 0, likewise for the other keys.", "Dates not in the date table: COUNTROWS(EXCEPT(VALUES(FactSales[ShipDate]), VALUES(DimDate[Date]))) = 0. The course DimDate stops on 31 March, so the April ship date fails: a good reason to replace it.", "Incremental refresh: INFO.PARTITIONS() (or TMSCHEMA_PARTITIONS via XMLA) and compare with the policy."],
+    "code": [
+      { "lang": "DAX", "title": "Post-refresh check query", "src": [
+        "EVALUATE",
+        "{",
+        "    ( \"FactSales rows\", COUNTROWS ( FactSales ), 100 ),",
+        "    ( \"Max OrderDate\", FORMAT ( MAX ( FactSales[OrderDate] ), \"yyyy-mm-dd\" ), \"2026-03-31\" ),",
+        "    ( \"Blank customer keys\", COUNTROWS ( FILTER ( FactSales, ISBLANK ( FactSales[CustomerKey] ) ) ) + 0, 0 ),",
+        "    ( \"Ship dates missing from DimDate\", COUNTROWS ( EXCEPT ( VALUES ( FactSales[ShipDate] ), VALUES ( DimDate[Date] ) ) ) + 0, 0 )",
+        "}"
+      ] }
+    ],
+    "check": "100 rows ✓, max 2026-03-31 ✓, no blank keys ✓, 1 ship date missing from the course DimDate ✗ (fixed by the Beginner date table)."
+  },
+  "qa-ops-1": {
+    "s": ["Budgets: page < 3 s cold, slicer interaction < 1 s, refresh < 30 min, model < 1 GB (pick numbers from the business need and today's baseline).", "Method: same test machine, Performance Analyzer after clearing the cache (or DAX Studio with cleared cache), same data snapshot.", "Gate: page and interaction budgets block release; refresh and size warn and create a ticket. Record results per release so the trend is visible."],
+    "check": "Any budget is fine if it's measurable, measured consistently and enforced at release."
+  },
+  "qa-ops-2": {
+    "s": ["Baseline: SUMMARIZECOLUMNS(Dates[YearMonth], \"Gross\", [Gross Sales], \"Net\", [Net Sales], …) exported to CSV before the change.", "Rerun after the change; diff the two files (Excel or a script).", "Every difference must be expected (in the impact assessment) or it's a regression to investigate before release."],
+    "check": "Only Net-Sales-dependent measures move, by the planned amounts; all other values identical."
+  }
+}

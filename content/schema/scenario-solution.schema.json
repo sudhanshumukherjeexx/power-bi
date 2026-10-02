@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scenario-solution.schema.json",
+  "title": "Experience Mode model answer. Loaded by the browser only when the learner asks for it.",
+  "type": "object",
+  "required": ["summary", "steps", "review"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "summary": { "type": "string" },
+    "root_cause": { "type": "array", "items": { "type": "string" } },
+    "steps": { "type": "array", "items": { "type": "string" } },
+    "numbers": { "type": "object", "required": ["title", "cols", "rows"], "properties": { "title": { "type": "string" }, "cols": { "type": "array" }, "rows": { "type": "array" }, "note": { "type": "string" } } },
+    "tables": { "type": "array", "items": { "type": "object", "required": ["title", "cols", "rows"], "properties": { "title": { "type": "string" }, "cols": { "type": "array" }, "rows": { "type": "array" }, "note": { "type": "string" } } } },
+    "artifacts": { "type": "array", "items": { "type": "object", "required": ["title", "lang", "body"], "properties": { "title": { "type": "string" }, "lang": { "type": "string" }, "body": { "type": "array", "items": { "type": "string" } } } } },
+    "communication": { "type": "object", "properties": { "executive": { "type": "string" }, "engineer": { "type": "string" } } },
+    "review": { "type": "object", "required": ["junior", "competent", "senior", "architect"], "properties": { "junior": { "type": "string" }, "competent": { "type": "string" }, "senior": { "type": "string" }, "architect": { "type": "string" } } },
+    "pitfalls": { "type": "array", "items": { "type": "string" } },
+    "options": { "type": "object", "additionalProperties": { "type": "string" }, "description": "decision scenarios: feedback per option id" }
+  }
+}

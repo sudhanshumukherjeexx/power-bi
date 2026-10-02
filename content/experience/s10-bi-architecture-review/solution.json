@@ -1,0 +1,62 @@
+{
+  "$schema": "../../schema/scenario-solution.schema.json",
+  "summary": "The estate's problem isn't size; it's that most of it has no owner and no agreed definitions. {{s10_zero_view_reports|int}} of {{s10_reports|int}} reports had no views in 90 days, {{s10_no_owner_models|int}} of {{s10_models|int}} models have no owner, {{s10_revenue_models|int}} models define revenue under {{s10_revenue_names|int}} different names, and {{s10_customer_models|int}} models load customers from {{s10_customer_tables|int}} different tables. Meanwhile three models ({{s10_top3_models}}) carry {{s10_top3_view_share|pct0}} of all report views. Recommend a federated model with a small central core: certified shared models for the company's core subjects (on the gold layer from ADR-009), domain workspaces owned by departments, an owner for every item, and a 90-day retirement process. The target in 12 months: every used item has an owner, and certified models serve 80% of views.",
+  "root_cause": [
+    "No ownership rule: anyone can create workspaces and models; {{s10_no_owner_models|int}} models and {{s10_no_owner_reports|int}} reports have no named owner.",
+    "No shared definitions outside the BI team's certified model: {{s10_revenue_names|int}} revenue names, {{s10_customer_tables|int}} customer tables.",
+    "Only {{s10_pipelines|int}} of {{s10_workspaces|int}} workspaces use deployment pipelines; {{s10_failed_refresh|int}} models' last refresh failed with nobody acting on it.",
+    "Endorsement is rare: {{s10_certified|int}} certified, {{s10_unendorsed|int}} models with no endorsement at all."
+  ],
+  "steps": [
+    "Quantify the current state from the three files (table below). Use numbers, not adjectives: \"{{s10_zero_view_reports|int}} reports unused for 90 days\" persuades; \"messy\" doesn't.",
+    "Flag compliance risk first, as Ava asked: models without owners that contain customer, financial or HR data are the top priority for ownership, regardless of usage.",
+    "Follow usage: three models carry {{s10_top3_view_share|pct0}} of views. Make those the consolidation targets and certify them on the gold layer (ADR-009, phase 2). Don't start with the long tail.",
+    "Workspace strategy: domain workspaces per department (Sales, Finance, Operations, Marketing, HR, Supply Chain), each with a named domain owner, separate Dev/Test/Prod for anything certified, personal and test workspaces out of production.",
+    "Governance in one page: roles (domain owner, model owner, BI centre of excellence), three endorsement levels with criteria, \"no owner, no publish\", certified models are the only source for company KPIs.",
+    "Retirement process: owner contacted → 30 days read-only with a banner → archive → delete after 90 days. Check lineage, subscriptions and Analyze in Excel connections before each step.",
+    "Roadmap: Q4 ownership and quick wins (retire unused, fix failed refreshes, assign owners); Q1 consolidate customer and revenue onto certified models; Q2 domains and pipelines for all production workspaces; Q3 measure and adjust.",
+    "Executive page: the three numbers that matter, three decisions for leadership (ownership rule, certified KPIs, funding), the 12-month target and how it will be measured."
+  ],
+  "numbers": {
+    "title": "Current state from the inventory",
+    "cols": ["Measure", "Value"],
+    "rows": [
+      ["Workspaces / semantic models / reports", "{{s10_workspaces|int}} / {{s10_models|int}} / {{s10_reports|int}}"],
+      ["Reports with 0 views in 90 days", "{{s10_zero_view_reports|int}}"],
+      ["Reports with 1–9 views in 90 days", "{{s10_low_view_reports|int}}"],
+      ["Models without an owner", "{{s10_no_owner_models|int}}"],
+      ["Reports without an owner", "{{s10_no_owner_reports|int}}"],
+      ["Models defining revenue / distinct names for it", "{{s10_revenue_models|int}} / {{s10_revenue_names|int}}"],
+      ["Models with a customer table / distinct customer tables", "{{s10_customer_models|int}} / {{s10_customer_tables|int}}"],
+      ["Certified models / models with no endorsement", "{{s10_certified|int}} / {{s10_unendorsed|int}}"],
+      ["Models whose last refresh failed", "{{s10_failed_refresh|int}}"],
+      ["Models with no reports at all", "{{s10_models_no_reports|int}}"],
+      ["Workspaces using deployment pipelines", "{{s10_pipelines|int}}"],
+      ["Share of views on the top 3 models", "{{s10_top3_view_share|pct0}}"]
+    ]
+  },
+  "artifacts": [
+    { "title": "One-page recommendation for the offsite", "lang": "md", "body": [
+      "**Where we are.** We have {{s10_reports|int}} reports and {{s10_models|int}} data models. {{s10_zero_view_reports|int}} reports weren't opened in three months, {{s10_no_owner_models|int}} models have nobody responsible for them, and \"revenue\" is defined {{s10_revenue_models|int}} times under {{s10_revenue_names|int}} names. People don't know which numbers to trust because nothing says which ones are official.",
+      "**Where we should be in 12 months.** Every report and model in use has a named owner. Company KPIs come only from certified models. 80% of report views come from certified models (today: the top three models carry {{s10_top3_view_share|pct0}} of views, so this is achievable). Unused content is retired through a 90-day process.",
+      "**What we ask you to decide.** (1) A rule: no owner, no publishing. (2) Company KPIs are defined once, owned by the business, and served only from certified models. (3) Fund the plan: the BI team's time for consolidation in Q4–Q1, and department owners' time to review their content.",
+      "**How we'll measure it.** Owned items %, certified share of views, number of revenue definitions, failed refreshes per month, reported quarterly."
+    ] }
+  ],
+  "communication": {
+    "executive": "We don't have a technology problem; we have an ownership problem. Most of what people actually use comes from three models, so we can fix trust quickly by making those official and giving everything else an owner or an exit. We need three decisions from you today.",
+    "engineer": "Federated domains with a central core: certified shared models on the OneLake gold layer (ADR-009), domain workspaces with Dev/Test/Prod and pipelines for certified content, endorsement criteria, ownership metadata required, lineage- and usage-driven retirement (read-only 30 days, archive, delete at 90)."
+  },
+  "pitfalls": [
+    "Deleting the {{s10_zero_view_reports|int}} unused reports in week one. Some feed subscriptions, paginated reports or Excel files that usage metrics don't show.",
+    "Centralising everything in the BI team. It becomes the bottleneck and departments create shadow BI again.",
+    "A long governance framework. If it doesn't fit on a page, it won't be followed.",
+    "Ignoring ADR-009: a consolidation plan that loads every model from source again undoes the platform decision."
+  ],
+  "review": {
+    "junior": "Lists everything that is wrong and proposes deleting unused reports.",
+    "competent": "Quantifies the problems and proposes consolidating the duplicated models.",
+    "senior": "Quantifies, follows usage, flags compliance risk, proposes a retirement process that checks dependencies and a workspace strategy, with a phased roadmap.",
+    "architect": "Frames it as ownership and trust, aligns with ADR-009, proposes federated governance that fits on a page, asks leadership for three specific decisions and sets measurable 12-month targets."
+  }
+}

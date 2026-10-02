@@ -1,0 +1,13 @@
+Table,Column,Cardinality,TotalSizeMB,DataType,Encoding
+FactSales,OrderTimestamp,31298411,1312.4,DateTime,VALUE
+FactSales,SalesKey,31400000,402.1,Int64,VALUE
+FactSales,OrderID,12950000,288.7,String,HASH
+FactSales,NetAmount,2875302,61,Decimal,HASH
+FactSales,CustomerKey,410233,38.2,Int64,HASH
+FactSales,OrderDate,1182,9.1,DateTime,HASH
+FactSales,ProductKey,24,3.4,Int64,HASH
+FactSales,Channel,5,1.2,String,HASH
+FactSales,Qty,48,2.8,Int64,HASH
+DimCustomer,CustomerKey,410233,6.2,Int64,VALUE
+DimCustomer,CustomerName,389114,14.9,String,HASH
+DimCustomer,Segment,3,0.1,String,HASH

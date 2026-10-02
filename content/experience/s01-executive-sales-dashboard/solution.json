@@ -1,0 +1,110 @@
+{
+  "$schema": "../../schema/scenario-solution.schema.json",
+  "summary": "Growth is real for the quarter but collapsing month by month. Q1 2026 net sales were {{q1_2026_net|money0}} against {{q1_2025_net|money0}} a year earlier ({{yoy_net|spct1}}), not the {{naive_growth|spct1}} the raw export suggests. January was {{yoy_jan|spct1}} year on year, February {{yoy_feb|spct1}} and March {{yoy_mar|spct1}}. Most of the slowdown comes from Summit Outfitters Co., the largest wholesale account, which placed its last order on {{summit_last_order|date}}, and from Drift Paddle Board returns. The new Marketplace channel ({{gross_q1_2026_marketplace|money0}}) hides part of the decline.",
+  "root_cause": [
+    "The {{s01_raw|money0}} in the email is a raw sum of the export. It double-counts {{s01_dup_lines|int}} order lines that the March re-run exported twice ({{s01_bridge_dup|money0}}), includes {{s01_cancel_lines|int}} lines on cancelled orders ({{s01_bridge_cancel|money0}}) and a test customer's orders ({{s01_bridge_test|money0}}).",
+    "Last year's deck number ({{naive_q1_2025|money0}}) was built the same naive way, so comparing the two was comparing two wrong numbers.",
+    "Summit Outfitters Co. bought {{summit_q1_2025|money0}} in Q1 2025 and {{summit_q1_2026|money0}} in Q1 2026, all of it before {{summit_last_order|date}}: {{summit_drop|money0}} less. Wholesale excluding Summit changed by {{wholesale_ex_summit_change|smoney0}}.",
+    "Drift Paddle Board has a quality problem: {{drift_returned_q1_2026|int}} of {{drift_units_q1_2026|int}} units sold in Q1 2026 have already come back ({{drift_return_rate_2026|pct0}}), refunds {{drift_refunds_q1_2026|money0}}, against {{drift_refunds_q1_2025|money0}} in Q1 2025."
+  ],
+  "steps": [
+    "Ask before building: which date (order or ledger posting), before or after discounts, before or after returns, in which currency, and should cancelled orders count. Write your defaults down and send them to Jordan on Friday night, so silence on Monday means agreement.",
+    "Count first. order_lines.csv has {{rows_lines_exported|int}} rows but only {{rows_lines|int}} distinct (OrderID, LineNo) pairs. All the duplicates are in March, exactly when Kenji's job was re-run.",
+    "Profile Status and CustomerName: {{cancelled_total|int}} cancelled orders in the file and a customer called \"TEST ACCOUNT - DO NOT USE\" with {{test_orders|int}} orders.",
+    "Model: FactSales at order-line grain (deduplicated, Completed only, test account removed), plus DimDate, DimCustomer, DimProduct, DimChannel, DimRegion. Convert euros in Power Query with the month's rate so every measure is in USD.",
+    "Agreed definitions: Gross Sales = quantity × unit price × (1 − discount), in USD, by order date. Net Sales = Gross Sales minus refunds on those orders. Growth = Net Sales against the same months last year.",
+    "Reconcile the raw file to the model before showing anyone a number (table below). If the adjustments don't sum exactly, you have another problem you haven't found.",
+    "Decompose: by month first (the trend), then by channel (wholesale and the new marketplace), then by customer (Summit) and by product (Drift returns).",
+    "Write the summary in business terms, then build the one page that proves it: a monthly YoY line, a channel bridge, and the top customer and product movements."
+  ],
+  "numbers": {
+    "title": "Reconciliation: raw export to reported Q1 2026 sales",
+    "cols": ["Step", "Lines", "USD"],
+    "rows": [
+      ["Raw export, Q1 2026 order dates", "{{s01_raw_lines|int}}", "{{s01_raw|money0}}"],
+      ["− lines exported twice (March re-run)", "−{{s01_dup_lines|int}}", "{{s01_bridge_dup|money0}}"],
+      ["− cancelled orders", "−{{s01_cancel_lines|int}}", "{{s01_bridge_cancel|money0}}"],
+      ["− test account", "−{{s01_test_lines|int}}", "{{s01_bridge_test|money0}}"],
+      ["= Gross Sales (after discount)", "{{s01_clean_lines|int}}", "{{q1_2026_gross|money0}}"],
+      ["− refunds on Q1 orders (to 10 Apr)", "", "−{{q1_2026_refunds|money0}}"],
+      ["= Net Sales", "", "{{q1_2026_net|money0}}"]
+    ],
+    "note": "{{s01_eur_lines|int}} of the clean lines are in EUR and are converted at each order month's average rate."
+  },
+  "tables": [
+    {
+      "title": "The trend the quarter total hides",
+      "cols": ["Month", "Net Sales 2025", "Net Sales 2026", "YoY"],
+      "rows": [
+        ["January", "{{net_2025_jan|money0}}", "{{net_2026_jan|money0}}", "{{yoy_jan|spct1}}"],
+        ["February", "{{net_2025_feb|money0}}", "{{net_2026_feb|money0}}", "{{yoy_feb|spct1}}"],
+        ["March", "{{net_2025_mar|money0}}", "{{net_2026_mar|money0}}", "{{yoy_mar|spct1}}"],
+        ["Q1", "{{q1_2025_net|money0}}", "{{q1_2026_net|money0}}", "{{yoy_net|spct1}}"]
+      ]
+    },
+    {
+      "title": "Gross Sales by channel, Q1",
+      "cols": ["Channel", "2025", "2026"],
+      "rows": [
+        ["Online", "{{gross_q1_2025_online|money0}}", "{{gross_q1_2026_online|money0}}"],
+        ["Store", "{{gross_q1_2025_store|money0}}", "{{gross_q1_2026_store|money0}}"],
+        ["Wholesale", "{{gross_q1_2025_wholesale|money0}}", "{{gross_q1_2026_wholesale|money0}}"],
+        ["… of which Summit Outfitters Co.", "{{summit_q1_2025|money0}}", "{{summit_q1_2026|money0}}"],
+        ["Marketplace (launched Jul 2025)", "{{gross_q1_2025_marketplace|money0}}", "{{gross_q1_2026_marketplace|money0}}"],
+        ["Staff purchases", "{{gross_q1_2025_staff|money0}}", "{{gross_q1_2026_staff|money0}}"]
+      ],
+      "note": "Wholesale still grew for the quarter because Summit placed large orders in January. From February it is gone, which is exactly the monthly trend above."
+    }
+  ],
+  "artifacts": [
+    { "title": "Power Query: clean order lines", "lang": "M", "body": [
+      "let",
+      "    Lines   = Csv.Document(File.Contents(DataFolder & \"order_lines.csv\"), [Delimiter = \",\", Encoding = 65001]),",
+      "    Promoted = Table.PromoteHeaders(Lines, [PromoteAllScalars = true]),",
+      "    Typed   = Table.TransformColumnTypes(Promoted, {{\"LineNo\", Int64.Type}, {\"ProductKey\", Int64.Type}, {\"Qty\", Int64.Type}, {\"UnitPrice\", Currency.Type}, {\"DiscountPct\", Int64.Type}}, \"en-US\"),",
+      "    // The March re-run exported some lines twice: a line is identified by OrderID + LineNo",
+      "    Distinct = Table.Distinct(Typed, {\"OrderID\", \"LineNo\"}),",
+      "    WithOrder = Table.NestedJoin(Distinct, {\"OrderID\"}, Orders, {\"OrderID\"}, \"o\", JoinKind.Inner),",
+      "    Expanded = Table.ExpandTableColumn(WithOrder, \"o\", {\"OrderDate\", \"CustomerID\", \"Channel\", \"SalesRegionKey\", \"Currency\", \"Status\"}),",
+      "    Completed = Table.SelectRows(Expanded, each [Status] = \"Completed\" and [CustomerID] <> \"C19999\"),",
+      "    WithMonth = Table.AddColumn(Completed, \"Month\", each Date.ToText([OrderDate], \"yyyy-MM\"), type text),",
+      "    WithRate = Table.NestedJoin(WithMonth, {\"Month\", \"Currency\"}, Fx, {\"Month\", \"Currency\"}, \"fx\", JoinKind.LeftOuter),",
+      "    Rate = Table.AddColumn(WithRate, \"USDPerUnit\", each if [Currency] = \"USD\" then 1 else [fx]{0}[USDPerUnit], type number),",
+      "    GrossUSD = Table.AddColumn(Rate, \"GrossUSD\", each Number.Round([Qty] * [UnitPrice] * (100 - [DiscountPct]) / 100 * [USDPerUnit], 2), Currency.Type)",
+      "in",
+      "    Table.RemoveColumns(GrossUSD, {\"fx\", \"Status\"})"
+    ] },
+    { "title": "DAX: the agreed measures", "lang": "DAX", "body": [
+      "Gross Sales = SUM ( FactSales[GrossUSD] )",
+      "",
+      "Refunds = SUM ( FactReturns[RefundUSD] )   -- returns related to the original order line, so they follow its order date",
+      "",
+      "Net Sales = [Gross Sales] - [Refunds]",
+      "",
+      "Net Sales LY = CALCULATE ( [Net Sales], SAMEPERIODLASTYEAR ( DimDate[Date] ) )",
+      "",
+      "Net Sales YoY % = DIVIDE ( [Net Sales] - [Net Sales LY], [Net Sales LY] )"
+    ] },
+    { "title": "Executive summary (the slide)", "lang": "md", "body": [
+      "**Q1 net sales grew {{yoy_net|spct1}}, but growth fell every month: {{yoy_jan|spct1}} in January, {{yoy_feb|spct1}} in February, {{yoy_mar|spct1}} in March.**",
+      "Two causes explain most of it: our largest wholesale customer, Summit Outfitters, stopped ordering in early February, and a quality problem on the Drift Paddle Board is driving returns ({{drift_return_rate_2026|pct0}} of units sold).",
+      "Q2 will start below last year unless we recover Summit or replace that volume, and we should stop selling the current Drift batch until the defect is understood."
+    ] }
+  ],
+  "communication": {
+    "executive": "Growth is slowing sharply. January was strong, March was below last year. One big wholesale customer stopping and one faulty product explain most of it. The new marketplace makes the quarter look better than the trend is.",
+    "engineer": "The export has 37 duplicate (OrderID, LineNo) pairs from the March re-run, cancelled orders and a test customer; the email's figure sums all of them. After dedupe, Completed-only and excluding C19999, with EUR converted at the monthly rate, Net Sales YoY by month is {{yoy_jan|spct1}} / {{yoy_feb|spct1}} / {{yoy_mar|spct1}}. Please add a uniqueness check on (OrderID, LineNo) to the export job."
+  },
+  "pitfalls": [
+    "Summing the raw export. Every naive total in this scenario is wrong, and in the same direction.",
+    "Reporting the quarter only. The quarter is up; the trend is down. Leadership needs the trend.",
+    "Adding EUR and USD together. Europe is about one order in ten.",
+    "Using the posting date because it is there. Sales and Finance use different dates; that is next week's ticket."
+  ],
+  "review": {
+    "junior": "Loads the CSVs, sums UnitPrice × Qty, reports {{s01_raw|money0}} and {{naive_growth|spct1}} growth, and builds a nice-looking page with the wrong number.",
+    "competent": "Notices duplicates or cancelled orders, defines Net Sales, converts currency, finds that March is negative and that wholesale is the issue.",
+    "senior": "Counts before summing, reconciles raw to reported exactly, separates trend from total, quantifies Summit and Drift separately, writes the assumptions down and sends them to Jordan before the weekend, and asks Kenji to fix the export with a uniqueness test.",
+    "architect": "Asks why a VP needs a BI developer on a Friday night to get a trustworthy quarterly number: proposes a certified sales model with agreed definitions and automated data-quality checks on the extract, so this never depends on one person again."
+  }
+}

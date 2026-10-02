@@ -1,0 +1,14 @@
+{
+  "id": "warehousing",
+  "kind": "track",
+  "order": 2,
+  "cls": "dw",
+  "name": "Data warehousing patterns",
+  "tag": "Track",
+  "tagline": "Surrogate keys, slowly changing dimensions, fact table types, role-playing and junk dimensions, calendars, time zones and currencies.",
+  "seo": "Data warehousing patterns for Power BI developers: SCD type 2, unknown members, early-arriving facts, accumulating and periodic snapshots, role-playing and junk dimensions, 4-4-5 calendars, time zones and multi-currency, with checked answers.",
+  "intro": "The patterns behind every good star schema, practised on Northwind data with SQL and Power BI. These are the ideas that make the difference between a model that answers today's question and one that still answers next year's: history that doesn't rewrite itself, facts at the right grain, and dates, time zones and currencies handled on purpose.",
+  "setup": "Use the company pack plus the files in data/tracks/warehousing (customer_changes, early_orders, order_events, web_sessions_local). Any SQL engine works; the model answers are portable SQL tested in CI.",
+  "stage": "engineer",
+  "topics": ["dw-keys", "dw-facts", "dw-dims", "dw-time"]
+}

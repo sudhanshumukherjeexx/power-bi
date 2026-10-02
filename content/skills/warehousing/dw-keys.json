@@ -1,0 +1,58 @@
+{
+  "id": "dw-keys",
+  "name": "Keys and slowly changing dimensions",
+  "ds": ["CustomerChanges", "EarlyOrders", "NWCustomers"],
+  "skills": ["warehousing", "sql", "modeling"],
+  "stage": "engineer",
+  "why": {
+    "matters": "Customers change segment, tier and region. Without history, last year's sales are silently re-attributed to this year's segment, and reports can't be reproduced.",
+    "failure": "A customer moves from Bronze to Gold and every historical sale jumps into the Gold row: Gold looks like it grew 40% last year when nothing happened.",
+    "use": "SCD type 2 (new row per change, valid-from/valid-to) for attributes people analyse over time; type 1 (overwrite) for corrections; surrogate keys so versions can coexist.",
+    "avoid": "Type 2 on everything. Tracking history on phone numbers or typos bloats the dimension and confuses users."
+  },
+  "verified": { "date": "2026-10-01", "context": "Kimball dimensional modeling techniques; portable SQL tested on SQLite in CI", "review_after_days": 365 },
+  "refs": [
+    { "title": "Star schema guidance for Power BI (slowly changing dimensions)", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/star-schema" },
+    { "title": "Dimensional modeling in Fabric Data Warehouse: dimension tables", "url": "https://learn.microsoft.com/en-us/fabric/data-warehouse/dimensional-modeling-dimension-tables" }
+  ],
+  "asg": [
+    {
+      "t": "Build an SCD type 2 customer dimension",
+      "time": "50 min",
+      "ds": "customer_changes",
+      "guidance": "B",
+      "brief": "The CRM sends a change feed: one row per customer per effective change. Build dim_customer with full history so sales can be analysed by the segment and tier the customer had at the time.",
+      "req": ["A surrogate key, the natural key (CustomerID), the tracked attributes, ValidFrom, ValidTo and IsCurrent.", "Remove exact duplicate feed rows.", "Don't create a new version when the CRM sends a \"change\" in which nothing tracked actually changed.", "Report the counts."],
+      "exp": "{{dw_change_rows|int}} feed rows → {{dw_duplicate_changes|int}} exact duplicate and {{dw_noop_changes|int}} no-op changes removed → {{dw_scd2_rows|int}} versions for {{dw_customers|int}} customers ({{dw_current_rows|int}} current, {{dw_historical_rows|int}} historical); {{dw_customers_with_history|int}} customers have more than one version."
+    },
+    {
+      "t": "Which version was true on that day?",
+      "time": "30 min",
+      "ds": "customer_changes, orders",
+      "guidance": "B",
+      "brief": "Attach each order to the customer version that was valid on the order date, so sales by tier reflect the tier at the time.",
+      "req": ["Point-in-time join: OrderDate >= ValidFrom AND OrderDate < ValidTo.", "Show the versions of customer {{dw_example_customer}}.", "Decide, per attribute, whether it should be type 1 or type 2."],
+      "exp": "{{dw_example_customer}} has {{dw_example_versions|int}} versions: from {{dw_example_first_tier}} to {{dw_example_current_tier}}, latest change on {{dw_example_last_change}}. Orders before that date keep the earlier tier."
+    },
+    {
+      "t": "Orders for customers who don't exist yet",
+      "time": "40 min",
+      "ds": "early_orders, customer_changes",
+      "guidance": "C",
+      "brief": "Four orders arrived for customers the CRM hasn't sent yet. Last night's load dropped them because the join to dim_customer failed. Fix the design so no fact row is ever lost, and say what happens when the customer arrives later.",
+      "req": ["Never drop a fact row because a dimension row is missing.", "Distinguish \"unknown\" from \"not yet arrived\".", "Show which of the four orders can be resolved once the CRM catches up."],
+      "exp": "{{dw_early_orders|int}} early orders: {{dw_early_resolved|int}} resolve when their customer arrives (inferred members, updated later); {{dw_early_unknown|int}} never appears in the feed and stays on the Unknown member until someone investigates."
+    }
+  ],
+  "int": [
+    { "q": "Surrogate key vs natural key?", "a": "The natural key comes from the source (CustomerID). A surrogate key is a meaningless integer the warehouse assigns. With SCD type 2 one customer has several rows, so the natural key isn't unique; the surrogate key is, and facts point to the version valid at the time. Surrogate keys also protect you from source key changes and mixed sources." },
+    { "q": "SCD type 1 vs type 2?", "a": "Type 1 overwrites the attribute: history is lost, which is right for corrections (a misspelt name). Type 2 adds a new row with validity dates: history is kept, which is right for attributes analysed over time (segment, region, tier). Many dimensions mix both per column." },
+    { "q": "What is an unknown member and why add one?", "a": "A dimension row (often key -1, \"Unknown\") that facts point to when their dimension key is missing or invalid. Facts are never dropped, totals stay complete, and the unknown row makes data quality problems visible in reports." },
+    { "q": "Early-arriving fact vs late-arriving dimension?", "a": "Two names for the same situation: a fact references a dimension member the warehouse doesn't have yet. Create an inferred member (natural key only, attributes \"pending\"), point the fact to it, and update it when the real dimension row arrives." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "A customer changes from Bronze to Gold on 1 March. With SCD type 2, a February order is reported under:", "o": ["Gold", "Bronze", "Both", "Unknown"], "a": 1, "why": "The fact points to the version valid on the order date." },
+    { "type": "mcq", "q": "Why use a surrogate key instead of CustomerID in a type 2 dimension?", "o": ["It's shorter", "CustomerID isn't unique once a customer has several versions", "Power BI requires integers", "It hides personal data"], "a": 1, "why": "Each version needs its own key." },
+    { "type": "task", "q": "In Power BI, relate FactSales to the type 2 dim_customer and build a matrix of sales by LoyaltyTier for 2025 and 2026. Then build the same with only the current version. Explain the difference to a sales manager.", "hint": "Join facts on the surrogate key for history; use a separate \"current customer\" view (or the IsCurrent filter on a type 1 copy) for \"as is today\" analysis." }
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "a-dax-0": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Semi-additive stock",
+        "src": [
+          "Stock On Hand =",
+          "CALCULATE (",
+          "    SUM ( FactInventory[QuantityOnHand] ),",
+          "    LASTNONBLANK ( Dates[Date], CALCULATE ( SUM ( FactInventory[QuantityOnHand] ) ) )",
+          ")",
+          "",
+          "Below Reorder =",
+          "COUNTROWS (",
+          "    FILTER (",
+          "        VALUES ( DimProduct[ProductKey] ),",
+          "        [Stock On Hand] < CALCULATE ( MAX ( FactInventory[ReorderPoint] ) )",
+          "    )",
+          ")"
+        ]
+      }
+    ],
+    "check": "Stock On Hand: Jan 725 (snapshot 25 Jan), Feb 516 (22 Feb), Mar 682 (8 Mar). The plain sum would be 5,791. Below Reorder at month end: Jan 1 (Hydro Filter Bottle, 21 vs 30), Feb 1 (Ridge Runner Boots, 1 vs 30), Mar 0.",
+    "note": "FactInventory[SnapshotDate] must be related to Dates[Date]. The kayak and board have a reorder point of 5 and never finish a month below it, so a test that only checks those two would pass for the wrong reason."
+  },
+  "a-dax-1": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Calculation items of \"Time Calc\"",
+        "src": [
+          "-- Current",
+          "SELECTEDMEASURE ()",
+          "",
+          "-- PM",
+          "CALCULATE ( SELECTEDMEASURE (), DATEADD ( Dates[Date], -1, MONTH ) )",
+          "",
+          "-- MoM %   (Format string expression: \"0.0%\")",
+          "VAR cur = SELECTEDMEASURE ()",
+          "VAR prev = CALCULATE ( SELECTEDMEASURE (), DATEADD ( Dates[Date], -1, MONTH ) )",
+          "RETURN DIVIDE ( cur - prev, prev )",
+          "",
+          "-- MTD",
+          "CALCULATE ( SELECTEDMEASURE (), DATESMTD ( Dates[Date] ) )",
+          "",
+          "-- Format string expression for Current, PM, MTD",
+          "SELECTEDMEASUREFORMATSTRING ()"
+        ]
+      }
+    ],
+    "s": [
+      "Tabular Editor 2 (External tools) → right-click Tables → Create New → Calculation Group. Or, in recent Desktop versions, Model view → Calculation group.",
+      "Add the items above in the order Current, PM, MoM %, MTD (Ordinal 0–3). Ctrl+S saves back to Desktop → Refresh now."
+    ],
+    "check": "Matrix: Category × Time Calc with Net Sales, then Orders. MoM % shows a %, the others keep $ or whole-number formats.",
+    "note": "Creating a calculation group turns on \"Discourage implicit measures\". Dragged-in columns stop summing, so use explicit measures only."
+  },
+  "a-dax-2": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Currency table (disconnected) and the \"Selected\" calculation item",
+        "src": [
+          "Currency = DATATABLE ( \"Code\", STRING, { { \"USD\" }, { \"EUR\" }, { \"GBP\" }, { \"CAD\" } } )",
+          "",
+          "-- Calculation group \"Currency\", item \"Selected\"",
+          "VAR c = SELECTEDVALUE ( Currency[Code], \"USD\" )",
+          "RETURN",
+          "    IF (",
+          "        c = \"USD\" || NOT ISSELECTEDMEASURE ( [Net Sales], [Gross Sales], [COGS] ),",
+          "        SELECTEDMEASURE (),",
+          "        SUMX (",
+          "            VALUES ( Dates[Date] ),",
+          "            VAR d = Dates[Date]",
+          "            VAR rateDate =",
+          "                COALESCE (",
+          "                    CALCULATE ( MAX ( ExchangeRates[RateDate] ), REMOVEFILTERS ( Dates ), ExchangeRates[Currency] = c, ExchangeRates[RateDate] <= d ),",
+          "                    CALCULATE ( MIN ( ExchangeRates[RateDate] ), REMOVEFILTERS ( Dates ), ExchangeRates[Currency] = c )",
+          "                )",
+          "            VAR r = CALCULATE ( MAX ( ExchangeRates[RateToUSD] ), REMOVEFILTERS ( Dates ), ExchangeRates[Currency] = c, ExchangeRates[RateDate] = rateDate )",
+          "            RETURN DIVIDE ( CALCULATE ( SELECTEDMEASURE () ), r )",
+          "        )",
+          "    )"
+        ]
+      }
+    ],
+    "check": "January Net Sales in EUR, converted per day = €10,905.83. Converting the January total ($11,573.97) once at the last January rate = €10,957.09. Per-day conversion is correct: each sale is converted at the rate that applied when it happened.",
+    "note": "The rate logic is written inline instead of calling a [Rate] measure. A measure referenced inside a calculation item gets the calculation item applied to it too (sideways recursion). ISSELECTEDMEASURE stops Orders or Margin % from being \"converted\"."
+  },
+  "a-dax-3": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Virtual relationship and CROSSFILTER",
+        "src": [
+          "Budget via TREATAS =",
+          "CALCULATE (",
+          "    SUM ( FactBudget[BudgetAmount] ),",
+          "    TREATAS ( VALUES ( DimProduct[Category] ), FactBudget[Category] ),",
+          "    TREATAS ( VALUES ( Dates[YearMonth] ), FactBudget[YearMonth] )",
+          ")",
+          "",
+          "-- count customers who bought the products in the current filter",
+          "Customers Buying Selected =",
+          "CALCULATE (",
+          "    DISTINCTCOUNT ( DimCustomer[CustomerKey] ),",
+          "    CROSSFILTER ( FactSales[CustomerKey], DimCustomer[CustomerKey], BOTH )",
+          ")"
+        ]
+      }
+    ],
+    "check": "Budget via TREATAS = $112,710 at the total and equals the relationship-based Budget in every Category × Month cell."
+  },
+  "a-dax-4": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "ABC classification, running total, previous row, rank",
+        "src": [
+          "Customer ABC Class =",
+          "VAR t = ADDCOLUMNS ( ALLSELECTED ( DimCustomer[CustomerKey] ), \"@s\", [Net Sales] )",
+          "VAR total = SUMX ( t, [@s] )",
+          "VAR cur = [Net Sales]",
+          "VAR cum = SUMX ( FILTER ( t, [@s] >= cur ), [@s] )",
+          "RETURN",
+          "    SWITCH ( TRUE (), DIVIDE ( cum, total ) <= 0.7, \"A\", DIVIDE ( cum, total ) <= 0.9, \"B\", \"C\" )",
+          "",
+          "Running Sales =",
+          "CALCULATE (",
+          "    [Net Sales],",
+          "    WINDOW ( 1, ABS, 0, REL, ALLSELECTED ( DimCustomer[CustomerName] ), ORDERBY ( [Net Sales], DESC ) )",
+          ")",
+          "",
+          "Prev Customer Sales =",
+          "CALCULATE (",
+          "    [Net Sales],",
+          "    OFFSET ( -1, ALLSELECTED ( DimCustomer[CustomerName] ), ORDERBY ( [Net Sales], DESC ) )",
+          ")",
+          "",
+          "Customer Position = RANK ( DENSE, ALLSELECTED ( DimCustomer[CustomerName] ), ORDERBY ( [Net Sales], DESC ) )"
+        ]
+      }
+    ],
+    "check": "26 buying customers: 7 A, 8 B, 11 C. Running Sales on the last row = $33,391.13.",
+    "note": "Customers with no sales still appear in the table, because Running Sales isn't blank for them. Wrap the measure in IF ( NOT ISBLANK ( [Net Sales] ), … ) to hide them. Older Power BI versions may reject a measure inside ORDERBY: add it as a column first (ADDCOLUMNS(..., \"@s\", [Net Sales])) and order by [@s]. WINDOW locates the current row inside the relation you pass. A FILTER that can remove the current row leaves WINDOW with nothing to anchor on, so filter the result, not the relation."
+  }
+}

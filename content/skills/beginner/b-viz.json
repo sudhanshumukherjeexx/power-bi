@@ -1,0 +1,143 @@
+{
+  "id": "b-viz",
+  "name": "Visualisation and report design",
+  "ds": [
+    "FactSales",
+    "DimProduct",
+    "DimCustomer",
+    "DimRegion"
+  ],
+  "skills": [
+    "visuals",
+    "communication"
+  ],
+  "stage": "analyst",
+  "refs": [
+    {
+      "title": "Tips for designing a great report",
+      "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-tips-and-tricks-for-creating-reports"
+    },
+    {
+      "title": "Conditional formatting in tables",
+      "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-conditional-table-formatting"
+    }
+  ],
+  "asg": [
+    {
+      "t": "The one-page executive summary",
+      "time": "45 min",
+      "ds": "Full star",
+      "guidance": "A",
+      "steps": [
+        "Page size 16:9. Add a title, four cards (Net Sales, Orders, Margin %, Customers Buying), a column chart Net Sales by MonthName, a bar chart Net Sales by Category sorted descending, a map or filled map by State, and a slicer for RegionName.",
+        "Use one accent colour for the \"good\" series and grey for everything else. No more than two font sizes besides the title.",
+        "Enable \"Edit interactions\" and make the category bar chart cross-highlight the month chart but not filter the cards.",
+        "Add a page-level filter Line Type = Sale, and a card that shows Return count using CALCULATE with REMOVEFILTERS on that column."
+      ],
+      "exp": "A colleague can answer \"which region is behind?\" within 5 seconds of looking at the page."
+    },
+    {
+      "t": "Conditional formatting that means something",
+      "time": "20 min",
+      "ds": "Full star",
+      "guidance": "A",
+      "steps": [
+        "Table: ProductName, Net Sales, Margin %.",
+        "Margin %: background colour rules → red below 40%, amber 40–55%, green above 55%.",
+        "Net Sales: data bars.",
+        "Add an icon set on Margin % using the same thresholds. Then remove the data bars: a table with three formats is noise."
+      ],
+      "exp": "Discontinued products cluster in the red/amber bands."
+    },
+    {
+      "t": "Slicer behaviour",
+      "time": "15 min",
+      "ds": "Full star",
+      "guidance": "A",
+      "steps": [
+        "Add a Category slicer (list), a Date slicer (between), a LoyaltyTier slicer (dropdown, multi-select with Ctrl off).",
+        "Sync the Category slicer to a second page via View → Sync slicers.",
+        "Add a \"Clear all slicers\" button using a bookmark with slicers reset."
+      ],
+      "exp": "Changing Category on page 1 changes page 2; clicking the button resets both."
+    },
+    {
+      "t": "Matrix mastery",
+      "time": "20 min",
+      "ds": "Full star",
+      "guidance": "A",
+      "steps": [
+        "Matrix rows: Category → SubCategory, columns: MonthName, values: Net Sales.",
+        "Turn on stepped layout off, subtotals per level, expand all one level down.",
+        "Add Margin % as a second value and switch \"Show on rows\" so values stack vertically.",
+        "Apply conditional formatting to only Net Sales, not to subtotals (there is a toggle)."
+      ],
+      "exp": "Matrix reads like a financial statement, not a spreadsheet dump."
+    }
+  ],
+  "int": [
+    {
+      "q": "When is a pie chart acceptable?",
+      "a": "Two to three parts of one whole, when the message is \"A is roughly half\". Anything else is a bar chart. Donuts add nothing except space for a number."
+    },
+    {
+      "q": "What is the difference between cross-filter and cross-highlight?",
+      "a": "Cross-highlight keeps all bars and dims the unselected part; cross-filter removes unselected data entirely. Highlight is better for \"share of\", filter for \"drill into\"."
+    },
+    {
+      "q": "How do you make a report load faster from the visual side alone?",
+      "a": "Fewer visuals per page (each is at least one query), no slicers with thousands of values, avoid tables with 20 columns of measures, turn off unnecessary interactions, use a Top N filter instead of showing every product."
+    },
+    {
+      "q": "Why should you avoid implicit measures (dragging a numeric column onto a visual)?",
+      "a": "The aggregation is decided per visual and can silently be wrong (Sum of UnitPrice), you cannot reference it from other measures, and it breaks with calculation groups."
+    },
+    {
+      "q": "A stakeholder asks for a \"dashboard\". What do you ask before you build?",
+      "a": "Who looks at it, how often, which decision does it drive, which single number matters most, and what is the definition of that number (net or gross, returns included or not). Then confirm the definition in writing."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "You want the total row of a table to show \"Total\" instead of blank in the first column. Where?",
+      "o": [
+        "Format the column",
+        "Format visual → Totals → Row label",
+        "Write a measure",
+        "Not possible"
+      ],
+      "a": 1,
+      "why": "Totals settings include a row label option."
+    },
+    {
+      "type": "mcq",
+      "q": "A visual shows 24 products but the stakeholder wants the top 5 by Net Sales. Best approach:",
+      "o": [
+        "Sort descending and hope",
+        "Visual-level filter Top N on ProductName by Net Sales",
+        "Calculated column IsTop5",
+        "Filter the query in Power Query"
+      ],
+      "a": 1,
+      "why": "Top N is dynamic and respects other filters."
+    },
+    {
+      "type": "task",
+      "q": "Build the executive summary page. Add a Bookmark called \"Water only\" that pre-selects Category = Water and shows a hidden text box saying \"Water category view\". Attach it to a button.",
+      "hint": "Bookmark must be set with Data on and the Selection pane used to hide the text box in the default state."
+    },
+    {
+      "type": "mcq",
+      "q": "Which visual best shows Net Sales this month versus last month for 4 regions?",
+      "o": [
+        "Pie",
+        "Clustered bar",
+        "Stacked bar",
+        "Gauge"
+      ],
+      "a": 1,
+      "why": "Clustered bars allow direct comparison of two values per category."
+    }
+  ]
+}

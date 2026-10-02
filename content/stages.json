@@ -1,0 +1,52 @@
+[
+  {
+    "id": "analyst",
+    "n": 1,
+    "name": "Data Analyst",
+    "question": "Can you ship a correct report?",
+    "challenge": "messy data → reliable model → validated dashboard",
+    "summary": "You turn a business question and a messy export into a model and a report that a manager can trust. Correctness beats polish.",
+    "skills": ["power-query", "modeling", "dax", "visuals", "testing", "communication"],
+    "modules": ["beginner"]
+  },
+  {
+    "id": "developer",
+    "n": 2,
+    "name": "BI Developer",
+    "question": "Can other people safely build on your work?",
+    "challenge": "individual report → reusable organizational BI asset",
+    "summary": "Your model becomes something other people depend on: shared, secured, refreshed on a schedule and documented well enough that nobody has to ask you.",
+    "skills": ["modeling", "dax", "security", "service", "power-query", "governance"],
+    "modules": ["intermediate"]
+  },
+  {
+    "id": "senior",
+    "n": 3,
+    "name": "Senior BI Developer",
+    "question": "Can you diagnose and fix what breaks?",
+    "challenge": "symptom → evidence → root cause → fix → prevention",
+    "summary": "Things go wrong in production: slow reports, numbers that disagree, refreshes that fail. You find the cause with evidence, fix it and stop it coming back.",
+    "skills": ["performance", "dax", "testing", "sql", "communication"],
+    "modules": ["advanced"]
+  },
+  {
+    "id": "engineer",
+    "n": 4,
+    "name": "BI Engineer",
+    "question": "Can you ship BI changes safely at scale?",
+    "challenge": "change → review → validate → deploy → observe → roll back if needed",
+    "summary": "Changes go through Git, review, automated checks and promotion between environments. You can deploy on a Friday because you can roll back.",
+    "skills": ["deployment", "testing", "automation", "sql", "warehousing", "fabric"],
+    "modules": ["advanced"]
+  },
+  {
+    "id": "architect",
+    "n": 5,
+    "name": "BI Architect / Lead",
+    "question": "Can you make the right organizational decision?",
+    "challenge": "multiple valid options → constraints → trade-offs → recommendation → decision",
+    "summary": "There is no single right answer any more. You weigh cost, latency, risk and people, write the decision down, and explain it to a CFO and an engineer in their own words.",
+    "skills": ["architecture", "governance", "fabric", "communication", "security"],
+    "modules": ["advanced"]
+  }
+]

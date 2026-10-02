@@ -1,0 +1,108 @@
+{
+  "sql-window-0": {
+    "s": ["Partition by the business key, order by something that decides which copy wins (here nothing differs, so any order works; with a LoadedAt column you'd keep the latest).", "Keep rn = 1.", "Count before and after, and record the difference."],
+    "code": [
+      {
+        "lang": "SQL", "title": "One row per (OrderID, LineNo)", "dialect": "portable",
+        "src": [
+          "WITH numbered AS (",
+          "    SELECT l.*,",
+          "           ROW_NUMBER() OVER (PARTITION BY OrderID, LineNo ORDER BY OrderID) AS rn",
+          "    FROM order_lines AS l",
+          ")",
+          "SELECT (SELECT COUNT(*) FROM order_lines)            AS RowsIn,",
+          "       COUNT(*)                                       AS RowsOut,",
+          "       (SELECT COUNT(*) FROM order_lines) - COUNT(*)  AS Removed",
+          "FROM numbered",
+          "WHERE rn = 1;"
+        ],
+        "expect": { "cols": ["RowsIn", "RowsOut", "Removed"], "rows": [["{{sql_exported_rows|int}}", "{{sql_distinct_rows|int}}", "{{sql_dup_rows|int}}"]] }
+      }
+    ],
+    "check": "{{sql_exported_rows|int}} → {{sql_distinct_rows|int}} rows; {{sql_dup_rows|int}} removed.",
+    "note": "If the copies could differ, decide the rule with the data owner (latest load wins? highest status?) and put that in the ORDER BY. An arbitrary ORDER BY makes the result change between runs.",
+    "verify": "Executed in CI against SQLite."
+  },
+  "sql-window-1": {
+    "s": ["Build one clean line-level CTE with the USD value and the order month.", "Aggregate by product, rank with RANK() OVER (ORDER BY Gross DESC), keep rank ≤ 3.", "Aggregate by month and add SUM(Gross) OVER (ORDER BY Month ROWS UNBOUNDED PRECEDING)."],
+    "code": [
+      {
+        "lang": "SQL", "title": "Top three products, Q1 2026", "dialect": "portable",
+        "src": [
+          "WITH lines AS (SELECT DISTINCT * FROM order_lines),",
+          "q1 AS (",
+          "    SELECT l.ProductKey, SUBSTRING(CAST(o.OrderDate AS VARCHAR(10)), 1, 7) AS Month,",
+          "           ROUND(ROUND(l.Qty * l.UnitPrice * (100 - l.DiscountPct) / 100.0, 2) * COALESCE(fx.USDPerUnit, 1), 2) AS GrossUSD",
+          "    FROM lines AS l",
+          "    JOIN orders AS o ON o.OrderID = l.OrderID",
+          "    LEFT JOIN fx_rates AS fx ON fx.Month = SUBSTRING(CAST(o.OrderDate AS VARCHAR(10)), 1, 7) AND fx.Currency = o.Currency",
+          "    WHERE o.Status = 'Completed' AND o.CustomerID <> 'C19999'",
+          "      AND o.OrderDate >= '2026-01-01' AND o.OrderDate < '2026-04-01'",
+          "),",
+          "by_product AS (",
+          "    SELECT p.ProductName, ROUND(SUM(q1.GrossUSD), 2) AS GrossUSD,",
+          "           RANK() OVER (ORDER BY SUM(q1.GrossUSD) DESC) AS Rnk",
+          "    FROM q1 JOIN products AS p ON p.ProductKey = q1.ProductKey",
+          "    GROUP BY p.ProductName",
+          ")",
+          "SELECT Rnk, ProductName, GrossUSD FROM by_product WHERE Rnk <= 3 ORDER BY Rnk;"
+        ],
+        "expect": { "cols": ["Rnk", "ProductName", "GrossUSD"], "rows": [["1", "{{sql_top1_product}}", "{{sql_top1_product_gross|num2}}"], ["2", "{{sql_top2_product}}", "{{sql_top2_product_gross|num2}}"], ["3", "{{sql_top3_product}}", "{{sql_top3_product_gross|num2}}"]] }
+      },
+      {
+        "lang": "SQL", "title": "Running total by month", "dialect": "portable",
+        "src": [
+          "WITH lines AS (SELECT DISTINCT * FROM order_lines),",
+          "q1 AS (",
+          "    SELECT SUBSTRING(CAST(o.OrderDate AS VARCHAR(10)), 1, 7) AS Month,",
+          "           ROUND(ROUND(l.Qty * l.UnitPrice * (100 - l.DiscountPct) / 100.0, 2) * COALESCE(fx.USDPerUnit, 1), 2) AS GrossUSD",
+          "    FROM lines AS l",
+          "    JOIN orders AS o ON o.OrderID = l.OrderID",
+          "    LEFT JOIN fx_rates AS fx ON fx.Month = SUBSTRING(CAST(o.OrderDate AS VARCHAR(10)), 1, 7) AND fx.Currency = o.Currency",
+          "    WHERE o.Status = 'Completed' AND o.CustomerID <> 'C19999'",
+          "      AND o.OrderDate >= '2026-01-01' AND o.OrderDate < '2026-04-01'",
+          "),",
+          "monthly AS (SELECT Month, SUM(GrossUSD) AS GrossUSD FROM q1 GROUP BY Month)",
+          "SELECT Month, ROUND(GrossUSD, 2) AS GrossUSD,",
+          "       ROUND(SUM(GrossUSD) OVER (ORDER BY Month ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW), 2) AS RunningUSD",
+          "FROM monthly ORDER BY Month;"
+        ],
+        "expect": { "cols": ["Month", "GrossUSD", "RunningUSD"], "rows": [["2026-01", "{{sql_gross_jan|num2}}", "{{sql_running_jan|num2}}"], ["2026-02", "{{sql_gross_feb|num2}}", "{{sql_running_feb|num2}}"], ["2026-03", "{{sql_gross_mar|num2}}", "{{sql_running_mar|num2}}"]] }
+      }
+    ],
+    "check": "1 {{sql_top1_product}} {{sql_top1_product_gross|money0}}, 2 {{sql_top2_product}} {{sql_top2_product_gross|money0}}, 3 {{sql_top3_product}} {{sql_top3_product_gross|money0}}. Running total {{sql_running_jan|money0}} → {{sql_running_feb|money0}} → {{sql_running_mar|money0}}.",
+    "verify": "Executed in CI against SQLite."
+  },
+  "sql-window-2": {
+    "s": ["Aggregate gross by customer, then compute each customer's share of the total with SUM() OVER ().", "Rank customers and sum the shares of the top 10.", "Interpret: one wholesale account at this share, combined with Sprint 01's finding that it stopped ordering, is a revenue risk to raise, not a curiosity."],
+    "code": [
+      {
+        "lang": "SQL", "title": "Share of the largest customer", "dialect": "portable",
+        "src": [
+          "WITH lines AS (SELECT DISTINCT * FROM order_lines),",
+          "q1 AS (",
+          "    SELECT o.CustomerID,",
+          "           ROUND(ROUND(l.Qty * l.UnitPrice * (100 - l.DiscountPct) / 100.0, 2) * COALESCE(fx.USDPerUnit, 1), 2) AS GrossUSD",
+          "    FROM lines AS l",
+          "    JOIN orders AS o ON o.OrderID = l.OrderID",
+          "    LEFT JOIN fx_rates AS fx ON fx.Month = SUBSTRING(CAST(o.OrderDate AS VARCHAR(10)), 1, 7) AND fx.Currency = o.Currency",
+          "    WHERE o.Status = 'Completed' AND o.CustomerID <> 'C19999'",
+          "      AND o.OrderDate >= '2026-01-01' AND o.OrderDate < '2026-04-01'",
+          "),",
+          "by_customer AS (",
+          "    SELECT CustomerID, SUM(GrossUSD) AS GrossUSD,",
+          "           SUM(GrossUSD) * 1.0 / SUM(SUM(GrossUSD)) OVER () AS Share,",
+          "           ROW_NUMBER() OVER (ORDER BY SUM(GrossUSD) DESC) AS rn",
+          "    FROM q1 GROUP BY CustomerID",
+          ")",
+          "SELECT c.CustomerName, ROUND(b.GrossUSD, 2) AS GrossUSD, ROUND(b.Share * 100, 1) AS SharePct",
+          "FROM by_customer AS b JOIN customers AS c ON c.CustomerID = b.CustomerID",
+          "WHERE b.rn = 1;"
+        ],
+        "expect": { "cols": ["CustomerName", "GrossUSD", "SharePct"], "rows": [["{{sql_top_customer}}", "{{sql_top_customer_gross|num2}}", "{{sql_top_share|dec1pct}}"]] }
+      }
+    ],
+    "check": "{{sql_top_customer}}: {{sql_top_customer_gross|money0}}, {{sql_top_share|pct1}} of Q1 2026 gross. Change WHERE b.rn = 1 to rn <= 10 and sum Share for the top-10 figure.",
+    "verify": "Executed in CI against SQLite."
+  }
+}

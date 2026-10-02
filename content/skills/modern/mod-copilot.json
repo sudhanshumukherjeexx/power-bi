@@ -1,0 +1,59 @@
+{
+  "id": "mod-copilot",
+  "name": "Copilot-assisted workflows and their limits",
+  "ds": [],
+  "skills": ["visuals", "dax", "governance", "communication"],
+  "stage": "developer",
+  "why": {
+    "matters": "Copilot can draft report pages, summarise a model, write DAX queries and suggest measure descriptions. Its answers are only as good as the model it reads, and someone still has to check them.",
+    "failure": "A manager asks Copilot \"what was revenue last quarter?\" and gets a confident number from the wrong one of three revenue measures, because the model had no descriptions and three similar names (Sprint 05).",
+    "use": "Drafting pages and narratives, exploring an unfamiliar model, first drafts of DAX queries and descriptions, summaries for subscriptions. Prepare the model for AI: clear names, descriptions, synonyms, hidden helper fields.",
+    "avoid": "Treating an answer as verified, using it on unprepared models for decisions, or assuming it's available everywhere: it needs paid capacity, an enabled tenant setting and a supported region."
+  },
+  "verified": { "date": "2026-10-01", "context": "Copilot for Power BI overview (Microsoft Learn, 2026-08-24): F2+/P1+ capacity, trial not supported; report pane GA, standalone and app experiences in preview", "cert": "PL-300 (2026-04-20): Copilot narrative visual, report pages, model summary", "review_after_days": 60 },
+  "refs": [
+    { "title": "Copilot for Power BI overview", "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/copilot-introduction" },
+    { "title": "Prepare your data for AI", "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/copilot-prepare-data-ai" },
+    { "title": "Privacy, security and responsible use of Copilot in Power BI", "url": "https://learn.microsoft.com/en-us/fabric/get-started/copilot-power-bi-privacy-security" }
+  ],
+  "asg": [
+    {
+      "t": "Prepare the model so AI answers correctly",
+      "time": "40 min",
+      "ds": "your certified model from Sprint 05 (or the starter)",
+      "guidance": "B",
+      "brief": "Before Copilot is switched on for the sales app, make the model unambiguous for a machine reader.",
+      "req": ["Descriptions on every visible measure (from the KPI dictionary).", "Clear names; hide keys and helper columns.", "Synonyms for common business words (revenue, turnover, sales).", "Decide which measure a question about \"revenue\" should land on."],
+      "exp": "Every visible measure described, helper fields hidden, synonyms added, and \"revenue\" mapped to Net Revenue (ledger) in descriptions and synonyms, so a natural-language question has one obvious target."
+    },
+    {
+      "t": "Check Copilot's work",
+      "time": "30 min",
+      "ds": "a model on F2+ or P1+ capacity",
+      "guidance": "C",
+      "brief": "Ask Copilot five questions you already know the answers to (use Sprint 01/02 numbers), and have it draft a report page and a DAX query. Grade each output as correct, partly correct or wrong, and explain why.",
+      "req": ["Five questions with known answers.", "One drafted page and one DAX query reviewed line by line.", "What you'd tell users about trusting answers."],
+      "exp": "A graded table. Typical findings: right when the question maps to one well-described measure, wrong or ambiguous when names are similar or the time period is implicit; drafted DAX needs review for filters and totals. Users should verify answers against the certified report before acting."
+    },
+    {
+      "t": "Should we turn it on?",
+      "time": "20 min",
+      "ds": "—",
+      "guidance": "D",
+      "brief": "Elena asks whether to enable Copilot for all report users now, for a pilot group, or not yet. Recommend one, considering capacity cost, data preparation, privacy and training.",
+      "req": ["Prerequisites (capacity, tenant setting, region).", "Where Copilot compute is billed.", "Which models are ready.", "How you'd measure the pilot."],
+      "exp": "A pilot: enable for a security group on certified, prepared models only; monitor Copilot CU in the Capacity Metrics app; publish guidance on verifying answers; expand when answer quality and cost are acceptable."
+    }
+  ],
+  "int": [
+    { "q": "What does Copilot need to work in Power BI?", "a": "A paid Fabric capacity (F2 or higher) or Premium (P1 or higher), the tenant setting allowing Copilot (Azure OpenAI features) enabled, and a supported region. Pro or PPU licences alone and trial capacities aren't enough." },
+    { "q": "How do you make a model better for Copilot?", "a": "Prepare it for AI: clear, business names; descriptions on measures and tables; synonyms; hide technical fields; one obvious measure per business concept; verified answers or instructions where supported." },
+    { "q": "Is Copilot output trustworthy?", "a": "It's a draft. Answers grounded in the semantic model can still pick the wrong measure or period, and questions outside the data are answered from general knowledge. Verify against certified content before decisions, and say so in user guidance." },
+    { "q": "How is Copilot usage charged?", "a": "It consumes capacity units on the Fabric capacity (or a dedicated Fabric Copilot capacity), processed as background operations; the Capacity Metrics app shows Copilot usage." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "A user has a Power BI Pro licence and the report is in a workspace on a Pro (shared) capacity. Copilot:", "o": ["Works", "Isn't available: it needs F2+/P1+ capacity", "Works in Desktop only", "Works on trial capacity"], "a": 1, "why": "Copilot requires paid organizational capacity." },
+    { "type": "mcq", "q": "The most effective way to improve Copilot answers about \"revenue\" is:", "o": ["Longer prompts", "Clear measure names, descriptions and synonyms in the model", "More visuals", "Turning off RLS"], "a": 1, "why": "Copilot grounds answers in the model's metadata." },
+    { "type": "task", "q": "Write a half-page user guide: what Copilot is good for in our reports, how to check an answer, and who to ask when it's wrong.", "hint": "Point users to the certified report and the KPI dictionary as the reference." }
+  ]
+}

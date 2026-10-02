@@ -149,3 +149,12 @@ section.paths,section.certs,section.starter{padding:40px 0;border-bottom:1px sol
 .themetoggle[aria-checked="true"] .tt-knob .k-moon{display:block}
 .themetoggle:focus-visible{outline:none}
 .themetoggle:focus-visible .tt-track{outline:3px solid var(--yellow);outline-offset:2px}
+.srch-filters{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
+.srch-filters .srch-types{border-bottom:0;flex:1;min-width:0}
+.srch-facet{flex:none;padding-right:12px}
+.srch-facet select{font:inherit;font-size:.8rem;color:var(--ink);background:var(--panel);border:1px solid var(--line-2);border-radius:6px;padding:4px 8px;min-height:32px;max-width:170px}
+.srch-type.t-Scenario,.srch-type.t-Drill{background:var(--yellow-soft);color:var(--yellow-ink)}
+@media (max-width:560px){.srch-filters{flex-direction:column;align-items:stretch;gap:0}.srch-facet{padding:0 12px 8px}.srch-facet select{max-width:none;width:100%}}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}

@@ -1,0 +1,57 @@
+{
+  "api-xmla-0": {
+    "s": ["INFO.MEASURES() returns one row per measure with [Name], [Expression], [Description], [TableID] and more.", "Join to INFO.TABLES() for table names, filter blank descriptions.", "Keep the query in the repo; run it before releases."],
+    "code": [
+      { "lang": "DAX", "title": "Measures without a description", "src": [
+        "EVALUATE",
+        "VAR m = SELECTCOLUMNS ( INFO.MEASURES (), \"TableID\", [TableID], \"Measure\", [Name], \"Description\", [Description], \"Expression\", [Expression] )",
+        "VAR t = SELECTCOLUMNS ( INFO.TABLES (), \"TableID\", [ID], \"Table\", [Name] )",
+        "RETURN",
+        "    SELECTCOLUMNS (",
+        "        FILTER ( NATURALINNERJOIN ( m, t ), ISBLANK ( [Description] ) || [Description] = \"\" ),",
+        "        \"Table\", [Table], \"Measure\", [Measure], \"Expression\", [Expression]",
+        "    )"
+      ] }
+    ],
+    "check": "One row per undocumented measure."
+  },
+  "api-xmla-1": {
+    "s": ["Read the CSV into a dictionary; loop over Model.AllMeasures.", "Dry run: print matches, overwrites (existing non-empty description that differs) and measures missing from the dictionary; change nothing.", "Apply: set Description where empty, and overwrite only when a flag allows it.", "Run it in Tabular Editor against the PBIP's model folder, save, commit, open a PR: the TMDL diff shows exactly what changed."],
+    "code": [
+      { "lang": "C#", "title": "Tabular Editor script: descriptions from the KPI dictionary", "src": [
+        "var dryRun = true; var allowOverwrite = false;",
+        "var lines = System.IO.File.ReadAllLines(@\"C:\\repo\\docs\\kpi_dictionary.csv\").Skip(1);",
+        "var dict = lines.Select(l => l.Split(new[]{','}, 2)).ToDictionary(p => p[0].Trim('\"'), p => p[1].Trim('\"'));",
+        "var report = new System.Text.StringBuilder();",
+        "foreach (var m in Model.AllMeasures) {",
+        "    if (!dict.ContainsKey(m.Name)) { report.AppendLine(\"NOT IN DICTIONARY: \" + m.DaxObjectFullName); continue; }",
+        "    var d = dict[m.Name];",
+        "    if (!string.IsNullOrWhiteSpace(m.Description) && m.Description != d) {",
+        "        report.AppendLine(\"WOULD OVERWRITE: \" + m.DaxObjectFullName);",
+        "        if (!allowOverwrite) continue;",
+        "    }",
+        "    if (!dryRun) m.Description = d;",
+        "}",
+        "Info(report.ToString());"
+      ] }
+    ],
+    "check": "Dry run lists matches, overwrites and unknown measures; apply mode changes only what the flags allow; the PR diff shows description lines only."
+  },
+  "api-xmla-2": {
+    "s": ["List partitions: EVALUATE INFO.PARTITIONS() or in SSMS/Tabular Editor; incremental refresh names them by period (e.g. 2026Q1, or months for the latest period).", "Send a TMSL refresh for that partition through the XMLA endpoint (SSMS → New XMLA query) or enhanced refresh via REST with objects=[{table, partition}].", "Compare duration with a full refresh; check the partition's RefreshedTime changed and others didn't."],
+    "code": [
+      { "lang": "JSON", "title": "TMSL: refresh one partition", "src": [
+        "{",
+        "  \"refresh\": {",
+        "    \"type\": \"full\",",
+        "    \"objects\": [",
+        "      { \"database\": \"Sales\", \"table\": \"FactSales\", \"partition\": \"2026Q103\" }",
+        "    ]",
+        "  }",
+        "}"
+      ] }
+    ],
+    "check": "Only the targeted partition's refresh time changes; duration is a fraction of a full refresh.",
+    "note": "Partition names depend on the incremental refresh policy (yearly, quarterly, monthly, daily granularity for the most recent periods). Read them first; don't guess."
+  }
+}

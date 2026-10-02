@@ -1,0 +1,40 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "d06",
+  "slug": "d06-change-requests",
+  "type": "drill",
+  "stage": "developer",
+  "order": 4,
+  "title": "Four change requests to a working model",
+  "seo": "Power BI change management drill: refactor a working model for four change requests (returns by return date, shipping refunds, salary security, 4-4-5 fiscal calendar) and quantify the impact.",
+  "summary": "The dashboard from Sprints 01 and 02 works. Now four change requests arrive. Assess the impact of each, then refactor without breaking what people rely on.",
+  "minutes": 180,
+  "skills": ["modeling", "dax", "security", "testing", "communication"],
+  "prereq": ["s02", "s03"],
+  "ticket": { "id": "CR-118", "kind": "change", "priority": "Normal", "reporter": "elena", "opened": "Mon 20 Apr 2026, 09:00", "labels": ["change-request", "refactoring"] },
+  "impact": "Most BI work is changing systems that are already in use. Every change moves numbers people have already seen; doing it without impact analysis is how trust is lost.",
+  "messages": [
+    { "from": "elena", "to": "you", "via": "email", "at": "Mon 20 Apr, 09:00", "subject": "Four CRs for the sales model", "body": [
+      "- **CR1** (Sarah): returns should reduce revenue in the month the return is received, not the month of the original order.\n- **CR2** (Sarah): shipping refunds should also reduce revenue.\n- **CR3** (Ava): contractors in Europe must not see employee salary data.\n- **CR4** (Sarah): from FY2026 Finance reports on a 4-4-5 calendar starting Sunday 28 Dec 2025.",
+      "For each one: what changes, by how much for Q1 2026, what could break, and how you'll test it. Then implement them."
+    ] }
+  ],
+  "evidence": [
+    { "id": "lines", "kind": "file", "title": "order_lines.csv", "file": "data/experience/company/order_lines.csv" },
+    { "id": "orders", "kind": "file", "title": "orders.csv", "file": "data/experience/company/orders.csv" },
+    { "id": "returns", "kind": "file", "title": "returns.csv", "file": "data/experience/company/returns.csv" },
+    { "id": "emp", "kind": "file", "title": "employees.csv", "file": "data/experience/s03/employees.csv" },
+    { "id": "now", "kind": "table", "title": "Current dashboard values, Q1 2026", "cols": ["Measure", "Value"], "rows": [["Gross Sales", "{{q1_2026_gross|money0}}"], ["Net Sales", "{{q1_2026_net|money0}}"]] }
+  ],
+  "tasks": ["Write an impact assessment per CR: what changes, the Q1 2026 effect in dollars, what else could break, how you'll test it.", "Implement the four CRs as separate, reviewable changes.", "Run a regression check on everything the CRs should not affect."],
+  "deliverables": [{ "id": "ia", "t": "Impact assessment per change request", "artifact": "release-notes" }, { "id": "impl", "t": "Implemented changes (DAX, model, roles, calendar table)" }, { "id": "reg", "t": "Regression results", "artifact": "validation-plan" }],
+  "hints": ["CR1 and CR2 change the definition of an existing measure that people have already seen; decide whether to change it or add a new one.", "CR4 moves the quarter boundaries: Q1 FY2026 is 13 weeks from 28 Dec 2025 to 28 Mar 2026. Compare it with calendar Q1 and explain the difference to Finance before they see it."],
+  "rubric": [
+    { "id": "impact", "n": "Impact analysis", "w": 35, "good": "Dollar effect per CR computed correctly; dependencies named (reports, commissions, YoY comparisons)." },
+    { "id": "impl", "n": "Implementation", "w": 30, "good": "Separate changes; date table with 4-4-5 periods; OLS or column security for salary; returns by return date via the right relationship." },
+    { "id": "reg", "n": "Regression testing", "w": 20, "good": "Unaffected measures proven unchanged; affected ones reconciled to the impact assessment." },
+    { "id": "comm", "n": "Communication", "w": 15, "good": "Stakeholders told before the numbers change, with old and new side by side." }
+  ],
+  "retro": ["Which CR changed the most numbers for the fewest lines of code?", "Which CR should have been rejected or clarified first?"],
+  "refs": [{ "title": "Create date tables in Power BI Desktop", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/model-date-tables" }, { "title": "Object-level security", "url": "https://learn.microsoft.com/en-us/fabric/security/service-admin-object-level-security" }]
+}

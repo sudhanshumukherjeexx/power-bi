@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-06-08T06:17:04Z",
+  "semanticModel": "Finance Board Pack",
+  "error": {
+    "code": "DM_GWPipeline_Gateway_MashupDataAccessError",
+    "pbi_error": "Expression.Error",
+    "details": [
+      {
+        "table": "DimCustomer",
+        "message": "The column 'CustomerSegment' of the table wasn't found.",
+        "source": "sql-prod.northwind.local;NorthwindDW;dbo.vw_Customer"
+      },
+      {
+        "table": "FxRates",
+        "message": "The credentials provided for the SQL source are invalid. (Source at sql-treasury.northwind.local;Treasury.)",
+        "source": "sql-treasury.northwind.local;Treasury;dbo.MonthlyRates"
+      }
+    ]
+  },
+  "clusterUri": "https://wabi-europe-north-b-redirect.analysis.windows.net/",
+  "activityId": "b7e1c0de-0608-4f00-9a17-5a1e5e5ed001"
+}

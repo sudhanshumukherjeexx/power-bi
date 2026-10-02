@@ -1,0 +1,59 @@
+{
+  "id": "gov-workspace",
+  "name": "Workspaces, domains, ownership and endorsement",
+  "ds": [],
+  "skills": ["governance", "service", "architecture"],
+  "stage": "architect",
+  "why": {
+    "matters": "Workspace structure and endorsement decide where people look for data and which numbers they trust. Without them, every team builds its own copy.",
+    "failure": "Nineteen models, five customer tables and four names for revenue (Sprint 10), because nothing tells users which one is official.",
+    "use": "Domain workspaces with named owners, separate Dev/Test/Prod for content many people rely on, promotion for good team content, certification with written criteria for company-wide models.",
+    "avoid": "Certifying content no one owns, or a review process so heavy that teams stop asking."
+  },
+  "verified": { "date": "2026-10-01", "context": "Endorsement, domains and workspace roles docs (Microsoft Learn, Sept 2026)", "review_after_days": 120 },
+  "refs": [
+    { "title": "Endorsement overview", "url": "https://learn.microsoft.com/en-us/fabric/governance/endorsement-overview" },
+    { "title": "Fabric domains", "url": "https://learn.microsoft.com/en-us/fabric/governance/domains" },
+    { "title": "Roles in workspaces", "url": "https://learn.microsoft.com/en-us/fabric/fundamentals/roles-workspaces" }
+  ],
+  "asg": [
+    {
+      "t": "A workspace and domain plan for Northwind",
+      "time": "40 min",
+      "ds": "data/experience/s10/workspaces.csv",
+      "guidance": "B",
+      "brief": "Using the Sprint 10 inventory, propose how workspaces should be organised: names, domains, who owns them, which ones get Dev/Test/Prod, and what happens to personal and test workspaces.",
+      "req": ["A naming convention.", "A domain per business area with an owner.", "Workspace roles: who is Admin, Member, Contributor, Viewer, and why consumers use apps instead of workspace roles.", "Which workspaces need deployment pipelines."],
+      "exp": "Domain workspaces (Sales, Finance, Operations, Marketing, HR, Supply Chain) with named owners and a convention like \"<Domain> – <Purpose> [Dev|Test]\"; at most two or three Admins per workspace; consumers through apps or audiences; pipelines for workspaces holding certified models; personal and test workspaces kept out of production use."
+    },
+    {
+      "t": "Write the certification criteria",
+      "time": "30 min",
+      "ds": "—",
+      "guidance": "C",
+      "brief": "Elena asks for the criteria a semantic model must meet before it's certified, short enough that people read it, strict enough that \"certified\" means something.",
+      "req": ["Ownership, documentation, testing, security, refresh, performance and change control.", "Who can certify and how certification is reviewed or removed."],
+      "exp": "One page: named business and technical owner; KPI dictionary and measure descriptions; data and model tests passing; RLS test matrix where relevant; refresh monitored with team alerts; meets the performance budget; changes through Git and a pipeline; reviewed yearly; certification removed when criteria lapse. Only a small, named group can certify."
+    },
+    {
+      "t": "Promoted or certified?",
+      "time": "15 min",
+      "ds": "—",
+      "guidance": "B",
+      "brief": "Classify five items: endorse as Promoted, Certified, or neither. Justify each.",
+      "req": ["The shared sales model with an owner, tests and a KPI dictionary.", "Marketing's campaign model, used by its own team, maintained but undocumented.", "A copy of the sales model someone made to add one measure.", "Finance's board pack model, owned by the CFO's team, reconciled to the ledger monthly.", "A one-off analysis for a single meeting."],
+      "exp": "Certified: shared sales model, Finance board pack. Promoted: Marketing's model (useful, maintained, not company-wide). Neither: the copy (merge the measure into the shared model and retire it) and the one-off (personal workspace, then delete)."
+    }
+  ],
+  "int": [
+    { "q": "Promoted vs certified?", "a": "Promotion means the owner thinks the item is ready to share; any member with write permission can promote. Certification means it meets organisational standards, and only people the admin authorises can certify. Certified items appear first in discovery." },
+    { "q": "What are Fabric domains for?", "a": "Grouping workspaces by business area so governance (ownership, settings, discovery) can be delegated to domain admins and data is easier to find in the OneLake catalog." },
+    { "q": "Why shouldn't report consumers be workspace Viewers on a development workspace?", "a": "They'd see work in progress and unfinished content. Consumers should use apps (or audiences) from production workspaces; workspace roles are for people who build or administer." },
+    { "q": "What makes governance actually work?", "a": "Making the governed path the easiest one: certified models that are easy to find and good to use, a light process, clear owners, and data on usage to decide what to keep." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "Who can certify a semantic model?", "o": ["Any workspace member", "Only users authorised by the Fabric administrator for certification", "Only the model owner", "Anyone with Build permission"], "a": 1, "why": "Certification is restricted to people the admin has authorised; promotion is open to contributors." },
+    { "type": "mcq", "q": "A team copies the certified sales model to add one measure. Best response:", "o": ["Certify the copy too", "Add the measure to the certified model (or a composite on top) and retire the copy", "Ignore it", "Delete both"], "a": 1, "why": "Copies drift; extend the shared model instead." },
+    { "type": "task", "q": "In a trial tenant, promote one model, request certification for another, and find both in the OneLake catalog with the endorsement filter.", "hint": "Settings → Endorsement and discovery on the item." }
+  ]
+}

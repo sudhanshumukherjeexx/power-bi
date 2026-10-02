@@ -1,0 +1,60 @@
+{
+  "id": "qa-ops",
+  "name": "Refresh tests, performance budgets and regression",
+  "ds": ["FactSales", "DimDate"],
+  "skills": ["testing", "performance", "service", "deployment"],
+  "stage": "senior",
+  "why": {
+    "matters": "Most production incidents aren't wrong DAX; they're refreshes that succeeded with the wrong data, pages that got slower one measure at a time, or a fix that broke something else.",
+    "failure": "A refresh reports Completed with a warning for weeks while one table is stale (Sprint 07).",
+    "use": "Post-refresh checks (rows, max date, partitions), a written performance budget measured the same way every release, and a regression baseline of key numbers compared before and after each change.",
+    "avoid": "Treating \"refresh succeeded\" as \"data is right\"."
+  },
+  "verified": { "date": "2026-10-01", "context": "Refresh history, incremental refresh and Performance Analyzer docs, Sept 2026", "review_after_days": 180 },
+  "refs": [
+    { "title": "Troubleshoot refresh scenarios", "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-troubleshooting-refresh-scenarios" },
+    { "title": "Incremental refresh overview", "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/incremental-refresh-overview" },
+    { "title": "Performance Analyzer", "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-performance-analyzer" }
+  ],
+  "asg": [
+    {
+      "t": "Post-refresh checks",
+      "time": "30 min",
+      "ds": "FactSales, DimDate (course)",
+      "guidance": "B",
+      "brief": "Write the checks that should run after every refresh of the course model, so a stale or partial load is caught before users see it.",
+      "req": ["Row count of FactSales against the source file.", "Max OrderDate against the expected data date.", "No blank keys after load; every FactSales date exists in the date table.", "For incremental refresh: the partitions you expect exist (DAX INFO functions or XMLA)."],
+      "deliverables": ["A DAX query returning check name, expected, actual, pass."],
+      "exp": "FactSales has 100 rows, max OrderDate 2026-03-31, no blank keys; the course DimDate fails the date coverage check (one ship date in April), which is exactly why Beginner replaces it."
+    },
+    {
+      "t": "Write and enforce a performance budget",
+      "time": "30 min",
+      "ds": "starter project",
+      "guidance": "C",
+      "brief": "Elena wants a performance budget for the executive page so Sprint 04 never happens again. Define it, measure it the same way every time, and say what happens when a change breaks it.",
+      "req": ["Budgets for cold page load, slicer interaction, refresh duration and model size.", "The measurement method (cache, machine, tool).", "What blocks a release and what only warns."],
+      "exp": "For example: page < 3 s cold, slicer < 1 s, refresh < 30 min, model < 1 GB, measured with Performance Analyzer after clearing the cache on the test machine; a breach of page or slicer budget blocks the release, others warn."
+    },
+    {
+      "t": "Prove you didn't break anything else",
+      "time": "30 min",
+      "ds": "starter project",
+      "guidance": "B",
+      "brief": "Before changing the Net Sales definition (Sprint 02's ledger change), capture a regression baseline, make the change, and prove that only the intended numbers moved.",
+      "req": ["A baseline: a DAX query returning ten key measures by month, saved to a file.", "The same query after the change; a comparison listing every difference.", "An explanation for each difference (expected or not)."],
+      "exp": "Only the measures depending on Net Sales change, by exactly the amounts in the change's impact assessment; Gross Sales, quantities and counts are identical."
+    }
+  ],
+  "int": [
+    { "q": "Refresh succeeded but the numbers are wrong. What do you check?", "a": "Which source each table actually read (parameters, connections), row counts and max dates against the source, refresh warnings (tables that kept old data), incremental refresh partitions, and whether an upstream job ran before the refresh." },
+    { "q": "What is a performance budget?", "a": "Agreed limits (page load, interaction, refresh, model size) measured the same way every time. It turns \"feels slow\" into a release criterion and stops gradual degradation." },
+    { "q": "What is a regression test in BI?", "a": "A comparison of key outputs before and after a change, proving that only the intended numbers moved. Save a baseline query result; rerun it after the change; explain every difference." },
+    { "q": "How do you check incremental refresh is working?", "a": "Look at the partitions (XMLA, SSMS, Tabular Editor, or DAX INFO functions), confirm only the latest partitions refresh, compare refresh duration with a full refresh, and check that the source filter folds (native query contains the RangeStart/RangeEnd predicate)." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "A refresh history shows Completed with a warning that a table wasn't refreshed. You should:", "o": ["Ignore it; it completed", "Treat it as a failure for production models and alert the owner", "Restart the gateway", "Delete the table"], "a": 1, "why": "Stale data that looks fresh is worse than a failure." },
+    { "type": "mcq", "q": "Which measurement is comparable across releases?", "o": ["Whatever the developer saw on their laptop", "Performance Analyzer after clearing the cache, same machine and dataset", "User feelings", "Refresh time on a busy capacity"], "a": 1, "why": "Same method, same conditions; otherwise you compare noise." },
+    { "type": "task", "q": "Write your team's release checklist section \"Tests\" (data, model, security, performance, regression) in five lines.", "hint": "See Templates → Deployment checklist and Validation." }
+  ]
+}

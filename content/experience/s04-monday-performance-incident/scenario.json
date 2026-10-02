@@ -1,0 +1,79 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "s04",
+  "slug": "s04-monday-performance-incident",
+  "type": "sprint",
+  "stage": "senior",
+  "order": 1,
+  "title": "The executive dashboard takes 18 seconds",
+  "seo": "Power BI performance tuning scenario: an executive page takes 18 seconds. Use Performance Analyzer, Server Timings and VertiPaq metrics to find formula-engine and storage-engine bottlenecks, then prove the fix.",
+  "summary": "Leadership opens the executive page every Monday at 9:00 and waits 18 seconds. Find out why with evidence, fix it, and prove the improvement.",
+  "minutes": 300,
+  "skills": ["performance", "dax", "modeling", "testing", "communication"],
+  "prereq": ["s02"],
+  "next": "s05",
+  "verified": { "date": "2026-10-01", "context": "Performance Analyzer, DAX query view and optimization guidance (Microsoft Learn, Sept 2026); DAX Studio 3.x Server Timings", "review_after_days": 180 },
+  "ticket": { "id": "INC-2044", "kind": "incident", "severity": "SEV3", "priority": "Medium", "status": "Open", "reporter": "grace", "opened": "Mon 4 May 2026, 09:12", "due": "Before next Monday's leadership meeting", "labels": ["performance", "executive", "dax"] },
+  "story": "Since Sprint 02 the company sales model carries both the Sales and the ledger definitions. It now has 31 million order lines from 2023 onwards, and the executive page has gained a few visuals.",
+  "impact": "Eight executives wait for the page at the start of every leadership meeting, and some have started asking for Excel exports instead. A slow report is an abandoned report, and the capacity is busiest exactly then.",
+  "messages": [
+    { "from": "grace", "to": "elena", "via": "email", "at": "Mon 4 May, 09:12", "subject": "Dashboard", "body": ["Elena, the dashboard took most of a minute to load this morning, again. We ended up looking at last week's PDF. Please sort it out before next Monday. Grace"] },
+    { "from": "elena", "to": "you", "via": "chat", "at": "Mon 4 May, 09:20", "body": [
+      "Grace's \"most of a minute\" is more like 18 seconds on my machine, but she's right that it's not acceptable. I captured Performance Analyzer and DAX Studio output this morning; it's all in the folder.",
+      "I want a before/after table with real measurements, not \"it feels faster\". And nothing on the page may change its numbers."
+    ] },
+    { "from": "sam", "to": "you", "via": "chat", "at": "Mon 4 May, 10:05", "body": [
+      "I added Customers Above Average and Store Sales YTD in March, they were urgent requests. Last Refreshed was always there. Maybe we just need a bigger capacity? F128 would sort it."
+    ] }
+  ],
+  "evidence": [
+    { "id": "pa", "kind": "file", "title": "performance_analyzer.json", "file": "data/experience/s04/performance_analyzer.json", "desc": "Performance Analyzer export of the executive page, cold cache, Monday 08:55." },
+    { "id": "st", "kind": "file", "title": "server_timings.csv", "file": "data/experience/s04/server_timings.csv", "desc": "DAX Studio Server Timings for the four slowest visuals' queries." },
+    { "id": "vp", "kind": "file", "title": "vertipaq_columns.csv", "file": "data/experience/s04/vertipaq_columns.csv", "desc": "VertiPaq Analyzer: column sizes and cardinality." },
+    { "id": "dax", "kind": "file", "title": "measures.dax", "file": "data/experience/s04/measures.dax", "desc": "The measures on the page, as they are today." },
+    { "id": "notes", "kind": "file", "title": "model_notes.md", "file": "data/experience/s04/model_notes.md" },
+    { "id": "repro", "kind": "doc", "title": "Reproduce it on your machine (optional)", "body": [
+      "Generate a big fact table with `node tools/generate-enterprise-data.js --rows 2000000` (see Resources → Enterprise scale pack) and load fact_sales.csv and dim_customer.csv into Power BI Desktop. The measures in measures.dax work against those columns, so you can measure your own before and after with Performance Analyzer and DAX Studio."
+    ] }
+  ],
+  "tasks": [
+    "Establish a baseline: which visuals cost the most, and is each one formula-engine bound or storage-engine bound?",
+    "Find the root cause of each slow visual, with evidence from the files.",
+    "Rewrite or remodel so the page is fast without changing any number on it.",
+    "Measure again and produce a before/after table: Visual | Before | After | Improvement | Root cause.",
+    "Propose a performance budget for this page, and explain to Elena whether a bigger capacity is the answer.",
+    "Write two versions of the result: one for Grace, one for the engineers."
+  ],
+  "deliverables": [
+    { "id": "base", "t": "Baseline: per-visual timings and FE/SE split" },
+    { "id": "rca", "t": "Root cause per slow visual, with the evidence line that proves it", "artifact": "postmortem" },
+    { "id": "fix", "t": "Optimised measures and model changes (DAX/TMDL)" },
+    { "id": "ba", "t": "Before/after table with improvement %", "artifact": "performance-report" },
+    { "id": "reg", "t": "Regression check: every visual returns the same values as before" },
+    { "id": "two", "t": "Executive note and engineering note (same facts, two audiences)" }
+  ],
+  "hints": [
+    "Sort the Performance Analyzer events by DAX query time. Three visuals account for most of the page. For each, look up its row in server_timings.csv: is the time in the formula engine (FE) or the storage engine (SE)?",
+    "Thousands of small SE queries plus a CallbackDataID means something is evaluated row by row. Look at what Customers Above Average recalculates for every customer. A FILTER over ALL(FactSales) materialises the whole table. A MAX over a 31-million-value datetime column is a full column scan.",
+    "Check vertipaq_columns.csv against what the page actually uses. Then check the relationship the model notes describe as \"Both\"."
+  ],
+  "rubric": [
+    { "id": "invest", "n": "Investigation quality", "w": 25, "good": "Every claimed cause is backed by a specific line of evidence (FE/SE split, SE query count, column size), not by intuition." },
+    { "id": "correct", "n": "Technical correctness", "w": 25, "good": "Each rewrite returns identical results; the fixes address the cause (variable outside the iterator, column filter instead of table filter, removed high-cardinality column, single-direction relationship)." },
+    { "id": "perf", "n": "Performance", "w": 20, "good": "Page meets a stated budget (e.g. under 3 seconds cold) with measured before/after numbers." },
+    { "id": "testing", "n": "Testing", "w": 10, "good": "Regression check proves no visual changed its values; the measurement method is repeatable (cold cache, same machine)." },
+    { "id": "comm", "n": "Communication", "w": 20, "good": "Grace's version has no jargon and states the result and the cost; the engineering version has the numbers. The capacity question is answered with evidence." }
+  ],
+  "retro": [
+    "Which fix gave the biggest improvement for the least risk?",
+    "Would F128 have fixed it? What would it have cost and what would it have hidden?",
+    "What check would stop a slow measure reaching production next time?",
+    "Why did the page get slower over two months when \"nobody changed the measures\"?"
+  ],
+  "refs": [
+    { "title": "Optimization guide for Power BI", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/power-bi-optimization" },
+    { "title": "Use Performance Analyzer", "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-performance-analyzer" },
+    { "title": "Avoid using FILTER as a filter argument", "url": "https://learn.microsoft.com/en-us/dax/best-practices/dax-avoid-avoid-filter-as-filter-argument" },
+    { "title": "Bi-directional relationship guidance", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/relationships-bidirectional-filtering" }
+  ]
+}

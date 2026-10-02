@@ -1,0 +1,16 @@
+{
+  "fab-directlake-0": {
+    "s": ["Use the comparison in Microsoft's Direct Lake overview as the source of truth, and date your page.", "Key differences: sources, fallback, views, SQL-endpoint security, composite models, calculated columns/tables (OneLake supports some in preview), behaviour at guardrails.", "Common ground: VertiPaq query engine, framing, Fabric capacity required, semantic-model RLS supported (fixed identity recommended)."],
+    "tbl": [["", "Direct Lake on OneLake", "Direct Lake on SQL endpoint"], ["Sources", "One or more Fabric items with Delta tables", "One Fabric source with a SQL analytics endpoint"], ["Fallback to DirectQuery", "Never (errors instead)", "Yes, controlled by Direct Lake behavior"], ["Non-materialised SQL views", "Not supported", "Supported, via fallback"], ["SQL-endpoint RLS/OLS", "Not applied", "Applied, forces fallback"], ["Mix with Import tables", "Yes", "Not in the same model (use a composite on top)"], ["Exceeded guardrails", "Refresh fails, model can't be queried", "Falls back (if allowed), slower"]],
+    "check": "The table above, with the date you checked it.",
+    "verify": "Checked against Direct Lake overview (2026-09-02) and How Direct Lake works (2026-09-09)."
+  },
+  "fab-directlake-1": {
+    "s": ["DAX query view: EVALUATE TABLETRAITS(); DirectLakeFallbackInfo = None means Direct Lake.", "For the SQL option, add a SQL view as a table; TABLETRAITS shows a reason; with DirectLakeBehavior = DirectLakeOnly the query errors.", "Model settings → Refresh → turn off \"Keep your Direct Lake data up to date\"; append rows to a table; the report doesn't change until you refresh (frame)."],
+    "check": "None for Delta tables; fallback reason for the view; framing controls data visibility."
+  },
+  "fab-directlake-2": {
+    "s": ["Put RLS in the semantic model (roles with DAX filters), as with Import.", "SQL-endpoint RLS: ignored by Direct Lake on OneLake (which reads OneLake directly), and forces DirectQuery in Direct Lake on SQL.", "Use a fixed-identity cloud connection for the model, as Microsoft recommends for Direct Lake with semantic-model RLS; keep OneLake/data access restricted so users can't bypass the model."],
+    "check": "Semantic-model RLS, fixed identity, SQL-endpoint security only for direct SQL users."
+  }
+}

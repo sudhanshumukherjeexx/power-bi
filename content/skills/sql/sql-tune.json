@@ -1,0 +1,60 @@
+{
+  "id": "sql-tune",
+  "name": "Making slow source queries fast",
+  "ds": ["SlowQuery", "NWOrders", "NWOrderLines", "NWReturns"],
+  "skills": ["sql", "performance"],
+  "stage": "senior",
+  "why": {
+    "matters": "Refresh time is usually source-query time. A 22-minute query makes every refresh slow, blocks incremental refresh and loads the source system everyone else uses.",
+    "failure": "A function on a date column (YEAR(OrderDate) = 2026) forces a full scan of 72 million rows every night, and nobody notices until the refresh window overlaps the working day.",
+    "use": "Read the execution plan, make predicates sargable, remove implicit conversions, select only needed columns, replace row-by-row subqueries with joins or EXISTS, and index for the access path.",
+    "avoid": "Adding indexes blindly: every index slows writes and costs storage. Fix the query first, then index for the remaining access pattern."
+  },
+  "verified": { "date": "2026-10-01", "context": "SQL Server execution plan and index design guidance (Microsoft Learn); rewrites tested on SQLite in CI", "review_after_days": 365 },
+  "refs": [
+    { "title": "Execution plan overview", "url": "https://learn.microsoft.com/en-us/sql/relational-databases/performance/execution-plans" },
+    { "title": "Index architecture and design guide", "url": "https://learn.microsoft.com/en-us/sql/relational-databases/sql-server-index-design-guide" },
+    { "title": "Query folding in Power Query", "url": "https://learn.microsoft.com/en-us/power-query/query-folding-basics" }
+  ],
+  "asg": [
+    {
+      "t": "The 22-minute query",
+      "time": "60 min",
+      "ds": "slow_query.sql",
+      "guidance": "C",
+      "brief": "The source query feeding FactSales now takes 22 minutes and the refresh window is at risk. Kenji sent the query and the plan summary (slow_query.sql). Investigate the query and its access pattern.",
+      "req": ["List every problem in the query and the plan, and what each one costs.", "Write a corrected query that returns the same rows.", "Suggest the index (or indexes) you would ask Kenji for, and why.", "Describe the expected downstream impact on the Power BI refresh and on incremental refresh."],
+      "exp": "Run on the company pack, the original logic and your rewrite return the same {{sql_slow_rows|int}} rows (raw lines of completed 2026 orders with no return). The rewrite uses a date range, matching join types, NOT EXISTS and only the needed columns."
+    },
+    {
+      "t": "Sargable or not?",
+      "time": "20 min",
+      "ds": "—",
+      "guidance": "B",
+      "brief": "An index exists on Orders(OrderDate) and another on Customers(Email). For each predicate decide whether SQL Server can seek on the index, and rewrite those that can't.",
+      "req": ["WHERE YEAR(OrderDate) = 2026", "WHERE OrderDate >= '2026-01-01' AND OrderDate < '2027-01-01'", "WHERE CONVERT(date, OrderDate) = '2026-03-31' (OrderDate is datetime2)", "WHERE LOWER(Email) = 'ava.patel@example.com'", "WHERE Email LIKE 'ava.%'", "WHERE Email LIKE '%@example.com'"],
+      "exp": "Seekable: the date range and LIKE 'ava.%'. CONVERT(date, …) on a datetime2 column is a special case SQL Server can still seek on. Not seekable: YEAR(), LOWER() and a leading wildcard; rewrite the first two as ranges or with a computed column, and don't index the third."
+    },
+    {
+      "t": "SQL or Power Query?",
+      "time": "30 min",
+      "ds": "—",
+      "guidance": "D",
+      "brief": "Elena asks where these transformations should live for the certified sales model: in the warehouse view, in Power Query, or in DAX. Decide and justify each, considering query folding, reuse and who maintains it.",
+      "req": ["Deduplicating order lines.", "Converting EUR to USD at the monthly rate.", "Splitting a full name into first and last name for a slicer.", "Excluding the test customer.", "A \"days since last order\" column per customer.", "Formatting numbers as $1.2M on a card."],
+      "deliverables": ["A table: transformation, where, why, risk."],
+      "exp": "Warehouse view: deduplication, currency conversion and test-customer exclusion (shared rules, foldable, one place to fix). Power Query or the view: the name split if the source can't. DAX measure: days since last order (depends on filter context). Model formatting: the $1.2M display. At most two of the six belong in DAX."
+    }
+  ],
+  "int": [
+    { "q": "What does \"sargable\" mean?", "a": "Search-ARGument-able: a predicate the engine can answer with an index seek. Wrapping the indexed column in a function (YEAR(col), LOWER(col)) or converting it implicitly usually prevents a seek; comparing the bare column with a range or constant allows it." },
+    { "q": "Why is an implicit conversion on a join column expensive?", "a": "If one side is int and the other varchar, SQL Server converts one side for every row before comparing, which prevents index seeks and can produce bad cardinality estimates. Fix the data types so both sides match." },
+    { "q": "Correlated subquery vs NOT EXISTS vs LEFT JOIN … IS NULL?", "a": "A correlated COUNT(*) subquery evaluated per row can execute millions of times. NOT EXISTS expresses an anti-join that the optimiser can run once as a set operation and stop at the first match. LEFT JOIN … IS NULL is equivalent but can duplicate rows if the right side isn't unique." },
+    { "q": "How does a slow source query affect Power BI beyond refresh time?", "a": "It loads the source system, can time out the refresh, makes incremental refresh slower or impossible if filters don't fold, and lengthens recovery after a failure because each retry takes as long." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "Which predicate lets SQL Server seek on an index on Orders(OrderDate)?", "o": ["YEAR(OrderDate) = 2026", "OrderDate >= '2026-01-01' AND OrderDate < '2027-01-01'", "DATEPART(month, OrderDate) = 3", "CAST(OrderDate AS varchar(10)) LIKE '2026%'"], "a": 1, "why": "Only the bare column compared with a range is sargable." },
+    { "type": "mcq", "q": "A plan shows a Table Scan on Returns executed 41 million times. The likely cause:", "o": ["Too few CPUs", "A correlated subquery evaluated once per outer row", "Statistics are up to date", "The Returns table is small"], "a": 1, "why": "A per-row subquery is executed for every outer row. Rewrite as NOT EXISTS or a join so it runs as one set operation." },
+    { "type": "task", "q": "In SQL Server, capture the actual execution plan of your rewritten query and compare logical reads (SET STATISTICS IO ON) with the original.", "hint": "Look for scans turning into seeks on Orders(OrderDate), the disappearance of the per-row Returns scan, and fewer pages read." }
+  ]
+}

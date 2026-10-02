@@ -1,0 +1,59 @@
+{
+  "id": "qa-break",
+  "name": "Build it, break it: the failure lab",
+  "ds": ["FactSales", "DimCustomer", "DimRegion", "DimProduct"],
+  "skills": ["testing", "performance", "modeling", "dax"],
+  "stage": "senior",
+  "why": {
+    "matters": "You recognise a failure quickly only if you've seen it before. Breaking a model on purpose, in a safe copy, builds that recognition without waiting for a production incident.",
+    "failure": "A team spends two days on a \"random\" wrong total that anyone who had seen bi-directional ambiguity would have spotted in minutes.",
+    "use": "For each failure: build the working version, break it deliberately, observe the symptom, diagnose it with tools, fix it, explain it in two sentences, and write the check that prevents it.",
+    "avoid": "Doing this on a shared or production model. Always work on a copy."
+  },
+  "verified": { "date": "2026-10-01", "context": "Power BI Desktop (Sept 2026): relationships, Performance Analyzer, View Native Query, incremental refresh", "review_after_days": 180 },
+  "refs": [
+    { "title": "Bi-directional relationship guidance", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/relationships-bidirectional-filtering" },
+    { "title": "Query folding guidance", "url": "https://learn.microsoft.com/en-us/power-query/query-folding-basics" },
+    { "title": "Data reduction techniques for Import models", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/import-modeling-data-reduction" }
+  ],
+  "asg": [
+    {
+      "t": "Break the relationships",
+      "time": "45 min",
+      "ds": "starter project",
+      "guidance": "B",
+      "brief": "In a copy of the starter project, make the relationships misbehave in two ways and learn the symptoms.",
+      "req": ["Build: Net Sales by RegionName from DimRegion and by the customer's region, as in Beginner.", "Break 1: set DimCustomer ↔ FactSales to bi-directional and add DimCustomer[RegionKey] → DimRegion. Observe what Power BI does and what your visuals show.", "Break 2: make FactSales → DimRegion inactive. Observe the totals.", "For each: the symptom, how you diagnosed it, the fix, a two-sentence explanation, and the check that would have caught it."],
+      "exp": "Break 1: Power BI refuses or deactivates a relationship because of an ambiguous path (or results depend on which path wins). Break 2: every region shows the grand total. Checks: no bi-directional relationships without an ADR; a test that regional totals sum to the grand total and differ from each other."
+    },
+    {
+      "t": "Break the performance",
+      "time": "45 min",
+      "ds": "enterprise pack (1M rows) or starter project",
+      "guidance": "B",
+      "brief": "Generate a larger fact (Resources → Enterprise scale pack) and make it slow on purpose, three ways, measuring each with Performance Analyzer and DAX Studio.",
+      "req": ["An iterator that evaluates a measure per row of the fact (e.g. SUMX(FactSales, [Net Sales]) or FILTER over the fact with a measure inside).", "A calculated column on the fact with a high-cardinality result (e.g. a timestamp as text).", "A query that stops folding (a custom function per row before a filter)."],
+      "exp": "The iterator shows many storage-engine queries or callbacks and FE time; the calculated column inflates model size (VertiPaq Analyzer) and refresh; the broken folding shows a greyed-out View Native Query and a longer refresh. Each fix restores the baseline."
+    },
+    {
+      "t": "Break the refresh",
+      "time": "30 min",
+      "ds": "starter project",
+      "guidance": "C",
+      "brief": "Simulate the two most common refresh failures and write the runbook entry for each.",
+      "req": ["Schema drift: rename a column in a source CSV that the model uses.", "Incremental refresh misconfigured: RangeStart/RangeEnd filter on a column that doesn't fold, or with >= on both ends.", "For each: the error or symptom, the diagnosis, the fix, the prevention."],
+      "exp": "Schema drift: \"The column … wasn't found\" naming the table; fix the step or the source; prevent with a data contract. Incremental: duplicated or missing rows at partition boundaries (>= on both ends) or a full scan every refresh (no folding); fix with >= RangeStart and < RangeEnd on a foldable column."
+    }
+  ],
+  "int": [
+    { "q": "Why break things on purpose?", "a": "So that you recognise the symptom quickly when it happens for real. The second time you see an ambiguous relationship or a broken fold, you diagnose it in minutes instead of days." },
+    { "q": "What symptom suggests an ambiguous relationship path?", "a": "Power BI refusing to activate a relationship, a relationship silently made inactive, or totals that change depending on which filters are applied, especially after adding a bi-directional relationship." },
+    { "q": "Why does >= RangeStart AND <= RangeEnd break incremental refresh?", "a": "Rows exactly on the boundary match two adjacent partitions and are loaded twice. Use >= RangeStart AND < RangeEnd so each row belongs to exactly one partition." },
+    { "q": "What is schema drift and how do you defend against it?", "a": "A source changes structure (renamed, removed or retyped columns). Defend with data contracts and change notification, select columns by name explicitly, fail loudly with a clear error, and monitor refresh failures." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "Making FactSales → DimRegion inactive, with no other change, makes a matrix by RegionName show:", "o": ["Correct values", "The grand total on every row", "Blanks", "An error"], "a": 1, "why": "Without an active path, the region filter doesn't reach the fact, so every row shows the total." },
+    { "type": "mcq", "q": "View Native Query is greyed out on a Power Query step against SQL Server. This means:", "o": ["The query is fast", "Folding stopped at or before this step", "The step has an error", "The source is a file"], "a": 1, "why": "Steps after a non-foldable step run in the mashup engine." },
+    { "type": "task", "q": "Write a one-page \"failure field guide\": for each failure from this lab, symptom → likely cause → first diagnostic step.", "hint": "This is the start of your team's runbook (Templates → Runbook)." }
+  ]
+}

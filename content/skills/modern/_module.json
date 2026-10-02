@@ -1,0 +1,14 @@
+{
+  "id": "modern",
+  "kind": "track",
+  "order": 7,
+  "cls": "mod",
+  "name": "Modern Power BI features",
+  "tag": "Track",
+  "tagline": "Visual calculations, Copilot workflows and their limits, paginated reports, mobile and accessible design, personalization, and AI-assisted analysis.",
+  "seo": "Modern Power BI practice for PL-300: visual calculations, Copilot in Power BI, paginated reports, mobile layouts, accessibility, personalization, automatic page refresh, forecasting, anomaly detection, clustering and AI visuals.",
+  "intro": "Product features layered on top of the fundamentals, most of them new to the PL-300 outline in April 2026. They don't replace a good model or correct DAX: Copilot answers better on a well-prepared model, and visual calculations are easier precisely because the model underneath is right. Each topic says when it was last checked against Microsoft's documentation, because these features change monthly.",
+  "setup": "Power BI Desktop (current monthly release) and the starter project. Copilot needs a paid Fabric capacity (F2 or higher) or Power BI Premium (P1 or higher): trial capacities and Pro/PPU licences alone aren't enough. Where you don't have it, the tasks describe what to evaluate.",
+  "stage": "analyst",
+  "topics": ["mod-viscalc", "mod-copilot", "mod-report", "mod-ai"]
+}

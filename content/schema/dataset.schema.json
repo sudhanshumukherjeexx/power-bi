@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dataset.schema.json",
+  "title": "Course datasets: metadata and profile assertions",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["key", "name", "desc", "profile"],
+    "additionalProperties": false,
+    "properties": {
+      "key": { "type": "string", "pattern": "^[A-Za-z]+$", "description": "file name in data/ without .csv" },
+      "name": { "type": "string" },
+      "desc": { "type": "string" },
+      "profile": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Facts the generator must keep true. tests/datasets.test.js checks every one.",
+        "properties": {
+          "rows": { "type": "integer" },
+          "unique": { "type": "array", "items": { "type": "string" } },
+          "distinct": { "type": "object", "additionalProperties": { "type": "integer" } },
+          "nulls": { "type": "object", "additionalProperties": { "type": "integer" } },
+          "duplicateRows": { "type": "integer" },
+          "range": { "type": "object", "additionalProperties": { "type": "array", "minItems": 2, "maxItems": 2 } },
+          "count": { "type": "array", "items": { "type": "object", "required": ["col", "n"], "properties": { "col": { "type": "string" }, "n": { "type": "integer" }, "eq": { "type": "string" }, "lt": { "type": "number" }, "gt": { "type": "number" }, "blank": { "type": "boolean" }, "match": { "type": "string" }, "why": { "type": "string" } } } },
+          "fk": { "type": "array", "items": { "type": "object", "required": ["col", "ref"], "properties": { "col": { "type": "string" }, "ref": { "type": "string", "pattern": "^\\w+\\.\\w+$" }, "orphans": { "type": "integer" }, "why": { "type": "string" } } } }
+        }
+      }
+    }
+  }
+}

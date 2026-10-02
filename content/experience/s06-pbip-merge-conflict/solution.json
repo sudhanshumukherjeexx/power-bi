@@ -1,0 +1,62 @@
+{
+  "$schema": "../../schema/scenario-solution.schema.json",
+  "summary": "Keep both intentions: Sam's rename and format, and your Staff exclusion and LY measure. But neither \"Net Sales\" nor plain \"Net Revenue\" is the right final name: the KPI dictionary reserves \"Net Revenue (ledger)\" for Finance, so the order-based measure becomes \"Net Sales (orders)\". Update the two dependent measures and the three report visuals, verify values and BPA, and say all of this in the PR.",
+  "root_cause": [
+    "Both branches edited the same block of _Measures.tmdl: ours changed the Net Sales expression, theirs changed its name and format string. Git can merge different lines, not two edits to the same lines.",
+    "The rename also breaks references Git can't see as conflicts: [Net Sales] in your new LY measure, and \"Property\": \"Net Sales\" in three PBIR visual.json files.",
+    "The real disagreement is about naming, which is a business decision: the KPI dictionary from Sprint 05 already defines the names."
+  ],
+  "steps": [
+    "Three-way diff: base→ours adds the KEEPFILTERS(Channel ≠ Staff) expression and Net Sales LY; base→theirs renames to Net Revenue, changes the format to two decimals and adds Net Revenue %.",
+    "Decide the name with the owners, not alone: message Nina and Sam with the proposal \"Net Sales (orders)\" because it follows the KPI dictionary and can't be confused with Net Revenue (ledger).",
+    "Resolve the measure block: name Net Sales (orders), your expression, Sam's format only if Finance wants cents (here: keep whole dollars like the other measures, and say so), and keep the lineageTag, which identifies the object across renames.",
+    "Keep both new measures and update their references: Net Sales LY uses [Net Sales (orders)]; Sam's % measure becomes Net Sales (orders) % and divides by [Gross Sales (orders)] if you renamed that too, otherwise [Gross Sales].",
+    "Search the report definition: three visual.json files reference \"Net Sales\". Update them, or open the report in Desktop and let it repoint (Desktop updates PBIR references when you rename in the model; external edits don't).",
+    "Remove every conflict marker, open the PBIP in Desktop, refresh, compare the page values with main (the Staff exclusion should lower Net Sales by exactly the Staff amount and nothing else).",
+    "Run BPA: the description warnings remain for four measures; add descriptions (they're in the KPI dictionary) so the warning list is empty, and explain the floating-point warning as pre-existing.",
+    "Commit: \"Merge sam/rename-net-revenue: rename to Net Sales (orders), keep Staff exclusion, update references\". Write the PR."
+  ],
+  "artifacts": [
+    { "title": "Resolved _Measures.tmdl (the conflicting part)", "lang": "TMDL", "body": [
+      "\tmeasure 'Net Sales (orders)' = CALCULATE ( [Gross Sales] - [Refunds], KEEPFILTERS ( DimChannel[Channel] <> \"Staff\" ) )",
+      "\t\tformatString: \\$#,0",
+      "\t\tdisplayFolder: Sales",
+      "\t\tdescription: Value ordered in the period after discounts and refunds, by order date, excluding staff purchases. Not ledger revenue. Owner: VP Sales.",
+      "\t\tlineageTag: 1a2b3c4d-5e6f-4a1b-8c9d-0e1f2a3b4c03",
+      "",
+      "\tmeasure 'Net Sales (orders) LY' = CALCULATE ( [Net Sales (orders)], SAMEPERIODLASTYEAR ( DimDate[Date] ) )",
+      "\t\tformatString: \\$#,0",
+      "\t\tdisplayFolder: Sales",
+      "\t\tlineageTag: 9d8e7f6a-5b4c-4d3e-8f2a-1b0c9d8e7f04",
+      "",
+      "\tmeasure 'Net Sales (orders) %' = DIVIDE ( [Net Sales (orders)], [Gross Sales] )",
+      "\t\tformatString: 0.0%",
+      "\t\tdisplayFolder: Sales",
+      "\t\tlineageTag: 4e5f6a7b-8c9d-4e0f-a1b2-c3d4e5f6a705"
+    ] },
+    { "title": "Pull request description", "lang": "md", "body": [
+      "**Merge Staff exclusion and Finance naming for the order-based net measure**",
+      "**What:** Net Sales → Net Sales (orders); expression excludes the Staff channel; adds Net Sales (orders) LY and Net Sales (orders) %. Updates three report visuals (pages 1a2b and 9f3c) that referenced Net Sales.",
+      "**Why:** Policy agreed in BI-1057/BI-1103: staff purchases aren't revenue; the KPI dictionary reserves \"Net Revenue (ledger)\" for Finance, so this name avoids a clash (agreed with Nina and Sam on 26 May).",
+      "**Tested:** PBIP opens and refreshes; page values equal main except Net Sales (orders), which is lower by exactly the Staff total; BPA: 0 errors, descriptions added, 1 pre-existing warning (floating point on UnitPriceUSD, tracked in BI-1120).",
+      "**Risk:** Any Analyze in Excel workbook or composite model that referenced [Net Sales] by name will break. Lineage shows 2 workbooks; owners notified.",
+      "**Rollback:** revert this merge commit and redeploy; no data or schema changes."
+    ] }
+  ],
+  "communication": {
+    "executive": "Two changes to the sales numbers were combined safely. One name changed so it can't be confused with Finance's revenue, and everything that used the old name was updated and tested before release.",
+    "engineer": "3-way resolution of _Measures.tmdl: kept KEEPFILTERS Staff exclusion (ours) + new measures from both sides; final name 'Net Sales (orders)' per KPI dictionary (not theirs' 'Net Revenue'); lineageTag preserved; 2 DAX refs and 3 PBIR visual refs updated; BPA clean except one pre-existing warning."
+  },
+  "pitfalls": [
+    "\"Accept theirs\" as Sam suggested: your Staff exclusion silently disappears and Net Sales LY breaks.",
+    "Resolving the text without opening the model: the file parses, but three visuals show errors in production.",
+    "Changing the lineageTag or deleting and recreating the measure: external references and usage history are lost.",
+    "Committing .pbi/localSettings.json or cache.abf along with the merge."
+  ],
+  "review": {
+    "junior": "Accepts one side of the conflict and pushes.",
+    "competent": "Merges both changes by hand, removes markers, checks the model opens.",
+    "senior": "Does a three-way diff, finds the hidden references (DAX and PBIR), resolves the naming with the owners using the KPI dictionary, validates values and BPA, and writes a PR with risk and rollback.",
+    "architect": "Adds naming rules to the BPA rule set (no bare \"Revenue\", descriptions required), a CI check that fails on conflict markers or broken references, and a team agreement to keep renames in their own PRs."
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "id": "qa-model",
+  "name": "Semantic model tests: known input, known output",
+  "ds": ["MiniSales"],
+  "skills": ["testing", "dax", "modeling"],
+  "stage": "developer",
+  "why": {
+    "matters": "Measures are code. A small table whose answers you can work out by hand turns \"the total looks plausible\" into a test that fails the moment a measure changes behaviour.",
+    "failure": "Someone \"fixes\" time intelligence and YoY silently changes for every month that crosses a year boundary; nobody notices until the annual review.",
+    "use": "A mini dataset with hand-computed answers, DAX queries (EVALUATE) that return measure values in specific filter contexts, and a stored expected result to compare against after every change.",
+    "avoid": "Testing only on production data, where you don't know the right answer."
+  },
+  "verified": { "date": "2026-10-01", "context": "DAX query view (Power BI Desktop, Sept 2026)", "review_after_days": 180 },
+  "refs": [
+    { "title": "DAX query view", "url": "https://learn.microsoft.com/en-us/power-bi/transform-model/dax-query-view" },
+    { "title": "EVALUATE statement", "url": "https://learn.microsoft.com/en-us/dax/evaluate-statement-dax" }
+  ],
+  "asg": [
+    {
+      "t": "Work the answers out by hand first",
+      "time": "30 min",
+      "ds": "mini_sales",
+      "guidance": "A",
+      "steps": [
+        "Open mini_sales.csv: eight lines. Value = Qty × UnitPrice. L8 is a return (negative quantity).",
+        "On paper, compute: total sales; Q1 2025; Q1 2026 by order date; Q1 2026 by ship date; YoY for Q1; distinct customers in 2026 and in March 2026; Online sales in Q1 2026.",
+        "Load the file into a new Power BI file with a date table: an active relationship on OrderDate, an inactive one on ShipDate.",
+        "Write the measures: Sales, Sales (ship date) with USERELATIONSHIP, Sales PY, YoY %, Customers.",
+        "Compare every measure with your paper answers."
+      ],
+      "exp": "Total {{qa_total|int}}; Q1 2025 {{qa_q1_2025|int}}; Q1 2026 {{qa_q1_2026|int}} by order date and {{qa_q1_2026_ship|int}} by ship date; YoY {{qa_yoy|pct1}}; {{qa_customers_2026|int}} customers in 2026, {{qa_customers_mar_2026|int}} in March 2026; Online Q1 2026 {{qa_online_q1_2026|int}}."
+    },
+    {
+      "t": "Turn them into a DAX test query",
+      "time": "30 min",
+      "ds": "mini_sales",
+      "guidance": "B",
+      "brief": "Write one DAX query that returns each test's name, expected value, actual value and pass/fail, so anyone can rerun the whole suite in seconds after a change.",
+      "req": ["One row per test, including the inactive-relationship and year-boundary cases.", "Expected values typed in from your paper answers, not copied from the measures.", "A pass flag that tolerates rounding."],
+      "exp": "Every row shows Pass. Change Sales PY to use DATEADD(…, -12, MONTH) incorrectly on purpose and at least the YoY test fails."
+    },
+    {
+      "t": "What should a measure return here?",
+      "time": "25 min",
+      "ds": "mini_sales",
+      "guidance": "C",
+      "brief": "Total rows and edge cases are where measures break. Decide what each measure should return in four awkward contexts, test it, and fix what's wrong.",
+      "req": ["YoY % for a month with no sales last year.", "Customers at the grand total (is it the sum of the months?).", "Sales for a product filtered to a date range with only a return.", "Sales (ship date) for March 2026, when one March order ships in April."],
+      "exp": "YoY blank (not infinity or 0) without prior-year sales; customers at the total = distinct across the period, not the sum of months; the return-only context shows a negative number; ship-date March excludes the line shipped in April."
+    }
+  ],
+  "int": [
+    { "q": "What is a known-input, known-output test for a measure?", "a": "A small dataset where you've worked out the correct results by hand, and a query that evaluates the measure in specific filter contexts and compares with those results. If the measure or the model changes behaviour, the test fails." },
+    { "q": "Which contexts most often break measures?", "a": "Totals (non-additive measures), year and period boundaries (time intelligence), blank or missing data (division, YoY), negative values (returns), inactive relationships and many-to-many paths." },
+    { "q": "How do you run model tests automatically?", "a": "Store the test queries (DAX) and expected results in the repository; run them with DAX query view by hand, or automatically through the XMLA endpoint or the executeQueries REST API after deployment, and fail the pipeline on mismatches." },
+    { "q": "Why type expected values in instead of computing them with another measure?", "a": "Computing them with DAX can reproduce the same mistake. Independent expected values (by hand, SQL or Excel) are what make it a test." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "Your DAX test says YoY for January 2026 = blank. January 2025 had no sales. Is that right?", "o": ["No, it should be 0%", "Yes: there is no prior value to compare with", "No, it should be 100%", "It should be infinity"], "a": 1, "why": "DIVIDE returns blank when the denominator is blank or zero, which is the honest answer." },
+    { "type": "mcq", "q": "The distinct customer count for Q1 is lower than the sum of the three months. This means:", "o": ["A bug", "Some customers bought in more than one month", "The date table is wrong", "Customers were deleted"], "a": 1, "why": "Distinct counts are non-additive." },
+    { "type": "task", "q": "Store your DAX test query and its expected output in the repository next to the PBIP, and write a one-paragraph README on how to run it.", "hint": "Later, the automation track shows how to run it against the Service with the executeQueries REST API." }
+  ]
+}

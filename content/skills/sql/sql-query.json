@@ -1,0 +1,63 @@
+{
+  "id": "sql-query",
+  "name": "Querying for BI: grain, joins and aggregation",
+  "ds": ["NWOrders", "NWOrderLines", "NWCustomers", "NWRegions", "NWFx"],
+  "skills": ["sql", "modeling"],
+  "stage": "analyst",
+  "why": {
+    "matters": "Most wrong numbers in BI are join mistakes: a join that multiplies rows, or one that silently drops them. SQL is where you see the grain clearly.",
+    "failure": "An analyst joins orders to order lines and counts rows as orders; the dashboard reports twice as many orders as the business has.",
+    "use": "Whenever data comes from a database: check the grain of every table and of every result before aggregating.",
+    "avoid": "Writing the whole model in one giant query. Keep views at a clear grain and let the semantic model do the slicing."
+  },
+  "verified": { "date": "2026-10-01", "context": "Portable SQL tested on SQLite 3.47 in CI; SQL Server and DuckDB syntax notes", "review_after_days": 365 },
+  "refs": [
+    { "title": "SELECT (Transact-SQL)", "url": "https://learn.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql" },
+    { "title": "Joins (SQL Server)", "url": "https://learn.microsoft.com/en-us/sql/relational-databases/performance/joins" }
+  ],
+  "asg": [
+    {
+      "t": "Q1 2026 sales by region",
+      "time": "40 min",
+      "ds": "orders, order_lines, regions, fx_rates",
+      "guidance": "A",
+      "steps": [
+        "Load the company pack into your SQL engine (see Before you start).",
+        "order_lines contains exact duplicate rows from a re-export. In a CTE, keep one copy of each (SELECT DISTINCT * is enough here).",
+        "Join the lines to orders. Keep only Status = 'Completed', OrderDate from 2026-01-01 to 2026-03-31, and exclude the test customer C19999.",
+        "Line value = ROUND(Qty × UnitPrice × (100 − DiscountPct) / 100, 2). Convert EUR lines to USD: join fx_rates on the order month (first 7 characters of OrderDate) and Currency, and multiply; round each line to cents.",
+        "Join regions on SalesRegionKey and group by RegionName. Add a grand total in a second query, or with ROLLUP if your engine has it."
+      ],
+      "exp": "Five rows. West {{uat_sales_west|money0}}, South {{uat_sales_south|money0}}, East {{uat_sales_east|money0}}, Central {{uat_sales_central|money0}}, Europe {{uat_sales_europe|money0}}; total {{q1_2026_gross|money0}}."
+    },
+    {
+      "t": "Count orders, lines and customers correctly",
+      "time": "30 min",
+      "ds": "orders, order_lines",
+      "guidance": "B",
+      "brief": "Sales wants one row per channel for Q1 2026 with the number of orders, order lines and buying customers, plus a total row. The totals must be right, not just the channel rows.",
+      "req": ["Same filters as the previous assignment (deduplicated, completed, no test customer, Q1 2026).", "Show in a comment why COUNT(*) after the join is the wrong way to count orders.", "Explain why the channel rows don't add up to the total for customers."],
+      "exp": "Total: {{sql_q1_orders|int}} orders, {{sql_q1_lines|int}} lines, {{sql_buying_customers|int}} customers. The customers column doesn't add up across channels, because some customers buy through more than one."
+    },
+    {
+      "t": "The customer list that lost customers",
+      "time": "30 min",
+      "ds": "customers, orders, order_lines",
+      "guidance": "C",
+      "brief": "Marketing asked for every customer with their Q1 2026 sales, including customers who bought nothing (they want to win them back). The query they were given returns only {{sql_buying_customers|int}} rows, but the company has {{sql_customers_total|int}} real customers. Find out why and fix it.",
+      "req": ["Return one row per customer (excluding the test account) with Q1 2026 gross sales, 0 when they bought nothing.", "Explain the bug in one sentence."],
+      "exp": "{{sql_customers_total|int}} rows, of which {{sql_customers_without_q1|int}} have 0. The cause: a LEFT JOIN followed by a WHERE condition on the right-hand table turns it back into an inner join."
+    }
+  ],
+  "int": [
+    { "q": "What does \"grain\" mean, and why check it before writing a join?", "a": "Grain is what one row represents: one order, one order line, one customer per day. Joining tables at different grains repeats the coarser rows (one order × its lines), so any sum or count of the coarser table's values is multiplied. Check the key of each table and of the result before aggregating." },
+    { "q": "Difference between WHERE and ON in a LEFT JOIN?", "a": "Conditions in ON decide which right-hand rows match; unmatched left rows are kept with NULLs. Conditions in WHERE filter after the join, so a WHERE on a right-hand column removes the NULL rows and silently makes it an inner join. Put right-hand filters in the ON clause when you want to keep all left rows." },
+    { "q": "COUNT(*) vs COUNT(column) vs COUNT(DISTINCT column)?", "a": "COUNT(*) counts rows, COUNT(column) counts non-null values, COUNT(DISTINCT column) counts different non-null values. After joining orders to lines, COUNT(*) counts lines; orders need COUNT(DISTINCT OrderID)." },
+    { "q": "Why do distinct counts not add up across categories?", "a": "The same entity can appear in several categories (a customer buying online and in store). Each category counts it once, the total counts it once overall, so the category rows add up to more than the total. It's correct, and it's why distinct counts are non-additive measures." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "SELECT COUNT(*) FROM orders o JOIN order_lines l ON l.OrderID = o.OrderID returns:", "o": ["The number of orders", "The number of order lines that have a matching order", "The number of customers", "The number of orders with more than one line"], "a": 1, "why": "The result has one row per matching line, so COUNT(*) counts lines." },
+    { "type": "mcq", "q": "A LEFT JOIN from customers to orders with WHERE orders.OrderDate >= '2026-01-01' returns:", "o": ["All customers", "Only customers with at least one order on or after that date", "Only customers without orders", "An error"], "a": 1, "why": "The WHERE condition removes the rows where OrderDate is NULL, i.e. customers without orders. Move it into the ON clause to keep them." },
+    { "type": "task", "q": "Write a query that returns the grain (the key columns and whether they are unique) of each table in the company pack.", "hint": "For each table compare COUNT(*) with COUNT(DISTINCT key) (or with a GROUP BY on the candidate key HAVING COUNT(*) > 1). order_lines will surprise you." }
+  ]
+}

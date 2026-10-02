@@ -1,0 +1,144 @@
+{
+  "id": "b-model",
+  "name": "Data modeling: a star schema that behaves",
+  "ds": [
+    "FactSales",
+    "DimProduct",
+    "DimCustomer",
+    "DimRegion",
+    "DimDate"
+  ],
+  "skills": [
+    "modeling"
+  ],
+  "stage": "analyst",
+  "refs": [
+    {
+      "title": "Star schema guidance for Power BI",
+      "url": "https://learn.microsoft.com/en-us/power-bi/guidance/star-schema"
+    },
+    {
+      "title": "Create date tables",
+      "url": "https://learn.microsoft.com/en-us/power-bi/guidance/model-date-tables"
+    }
+  ],
+  "asg": [
+    {
+      "t": "Build the Northwind star",
+      "time": "30 min",
+      "ds": "FactSales + 4 dims",
+      "guidance": "A",
+      "steps": [
+        "Load FactSales, DimProduct, DimCustomer, DimRegion and DimDate.",
+        "In Model view, delete every auto-detected relationship. Rebuild them yourself: DimProduct[ProductKey] → FactSales[ProductKey], same for Customer, Region and DimDate[Date] → FactSales[OrderDate].",
+        "Set every relationship to One-to-Many, single direction, filter flowing from dimension to fact.",
+        "Mark DimDate as a date table.",
+        "Hide every key column in the fact table from Report view."
+      ],
+      "exp": "Four relationships, all 1:*, all single-direction arrows pointing at FactSales. Card visual showing COUNTROWS(FactSales) = 100."
+    },
+    {
+      "t": "Replace DimDate with a DAX date table",
+      "time": "20 min",
+      "ds": "DimDate",
+      "guidance": "A",
+      "steps": [
+        "Create a new table: Dates = CALENDAR(DATE(2025,1,1), DATE(2026,12,31)).",
+        "Add columns Year, MonthNumber, MonthName, YearMonth (as \"2026-03\"), Quarter, IsWeekend.",
+        "Sort MonthName by MonthNumber. Mark as date table. Relate to FactSales[OrderDate]. Delete the loaded DimDate.",
+        "Build a column chart of FactSales quantity by MonthName: months must appear Jan, Feb, Mar (not alphabetically)."
+      ],
+      "exp": "730 rows in Dates. Chart order Jan → Feb → Mar. Note: the loaded DimDate stops at 31 Mar 2026, which is exactly why you replaced it."
+    },
+    {
+      "t": "Find the join that lies",
+      "time": "20 min",
+      "ds": "FactSales, DimCustomer, DimRegion",
+      "guidance": "A",
+      "steps": [
+        "Notice that both FactSales and DimCustomer contain a RegionKey.",
+        "Create two relationships from DimRegion: one to FactSales[RegionKey], one to DimCustomer[RegionKey]. Power BI will make one of them inactive (dashed line).",
+        "Build a table: RegionName, Sum of Quantity. Change which relationship is active and compare.",
+        "Decide which is correct for \"sales by region where the sale happened\" versus \"sales by region of the customer's home\". Keep the one to FactSales active."
+      ],
+      "exp": "Region totals change, but the grand total (333 units) does not: 79 of the 100 sales lines were sold by a rep whose region is not the customer's home region."
+    },
+    {
+      "t": "Role-playing date",
+      "time": "15 min",
+      "ds": "FactSales, Dates",
+      "guidance": "A",
+      "steps": [
+        "Create a second relationship Dates[Date] → FactSales[ShipDate]. It will be inactive.",
+        "Write: Shipped Qty = CALCULATE(SUM(FactSales[Quantity]), USERELATIONSHIP(Dates[Date], FactSales[ShipDate])).",
+        "Matrix by MonthName with Sum of Quantity and Shipped Qty side by side."
+      ],
+      "exp": "March shows more ordered than shipped because some late-March orders ship in April, outside the fact range."
+    }
+  ],
+  "int": [
+    {
+      "q": "Why single-direction relationships by default? Give one concrete bug bi-directional filtering causes.",
+      "a": "Bi-directional filters create ambiguity and cost performance. Concrete bug: with DimCustomer ↔ FactSales both ways, a slicer on Product filters the customer list to only customers who bought that product, which looks helpful but makes every other slicer behave unpredictably and breaks RLS propagation."
+    },
+    {
+      "q": "What makes a table a \"proper\" date table and what breaks if it is not one?",
+      "a": "Contiguous dates, one row per day, covering the full range of every fact, a unique date column, marked as date table. Without it, time-intelligence functions like DATEADD and TOTALYTD return wrong results or blanks, and auto date/time hidden tables bloat the model."
+    },
+    {
+      "q": "Explain snowflake vs star and why Power BI prefers star.",
+      "a": "Snowflake normalises dimensions (Product → SubCategory → Category tables). Star flattens them into one table. VertiPaq compresses repeated text well, so flattening costs little, and every extra hop is an extra relationship the engine must traverse per query."
+    },
+    {
+      "q": "You have a fact table with 100 rows and a Product dimension with 24 rows, but the visual total does not match the fact table sum. Name three causes.",
+      "a": "(1) a ProductKey in the fact with no match in the dimension (blank row absorbing them), (2) a duplicate key in the dimension turning the relationship into many-to-many, (3) an inactive or wrong-direction relationship."
+    },
+    {
+      "q": "When do you actually want a calculated column instead of a measure?",
+      "a": "When the value is needed on an axis, slicer or as a relationship key, or for row-level categorisation (e.g. \"Order size bucket\"). Everything aggregated should be a measure. Calculated columns are computed at refresh and stored, so they cost memory."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "FactSales has a ProductKey of 25 that does not exist in DimProduct. What does a table of Category by Quantity show?",
+      "o": [
+        "An error",
+        "The row is dropped",
+        "A row with blank Category holding that quantity",
+        "The quantity spreads across all categories"
+      ],
+      "a": 2,
+      "why": "Referential integrity violations are collected into an invisible blank member of the dimension."
+    },
+    {
+      "type": "mcq",
+      "q": "Which relationship must be inactive?",
+      "o": [
+        "DimRegion → FactSales",
+        "Dates → FactSales[OrderDate]",
+        "Dates → FactSales[ShipDate]",
+        "DimProduct → FactSales"
+      ],
+      "a": 2,
+      "why": "Two relationships between the same pair of tables cannot both be active; you activate ShipDate on demand with USERELATIONSHIP."
+    },
+    {
+      "type": "task",
+      "q": "Build the star and produce a matrix: rows = Category, columns = RegionName, values = Sum Quantity. Report the value for Water × West.",
+      "hint": "If your value is 0 or blank, check the direction of the Region relationship."
+    },
+    {
+      "type": "mcq",
+      "q": "Marking a table as a date table requires:",
+      "o": [
+        "A column of type Date/Time",
+        "A unique Date column with no nulls and no gaps",
+        "At least 365 rows",
+        "A column named \"Date\""
+      ],
+      "a": 1,
+      "why": "Uniqueness and contiguity are validated; the name and row count are not."
+    }
+  ]
+}

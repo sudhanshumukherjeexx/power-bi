@@ -1,0 +1,58 @@
+{
+  "id": "dw-dims",
+  "name": "Dimension patterns: conformed, role-playing, junk and bridge",
+  "ds": ["NWOrders", "NWOrderLines", "CustomerTargets"],
+  "skills": ["warehousing", "modeling", "dax"],
+  "stage": "developer",
+  "why": {
+    "matters": "Shared, well-designed dimensions are what let Sales, Finance and Operations slice different facts by the same customer, product and date, and get comparable answers.",
+    "failure": "Each fact gets its own copy of the date table and \"Q1\" means three slightly different things on one dashboard.",
+    "use": "Conformed dimensions shared across facts; role-playing for several dates; junk dimensions for scattered flags; bridges for genuine many-to-many.",
+    "avoid": "Bridges and bi-directional filters to paper over a grain problem that a better fact design would remove."
+  },
+  "verified": { "date": "2026-10-01", "context": "Power BI relationship guidance (role-playing, many-to-many), Sept 2026", "review_after_days": 365 },
+  "refs": [
+    { "title": "Active vs inactive relationship guidance (role-playing dimensions)", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/relationships-active-inactive" },
+    { "title": "Many-to-many relationship guidance", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/relationships-many-to-many" }
+  ],
+  "asg": [
+    {
+      "t": "One date table, three dates",
+      "time": "35 min",
+      "ds": "orders, order_lines",
+      "guidance": "B",
+      "brief": "Sales wants Q1 2026 by order date, Operations by ship date, Finance by posting date, all from one model and one date table.",
+      "req": ["One active relationship (order date) and two inactive ones.", "Measures that use USERELATIONSHIP for ship and posting dates.", "Compare Q1 2026 gross sales by order date and by ship date, and explain the difference."],
+      "exp": "By order date {{q1_2026_gross|money0}}; by ship date {{rev_ops_model|money0}}. The difference comes from orders placed in late December that shipped in January and March orders that shipped in April."
+    },
+    {
+      "t": "A junk dimension for order flags",
+      "time": "25 min",
+      "ds": "orders",
+      "guidance": "C",
+      "brief": "FactSales carries Channel, Status and Currency as text on every row: wasteful at 30 million rows and messy for the field list. Replace them with one small dimension.",
+      "req": ["Build the dimension from the combinations that actually occur.", "Give it a surrogate key and point the fact to it.", "Say why a cross join of all possible values may or may not be better."],
+      "exp": "{{dw_junk_combos|int}} combinations occur out of {{dw_junk_possible|int}} possible. The fact keeps one small integer instead of three text columns."
+    },
+    {
+      "t": "Targets that don't fit the customer grain",
+      "time": "35 min",
+      "ds": "CustomerTargets, DimCustomer (course datasets)",
+      "guidance": "B",
+      "brief": "Targets are set by Segment × LoyaltyTier × Quarter, not by customer (course dataset CustomerTargets). Model them so a matrix by Segment and Tier shows actuals and targets side by side.",
+      "req": ["Either a bridge (Segment-Tier dimension) or relationships at the target grain; explain your choice.", "Show what happens at customer level (targets can't be split)."],
+      "exp": "Targets appear at Segment × Tier and above; at customer level they are blank (or repeated, if you chose a *:* relationship, which is why you shouldn't)."
+    }
+  ],
+  "int": [
+    { "q": "What is a conformed dimension?", "a": "A dimension shared, with the same keys and attributes, by several facts (and ideally several models), so that slicing Sales and Returns by Product gives comparable results. It's the backbone of an enterprise bus matrix." },
+    { "q": "What is a role-playing dimension, and how do you model it in Power BI?", "a": "One dimension used in several roles, like Date as order date, ship date and posting date. In Power BI: one active relationship and inactive ones activated per measure with USERELATIONSHIP, or separate copies of the date table when users need to slice by two roles at once." },
+    { "q": "When is a junk dimension useful?", "a": "When a fact has several low-cardinality flags or codes that don't belong to any dimension. Combining them into one small dimension replaces several text columns with one key and gives users one tidy place to find them." },
+    { "q": "When do you need a bridge table?", "a": "For a genuine many-to-many: an account with several owners, a patient with several diagnoses, or a fact at a grain coarser than a dimension (targets by segment). The bridge resolves the relationship; weighting factors avoid double counting when amounts must be allocated." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "Users need a matrix by Order Month AND Ship Month at the same time. Best model?", "o": ["One date table with USERELATIONSHIP", "Two date tables (order date, ship date), each with an active relationship", "A bi-directional relationship", "A calculated column"], "a": 1, "why": "USERELATIONSHIP activates one role per measure; slicing by two roles simultaneously needs two date dimensions." },
+    { "type": "mcq", "q": "Targets exist by Segment × Tier. A *:* relationship from targets to customers will, at customer level:", "o": ["Split the target evenly", "Repeat the segment's target for every customer", "Show blank", "Error"], "a": 1, "why": "Each customer in the segment sees the whole target, and totals still work because filters propagate; that's why customer-level target visuals are misleading." },
+    { "type": "task", "q": "Draw (or describe) the bus matrix for Northwind: facts as rows (Sales, Returns, Budget, Inventory, Payroll), dimensions as columns (Date, Product, Customer, Region, Employee), with a tick where they relate.", "hint": "Budget is at Category × Month, so it relates to a Category-level product dimension and to Date at month grain." }
+  ]
+}

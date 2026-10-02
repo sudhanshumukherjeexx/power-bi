@@ -1,0 +1,14 @@
+/// Sales Model (workspace: Sales Reporting)
+measure Revenue = SUMX ( FactOrderLine, FactOrderLine[Qty] * FactOrderLine[UnitPriceUSD] * ( 1 - FactOrderLine[DiscountPct] / 100 ) )
+	formatString: \$#,0
+	/// filters: Orders[Status] = "Completed" (report level), date axis uses Orders[OrderDate]
+
+/// Finance GL (workspace: Finance)
+measure Revenue = CALCULATE ( SUM ( GL[AmountUSD] ), GL[Account] IN { "4000", "4900", "4910" } )
+	formatString: \$#,0
+	/// date axis uses GL[Period] (posting period)
+
+/// Ops Fulfilment (workspace: Ops Dashboards)
+measure Revenue = CALCULATE ( SUMX ( Shipments, Shipments[ShippedQty] * Shipments[UnitPriceUSD] * ( 1 - Shipments[DiscountPct] / 100 ) ) )
+	formatString: \$#,0
+	/// date axis uses Shipments[ShipDate]

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "elena",
+    "name": "Elena Torres",
+    "role": "BI Lead (your manager)",
+    "cares": "Architecture, review quality and safe deployments. Asks \"how do you know?\" a lot.",
+    "style": "Short messages, expects a recommendation, not a list of options."
+  },
+  {
+    "id": "sarah",
+    "name": "Sarah Chen",
+    "role": "CFO",
+    "cares": "Reconciliation to the general ledger and the board pack. A number that changes after it was presented is a serious problem.",
+    "style": "Formal email. Wants the answer, the impact and what you will do, in that order."
+  },
+  {
+    "id": "jordan",
+    "name": "Jordan Reed",
+    "role": "VP Sales",
+    "cares": "Revenue growth, pipeline and fast answers before leadership meetings.",
+    "style": "Chat messages, late on Fridays, short on detail."
+  },
+  {
+    "id": "kenji",
+    "name": "Kenji Mori",
+    "role": "Data Engineer",
+    "cares": "Source systems, pipelines and platform reliability. Owns the SQL warehouse and the gateway.",
+    "style": "Precise and technical. Happy to help if you bring evidence."
+  },
+  {
+    "id": "dana",
+    "name": "Dana Whitfield",
+    "role": "West Regional Sales Manager",
+    "cares": "Their own region's numbers and team. Should never see other regions' payroll.",
+    "style": "Practical. Reports problems as screenshots with no context."
+  },
+  {
+    "id": "ava",
+    "name": "Ava Martin",
+    "role": "Compliance Officer",
+    "cares": "Who can see what, audit trails and evidence that controls work.",
+    "style": "Asks for written records and dates."
+  },
+  {
+    "id": "nina",
+    "name": "Nina Kowalski",
+    "role": "Finance Analyst",
+    "cares": "Matching Power BI to Excel and the finance close calendar.",
+    "style": "Sends spreadsheets with the differences highlighted."
+  },
+  {
+    "id": "sam",
+    "name": "Sam Patel",
+    "role": "BI Developer (your teammate)",
+    "cares": "Getting their own changes merged. Works on the same semantic model as you.",
+    "style": "Friendly, fast, sometimes skips the tests."
+  },
+  {
+    "id": "grace",
+    "name": "Grace Hollis",
+    "role": "CEO",
+    "cares": "One version of the truth for the leadership team.",
+    "style": "Rarely writes. When Grace does, it is urgent."
+  },
+  {
+    "id": "tomas",
+    "name": "Tomas Ekberg",
+    "role": "Central Regional Sales Manager",
+    "cares": "The wholesale accounts in the Central region, especially the big outfitters.",
+    "style": "Forwards emails with one line on top."
+  },
+  {
+    "id": "lea",
+    "name": "Lea Brandt",
+    "role": "Europe Regional Manager (Berlin)",
+    "cares": "EUR numbers that match what the German entity reports.",
+    "style": "Precise. Notices currency problems first."
+  },
+  {
+    "id": "service",
+    "name": "Power BI service",
+    "role": "Automated notification",
+    "cares": "Nothing. It sends emails to whoever is listed as the model owner.",
+    "style": "Terse."
+  }
+]

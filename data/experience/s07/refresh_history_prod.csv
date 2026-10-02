@@ -1,0 +1,4 @@
+Start,End,Type,Status,Message
+2026-06-01 18:20,2026-06-01 18:31,On demand,Completed,Warning: table Targets was not refreshed (credentials expired); previous data kept
+2026-06-02 05:00,2026-06-02 05:12,Scheduled,Completed,Warning: table Targets was not refreshed (credentials expired); previous data kept
+2026-06-03 05:00,2026-06-03 05:11,Scheduled,Completed,Warning: table Targets was not refreshed (credentials expired); previous data kept

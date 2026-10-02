@@ -1,0 +1,69 @@
+{
+  "sql-tune-0": {
+    "s": [
+      "SELECT * returns 61 columns; Power Query keeps 9. Select only those: less I/O, less network, and the query can be covered by an index.",
+      "CONVERT(varchar, o.OrderID) = l.OrderID: mismatched join types force a conversion on every row and prevent seeks. Make both sides the same type (ask Kenji to fix the column), or convert the smaller side once.",
+      "YEAR(o.OrderDate) = 2026 isn't sargable: use OrderDate >= '2026-01-01' AND OrderDate < '2027-01-01' so the OrderDate index can seek.",
+      "UPPER(o.Status) = 'COMPLETED': the column is already upper case in the data; compare directly (or fix collation) so it can be part of an index.",
+      "The correlated COUNT(*) on Returns runs 41 million times: replace with NOT EXISTS, which the optimiser runs as one anti-join and can stop at the first match.",
+      "ORDER BY is pointless for Power BI (it doesn't preserve order) and adds a sort over millions of rows: remove it.",
+      "Indexes to request: nonclustered on Orders(Status, OrderDate) INCLUDE (CustomerID, Channel, SalesRegionKey, Currency); and on Returns(OrderID, LineNo). Then check the plan again.",
+      "Downstream: refresh drops from ~22 minutes to minutes; with a foldable date range, incremental refresh can push RangeStart/RangeEnd filters to the source and refresh only recent partitions."
+    ],
+    "code": [
+      {
+        "lang": "SQL", "title": "Original logic vs rewrite: same rows (portable version run in CI)", "dialect": "portable",
+        "src": [
+          "WITH original AS (",
+          "    SELECT l.OrderID, l.LineNo",
+          "    FROM order_lines AS l",
+          "    JOIN orders AS o ON o.OrderID = l.OrderID",
+          "    WHERE SUBSTRING(CAST(o.OrderDate AS VARCHAR(10)), 1, 4) = '2026'        -- stands in for YEAR(OrderDate) = 2026",
+          "      AND UPPER(o.Status) = 'COMPLETED'",
+          "      AND (SELECT COUNT(*) FROM returns AS r WHERE r.OrderID = l.OrderID AND r.LineNo = l.LineNo) = 0",
+          "),",
+          "rewrite AS (",
+          "    SELECT l.OrderID, l.LineNo",
+          "    FROM order_lines AS l",
+          "    JOIN orders AS o ON o.OrderID = l.OrderID",
+          "    WHERE o.OrderDate >= '2026-01-01' AND o.OrderDate < '2027-01-01'      -- sargable range",
+          "      AND o.Status = 'Completed'",
+          "      AND NOT EXISTS (SELECT 1 FROM returns AS r WHERE r.OrderID = l.OrderID AND r.LineNo = l.LineNo)",
+          ")",
+          "SELECT (SELECT COUNT(*) FROM original) AS OriginalRows,",
+          "       (SELECT COUNT(*) FROM rewrite)  AS RewriteRows;"
+        ],
+        "expect": { "cols": ["OriginalRows", "RewriteRows"], "rows": [["{{sql_slow_rows|int}}", "{{sql_slow_rows|int}}"]] }
+      },
+      {
+        "lang": "SQL", "title": "The rewrite for SQL Server", "dialect": "tsql",
+        "src": [
+          "SELECT l.OrderID, l.LineNo, o.OrderDate, o.PostingDate, o.CustomerID, o.Channel,",
+          "       o.SalesRegionKey, l.ProductKey, l.Qty, l.UnitPrice, l.DiscountPct, o.Currency",
+          "FROM dbo.OrderLines AS l",
+          "JOIN dbo.Orders AS o",
+          "  ON o.OrderID = l.OrderID                -- after fixing OrderLines.OrderID to int",
+          "WHERE o.OrderDate >= '20260101' AND o.OrderDate < '20270101'",
+          "  AND o.Status = 'Completed'",
+          "  AND NOT EXISTS (SELECT 1 FROM dbo.Returns AS r WHERE r.OrderID = l.OrderID AND r.LineNo = l.LineNo);",
+          "",
+          "CREATE NONCLUSTERED INDEX IX_Orders_Status_OrderDate",
+          "    ON dbo.Orders (Status, OrderDate) INCLUDE (PostingDate, CustomerID, Channel, SalesRegionKey, Currency);",
+          "CREATE NONCLUSTERED INDEX IX_Returns_OrderLine ON dbo.Returns (OrderID, LineNo);"
+        ]
+      }
+    ],
+    "check": "Both return {{sql_slow_rows|int}} rows on the company pack. On SQL Server, expect seeks instead of scans and no per-row Returns scan.",
+    "note": "The original query also didn't exclude duplicates or the test customer. A faster query that returns wrong rows is still wrong: use vw_FactSales from the previous topic as the base.",
+    "verify": "Row equivalence executed in CI against SQLite; the T-SQL block and index advice are not executed."
+  },
+  "sql-tune-1": {
+    "s": ["Seek: the explicit date range; LIKE 'ava.%' (prefix).", "CONVERT(date, datetime2col) = constant: SQL Server treats this as a sargable range internally, a documented exception, but don't rely on it for other functions.", "No seek: YEAR(OrderDate) → rewrite as a range; LOWER(Email) → use a case-insensitive collation (default) and compare directly, or a persisted computed column with an index; LIKE '%@example.com' → can't seek; store the domain in its own column if it's queried often."],
+    "check": "Seekable: range, prefix LIKE, CONVERT(date) on datetime2. Not: YEAR(), LOWER(), leading wildcard."
+  },
+  "sql-tune-2": {
+    "s": ["Shared business rules go as far upstream as possible: deduplication, currency conversion and test-customer exclusion in the warehouse view (folds, reused by every model, one fix).", "Shape-only changes that the source can't do: Power Query, as long as folding is preserved or the table is small.", "Anything that depends on filter context is a measure: days since last order changes with the date filter.", "Display formatting belongs in the model (format strings), not in data.", "Rule: transform as far upstream as possible, as far downstream as necessary."],
+    "tbl": [["Transformation", "Where", "Why"], ["Deduplicate order lines", "Warehouse view", "Shared rule; everyone gets the same rows"], ["EUR → USD monthly", "Warehouse view", "Shared rule; foldable join"], ["Split full name", "View (or Power Query)", "Shape only; small dimension"], ["Exclude test customer", "Warehouse view", "Data quality rule for every consumer"], ["Days since last order", "DAX measure", "Depends on the selected date"], ["$1.2M on a card", "Format string", "Presentation only"]],
+    "check": "Only \"days since last order\" (and the formatting, as a format string) live in the model; at most two of six in DAX."
+  }
+}

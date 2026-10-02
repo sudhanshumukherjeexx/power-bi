@@ -1,0 +1,25 @@
+ProductKey,ProductName,Category,SubCategory,Brand,UnitCostUSD,ListPriceUSD
+1,Ridgeline 2P Tent,Camping,Tents,Summit,95.00,199.99
+2,Alpine Down Sleeping Bag,Camping,Sleep,Summit,82.00,179.99
+3,Trail Chef Stove,Camping,Cooking,Ember,18.50,49.99
+4,Ember Titanium Pot Set,Camping,Cooking,Ember,22.00,59.99
+5,Basecamp Camp Chair,Camping,Furniture,Northwind,14.00,39.99
+6,Glacier Headlamp 400,Camping,Lighting,Lumen,9.00,29.99
+7,Summit 65L Backpack,Hiking,Packs,Summit,70.00,169.99
+8,Daytrip 22L Pack,Hiking,Packs,Northwind,19.00,54.99
+9,Carbon Trekking Poles,Hiking,Poles,Summit,31.00,89.99
+10,Ridge Runner Boots,Hiking,Footwear,Terra,58.00,149.99
+11,Trailflex Sandals,Hiking,Footwear,Terra,21.00,64.99
+12,Merino Hiking Sock,Hiking,Apparel,Terra,5.50,19.99
+13,Stormshell Rain Jacket,Apparel,Outerwear,Northwind,48.00,129.99
+14,Puffpack Insulated Vest,Apparel,Outerwear,Northwind,36.00,99.99
+15,Quickdry Trail Shirt,Apparel,Tops,Terra,12.00,39.99
+16,Convertible Hike Pant,Apparel,Bottoms,Terra,24.00,74.99
+17,Sunrise Cap,Apparel,Accessories,Northwind,4.00,17.99
+18,Fleece Beanie,Apparel,Accessories,Northwind,3.50,14.99
+19,Riverstone Kayak 10,Water,Kayaks,Current,310.00,699.99
+20,Drift Paddle Board,Water,Boards,Current,260.00,599.99
+21,Dry Bag 20L,Water,Accessories,Current,6.00,24.99
+22,Type III Life Vest,Water,Safety,Current,28.00,79.99
+23,Hydro Filter Bottle,Water,Hydration,Ember,11.00,34.99
+24,Neoprene Water Shoe,Water,Footwear,Current,13.00,44.99

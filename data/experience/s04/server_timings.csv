@@ -1,0 +1,5 @@
+Query,TotalMs,FormulaEngineMs,StorageEngineMs,SEQueries,SECacheHits,Notes
+Matrix: Customers above average by Region,9790,8930,860,4127,12,many small SE queries with identical shape; CallbackDataID present
+Bar: Store Sales YTD by Category,3080,610,2470,6,0,one SE query scans all FactSales rows and materialises 31.4M rows
+Card: Last refreshed,2180,15,2165,1,0,scan of FactSales[OrderTimestamp]
+Slicer: Customer Segment,1150,760,390,34,2,bidirectional filter propagation to FactSales

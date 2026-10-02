@@ -1,0 +1,81 @@
+ReportID,Name,WorkspaceID,ModelID,ViewsLast90Days,ModifiedDaysAgo,Owner
+RP001,Sales Model Overview,WS01,SM01,0,133,kenji.mori
+RP002,Board Pack Model Detail,WS05,SM04,0,808,kenji.mori
+RP003,Finance GL by Region,WS04,SM03,488,92,
+RP004,Sales Model Weekly,WS01,SM01,0,587,kenji.mori
+RP005,Finance GL Monthly,WS04,SM03,0,59,sam.patel
+RP006,Sales Model Exec,WS01,SM01,1871,560,kenji.mori
+RP007,Regional Sales Drilldown,WS18,SM14,0,34,marketing.ops
+RP008,Ecom Orders Export,WS13,SM12,0,840,unknown
+RP009,Board Pack Model Old,WS05,SM04,0,232,kenji.mori
+RP010,Ops Fulfilment Copy of Overview,WS06,SM05,528,575,hr.analytics
+RP011,Finance GL Overview 2,WS04,SM03,14,119,sam.patel
+RP012,Ecom Orders Detail 2,WS12,SM11,494,568,marketing.ops
+RP013,HR Headcount by Region 2,WS10,SM09,310,337,
+RP014,Finance GL Weekly 2,WS04,SM03,0,352,sam.patel
+RP015,Sales Model Monthly 2,WS01,SM01,332,49,kenji.mori
+RP016,Executive KPIs Exec 2,WS14,SM13,341,696,dana.whitfield
+RP017,Sales Model Drilldown 2,WS01,SM01,522,39,kenji.mori
+RP018,Ops Fulfilment Export 2,WS06,SM05,0,625,hr.analytics
+RP019,Sales Model Old 2,WS01,SM01,1,314,kenji.mori
+RP020,Board Pack Model Copy of Overview 2,WS05,SM04,1124,686,kenji.mori
+RP021,Ops Fulfilment Overview 3,WS06,SM05,1782,586,hr.analytics
+RP022,Sales Model Detail 3,WS01,SM01,481,241,
+RP023,Sales Model by Region 3,WS02,SM02,0,617,unknown
+RP024,Customer 360 Weekly 3,WS19,SM16,513,519,marketing.ops
+RP025,Web Analytics Monthly 3,WS08,SM08,149,861,marketing.ops
+RP026,Pricing Test Exec 3,WS17,SM17,0,185,
+RP027,Ecom Orders Drilldown 3,WS12,SM11,1649,759,marketing.ops
+RP028,Board Pack Model Export 3,WS05,SM04,1758,378,
+RP029,Ops Fulfilment Old 3,WS06,SM05,2119,22,hr.analytics
+RP030,Finance GL Copy of Overview 3,WS04,SM03,0,65,sam.patel
+RP031,Marketing Campaigns Overview 4,WS08,SM07,98,132,unknown
+RP032,Marketing Campaigns Detail 4,WS08,SM07,12,415,
+RP033,Finance GL by Region 4,WS04,SM03,1687,825,sam.patel
+RP034,Marketing Campaigns Weekly 4,WS08,SM07,0,159,unknown
+RP035,Ecom Orders Monthly 4,WS12,SM11,902,63,marketing.ops
+RP036,Board Pack Model Exec 4,WS05,SM04,1544,310,kenji.mori
+RP037,Board Pack Model Drilldown 4,WS05,SM04,19,551,kenji.mori
+RP038,Sales Model Export 4,WS02,SM02,2326,838,
+RP039,Sales Model Old 4,WS01,SM01,554,496,kenji.mori
+RP040,Board Pack Model Copy of Overview 4,WS05,SM04,0,55,kenji.mori
+RP041,Web Analytics Overview 5,WS08,SM08,1598,698,marketing.ops
+RP042,Returns Analysis Detail 5,WS03,SM15,1456,817,unknown
+RP043,Marketing Campaigns by Region 5,WS08,SM07,0,218,unknown
+RP044,Finance GL Weekly 5,WS04,SM03,0,437,sam.patel
+RP045,Sales Model Monthly 5,WS02,SM02,735,270,unknown
+RP046,Ops Fulfilment Exec 5,WS06,SM05,0,540,
+RP047,Ops Fulfilment Drilldown 5,WS06,SM05,1416,834,
+RP048,Sales Model Export 5,WS02,SM02,700,463,unknown
+RP049,Board Pack Model Old 5,WS05,SM04,814,751,kenji.mori
+RP050,Sales Model Copy of Overview 5,WS02,SM02,2265,490,unknown
+RP051,HR Headcount Overview 6,WS10,SM09,1003,357,sam.patel
+RP052,Sales Model Detail 6,WS01,SM01,0,810,
+RP053,Finance GL by Region 6,WS04,SM03,1079,105,
+RP054,Ops Fulfilment Weekly 6,WS06,SM05,344,221,
+RP055,Ecom Orders Monthly 6,WS13,SM12,1233,520,unknown
+RP056,Targets 2025 Exec 6,WS15,SM18,2018,294,hr.analytics
+RP057,Finance GL Drilldown 6,WS04,SM03,178,112,
+RP058,Sales Model Export 6,WS02,SM02,2367,54,unknown
+RP059,Sales Model Old 6,WS02,SM02,0,161,unknown
+RP060,Ops Inventory Copy of Overview 6,WS06,SM06,580,456,dana.whitfield
+RP061,Finance GL Overview 7,WS04,SM03,0,733,sam.patel
+RP062,Sales Model Detail 7,WS02,SM02,0,279,unknown
+RP063,Ops Fulfilment by Region 7,WS06,SM05,1746,55,hr.analytics
+RP064,HR Headcount Weekly 7,WS10,SM09,0,823,sam.patel
+RP065,Ops Inventory Monthly 7,WS06,SM06,668,740,dana.whitfield
+RP066,Board Pack Model Exec 7,WS05,SM04,0,602,kenji.mori
+RP067,HR Headcount Drilldown 7,WS10,SM09,47,279,sam.patel
+RP068,Sales Model Export 7,WS02,SM02,180,891,unknown
+RP069,Ops Fulfilment Old 7,WS06,SM05,1854,248,hr.analytics
+RP070,Board Pack Model Copy of Overview 7,WS05,SM04,497,834,
+RP071,Customer 360 Overview 8,WS19,SM16,0,9,
+RP072,Sales Model Detail 8,WS01,SM01,0,504,kenji.mori
+RP073,Finance GL by Region 8,WS04,SM03,1044,156,
+RP074,Sales Model Weekly 8,WS01,SM01,0,569,kenji.mori
+RP075,Ops Fulfilment Monthly 8,WS06,SM05,0,33,hr.analytics
+RP076,Sales Model Exec 8,WS02,SM02,1,456,unknown
+RP077,Sales Model Drilldown 8,WS01,SM01,0,158,kenji.mori
+RP078,Sales Model Export 8,WS01,SM01,0,517,kenji.mori
+RP079,Ops Fulfilment Old 8,WS06,SM05,0,685,
+RP080,Sales Model Copy of Overview 8,WS01,SM01,0,392,kenji.mori

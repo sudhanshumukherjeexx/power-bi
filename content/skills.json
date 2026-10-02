@@ -1,0 +1,18 @@
+[
+  { "id": "power-query", "name": "Power Query", "desc": "Getting, profiling and shaping data so it can be trusted.", "cards": ["Power Query & data prep"] },
+  { "id": "modeling", "name": "Dimensional modeling", "desc": "Stars, grain, relationships and keys that answer questions correctly.", "cards": ["Data modeling"] },
+  { "id": "dax", "name": "DAX", "desc": "Measures that behave correctly in every filter context.", "cards": ["DAX concepts"] },
+  { "id": "visuals", "name": "Report design", "desc": "Pages that answer a question in seconds, on any device, for every user.", "cards": ["Visuals & report design"] },
+  { "id": "service", "name": "Service and refresh", "desc": "Publishing, sharing, gateways and scheduled refresh.", "cards": ["Service, sharing & refresh"] },
+  { "id": "security", "name": "Security", "desc": "RLS, OLS, workspace roles and least privilege, tested rather than assumed.", "cards": ["Security & governance"] },
+  { "id": "performance", "name": "Performance", "desc": "Measuring first, then fixing the formula engine, storage engine or model size.", "cards": ["Performance"] },
+  { "id": "sql", "name": "SQL", "desc": "Querying, joining, windowing and loading data for BI.", "cards": [] },
+  { "id": "warehousing", "name": "Data warehousing", "desc": "Keys, slowly changing dimensions, fact types and calendars.", "cards": [] },
+  { "id": "testing", "name": "Testing and validation", "desc": "Proving numbers, security and refreshes are right, and staying right after changes.", "cards": [] },
+  { "id": "deployment", "name": "Deployment and Git", "desc": "PBIP, TMDL, branches, pull requests, pipelines and rollback.", "cards": [] },
+  { "id": "automation", "name": "Automation and APIs", "desc": "REST APIs, XMLA, TOM and scripts that do the repetitive work.", "cards": [] },
+  { "id": "fabric", "name": "Fabric", "desc": "OneLake, lakehouses, warehouses, Direct Lake and Dataflow Gen2.", "cards": ["Fabric & enterprise"] },
+  { "id": "governance", "name": "Governance", "desc": "Ownership, endorsement, labels, monitoring and retirement.", "cards": ["Security & governance"] },
+  { "id": "communication", "name": "Communication", "desc": "Requirements, stakeholder updates, incident notes and explaining trade-offs.", "cards": ["Scenarios & behavioural"] },
+  { "id": "architecture", "name": "Architecture", "desc": "Choosing between valid options under constraints, and writing the decision down.", "cards": [] }
+]

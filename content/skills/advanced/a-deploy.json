@@ -1,0 +1,160 @@
+{
+  "id": "a-deploy",
+  "name": "Deployment: pipelines, Git, PBIP, TMDL, XMLA, Tabular Editor",
+  "ds": [
+    "FactSales"
+  ],
+  "skills": [
+    "deployment",
+    "testing"
+  ],
+  "stage": "engineer",
+  "why": {
+    "matters": "Without source control and promotion between environments, every change is made live in production and nobody can say what changed or roll it back.",
+    "failure": "Two developers overwrite each other's published model; a measure silently changes and the board pack is wrong for a week.",
+    "use": "PBIP + Git for every shared model; deployment pipelines or Fabric Git integration to move Dev → Test → Prod.",
+    "avoid": "Editing the production model directly through XMLA as a habit; it bypasses review and breaks .pbix download."
+  },
+  "verified": {
+    "date": "2026-10-01",
+    "context": "PBIP overview and PBIR report format (Microsoft Learn, 2026-09-23); deployment pipelines docs",
+    "cert": "DP-600 (2026-10-19)",
+    "review_after_days": 90
+  },
+  "refs": [
+    {
+      "title": "Power BI Desktop projects (PBIP)",
+      "url": "https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-overview"
+    },
+    {
+      "title": "PBIR: project report folder",
+      "url": "https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-report"
+    },
+    {
+      "title": "Deployment pipelines overview",
+      "url": "https://learn.microsoft.com/en-us/fabric/cicd/deployment-pipelines/intro-to-deployment-pipelines"
+    },
+    {
+      "title": "Fabric Git integration",
+      "url": "https://learn.microsoft.com/en-us/fabric/cicd/git-integration/intro-to-git-integration"
+    }
+  ],
+  "asg": [
+    {
+      "t": "PBIP and Git",
+      "time": "40 min",
+      "ds": "Your report",
+      "guidance": "A",
+      "steps": [
+        "Save your report as a Power BI Project: File → Save as → .pbip. Current Desktop builds save the model as TMDL and the report in PBIR, the enhanced report format that is now the default. Older builds needed preview switches for both.",
+        "Initialise a Git repo, commit. Open the folder: .SemanticModel/definition/*.tmdl and .Report/definition.",
+        "Change a measure in Desktop, save, git diff. Then change the same measure directly in the .tmdl file while the project is open: Desktop detects the external change and offers to apply it.",
+        "Connect the workspace to a Git branch (Fabric Git integration). Commit from Desktop, sync in the Service."
+      ],
+      "exp": "A readable diff showing exactly one measure expression change."
+    },
+    {
+      "t": "Deployment pipeline with rules",
+      "time": "40 min",
+      "ds": "Dev/Test/Prod workspaces",
+      "guidance": "A",
+      "steps": [
+        "Create a deployment pipeline with the three workspaces. Assign Dev.",
+        "Deploy to Test. Add a deployment rule that changes the Environment parameter (from the Intermediate parameter assignment) to \"Test\".",
+        "Compare Test vs Dev after changing a measure in Dev: the pipeline shows \"Different\". Deploy again.",
+        "Deploy only the semantic model, not the report, using selective deployment."
+      ],
+      "exp": "Prod points at the Prod source without anyone editing the PBIX."
+    },
+    {
+      "t": "Tabular Editor scripting",
+      "time": "40 min",
+      "ds": "Your model",
+      "guidance": "A",
+      "steps": [
+        "Open the model in Tabular Editor 2. Write a C# script that creates, for every measure ending in \"Sales\", a sibling measure \"{name} PY\" using SAMEPERIODLASTYEAR.",
+        "Run Best Practice Analyzer with the standard rules. Fix every violation, or document why not.",
+        "Use the XMLA endpoint (needs PPU/capacity) to open the published model, rename a measure, save. Note that the model can no longer be downloaded as PBIX.",
+        "Format all DAX with the built-in formatter."
+      ],
+      "exp": "BPA shows 0 errors. You can list three BPA rules you disagree with and why."
+    },
+    {
+      "t": "Semantic model versioning and rollback",
+      "time": "20 min",
+      "ds": "Your model",
+      "guidance": "A",
+      "steps": [
+        "Tag a Git commit as v1.0. Deploy. Make a breaking change (rename a column a report uses). Deploy.",
+        "Roll back by checking out the tag and syncing to the workspace.",
+        "Write a one-paragraph release note template you would send to report authors."
+      ],
+      "exp": "The broken visual is fixed after the rollback without touching the report."
+    }
+  ],
+  "int": [
+    {
+      "q": "PBIX vs PBIP: why does it matter for a team?",
+      "a": "PBIX is a binary blob: no diffs, no merges, one person at a time. PBIP splits model (TMDL) and report (JSON) into text files that Git can diff and merge, and enables CI/CD and code review."
+    },
+    {
+      "q": "What does a deployment rule change and what can it not change?",
+      "a": "Data source connections and parameter values per stage. It cannot change measures, RLS role membership or report content; those come from the deployed item."
+    },
+    {
+      "q": "After editing a model via XMLA, why can't you download the PBIX anymore?",
+      "a": "The Service model has diverged from any PBIX; Desktop cannot round-trip arbitrary TOM changes. Your source of truth becomes the TMDL in Git."
+    },
+    {
+      "q": "How do you deploy a model without triggering a full refresh?",
+      "a": "Deploy metadata only; the pipeline preserves data if the model structure allows. For incremental-refresh models, apply the refresh policy without data and refresh partitions in batches."
+    },
+    {
+      "q": "What is the difference between Fabric Git integration and deployment pipelines, and do you use both?",
+      "a": "Git integration = source control and collaboration (branches, PRs). Pipelines = promotion between environments with rules. Typically Git for Dev, pipelines from Dev → Test → Prod, or Git-based deployment via API for full CI/CD."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "TMDL is:",
+      "o": [
+        "A DAX dialect",
+        "A text serialisation of the tabular model definition",
+        "A refresh log",
+        "A visual container"
+      ],
+      "a": 1,
+      "why": "Tabular Model Definition Language: one file per table with measures, columns, relationships in plain text."
+    },
+    {
+      "type": "mcq",
+      "q": "Deployment rules apply to:",
+      "o": [
+        "Reports",
+        "Semantic models and dataflows (parameters, sources)",
+        "Dashboards",
+        "Apps"
+      ],
+      "a": 1,
+      "why": "Rules rewrite connection and parameter values on data items."
+    },
+    {
+      "type": "task",
+      "q": "Save your model as PBIP, write a Tabular Editor script that adds a description to every measure lacking one, commit, and show the git diff line count.",
+      "hint": "foreach(var m in Model.AllMeasures) if(string.IsNullOrEmpty(m.Description)) m.Description = \"TODO\";"
+    },
+    {
+      "type": "mcq",
+      "q": "Best Practice Analyzer rule \"Avoid bi-directional relationships\" fires. Best response:",
+      "o": [
+        "Always remove them",
+        "Justify or remove each; bridge-table security filters are a valid exception",
+        "Ignore BPA",
+        "Convert to many-to-many"
+      ],
+      "a": 1,
+      "why": "Rules are guidance; document justified exceptions."
+    }
+  ]
+}

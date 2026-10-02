@@ -1,0 +1,61 @@
+{
+  "api-rest-0": {
+    "s": ["Load each response's value array; index workspaces and datasets by id.", "For each report: its dataset, workspace, owner (configuredBy), endorsement, latest refresh status (sort refreshes by startTime), and whether any ViewReport event mentions it.", "Print the summary counts; write the table to CSV for the governance review.", "Swap the load() function for authenticated GETs later; nothing else changes."],
+    "code": [
+      { "lang": "Python", "title": "inventory.py (offline: reads the mock responses)", "src": [
+        "import csv, json, pathlib",
+        "",
+        "DATA = pathlib.Path('data/tracks/automation')",
+        "def load(name):",
+        "    doc = json.loads((DATA / name).read_text(encoding='utf-8'))",
+        "    return doc.get('value') or doc.get('activityEventEntities') or []",
+        "",
+        "groups   = {g['id']: g for g in load('groups.json')}",
+        "datasets = {d['id']: d for d in load('datasets.json')}",
+        "reports  = load('reports.json')",
+        "latest   = {}",
+        "for r in sorted(load('refreshes.json'), key=lambda r: r['startTime']):",
+        "    latest[r['datasetId']] = r['status']",
+        "viewed = {e['ReportId'] for e in load('activity_views.json') if e['Activity'] == 'ViewReport'}",
+        "",
+        "rows = []",
+        "for rp in reports:",
+        "    ds = datasets[rp['datasetId']]",
+        "    rows.append({",
+        "        'Workspace': groups[rp['workspaceId']]['name'], 'Report': rp['name'], 'Model': ds['name'],",
+        "        'Owner': ds['configuredBy'], 'Endorsement': (ds.get('endorsementDetails') or {}).get('endorsement', 'None'),",
+        "        'LastRefresh': latest.get(ds['id'], 'Never'), 'ViewedLast90Days': rp['id'] in viewed})",
+        "",
+        "with open('inventory.csv', 'w', newline='', encoding='utf-8') as f:",
+        "    w = csv.DictWriter(f, fieldnames=rows[0].keys()); w.writeheader(); w.writerows(rows)",
+        "",
+        "print('workspaces', len(groups), 'models', len(datasets), 'reports', len(reports))",
+        "print('reports unused 90d', sum(not r['ViewedLast90Days'] for r in rows))",
+        "print('models without endorsement', sum(1 for d in datasets.values() if not d.get('endorsementDetails')))",
+        "print('models whose latest refresh failed', sum(1 for s in latest.values() if s == 'Failed'))"
+      ] },
+      { "lang": "Python", "title": "The same against the real API (service principal)", "src": [
+        "import os, msal, requests",
+        "app = msal.ConfidentialClientApplication(",
+        "    os.environ['PBI_CLIENT_ID'], client_credential=os.environ['PBI_CLIENT_SECRET'],",
+        "    authority=f\"https://login.microsoftonline.com/{os.environ['PBI_TENANT_ID']}\")",
+        "token = app.acquire_token_for_client(scopes=['https://analysis.windows.net/powerbi/api/.default'])['access_token']",
+        "H = {'Authorization': f'Bearer {token}'}",
+        "BASE = 'https://api.powerbi.com/v1.0/myorg'",
+        "groups = requests.get(f'{BASE}/groups', headers=H, timeout=30).json()['value']",
+        "# per group: /groups/{id}/datasets, /groups/{id}/reports, /groups/{id}/datasets/{ds}/refreshes?$top=1",
+        "# report views need the admin activity events API (one UTC day per call) and admin API permission"
+      ] }
+    ],
+    "check": "workspaces {{api_workspaces|int}} · models {{api_datasets|int}} · reports {{api_reports|int}} · unused 90 days {{api_reports_unused|int}} · without endorsement {{api_unendorsed|int}} · latest refresh failed {{api_last_failed|int}}.",
+    "verify": "The offline script was run against the mock files and its output matches the counts above (which are computed from the same files by the build)."
+  },
+  "api-rest-1": {
+    "s": ["Entra ID → App registrations → New; record client ID and tenant ID; create a certificate (preferred) or client secret with an expiry and an owner who renews it.", "Put the app in a security group; in Fabric tenant settings allow that group for \"Service principals can call Fabric public APIs\"; add read-only admin API access only if the inventory must cover the whole tenant.", "Give the service principal Viewer (or Member if it must refresh) on the workspaces it inventories; not Admin.", "Get tokens with the client-credentials flow (MSAL), scope https://analysis.windows.net/powerbi/api/.default for Power BI APIs or https://api.fabric.microsoft.com/.default for Fabric APIs.", "Secrets: key vault or CI secret store; rotation calendar; alert before expiry."],
+    "check": "Allowed group + correct tenant setting + least workspace role + secret outside code + client-credentials flow."
+  },
+  "api-rest-2": {
+    "s": ["Contain: rotate or delete the secret in Entra ID now; the old one stops working. Review the app's sign-in logs for unexpected use.", "Clean up: remove the secret from the code, purge it from history (git filter-repo or BFG), force-push, ask everyone to re-clone. Treat it as compromised anyway.", "Prevent: secrets only in a key vault or CI secret store, loaded from environment variables; enable secret scanning and push protection; add a pre-commit hook; document the rule in CONTRIBUTING."],
+    "check": "Rotate first, then clean history, then prevent recurrence."
+  }
+}

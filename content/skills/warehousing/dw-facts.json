@@ -1,0 +1,58 @@
+{
+  "id": "dw-facts",
+  "name": "Fact table types: transaction, snapshot, accumulating, factless",
+  "ds": ["OrderEvents", "FactInventory", "NWOrders"],
+  "skills": ["warehousing", "modeling", "sql"],
+  "stage": "engineer",
+  "why": {
+    "matters": "The fact type decides which questions are easy and which measures are additive. Inventory, pipelines and fulfilment can't be modelled like sales.",
+    "failure": "Weekly stock snapshots are summed across weeks and the warehouse appears to hold ten times its real stock.",
+    "use": "Transaction facts for events (sales lines); periodic snapshots for levels measured at intervals (stock, balances); accumulating snapshots for processes with milestones (order to delivery); factless facts for coverage and eligibility.",
+    "avoid": "Forcing a process into a transaction fact and reconstructing milestones with complex DAX at query time."
+  },
+  "verified": { "date": "2026-10-01", "context": "Kimball fact table techniques; portable SQL tested on SQLite in CI", "review_after_days": 365 },
+  "refs": [
+    { "title": "Dimensional modeling in Fabric Data Warehouse: fact tables", "url": "https://learn.microsoft.com/en-us/fabric/data-warehouse/dimensional-modeling-fact-tables" }
+  ],
+  "asg": [
+    {
+      "t": "Build an accumulating snapshot of fulfilment",
+      "time": "45 min",
+      "ds": "order_events",
+      "guidance": "B",
+      "brief": "Operations want to see where March orders spend their time: placed → picked → shipped → delivered. Turn the event log into one row per order with a column per milestone and the lags between them.",
+      "req": ["One row per order with PlacedAt, PickedAt, ShippedAt, DeliveredAt (NULL if not reached yet).", "Hours from placed to shipped; whether it was delivered within 5 days of being placed.", "Explain why this table is updated in place, unlike a transaction fact."],
+      "exp": "{{dw_snapshot_orders|int}} orders; {{dw_shipped|int}} shipped and {{dw_delivered|int}} delivered by the extract date. Average {{dw_avg_hours_to_ship|dec1}} hours from placed to shipped; {{dw_delivered_within_5d_pct|pct0}} of delivered orders arrived within 5 days."
+    },
+    {
+      "t": "Stock is a snapshot, not a sum",
+      "time": "30 min",
+      "ds": "FactInventory (course dataset)",
+      "guidance": "B",
+      "brief": "FactInventory holds weekly stock snapshots. Design the month-end stock figure the finance team needs, and show what goes wrong if someone sums it.",
+      "req": ["Month-end stock = the last snapshot in each month.", "Show the naive sum for comparison.", "Name which dimensions stock can and can't be summed over."],
+      "exp": "Month-end stock: January {{dw_stock_jan|int}}, February {{dw_stock_feb|int}}, March {{dw_stock_mar|int}} units. Summing all {{dw_snapshots|int}} snapshots gives {{dw_stock_sum_wrong|int}}. Stock adds up across products and warehouses but not across time."
+    },
+    {
+      "t": "Choose the fact type",
+      "time": "25 min",
+      "ds": "—",
+      "guidance": "D",
+      "brief": "Elena wants designs for four new requests. For each, choose the fact table type and grain, and say which measures are additive.",
+      "req": ["Customer support tickets from opened to resolved, with SLA breaches.", "Monthly account balances for wholesale customers.", "Which products were on promotion in which stores, including those that sold nothing.", "Every web page view."],
+      "deliverables": ["A table: request, fact type, grain, additive measures, semi/non-additive measures."],
+      "exp": "Tickets: accumulating snapshot (one row per ticket). Balances: periodic snapshot (customer × month; semi-additive). Promotion coverage: factless fact (product × store × promotion × day). Page views: transaction fact (one row per view)."
+    }
+  ],
+  "int": [
+    { "q": "Name the main fact table types and an example of each.", "a": "Transaction (one row per event: a sales line), periodic snapshot (one row per entity per period: month-end balance, weekly stock), accumulating snapshot (one row per process instance updated as milestones happen: order fulfilment), factless (records that something happened or was possible, with no measure: attendance, promotion coverage)." },
+    { "q": "What is a semi-additive measure?", "a": "One that can be summed over some dimensions but not others. Stock levels and balances add across products or accounts, but over time you take the last (or average) value, not the sum." },
+    { "q": "Why is an accumulating snapshot updated rather than appended?", "a": "Its grain is the process instance (one order). As the order reaches each milestone, the same row gets the new date and lag. Appending would create several rows per order and break the grain." },
+    { "q": "What question can a factless fact answer that a sales fact can't?", "a": "What didn't happen: products on promotion that didn't sell, students enrolled who didn't attend. Sales facts only contain what happened, so coverage needs its own table." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "Month-end bank balances should be stored as:", "o": ["A transaction fact", "A periodic snapshot", "An accumulating snapshot", "A factless fact"], "a": 1, "why": "A level measured at regular intervals is a periodic snapshot, and it's semi-additive over time." },
+    { "type": "mcq", "q": "In an accumulating snapshot of orders, what happens when an order ships?", "o": ["A new row is inserted", "The existing row is updated with ShippedAt and the lag", "The row is deleted", "Nothing until delivery"], "a": 1, "why": "The grain is one row per order; milestones update it." },
+    { "type": "task", "q": "In Power BI, build the semi-additive measure Stock On Hand with LASTNONBLANK (see Advanced → semi-additive inventory) and check it against your SQL month-end numbers.", "hint": "January {{dw_stock_jan|int}}, February {{dw_stock_feb|int}}, March {{dw_stock_mar|int}}." }
+  ]
+}

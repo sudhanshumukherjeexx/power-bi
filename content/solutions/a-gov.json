@@ -1,0 +1,71 @@
+{
+  "a-gov-0": {
+    "s": [
+      "Tabular Editor → Model → Roles → new role \"NoSalary\" → select DimEmployee[Salary] → Object Level Security → NoSalary = None. Save.",
+      "Service → Security → add the test user to NoSalary (and to the RLS role)."
+    ],
+    "check": "Visuals that use Salary show an error for that user. Others work. RLS still filters rows.",
+    "note": "OLS makes the column not exist for that user. A visual that references a non-existent field can't render, so it errors instead of going blank. Design separate pages for restricted audiences."
+  },
+  "a-gov-1": {
+    "code": [
+      {
+        "lang": "C#",
+        "title": "Tabular Editor: flag measures missing a description",
+        "src": [
+          "foreach (var m in Model.AllMeasures.Where(x => string.IsNullOrWhiteSpace(x.Description)))",
+          "    m.Description = \"TODO: describe \" + m.Name;"
+        ]
+      },
+      {
+        "lang": "DAX",
+        "title": "Model guide (DAX query view or DAX Studio)",
+        "src": [
+          "EVALUATE",
+          "SELECTCOLUMNS (",
+          "    INFO.MEASURES (),",
+          "    \"Measure\", [Name],",
+          "    \"Expression\", [Expression],",
+          "    \"Description\", [Description],",
+          "    \"Folder\", [DisplayFolder]",
+          ")"
+        ]
+      }
+    ],
+    "s": [
+      "Model view → select a field → Properties → Synonyms (for Q&A).",
+      "Service → semantic model → Settings → Endorsement → Certified (needs admin permission) and Sensitivity label."
+    ],
+    "check": "Every visible measure has a description, and the guide page lists them all."
+  },
+  "a-gov-2": {
+    "s": [
+      "Report → … → Open usage metrics → Report pages tab: sort by views.",
+      "Workspace → View → Lineage → select the Lakehouse → everything downstream is highlighted.",
+      "Fabric Capacity Metrics app → Compute page → items sorted by CU(s)."
+    ],
+    "check": "A written list: three candidates to retire (low or no views) and one heavy item to optimise."
+  },
+  "a-gov-3": {
+    "code": [
+      {
+        "lang": "Text",
+        "title": "Model answers (≈100 words each)",
+        "src": [
+          "(1) CFO – \"Why is the report slow?\"",
+          "It's slow because it answers too many detailed questions at once every time you open it. We'll move the detail behind a click and pre-summarise the monthly numbers. Opening will take under three seconds, and the numbers won't change. I recommend we approve two days of work this sprint.",
+          "",
+          "(2) Data engineer – same question",
+          "Performance Analyzer shows 70% of time in one visual. Its measure iterates FactSales row by row with a callback, and SalesKey plus a datetime column dominate model size. Plan: drop SalesKey, split datetime, rewrite the measure over VALUES(Customer), and add a month-category aggregation. Can you give us a date-level view with a ModifiedDate so incremental refresh folds?",
+          "",
+          "(3) CTO – \"Should we go Fabric?\"",
+          "Yes, in stages. Fabric puts our data and Power BI on one copy of the data, which removes nightly imports and duplicate storage. We should start with one domain on an F64 trial, measure capacity use, and decide on the licence after 60 days.",
+          "",
+          "(4) Analyst – \"Why can't I just export everything to Excel?\"",
+          "You can export what you see. Bulk exports copy confidential data outside our controls and go stale the moment you save them. Tell me which question you're answering and I'll give you Analyze in Excel on the certified model: live data and your own pivots, secured."
+        ]
+      }
+    ],
+    "check": "Each answer ends with a recommendation. The CFO answer has no jargon."
+  }
+}

@@ -20,6 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/app.css">
 <style>
 :root{
   --bg:#EEF1F5;--panel:#FFFFFF;--panel-2:#F6F8FA;--ink:#1B2430;--ink-2:#4A5568;--ink-3:#7A8594;
@@ -100,9 +101,10 @@ p{margin:0 0 .8em}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .row .sp{flex:1}
-.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.twocol>*{min-width:0}
-@media (max-width:640px){.twocol{grid-template-columns:1fr}}
+.twocol{display:flex;flex-wrap:wrap;gap:12px 16px}
+.twocol>*{flex:1 1 max-content;min-width:0}
+@media (max-width:640px){.twocol>*{flex-basis:100%}}
+@media (min-width:641px){.chips{flex-wrap:wrap;overflow:visible}}
 
 /* stats */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
@@ -125,7 +127,7 @@ p{margin:0 0 .8em}
 .face .tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .tag{font-family:var(--mono);font-size:.72rem;padding:2px 8px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line);color:var(--ink-2)}
 .tag.lv{color:#fff;border:0}
-.tag.Beginner{background:var(--beg)}.tag.Intermediate{background:var(--int)}.tag.Advanced{background:var(--adv)}
+.tag.Tracks{background:var(--ink-3)}.tag.Beginner{background:var(--beg)}.tag.Intermediate{background:var(--int)}.tag.Advanced{background:var(--adv)}
 :root[data-theme="dark"] .tag.lv{color:#12171E}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.lv{color:#12171E}}
 .front .q,.mockq .q{font-size:clamp(1.2rem,3.4vw,1.55rem);font-weight:600;line-height:1.3;margin:auto 0;padding:10px 0}
@@ -217,15 +219,18 @@ p{margin:0 0 .8em}
 </style>
 </head>
 <body>
-<header class="top"><div class="in">
-  <a class="brand" href="index.html" title="Back to the course"><span class="mark">BI</span><span>Flashcards <small>· Power BI Holy Grail</small></span></a>
+<a class="skip" href="#main">Skip to content</a>
+<!--nav:interview-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="learn.html">Learn</a><a href="experience.html">Practice</a><a href="flashcards.html" aria-current="true">Interview</a><a href="progress.html">Progress</a></nav>
   <span class="sp"></span>
-  <button class="btn iconbtn" type="button" data-open-search aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
-  <a class="btn" href="index.html">← <span class="clabel">Course</span></a>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
   <span data-theme-toggle-slot></span>
 </div></header>
+<!--/nav-->
 
-<main class="wrap">
+<main class="wrap" id="main" tabindex="-1">
   <section class="intro">
     <h1>Power BI interview <span class="hl">flashcards</span></h1>
     <details class="howto" id="howto"><summary>How these cards work</summary><p>You don't need Power BI open to use these. Read the question and say your answer out loud, then flip the card and compare. <b>Got it</b> schedules the card for later: tomorrow, then 3, 7, 14 and 30 days. <b>Review again</b> brings it back in this session. Come back daily and study <b>Due today</b>. Tap any dotted-underlined term for a plain-English definition.</p></details>
@@ -253,12 +258,12 @@ p{margin:0 0 .8em}
     </div>
     </div></details>
     <div class="row">
-      <button class="btn primary" id="mockBtn">⏱ Mock interview</button>
-      <button class="btn" id="shuffleBtn" aria-pressed="false">Shuffle</button>
-      <button class="btn" id="viewBtn" aria-pressed="false">List view</button>
-      <button class="btn" id="printBtn" title="Print or save the current cards as PDF">Print / PDF</button>
+      <button type="button" class="btn primary" id="mockBtn">⏱ Mock interview</button>
+      <button type="button" class="btn" id="shuffleBtn" aria-pressed="false">Shuffle</button>
+      <button type="button" class="btn" id="viewBtn" aria-pressed="false">List view</button>
+      <button type="button" class="btn" id="printBtn" title="Print or save the current cards as PDF">Print / PDF</button>
       <span class="sp"></span>
-      <button class="btn sm" id="resetBtn">Reset progress</button>
+      <button type="button" class="btn sm" id="resetBtn">Reset progress</button>
     </div>
   </div>
 
@@ -269,16 +274,16 @@ p{margin:0 0 .8em}
     <div class="bar"><i id="bar"></i></div>
     <div id="cardHost"></div>
     <div class="actions" id="actions">
-      <button class="btn" id="prevBtn" aria-label="Previous card">←</button>
-      <button class="btn bad" id="againBtn">Review again</button>
-      <button class="btn ok" id="gotBtn">Got it</button>
-      <button class="btn" id="nextBtn" aria-label="Next card">→</button>
+      <button type="button" class="btn" id="prevBtn" aria-label="Previous card">←</button>
+      <button type="button" class="btn bad" id="againBtn">Review again</button>
+      <button type="button" class="btn ok" id="gotBtn">Got it</button>
+      <button type="button" class="btn" id="nextBtn" aria-label="Next card">→</button>
     </div>
     <p class="keys">Tap the card or press <kbd>Space</kbd> to flip · swipe or <kbd>←</kbd> <kbd>→</kbd> to move · <kbd>1</kbd> review again · <kbd>2</kbd> got it · <kbd>/</kbd> search</p>
   </section>
 
   <section class="list" id="list" hidden>
-    <div class="listtools"><button class="btn" id="expandBtn">Expand all</button><button class="btn" id="collapseBtn">Collapse all</button></div>
+    <div class="listtools"><button type="button" class="btn" id="expandBtn">Expand all</button><button type="button" class="btn" id="collapseBtn">Collapse all</button></div>
     <div id="listHost"></div>
   </section>
 
@@ -291,7 +296,7 @@ p{margin:0 0 .8em}
         <div><div class="ctl-lbl">Time per question</div><div class="seg" id="mockT" role="group" aria-label="Seconds per question"></div></div>
       </div>
       <p class="muted" id="mockPool"></p>
-      <div class="row"><button class="btn primary" id="mockStart">Start</button><button class="btn" id="mockCancel">Back to cards</button></div>
+      <div class="row"><button type="button" class="btn primary" id="mockStart">Start</button><button type="button" class="btn" id="mockCancel">Back to cards</button></div>
     </div>
     <div id="mockRun" hidden>
       <div class="meta"><span class="count" id="mockCount"></span><span class="clock" id="mockClock"></span></div>
@@ -306,7 +311,7 @@ p{margin:0 0 .8em}
   </section>
 
   <footer class="foot">
-    Want to practise hands-on? Cards in the Topic questions deck link to their assignments in the <a href="index.html">course</a>. Unsure of a word? See the <a href="glossary.html">glossary</a>. Prefer paper? Print a <a href="cheatsheet.html">cheat sheet</a>.
+    Want to practise hands-on? Cards in the Topic questions deck link to their assignments in <a href="learn.html">Skill Mode</a>. Unsure of a word? See the <a href="glossary.html">glossary</a>. Prefer paper? Print a <a href="cheatsheet.html">cheat sheet</a>.
     <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
   </footer>
 </main>
@@ -314,6 +319,7 @@ p{margin:0 0 .8em}
 <div class="sr" id="live" aria-live="polite"></div>
 
 <script src="assets/js/content.js"></script>
+<script src="assets/js/tracks.js"></script>
 <script src="assets/js/cards.js"></script>
 <script src="assets/js/glossary.js"></script>
 <script src="assets/js/site.js"></script>
@@ -321,10 +327,10 @@ p{margin:0 0 .8em}
 /* ---------- decks ---------- */
 const ALL=[
   ...CONCEPTS.map(c=>({...c,deck:'concepts',id:PBI.cardId.concept(c.q)})),
-  ...LEVELS.flatMap(L=>L.topics.flatMap(T=>T.int.map(q=>({c:T.name,l:L.name,q:q.q,a:q.a,href:'index.html#'+T.id+':int:'+T.int.indexOf(q),deck:'topics',id:PBI.cardId.topic(q.q)}))))
+  ...[...LEVELS,...(typeof TRACKS!=='undefined'?TRACKS:[])].flatMap(L=>L.topics.flatMap(T=>T.int.map((q,qi)=>({c:T.name,l:LEVELS.includes(L)?L.name:'Tracks',q:q.q,a:q.a,href:L.id+'.html#'+T.id+':int:'+qi,deck:'topics',id:PBI.cardId.topic(q.q)}))))
 ];
 const DECKS=[['concepts','Plain-English concepts'],['topics','Topic questions'],['all','Everything']];
-const LVLS=['all','Beginner','Intermediate','Advanced'];
+const LVLS=['all','Beginner','Intermediate','Advanced',...(typeof TRACKS!=='undefined'&&TRACKS.length?['Tracks']:[])];
 const SRS=PBI.SRS;
 
 /* ---------- state ---------- */
@@ -342,14 +348,14 @@ function filtered(){return pool().filter(c=>st.mode!=='due'||SRS.isDue(st,c.id))
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 
 function renderControls(){
-  $('deckSeg').innerHTML=DECKS.map(([k,n])=>`<button data-deck="${k}" aria-pressed="${st.deck===k}">${n}<span class="n">${ALL.filter(c=>k==='all'||c.deck===k).length}</span></button>`).join('');
-  $('lvlSeg').innerHTML=LVLS.map(l=>`<button data-lvl="${l}" aria-pressed="${st.lvl===l}">${l==='all'?'All levels':l}</button>`).join('');
+  $('deckSeg').innerHTML=DECKS.map(([k,n])=>`<button type="button" data-deck="${k}" aria-pressed="${st.deck===k}">${n}<span class="n">${ALL.filter(c=>k==='all'||c.deck===k).length}</span></button>`).join('');
+  $('lvlSeg').innerHTML=LVLS.map(l=>`<button type="button" data-lvl="${l}" aria-pressed="${st.lvl===l}">${l==='all'?'All levels':l}</button>`).join('');
   const base=ALL.filter(c=>inDeck(c)&&inLvl(c));
   const cats=[...new Set(base.map(c=>c.c))];
   if(st.cat!=='all'&&!cats.includes(st.cat))st.cat='all';
-  $('chips').innerHTML=`<button class="chip" data-cat="all" aria-pressed="${st.cat==='all'}">All (${base.length})</button>`+cats.map(c=>`<button class="chip" data-cat="${esc(c)}" aria-pressed="${st.cat===c}">${esc(c)} (${base.filter(x=>x.c===c).length})</button>`).join('');
+  $('chips').innerHTML=`<button type="button" class="chip" data-cat="all" aria-pressed="${st.cat==='all'}">All (${base.length})</button>`+cats.map(c=>`<button type="button" class="chip" data-cat="${esc(c)}" aria-pressed="${st.cat===c}">${esc(c)} (${base.filter(x=>x.c===c).length})</button>`).join('');
   const p=pool(),due=p.filter(c=>SRS.isDue(st,c.id)).length;
-  $('modeSeg').innerHTML=`<button data-mode="all" aria-pressed="${st.mode==='all'}">All cards<span class="n">${p.length}</span></button><button data-mode="due" aria-pressed="${st.mode==='due'}">Due today<span class="n">${due}</span></button>`;
+  $('modeSeg').innerHTML=`<button type="button" data-mode="all" aria-pressed="${st.mode==='all'}">All cards<span class="n">${p.length}</span></button><button type="button" data-mode="due" aria-pressed="${st.mode==='due'}">Due today<span class="n">${due}</span></button>`;
   $('shuffleBtn').setAttribute('aria-pressed',shuffled);
   $('viewBtn').setAttribute('aria-pressed',st.list);
   $('viewBtn').textContent=st.list?'Card view':'List view';
@@ -389,7 +395,7 @@ function renderCard(){
   if(!has){
     $('count').textContent='0 cards';
     const doneForToday=st.mode==='due'&&p.length;
-    host.innerHTML=`<div class="empty"><h2>${doneForToday?'Nothing due today 🎉':'No cards match'}</h2><p class="muted">${doneForToday?'Every card here is scheduled for a later day. Come back tomorrow, study other categories, or run a mock interview.':'Try another level or category.'}</p>${doneForToday?'<button class="btn primary" data-mode="all">Show all cards</button>':''}</div>`;
+    host.innerHTML=`<div class="empty"><h2>${doneForToday?'Nothing due today 🎉':'No cards match'}</h2><p class="muted">${doneForToday?'Every card here is scheduled for a later day. Come back tomorrow, study other categories, or run a mock interview.':'Try another level or category.'}</p>${doneForToday?'<button type="button" class="btn primary" data-mode="all">Show all cards</button>':''}</div>`;
     return;
   }
   if(pos>=order.length)pos=order.length-1;
@@ -447,8 +453,8 @@ function openMockSetup(){
   clearInterval(mock.timer);
   $('mock').hidden=false;$('stage').hidden=true;$('list').hidden=true;$('controls').hidden=true;$('stats').hidden=true;
   $('mockSetup').hidden=false;$('mockRun').hidden=true;$('mockDone').hidden=true;
-  $('mockN').innerHTML=[5,10,15].map(n=>`<button data-mn="${n}" aria-pressed="${st.mockN===n}">${n} questions</button>`).join('');
-  $('mockT').innerHTML=[60,90,120].map(n=>`<button data-mt="${n}" aria-pressed="${st.mockT===n}">${n}s</button>`).join('');
+  $('mockN').innerHTML=[5,10,15].map(n=>`<button type="button" data-mn="${n}" aria-pressed="${st.mockN===n}">${n} questions</button>`).join('');
+  $('mockT').innerHTML=[60,90,120].map(n=>`<button type="button" data-mt="${n}" aria-pressed="${st.mockT===n}">${n}s</button>`).join('');
   const p=pool(),due=p.filter(c=>SRS.isDue(st,c.id)).length;
   $('mockPool').innerHTML=`Drawing from <b>${p.length}</b> cards (${esc(DECKS.find(d=>d[0]===st.deck)[1])}, ${st.lvl==='all'?'all levels':st.lvl}${st.cat==='all'?'':', '+esc(st.cat)}). Cards that are due come first. ${due} are due now.`;
   $('mockStart').disabled=!p.length;
@@ -467,7 +473,7 @@ function showMockQ(){
   $('mockTags').innerHTML=`<span class="tag lv ${c.l}">${c.l}</span><span class="tag">${esc(c.c)}</span>`;
   $('mockQ').textContent=c.q;$('mockAns').hidden=true;$('mockAns').innerHTML='';
   $('mockAct').className='actions mockact one';
-  $('mockAct').innerHTML='<button class="btn primary" id="mockReveal">Reveal answer</button><button class="btn" id="mockEnd">End</button>';
+  $('mockAct').innerHTML='<button type="button" class="btn primary" id="mockReveal">Reveal answer</button><button type="button" class="btn" id="mockEnd">End</button>';
   $('live').textContent=`Question ${mock.i+1}. ${c.q}`;
   tick();clearInterval(mock.timer);mock.timer=setInterval(tick,250);
 }
@@ -484,7 +490,7 @@ function reveal(timeUp){
   $('mockAns').innerHTML=`${timeUp?'<div class="late">⏰ Time\'s up. In a real interview, wrap up in one sentence.</div>':''}<div class="a">${esc(c.a)}</div>${extras(c)}`;
   PBI.linkTerms($('mockAns'),null,'.a, .x, .t');
   $('mockAct').className='actions mockact';
-  $('mockAct').innerHTML='<button class="btn bad" id="mockAgain">Review again</button><button class="btn ok" id="mockGot">Got it</button>';
+  $('mockAct').innerHTML='<button type="button" class="btn bad" id="mockAgain">Review again</button><button type="button" class="btn ok" id="mockGot">Got it</button>';
   $('mockAns').scrollIntoView({block:'nearest',behavior:'smooth'});
 }
 function gradeMock(ok){
@@ -496,7 +502,7 @@ function finishMock(){
   clearInterval(mock.timer);$('mockRun').hidden=true;$('mockDone').hidden=false;
   const n=mock.results.length,ok=mock.results.filter(r=>r.ok).length,avg=n?Math.round(mock.results.reduce((a,r)=>a+r.used,0)/n):0,late=mock.results.filter(r=>r.late).length;
   const missed=mock.results.filter(r=>!r.ok);
-  $('mockDone').innerHTML=`<h2>${ok===n?'Clean sweep 🎉':ok>=n*0.7?'Strong round':'Good practice'}</h2><div class="summary"><div class="stat mast"><b>${ok}/${n}</b><span>answered well</span></div><div class="stat"><b>${avg}s</b><span>avg time used</span></div><div class="stat due"><b>${late}</b><span>ran out of time</span></div></div>${missed.length?`<p class="muted">Study these next. They're now marked Review again:</p><div class="missed">${missed.map(r=>`<a href="#card=${r.c.id}">${esc(r.c.q)}<span>${esc(r.c.c)}</span></a>`).join('')}</div>`:'<p class="muted">Every answer went well. Those cards are now scheduled days ahead.</p>'}<div class="row" style="margin-top:14px"><button class="btn primary" id="mockAgainRound">Another round</button><button class="btn" id="mockBack">Back to cards</button></div>`;
+  $('mockDone').innerHTML=`<h2>${ok===n?'Clean sweep 🎉':ok>=n*0.7?'Strong round':'Good practice'}</h2><div class="summary"><div class="stat mast"><b>${ok}/${n}</b><span>answered well</span></div><div class="stat"><b>${avg}s</b><span>avg time used</span></div><div class="stat due"><b>${late}</b><span>ran out of time</span></div></div>${missed.length?`<p class="muted">Study these next. They're now marked Review again:</p><div class="missed">${missed.map(r=>`<a href="#card=${r.c.id}">${esc(r.c.q)}<span>${esc(r.c.c)}</span></a>`).join('')}</div>`:'<p class="muted">Every answer went well. Those cards are now scheduled days ahead.</p>'}<div class="row" style="margin-top:14px"><button type="button" class="btn primary" id="mockAgainRound">Another round</button><button type="button" class="btn" id="mockBack">Back to cards</button></div>`;
   scrollTo({top:0});
 }
 

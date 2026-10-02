@@ -1,0 +1,58 @@
+{
+  "id": "dw-time",
+  "name": "Calendars, time zones and currencies",
+  "ds": ["WebSessionsLocal", "NWOrders", "NWOrderLines", "NWFx"],
+  "skills": ["warehousing", "modeling", "sql"],
+  "stage": "engineer",
+  "why": {
+    "matters": "\"Yesterday\", \"Q1\" and \"in dollars\" each hide a decision. Get them wrong and numbers don't match Finance, regions disagree on daily totals, and currency movements look like sales growth.",
+    "failure": "Europe's sales look 4% lower than the German entity reports, because they were translated at the quarter-end rate instead of each month's average.",
+    "use": "Store timestamps in UTC with the original offset; build one date dimension with calendar and fiscal (including 4-4-5) columns; keep amounts in transaction currency and translate with an explicit, documented rate rule.",
+    "avoid": "Converting time zones or currencies in DAX at query time when it can be done once at load."
+  },
+  "verified": { "date": "2026-10-01", "context": "Portable SQL tested on SQLite in CI; Power BI date table guidance, Sept 2026", "review_after_days": 365 },
+  "refs": [
+    { "title": "Date tables in Power BI", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/model-date-tables" },
+    { "title": "AT TIME ZONE (Transact-SQL)", "url": "https://learn.microsoft.com/en-us/sql/t-sql/queries/at-time-zone-transact-sql" }
+  ],
+  "asg": [
+    {
+      "t": "Whose \"7 April\" is it?",
+      "time": "30 min",
+      "ds": "web_sessions_local",
+      "guidance": "B",
+      "brief": "Web sessions are logged in the visitor's local time with a UTC offset. Marketing in Berlin and the US teams get different daily totals. Normalise to UTC and show the effect.",
+      "req": ["Convert StartLocal to UTC using UtcOffset.", "Count sessions per day by local date and by UTC date.", "Recommend which date the daily report should use, and when local time is still the right choice."],
+      "exp": "{{dw_sessions_date_shift|int}} of {{dw_sessions|int}} sessions fall on a different date in UTC. 7 April 2026 has {{dw_sessions_local_0407|int}} sessions by local date and {{dw_sessions_utc_0407|int}} by UTC date."
+    },
+    {
+      "t": "Europe in euros and in dollars",
+      "time": "30 min",
+      "ds": "orders, order_lines, fx_rates",
+      "guidance": "B",
+      "brief": "Lea (Europe) reports Q1 2026 in euros; the group reports in dollars. Show both, and show what changes if someone translates the quarter at the March rate instead of each month's rate.",
+      "req": ["Q1 2026 Europe gross in EUR (transaction currency).", "The same in USD at each month's average rate (the agreed rule).", "The same at the March rate, and the difference."],
+      "exp": "€{{dw_eur_q1_local|usd}} in EUR. At monthly average rates {{dw_eur_q1_usd|money0}}; at the March rate {{dw_eur_q1_usd_at_q1end|money0}}. The difference is FX, not sales."
+    },
+    {
+      "t": "Build the 4-4-5 fiscal calendar",
+      "time": "40 min",
+      "ds": "orders, order_lines",
+      "guidance": "C",
+      "brief": "From FY2026 Finance reports on a 4-4-5 calendar that starts on Sunday 28 December 2025 (see the change-request drill). Add the fiscal columns to the date dimension and reproduce Finance's period totals.",
+      "req": ["FiscalYear, FiscalPeriod (1–12) and FiscalQuarter columns for every date of FY2026.", "Gross sales for fiscal periods 1, 2 and 3.", "One relationship to the same date table: don't create a second date table."],
+      "exp": "P1 (28 Dec–24 Jan) {{cr4_p1|money0}}, P2 (25 Jan–21 Feb) {{cr4_p2|money0}}, P3 (22 Feb–28 Mar) {{cr4_p3|money0}}; fiscal Q1 {{cr4_gross_q1|money0}}."
+    }
+  ],
+  "int": [
+    { "q": "Why store timestamps in UTC?", "a": "UTC has no daylight-saving gaps or overlaps and gives one global order of events. Keep the original offset or time zone too, so local-time questions (\"what hour do customers shop?\") can still be answered." },
+    { "q": "What is a 4-4-5 calendar and why do retailers use it?", "a": "Each quarter is 13 weeks split into periods of 4, 4 and 5 weeks, always starting on the same weekday. Periods have equal numbers of weekends, so period-on-period comparisons aren't distorted by calendar months of 28 to 31 days." },
+    { "q": "Which exchange rate should a sales report use?", "a": "Whatever the finance policy says, written down and applied consistently: commonly the average rate of the month of the transaction for revenue, and the closing rate for balances. Keep the transaction currency amount too, so you can separate sales change from FX change." },
+    { "q": "Where should time-zone and currency conversion happen?", "a": "At load time, in the warehouse or view: once, consistently, foldable, and testable. DAX-time conversion makes every query slower and easy to get inconsistent across measures." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "A session starts at 23:30 local time in Los Angeles (UTC−07:00) on 6 April. Its UTC date is:", "o": ["5 April", "6 April", "7 April", "It depends on the server"], "a": 2, "why": "23:30 + 7 hours = 06:30 the next day, 7 April UTC." },
+    { "type": "mcq", "q": "Q1 sales in EUR were flat but Q1 sales in USD grew 5%. Most likely:", "o": ["Sales grew in Europe", "The euro strengthened against the dollar", "A data error", "Returns fell"], "a": 1, "why": "Same euros, more dollars per euro: that's FX, not sales. Show constant-currency growth alongside." },
+    { "type": "task", "q": "In Power BI, add a field parameter or calculation group that switches Gross Sales between transaction currency (EUR for Europe) and USD.", "hint": "Keep both amounts as columns at load; the calculation group (Advanced → currency conversion) selects which one to sum." }
+  ]
+}

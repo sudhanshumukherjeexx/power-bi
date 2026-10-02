@@ -1,0 +1,64 @@
+{
+  "id": "fab-onelake",
+  "name": "OneLake, Lakehouse, Warehouse and the SQL analytics endpoint",
+  "ds": ["NWOrders", "NWOrderLines", "NWCustomers", "NWProducts"],
+  "skills": ["fabric", "sql", "architecture"],
+  "stage": "engineer",
+  "why": {
+    "matters": "Choosing the right store decides who can build on it (SQL people, Spark people, analysts), how security works and which Direct Lake option you can use.",
+    "failure": "A team builds the gold layer as SQL views on a lakehouse endpoint, then discovers that Direct Lake on OneLake can't use non-materialised views and Direct Lake on SQL falls back to DirectQuery on every query.",
+    "use": "Lakehouse when data arrives as files and engineers use Spark or Dataflow Gen2; Warehouse when the team works in T-SQL and needs multi-table transactions; shortcuts to reference data without copying it.",
+    "avoid": "Copying the same table into several lakehouses \"to be safe\": use shortcuts and one owner."
+  },
+  "verified": { "date": "2026-10-01", "context": "Fabric data store decision guide, Lakehouse and SQL analytics endpoint docs (Microsoft Learn, Sept 2026)", "cert": "DP-600 (2026-10-19)", "review_after_days": 90 },
+  "refs": [
+    { "title": "Decision guide: choose a data store", "url": "https://learn.microsoft.com/en-us/fabric/fundamentals/decision-guide-data-store" },
+    { "title": "What is a lakehouse?", "url": "https://learn.microsoft.com/en-us/fabric/data-engineering/lakehouse-overview" },
+    { "title": "SQL analytics endpoint of a lakehouse", "url": "https://learn.microsoft.com/en-us/fabric/data-engineering/lakehouse-sql-analytics-endpoint" },
+    { "title": "OneLake shortcuts", "url": "https://learn.microsoft.com/en-us/fabric/onelake/onelake-shortcuts" }
+  ],
+  "asg": [
+    {
+      "t": "Land the company pack in a lakehouse",
+      "time": "40 min",
+      "ds": "company pack CSVs",
+      "guidance": "A",
+      "steps": [
+        "Create a workspace on the trial capacity and a lakehouse called nw_bronze.",
+        "Upload the seven CSVs to Files, then Load to Tables (each becomes a Delta table).",
+        "Open the SQL analytics endpoint and run the Q1 2026 by region query from the SQL track. Compare with the expected values there.",
+        "Try an UPDATE through the SQL analytics endpoint and read the error."
+      ],
+      "exp": "Seven Delta tables; the SQL query returns the same totals as in the SQL track (total {{q1_2026_gross|money0}}); UPDATE fails because the SQL analytics endpoint is read-only."
+    },
+    {
+      "t": "Lakehouse or Warehouse for the gold layer?",
+      "time": "25 min",
+      "ds": "—",
+      "guidance": "C",
+      "brief": "Northwind's team knows T-SQL, not Spark (Sprint 09). Choose where the cleaned star schema (gold layer) lives and justify it against the constraints, including how it will be read by a Direct Lake model.",
+      "req": ["Team skills, transactions, security, how the semantic model reads it.", "What you'd do with SQL views in the design."],
+      "exp": "A Fabric Warehouse for gold: T-SQL skills, multi-table transactions, materialised tables that Direct Lake (on OneLake or on SQL) reads natively. Views are fine for ad-hoc SQL users but shouldn't be the tables a Direct Lake model reads: materialise them."
+    },
+    {
+      "t": "Shortcut instead of copy",
+      "time": "20 min",
+      "ds": "—",
+      "guidance": "B",
+      "brief": "Finance has its own workspace and lakehouse, and wants the cleaned customer table owned by the sales data team. Give them access without copying it.",
+      "req": ["Create a OneLake shortcut in Finance's lakehouse to the source table.", "Explain who owns the data, who can change it, and how permissions apply."],
+      "exp": "A shortcut in Finance's lakehouse points to the sales team's table; data isn't duplicated; the sales team stays the owner; access requires permission on the source as well as on Finance's lakehouse."
+    }
+  ],
+  "int": [
+    { "q": "What is OneLake?", "a": "A single logical data lake for the whole Fabric tenant. Every lakehouse, warehouse and many other items store their tables there in Delta Parquet format, so engines (Spark, SQL, Analysis Services) can read the same data without copying it." },
+    { "q": "Lakehouse vs Warehouse?", "a": "A lakehouse stores files and Delta tables, written mainly with Spark, Dataflow Gen2 or pipelines, with a read-only SQL analytics endpoint. A warehouse is written with T-SQL and supports multi-table transactions. Both store Delta tables in OneLake; choose by team skills and workload." },
+    { "q": "What is the SQL analytics endpoint?", "a": "An automatically created, read-only T-SQL interface over a lakehouse's (or mirrored database's) Delta tables. You can query, create views and set SQL permissions, but not modify data." },
+    { "q": "What is a shortcut?", "a": "A pointer in OneLake to data stored elsewhere (another lakehouse, ADLS, S3 and others) that appears as a folder or table without copying the data." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "Can you run UPDATE through a lakehouse's SQL analytics endpoint?", "o": ["Yes", "No: it's read-only", "Only on views", "Only as an admin"], "a": 1, "why": "Write with Spark, Dataflow Gen2, pipelines, or use a Warehouse for T-SQL DML." },
+    { "type": "mcq", "q": "A team only knows T-SQL and needs multi-table transactions for its gold layer. Best fit:", "o": ["Lakehouse with Spark notebooks", "Fabric Warehouse", "Excel files in OneLake", "Eventhouse"], "a": 1, "why": "The warehouse is T-SQL-native and transactional." },
+    { "type": "task", "q": "Use the Fabric decision guide to classify Northwind's four workloads from Sprint 09 (sales, finance, ops, web) by store.", "hint": "Consider data volume, latency, skills and who writes the data." }
+  ]
+}

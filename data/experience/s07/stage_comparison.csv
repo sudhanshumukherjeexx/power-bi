@@ -1,0 +1,6 @@
+Check,Test,Production
+FactSales rows,"2,301,877","2,184,210"
+Max OrderDate,2026-05-31,2026-02-28
+"Net Sales, May 2026","$98,730",(blank)
+Targets rows,60,55
+Targets latest month,2026-06,2026-05

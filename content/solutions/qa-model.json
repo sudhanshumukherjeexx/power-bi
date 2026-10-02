@@ -1,0 +1,42 @@
+{
+  "qa-model-0": {
+    "s": ["Line values: L1 200, L2 150, L3 100, L4 300, L5 700, L6 300, L7 150, L8 −100.", "Q1 2025 = L1 + L2. Q1 2026 by order date = L3…L8. By ship date, L7 and L8 ship in April, so Q1 2026 drops them; nothing from 2025 ships in 2026.", "YoY = (Q1 2026 − Q1 2025) ÷ Q1 2025.", "Customers 2026: A, B, C, D. March 2026: B, C, D."],
+    "code": [
+      { "lang": "SQL", "title": "The same answers from SQL (independent check)", "dialect": "portable", "src": [
+        "SELECT SUM(Qty * UnitPrice) AS Total,",
+        "       SUM(CASE WHEN OrderDate BETWEEN '2025-01-01' AND '2025-03-31' THEN Qty * UnitPrice ELSE 0 END) AS Q1_2025,",
+        "       SUM(CASE WHEN OrderDate BETWEEN '2026-01-01' AND '2026-03-31' THEN Qty * UnitPrice ELSE 0 END) AS Q1_2026,",
+        "       SUM(CASE WHEN ShipDate  BETWEEN '2026-01-01' AND '2026-03-31' THEN Qty * UnitPrice ELSE 0 END) AS Q1_2026_Ship,",
+        "       COUNT(DISTINCT CASE WHEN OrderDate >= '2026-01-01' THEN Customer END) AS Customers2026",
+        "FROM mini_sales;"
+      ], "expect": { "cols": ["Total", "Q1_2025", "Q1_2026", "Q1_2026_Ship", "Customers2026"], "rows": [["{{qa_total|int}}", "{{qa_q1_2025|int}}", "{{qa_q1_2026|int}}", "{{qa_q1_2026_ship|int}}", "{{qa_customers_2026|int}}"]] } }
+    ],
+    "check": "Total {{qa_total|int}}; Q1 2025 {{qa_q1_2025|int}}; Q1 2026 {{qa_q1_2026|int}} (order) / {{qa_q1_2026_ship|int}} (ship); YoY {{qa_yoy|pct1}}; customers {{qa_customers_2026|int}} (2026), {{qa_customers_mar_2026|int}} (March); Online Q1 2026 {{qa_online_q1_2026|int}}.",
+    "verify": "Executed in CI against SQLite."
+  },
+  "qa-model-1": {
+    "s": ["Build a table of tests with DATATABLE or ROW, each evaluating a measure inside CALCULATE with explicit filters.", "Add Expected (typed in) and a Pass column with ABS(Actual − Expected) < 0.01.", "Keep the query in the repo; rerun after every change."],
+    "code": [
+      { "lang": "DAX", "title": "Test query (DAX query view)", "src": [
+        "DEFINE",
+        "    VAR Q1_26 = DATESBETWEEN ( Dates[Date], DATE ( 2026, 1, 1 ), DATE ( 2026, 3, 31 ) )",
+        "    VAR T = {",
+        "        ( \"Total sales\",            CALCULATE ( [Sales] ),                                   {{qa_total|int}} ),",
+        "        ( \"Q1 2026 by order date\",  CALCULATE ( [Sales], Q1_26 ),                            {{qa_q1_2026|int}} ),",
+        "        ( \"Q1 2026 by ship date\",   CALCULATE ( [Sales (ship date)], Q1_26 ),                {{qa_q1_2026_ship|int}} ),",
+        "        ( \"Q1 2026 prior year\",     CALCULATE ( [Sales PY], Q1_26 ),                         {{qa_q1_2025|int}} ),",
+        "        ( \"Customers 2026\",         CALCULATE ( [Customers], Dates[Year] = 2026 ),            {{qa_customers_2026|int}} ),",
+        "        ( \"Online Q1 2026\",         CALCULATE ( [Sales], Q1_26, mini_sales[Channel] = \"Online\" ), {{qa_online_q1_2026|int}} )",
+        "    }",
+        "EVALUATE",
+        "SELECTCOLUMNS ( T, \"Test\", [Value1], \"Actual\", [Value2], \"Expected\", [Value3],",
+        "    \"Pass\", ABS ( [Value2] - [Value3] ) < 0.01 )"
+      ] }
+    ],
+    "check": "All Pass. A deliberately broken Sales PY makes \"Q1 2026 prior year\" fail."
+  },
+  "qa-model-2": {
+    "s": ["YoY % = DIVIDE([Sales] − [Sales PY], [Sales PY]) returns blank without prior sales; check that your visual shows blank, not 0%.", "Customers is DISTINCTCOUNT, so the total is the distinct count over the whole period: lower than the sum of months.", "A return-only context sums to a negative value; decide with the business whether to show it as negative or as returns in a separate measure.", "Sales (ship date) for March excludes L7 (ships 2 April): the inactive relationship is doing its job."],
+    "check": "Blank YoY without prior year; non-additive customer total; negative return context; ship-date March excludes the April shipment."
+  }
+}

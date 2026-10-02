@@ -1,0 +1,34 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "d03",
+  "slug": "d03-pull-request-review",
+  "type": "drill",
+  "stage": "engineer",
+  "order": 3,
+  "title": "Review Sam's pull request",
+  "seo": "Power BI code review drill: review a TMDL pull request with calculated columns on a fact table, a bi-directional relationship, duplicate and badly named measures.",
+  "summary": "Sam's PR adds margin to the shared model. It's due in today's release train. Review the diff and decide: approve, or request changes?",
+  "minutes": 45,
+  "skills": ["deployment", "modeling", "dax", "performance", "communication"],
+  "prereq": ["s06"],
+  "ticket": { "id": "PR-231", "kind": "review", "priority": "Normal", "reporter": "sam", "opened": "Thu 4 Jun 2026, 11:20", "labels": ["pull-request", "review"] },
+  "impact": "Review is the cheapest place to stop a slow, wrong or confusing change. After it ships, every report built on the shared model inherits the problem.",
+  "messages": [
+    { "from": "sam", "to": "you", "via": "pr", "at": "Thu 4 Jun, 11:20", "subject": "PR-231: Add margin to the sales model", "body": ["Jordan needs margin by customer for Monday. Adds Line Margin and a few measures. Tested in Desktop, numbers look right. Can you approve before the 3pm train? 🙏"] }
+  ],
+  "evidence": [
+    { "id": "diff", "kind": "file", "title": "pr-231.diff", "file": "data/experience/d03/pr-231.diff", "desc": "The full change." },
+    { "id": "rules", "kind": "doc", "title": "Team modeling standards (excerpt)", "body": ["- Measures: descriptive names, display folder, description, format string; use DIVIDE.\n- No calculated columns on fact tables over 1M rows unless agreed; push logic upstream.\n- Relationships single direction unless an ADR says otherwise.\n- One measure per concept: no duplicates."] }
+  ],
+  "tasks": ["Review the diff line by line. Write each comment as you would on GitHub: the line, the problem, why it matters, the suggested change.", "Decide approve / request changes, and say what must change before the 3pm train and what can follow later."],
+  "deliverables": [{ "id": "rev", "t": "Review comments and decision", "artifact": "pull-request" }],
+  "hints": ["There are six distinct problems in fifteen added lines: two columns, four measures, one relationship. Check each against the team standards.", "For each problem ask: is it wrong, slow, confusing or risky? Wrong and risky block the merge; confusing can sometimes be a follow-up."],
+  "rubric": [
+    { "id": "find", "n": "Issues found", "w": 40, "good": "All six issues found: calculated column on the fact, text year column, m1 naming and / operator, duplicate margin measures, hard-coded year, bi-directional relationship (plus missing descriptions)." },
+    { "id": "why", "n": "Explanation", "w": 25, "good": "Each comment says why it matters (performance, correctness, maintainability, ambiguity)." },
+    { "id": "fix", "n": "Suggested fixes", "w": 20, "good": "Concrete alternatives: margin in the source or as a measure with SUMX, DATESYTD or a year filter on DimDate, single direction." },
+    { "id": "tone", "n": "Tone and decision", "w": 15, "good": "Respectful, specific; clear decision with what blocks and what can follow." }
+  ],
+  "retro": ["Which of these would a Best Practice Analyzer rule catch automatically?", "How do you review fast without rubber-stamping?"],
+  "refs": [{ "title": "Bi-directional relationship guidance", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/relationships-bidirectional-filtering" }, { "title": "Avoid converting BLANKs and use DIVIDE", "url": "https://learn.microsoft.com/en-us/dax/best-practices/dax-divide-function-operator" }]
+}

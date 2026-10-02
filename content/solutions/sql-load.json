@@ -1,0 +1,98 @@
+{
+  "sql-load-0": {
+    "s": ["Deduplicate with ROW_NUMBER on the business key (robust if copies ever differ).", "Join the header for dates, customer, channel and region; filter completed orders and the test customer.", "Convert to USD per line with the order month's rate; keep the posting month's rate in a second column for Finance.", "Name columns for the business and select only what models need."],
+    "code": [
+      {
+        "lang": "SQL", "title": "vw_FactSales", "dialect": "portable",
+        "src": [
+          "DROP VIEW IF EXISTS vw_FactSales;",
+          "CREATE VIEW vw_FactSales AS",
+          "WITH lines AS (",
+          "    SELECT l.*, ROW_NUMBER() OVER (PARTITION BY l.OrderID, l.LineNo ORDER BY l.OrderID) AS rn",
+          "    FROM order_lines AS l",
+          ")",
+          "SELECT l.OrderID, l.LineNo, o.OrderDate, o.PostingDate, o.CustomerID, o.Channel,",
+          "       o.SalesRegionKey, l.ProductKey, l.Qty, o.Currency,",
+          "       ROUND(ROUND(l.Qty * l.UnitPrice * (100 - l.DiscountPct) / 100.0, 2) * COALESCE(fo.USDPerUnit, 1), 2) AS GrossUSD,",
+          "       ROUND(ROUND(l.Qty * l.UnitPrice * (100 - l.DiscountPct) / 100.0, 2) * COALESCE(fp.USDPerUnit, 1), 2) AS GrossUSDAtPosting",
+          "FROM lines AS l",
+          "JOIN orders AS o ON o.OrderID = l.OrderID",
+          "LEFT JOIN fx_rates AS fo ON fo.Month = SUBSTRING(CAST(o.OrderDate AS VARCHAR(10)), 1, 7)   AND fo.Currency = o.Currency",
+          "LEFT JOIN fx_rates AS fp ON fp.Month = SUBSTRING(CAST(o.PostingDate AS VARCHAR(10)), 1, 7) AND fp.Currency = o.Currency",
+          "WHERE l.rn = 1 AND o.Status = 'Completed' AND o.CustomerID <> 'C19999';",
+          "",
+          "SELECT COUNT(*) AS Lines, ROUND(SUM(GrossUSD), 2) AS GrossUSD",
+          "FROM vw_FactSales",
+          "WHERE OrderDate >= '2026-01-01' AND OrderDate < '2026-04-01';"
+        ],
+        "expect": { "cols": ["Lines", "GrossUSD"], "rows": [["{{sql_q1_lines|int}}", "{{q1_2026_gross|num2}}"]] }
+      }
+    ],
+    "check": "Q1 2026: {{sql_q1_lines|int}} rows, {{q1_2026_gross|money0}}.",
+    "note": "SQL Server: CREATE OR ALTER VIEW instead of DROP/CREATE, and keep the CTE (views can contain CTEs).",
+    "verify": "Executed in CI against SQLite."
+  },
+  "sql-load-1": {
+    "s": ["Read the stored watermark (from a control table, not hard-coded).", "Extract rows with OrderDate (better: a LastModified column) greater than the watermark minus the lookback.", "Upsert those rows (next assignment), then move the watermark to the maximum value actually loaded, only after the load commits."],
+    "code": [
+      {
+        "lang": "SQL", "title": "Rows to extract: without and with a 7-day lookback", "dialect": "portable",
+        "src": [
+          "SELECT",
+          "  (SELECT COUNT(*) FROM orders WHERE OrderDate > '2026-03-24') AS AfterWatermark,",
+          "  (SELECT COUNT(*) FROM orders WHERE OrderDate > '2026-03-17') AS WithLookback,",
+          "  (SELECT COUNT(*) FROM orders)                                AS AllOrders;"
+        ],
+        "expect": { "cols": ["AfterWatermark", "WithLookback", "AllOrders"], "rows": [["{{sql_incremental_orders|int}}", "{{sql_lookback_orders|int}}", "{{sql_all_orders|int}}"]] }
+      }
+    ],
+    "check": "{{sql_incremental_orders|int}} after the watermark, {{sql_lookback_orders|int}} with the lookback, out of {{sql_all_orders|int}}.",
+    "note": "OrderDate is a proxy here because the export has no LastModified column. Ask the source team for one: cancellations and returns change rows long after OrderDate.",
+    "verify": "Executed in CI against SQLite."
+  },
+  "sql-load-2": {
+    "s": ["Reproduce: create an empty table, run the plain INSERT twice, count: the row count doubles.", "Fix: insert only keys that aren't there (NOT EXISTS on OrderID + LineNo), or delete the batch first, or MERGE.", "Prove: run the fixed load twice and count."],
+    "code": [
+      {
+        "lang": "SQL", "title": "Idempotent load, run twice", "dialect": "portable",
+        "src": [
+          "DROP TABLE IF EXISTS fact_sales;",
+          "CREATE TABLE fact_sales (OrderID VARCHAR(20), LineNo INT, ProductKey INT, Qty INT, UnitPrice DECIMAL(12,2), DiscountPct INT);",
+          "",
+          "-- the load: insert each (OrderID, LineNo) only if it isn't already there",
+          "INSERT INTO fact_sales",
+          "SELECT s.OrderID, s.LineNo, s.ProductKey, s.Qty, s.UnitPrice, s.DiscountPct",
+          "FROM (SELECT l.*, ROW_NUMBER() OVER (PARTITION BY OrderID, LineNo ORDER BY OrderID) AS rn FROM order_lines AS l) AS s",
+          "WHERE s.rn = 1",
+          "  AND NOT EXISTS (SELECT 1 FROM fact_sales AS f WHERE f.OrderID = s.OrderID AND f.LineNo = s.LineNo);",
+          "",
+          "-- the re-run after a failure: exactly the same statement",
+          "INSERT INTO fact_sales",
+          "SELECT s.OrderID, s.LineNo, s.ProductKey, s.Qty, s.UnitPrice, s.DiscountPct",
+          "FROM (SELECT l.*, ROW_NUMBER() OVER (PARTITION BY OrderID, LineNo ORDER BY OrderID) AS rn FROM order_lines AS l) AS s",
+          "WHERE s.rn = 1",
+          "  AND NOT EXISTS (SELECT 1 FROM fact_sales AS f WHERE f.OrderID = s.OrderID AND f.LineNo = s.LineNo);",
+          "",
+          "SELECT COUNT(*) AS RowsAfterTwoRuns FROM fact_sales;"
+        ],
+        "expect": { "cols": ["RowsAfterTwoRuns"], "rows": [["{{sql_distinct_rows|int}}"]] }
+      },
+      {
+        "lang": "SQL", "title": "The same with MERGE (SQL Server)", "dialect": "tsql",
+        "src": [
+          "MERGE dbo.FactSales AS f",
+          "USING stage.OrderLines AS s",
+          "   ON f.OrderID = s.OrderID AND f.LineNo = s.LineNo",
+          "WHEN MATCHED AND (f.Qty <> s.Qty OR f.UnitPrice <> s.UnitPrice OR f.DiscountPct <> s.DiscountPct)",
+          "    THEN UPDATE SET Qty = s.Qty, UnitPrice = s.UnitPrice, DiscountPct = s.DiscountPct",
+          "WHEN NOT MATCHED BY TARGET",
+          "    THEN INSERT (OrderID, LineNo, ProductKey, Qty, UnitPrice, DiscountPct)",
+          "         VALUES (s.OrderID, s.LineNo, s.ProductKey, s.Qty, s.UnitPrice, s.DiscountPct);"
+        ]
+      }
+    ],
+    "check": "Two runs → {{sql_distinct_rows|int}} rows, the same as one run.",
+    "note": "Also add a unique constraint on (OrderID, LineNo) in the warehouse: then a bad load fails loudly instead of silently duplicating.",
+    "verify": "Portable block executed in CI against SQLite; the MERGE block is SQL Server syntax and not executed."
+  }
+}

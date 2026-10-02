@@ -1,0 +1,64 @@
+{
+  "id": "api-xmla",
+  "name": "XMLA, TOM, TMSL and Tabular Editor scripting",
+  "ds": [],
+  "skills": ["automation", "deployment", "governance"],
+  "stage": "engineer",
+  "why": {
+    "matters": "Model-wide changes (descriptions on 200 measures, format strings, partitions, a new calculation group) are slow and error-prone by hand. Scripts make them repeatable and reviewable.",
+    "failure": "Someone renames twenty measures by hand in production through XMLA; three are misspelt, and the PBIX can no longer be downloaded to check.",
+    "use": "Tabular Editor scripts or TOM in a pipeline for bulk metadata changes on the PBIP in Git; TMSL or XMLA for partition refreshes and deployments; INFO DAX functions to inspect metadata.",
+    "avoid": "Editing production models directly through XMLA outside the release process."
+  },
+  "verified": { "date": "2026-10-01", "context": "XMLA endpoint, TOM and INFO DAX functions docs (Microsoft Learn, Sept 2026); Tabular Editor 2", "review_after_days": 120 },
+  "refs": [
+    { "title": "Semantic model connectivity with the XMLA endpoint", "url": "https://learn.microsoft.com/en-us/fabric/enterprise/powerbi/service-premium-connect-tools" },
+    { "title": "Tabular Object Model (TOM)", "url": "https://learn.microsoft.com/en-us/analysis-services/tom/introduction-to-the-tabular-object-model-tom-in-analysis-services-amo" },
+    { "title": "INFO.MEASURES (DAX)", "url": "https://learn.microsoft.com/en-us/dax/info-measures-function-dax" },
+    { "title": "Tabular Model Scripting Language (TMSL) refresh command", "url": "https://learn.microsoft.com/en-us/analysis-services/tmsl/refresh-command-tmsl" }
+  ],
+  "asg": [
+    {
+      "t": "Find every measure without a description",
+      "time": "20 min",
+      "ds": "starter project with your measures",
+      "guidance": "A",
+      "steps": [
+        "Open DAX query view in Power BI Desktop on a model with at least ten measures.",
+        "Run EVALUATE INFO.MEASURES() and look at the columns it returns.",
+        "Filter to measures whose Description is blank; return table name, measure name and expression.",
+        "Save the query in the repository as a governance check."
+      ],
+      "exp": "A query listing every measure without a description, ready to run on any model (or through executeQueries in a pipeline)."
+    },
+    {
+      "t": "Add descriptions in bulk from the KPI dictionary",
+      "time": "40 min",
+      "ds": "your KPI dictionary (CSV)",
+      "guidance": "B",
+      "brief": "Your KPI dictionary (Sprint 01–05) lives in a CSV with MeasureName and Description. Write a script that applies the descriptions to the model, reports measures missing from the dictionary, and never overwrites a description someone wrote by hand without saying so.",
+      "req": ["Tabular Editor C# script or TOM.", "A dry-run mode that only reports what would change.", "Run against the PBIP (via Tabular Editor) and commit the result through a pull request."],
+      "exp": "Matched measures get descriptions; unmatched names are listed; overwrites are reported in the dry run; the change is a reviewable diff in the TMDL files."
+    },
+    {
+      "t": "Refresh only what changed",
+      "time": "30 min",
+      "ds": "a model with incremental refresh on an F or PPU capacity (or the trial)",
+      "guidance": "C",
+      "brief": "A correction was loaded into the warehouse for March 2026 only. Refresh just that partition of FactSales, not the whole model, and prove that nothing else was reprocessed.",
+      "req": ["Find the partition name (SSMS, Tabular Editor or INFO.PARTITIONS()).", "Refresh it with TMSL through the XMLA endpoint (or enhanced refresh via REST).", "Show the refresh time compared with a full refresh."],
+      "exp": "A TMSL refresh command targeting FactSales' 2026 Q1 (or March) partition, a refresh that takes a fraction of the full refresh, and partition metadata showing only that partition's refresh time changed."
+    }
+  ],
+  "int": [
+    { "q": "What is the XMLA endpoint?", "a": "The Analysis Services protocol endpoint of a workspace on Fabric/Premium capacity (or PPU). Tools like SSMS, Tabular Editor, DAX Studio and scripts use it to read and (with read-write enabled) change semantic models: metadata, partitions, refresh, deployment." },
+    { "q": "TOM vs TMSL vs TMDL?", "a": "TOM is the .NET object model for programmatic changes. TMSL is a JSON command language (create, alter, refresh) sent over XMLA. TMDL is the human-readable text format for model definitions, used in PBIP files and Git." },
+    { "q": "What's the risk of changing a published model through XMLA?", "a": "The change bypasses source control and review, the model may no longer be downloadable as .pbix, and the next deployment from Git can overwrite it. Make bulk changes in the PBIP (with Tabular Editor) and deploy through the pipeline." },
+    { "q": "How do INFO DAX functions help governance?", "a": "INFO.MEASURES(), INFO.TABLES(), INFO.RELATIONSHIPS(), INFO.PARTITIONS() and similar return model metadata as tables in DAX query view, so governance checks (missing descriptions, bi-directional relationships, partition state) are just queries." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "To refresh one partition of a large model, use:", "o": ["Publish the PBIX again", "A TMSL refresh command (or enhanced refresh) targeting that partition", "Delete the table", "Scheduled refresh"], "a": 1, "why": "Partition-level refresh through XMLA or enhanced refresh avoids reprocessing everything." },
+    { "type": "mcq", "q": "Where should bulk metadata changes (descriptions on 200 measures) be made?", "o": ["Directly in production via XMLA", "In the PBIP in Git with a script, then deployed through the pipeline", "By hand in the Service", "In Excel"], "a": 1, "why": "Reviewable, repeatable, and not overwritten by the next deployment." },
+    { "type": "task", "q": "Write a Best Practice Analyzer rule (JSON) that flags measures without a description, and run it in Tabular Editor.", "hint": "Scope: Measure; expression: string.IsNullOrWhitespace(Description). Add it to the team's BPA rule file in the repository." }
+  ]
+}

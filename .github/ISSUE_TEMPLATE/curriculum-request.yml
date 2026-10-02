@@ -1,0 +1,32 @@
+name: Curriculum request (new topic, track or scenario)
+description: Suggest something learners should practise.
+labels: [curriculum]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of content?
+      options:
+        - Skill Mode assignment or topic
+        - Experience Mode scenario or drill
+        - Flashcards or glossary terms
+        - Professional template
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: The real-world situation
+      description: What happens on the job that learners can't currently practise? Why would a company care?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: What a learner should be able to do afterwards
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Contributing
+      options:
+        - label: I'd like to write this myself (see CONTRIBUTING.md)

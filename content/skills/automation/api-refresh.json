@@ -1,0 +1,59 @@
+{
+  "id": "api-refresh",
+  "name": "Refresh automation, monitoring and tests through the API",
+  "ds": ["ApiRefreshes", "ApiDatasets"],
+  "skills": ["automation", "service", "testing"],
+  "stage": "engineer",
+  "why": {
+    "matters": "Refreshes should run after upstream data is ready, not at a fixed time that hopes it is; and failures should reach a team, not one person's inbox.",
+    "failure": "A 05:30 schedule runs before the warehouse load finishes on busy days, and reports show yesterday's data with no error at all.",
+    "use": "Trigger refresh from the pipeline that loads the data, poll the status with backoff, log every run, alert on failure, and run test queries after success.",
+    "avoid": "Tight polling loops (you'll hit API limits) and retrying a failing refresh forever."
+  },
+  "verified": { "date": "2026-10-01", "context": "Power BI REST API: Refresh Dataset, Get Refresh History, Execute Queries; enhanced refresh docs", "review_after_days": 120 },
+  "refs": [
+    { "title": "Enhanced refresh with the Power BI REST API", "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/asynchronous-refresh" },
+    { "title": "Datasets - Get Refresh History In Group", "url": "https://learn.microsoft.com/en-us/rest/api/power-bi/datasets/get-refresh-history-in-group" },
+    { "title": "Datasets - Execute Queries In Group", "url": "https://learn.microsoft.com/en-us/rest/api/power-bi/datasets/execute-queries-in-group" }
+  ],
+  "asg": [
+    {
+      "t": "Trigger a refresh and poll until it finishes",
+      "time": "40 min",
+      "ds": "refreshes.json",
+      "guidance": "B",
+      "brief": "Write a script that refreshes one semantic model, waits for the result without hammering the API, and logs the outcome. Then use the mock refresh history to report the failure rate.",
+      "req": ["POST the refresh, read the request id, poll the refresh history with increasing waits, stop on Completed, Failed or a timeout.", "Log start, end, duration, status and error details.", "From refreshes.json: total runs, failed runs, and the model that failed most."],
+      "exp": "{{api_failed_runs|int}} of {{api_refresh_runs|int}} runs in the mock history failed. The script polls with backoff, exits non-zero on failure so the calling pipeline fails too, and writes one log line per run."
+    },
+    {
+      "t": "Run the model tests after every refresh",
+      "time": "30 min",
+      "ds": "—",
+      "guidance": "B",
+      "brief": "Your known-input tests from the testing track run in DAX query view. Run them automatically after each refresh with the Execute Queries API, and fail the pipeline if any test fails.",
+      "req": ["POST a DAX query to executeQueries; parse the JSON result.", "Compare each test's actual and expected value.", "Know the API's limits (one query per call, row limits) and permissions (Build on the model)."],
+      "exp": "A script that posts the test query, reads results.tables[0].rows, fails on any row where Pass is false, and is called after a successful refresh."
+    },
+    {
+      "t": "Design tenant-wide refresh monitoring",
+      "time": "30 min",
+      "ds": "refreshes.json, datasets.json",
+      "guidance": "C",
+      "brief": "Elena wants to know about any failed refresh of a certified model within 15 minutes, and a weekly view of refresh duration trends. Design it.",
+      "req": ["Where the data comes from (APIs, workspace monitoring, capacity metrics).", "How alerts are routed (team, severity).", "How you avoid alert fatigue."],
+      "exp": "A scheduled job (every 15 minutes) that reads refresh history for certified models and alerts a team channel on Failed or Completed-with-warning; a weekly report of duration trends; severity from the model's endorsement and consumers; suppression of repeats."
+    }
+  ],
+  "int": [
+    { "q": "How do you trigger and track a refresh through the REST API?", "a": "POST /groups/{groupId}/datasets/{datasetId}/refreshes (optionally with an enhanced-refresh body for specific tables or partitions); then GET the refresh history (or the specific request with enhanced refresh) until the status is Completed or Failed, polling with backoff." },
+    { "q": "What is enhanced refresh?", "a": "An asynchronous refresh through the REST API with options: refresh specific tables or partitions, set commit mode, retry count and timeout, and track or cancel the specific request. Useful for orchestration and large models." },
+    { "q": "Why trigger refresh from the data pipeline instead of a schedule?", "a": "The refresh then runs when the data is actually ready. A fixed schedule either waits too long or runs too early on slow days and silently shows stale data." },
+    { "q": "What does the Execute Queries API allow?", "a": "Running a DAX query against a semantic model and getting the result as JSON. It's handy for automated tests and monitoring, within its limits on rows and query count, and it requires Build permission (and respects RLS for the caller)." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "Your script polls refresh status every second. What's the risk?", "o": ["None", "Hitting API rate limits (HTTP 429) and being throttled", "The refresh becomes slower", "The model is locked"], "a": 1, "why": "Poll with increasing waits and respect Retry-After headers." },
+    { "type": "mcq", "q": "A refresh status is Completed but a table kept old data because of a credential problem. Your monitoring should:", "o": ["Treat it as success", "Treat warnings on production models as failures", "Ignore warnings", "Restart the capacity"], "a": 1, "why": "Stale-but-green is the most dangerous state (Sprint 07)." },
+    { "type": "task", "q": "Add your refresh script to a pipeline (Fabric pipeline, Azure DevOps or GitHub Actions) after the step that loads the warehouse.", "hint": "Pass workspace and model IDs as variables; keep the secret in the pipeline's secret store." }
+  ]
+}

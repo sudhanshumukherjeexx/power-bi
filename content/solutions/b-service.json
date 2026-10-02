@@ -1,0 +1,36 @@
+{
+  "b-service-0": {
+    "s": [
+      "Service → Workspaces → New workspace \"Northwind Dev\" (a trial or Pro licence is needed to share). In Desktop, Publish → select it.",
+      "Workspace → semantic model → Settings: Enter Data tables show no refreshable source. That is expected.",
+      "Report → Share → type the colleague's email → untick \"Allow recipients to share\" and \"Allow recipients to build content\".",
+      "The colleague finds it under Home → Shared with me. They have no workspace access."
+    ],
+    "check": "The colleague can view and interact but has no Edit, no Save a copy, and doesn't see the workspace in their list."
+  },
+  "b-service-1": {
+    "s": [
+      "Workspace → Create app → name, description, navigation → Content: add the report → Audience: add a group or person → Publish.",
+      "Open the app link as the consumer. It has app navigation and no workspace chrome. A direct share opens the report alone.",
+      "Change a visual in Desktop → Publish (overwrite) → the workspace updates at once, but app users see the change only after Update app."
+    ],
+    "check": "Before Update app the consumer sees the old visual. After it, the new one."
+  },
+  "b-service-2": {
+    "s": [
+      "Open the report in the Service → hover a card → pin icon → New dashboard \"Northwind KPI\". Repeat for all four cards.",
+      "On the dashboard → Net Sales tile → … → Manage alerts → + Add alert rule, e.g. above 30,000.",
+      "Try adding a slicer: dashboards only accept pinned tiles, text/web/image/video tiles and Q&A."
+    ],
+    "check": "Dashboard can: alerts on card/KPI/gauge tiles, tiles from several reports. Dashboard can't: slicers, cross-filtering between tiles."
+  },
+  "b-service-3": {
+    "s": [
+      "Put the CSV where the Service can reach it without a gateway: OneDrive for Business, SharePoint, or a public URL. This site's own files work too: Get Data → Web → the address of data/FactSales.csv on your GitHub Pages site.",
+      "Publish → semantic model Settings → Data source credentials → Edit (OAuth2 for OneDrive/SharePoint, Anonymous for a public URL) → Scheduled refresh On → 06:00, your time zone.",
+      "Change a value in the file → Refresh now → reopen the report."
+    ],
+    "check": "Refresh history shows Completed and the new value appears without republishing.",
+    "note": "A local path like C:\\… needs a gateway. Browse the OneDrive folder through the SharePoint folder connector rather than a local sync path."
+  }
+}

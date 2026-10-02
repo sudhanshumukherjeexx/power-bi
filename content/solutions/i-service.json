@@ -1,0 +1,37 @@
+{
+  "i-service-0": {
+    "s": [
+      "Download the on-premises data gateway (standard mode) → sign in → Register a new gateway → name it and store the recovery key safely.",
+      "Service → Settings → Manage connections and gateways → New → On-premises → your gateway → File (path + Windows credentials) or SQL Server.",
+      "Semantic model → Settings → Gateway and cloud connections → map the source → Scheduled refresh.",
+      "services.msc → stop \"On-premises data gateway service\" → Refresh now → read the error. Start it again.",
+      "Gateway → Manage users → add a second Admin."
+    ],
+    "check": "Online: Completed. Offline: an error saying the gateway is unreachable or offline.",
+    "note": "The account running the gateway service needs read access to the file path. Use a UNC path (\\\\server\\share), not a mapped drive letter."
+  },
+  "i-service-1": {
+    "s": [
+      "Create Northwind-Dev, -Test, -Prod and Northwind-Models. Publish the full PBIX to Northwind-Models.",
+      "Desktop → new file → Get Data → Power BI semantic models → pick the model → build visuals → Publish to Northwind-Dev.",
+      "Model → Manage permissions → Add user → tick \"Allow recipients to build content\"."
+    ],
+    "check": "Lineage view shows one model feeding reports in two workspaces. Deleting a report leaves the model untouched."
+  },
+  "i-service-2": {
+    "s": [
+      "Semantic model → Settings → Refresh history → download the log (or read Details).",
+      "Scheduled refresh → \"Send refresh failure notifications to\" → add the colleague.",
+      "Add 8 time slots. Adding a 9th on Pro is blocked."
+    ],
+    "check": "Pro: 8 scheduled refreshes per day. Premium Per User / Fabric or Premium capacity: 48 per day."
+  },
+  "i-service-3": {
+    "s": [
+      "Workspace → Create app / Update app → Audience tab → New audience \"Managers\" (all content) and \"Reps\" (hide the manager page).",
+      "Navigation → New → Link → an external URL.",
+      "Update a visual → republish → Update app."
+    ],
+    "check": "A Rep opening the manager page by URL is refused. Changes reach app users only after Update app."
+  }
+}

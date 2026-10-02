@@ -1,0 +1,159 @@
+{
+  "id": "a-gov",
+  "name": "Governance, enterprise architecture and the \"senior\" conversations",
+  "ds": [
+    "FactSales",
+    "DimEmployee"
+  ],
+  "skills": [
+    "governance",
+    "security",
+    "communication"
+  ],
+  "stage": "architect",
+  "why": {
+    "matters": "Governance is what lets a company trust a number without asking who built it.",
+    "failure": "Three \"Revenue\" reports disagree in a board meeting and nobody knows which model is authoritative.",
+    "use": "Certification for models that many reports depend on, sensitivity labels for anything confidential, usage and lineage to decide what to retire.",
+    "avoid": "Governance as a gate that blocks every change. Make the certified path the easiest path."
+  },
+  "verified": {
+    "date": "2026-10-01",
+    "context": "OLS, endorsement, usage metrics and lineage docs, Sept 2026",
+    "cert": "PL-300 (2026-04-20); DP-600 (2026-10-19)",
+    "review_after_days": 120
+  },
+  "refs": [
+    {
+      "title": "Object-level security",
+      "url": "https://learn.microsoft.com/en-us/fabric/security/service-admin-object-level-security"
+    },
+    {
+      "title": "Endorsement overview",
+      "url": "https://learn.microsoft.com/en-us/fabric/governance/endorsement-overview"
+    },
+    {
+      "title": "Lineage view",
+      "url": "https://learn.microsoft.com/en-us/fabric/governance/lineage"
+    }
+  ],
+  "asg": [
+    {
+      "t": "Object-level security",
+      "time": "20 min",
+      "ds": "DimEmployee",
+      "guidance": "A",
+      "steps": [
+        "In Tabular Editor, create a role \"NoSalary\" and set OLS on DimEmployee[Salary] to None.",
+        "Publish. Add a test user. Open the report: the visual using Salary must show an error, others must work.",
+        "Combine with the RLS role and confirm both apply."
+      ],
+      "exp": "Only the salary visual breaks for the restricted user; you can explain why OLS breaks the visual instead of hiding the column."
+    },
+    {
+      "t": "Certified model with documentation",
+      "time": "30 min",
+      "ds": "Your shared model",
+      "guidance": "A",
+      "steps": [
+        "Add descriptions to every visible measure and table (Tabular Editor script from the Deployment topic).",
+        "Add synonyms for Q&A on the top five fields.",
+        "Request certification from your admin (or certify as admin in a trial tenant). Add a sensitivity label.",
+        "Create a \"Model guide\" report page listing every measure, its definition and owner, generated from INFO.MEASURES() in a DAX query."
+      ],
+      "exp": "Analysts can find and understand the model without asking you."
+    },
+    {
+      "t": "Usage and lineage",
+      "time": "20 min",
+      "ds": "Your workspace",
+      "guidance": "A",
+      "steps": [
+        "Open the usage metrics report for your report. Find the least-viewed page.",
+        "Open lineage view for the workspace. Identify everything that breaks if the Lakehouse is deleted.",
+        "Use the Admin monitoring workspace (or the Fabric Capacity Metrics app) to find the model consuming the most CU."
+      ],
+      "exp": "A list of three items you would retire and one you would optimise."
+    },
+    {
+      "t": "The senior conversation",
+      "time": "30 min",
+      "ds": "—",
+      "guidance": "A",
+      "steps": [
+        "Write, in under 200 words each, your answer to: (1) \"Why is the report slow?\" for a CFO, (2) the same for a data engineer. (3) \"Should we go Fabric?\" for a CTO. (4) \"Why can't I just export everything to Excel?\" for an analyst.",
+        "Read them aloud. Cut any sentence a listener would not understand."
+      ],
+      "exp": "Four answers, none containing the word VertiPaq for the CFO, all containing a recommendation."
+    }
+  ],
+  "int": [
+    {
+      "q": "Design a semantic-model architecture for 50 reports across 6 departments.",
+      "a": "One certified enterprise model per domain (Sales, Finance, HR) with conformed date/customer/product dimensions, owned by a central team, living in models-only workspaces. Departmental workspaces hold reports live-connected or composite-extended. Dev/Test/Prod via pipelines, Git for models, BPA in CI. Self-service models allowed only in personal or sandbox workspaces and never certified."
+    },
+    {
+      "q": "OLS vs RLS vs hiding a column.",
+      "a": "Hiding is cosmetic (Analyze in Excel still shows it). RLS filters rows. OLS removes the column/table from the metadata for the role; any visual referencing it errors, so build separate reports per audience."
+    },
+    {
+      "q": "What are the key tenant settings you review on day one at a new company?",
+      "a": "Export to Excel/CSV, publish to web, external sharing, who can create workspaces, who can certify, Fabric enablement, sensitivity label enforcement, XMLA read/write, and the usage metrics setting."
+    },
+    {
+      "q": "How do you handle a request for a report you know is wrong (e.g. summing a snapshot)?",
+      "a": "Show the requester the wrong number and the right one on the same page with the definition of each, agree the definition in writing, put it in the certified model, and reference it in the report. Refusing helps nobody; educating does."
+    },
+    {
+      "q": "What is your checklist before calling a model production-ready?",
+      "a": "Star schema, marked date table, no unused columns, integer keys, measures documented, BPA clean, RLS tested with View as and a real user, refresh tested from the Service with the gateway, performance under 2 seconds per visual on the expected data volume, ownership and support path documented, sensitivity label applied."
+    },
+    {
+      "q": "How do you estimate capacity needs?",
+      "a": "Measure the model size after optimisation and 2× it for refresh, count concurrent users from usage metrics, run a load test, look at the Capacity Metrics app for CU per interactive query and per refresh, and leave 30% headroom."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "A user in an OLS role opens a visual using a restricted column. Result:",
+      "o": [
+        "Column hidden, visual works",
+        "Visual shows an error",
+        "Blank values",
+        "The role is ignored"
+      ],
+      "a": 1,
+      "why": "OLS removes the object from the metadata; references to it fail."
+    },
+    {
+      "type": "mcq",
+      "q": "Certification of a semantic model can be granted by:",
+      "o": [
+        "Any Pro user",
+        "Users/groups allowed by the tenant setting",
+        "Workspace Viewers",
+        "Only Microsoft"
+      ],
+      "a": 1,
+      "why": "Certification is governed by a tenant setting listing who may certify."
+    },
+    {
+      "type": "task",
+      "q": "Produce the \"Model guide\" page using INFO.MEASURES() and INFO.TABLES() in a DAX query, exported to a table in a report, and include the description column.",
+      "hint": "EVALUATE SELECTCOLUMNS(INFO.MEASURES(), \"Measure\", [Name], \"Expression\", [Expression], \"Description\", [Description])."
+    },
+    {
+      "type": "mcq",
+      "q": "Lineage view helps you answer:",
+      "o": [
+        "Which measure is slow",
+        "Which downstream items depend on a source",
+        "Who viewed a report",
+        "How much a capacity costs"
+      ],
+      "a": 1,
+      "why": "Lineage shows dependency chains between sources, dataflows, models and reports."
+    }
+  ]
+}

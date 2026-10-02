@@ -1,0 +1,14 @@
+{
+  "id": "testing",
+  "kind": "track",
+  "order": 3,
+  "cls": "qa",
+  "name": "Testing and validation",
+  "tag": "Track",
+  "tagline": "Data quality tests, known-input model tests, security matrices, refresh checks, performance budgets, regression, and a lab where you break things on purpose.",
+  "seo": "Testing for Power BI developers: data quality tests, DAX measure tests with known inputs and outputs, RLS test matrices, refresh and performance tests, regression testing and failure-injection exercises.",
+  "intro": "In BI, a number is wrong until it's proven right. This track turns \"looks fine\" into tests you can run again after every change: on the data, on the measures, on security, on refresh and on performance. The last topic is a lab where you deliberately break a model, watch what happens and learn to recognise the symptom later.",
+  "setup": "Power BI Desktop with DAX query view, the course datasets and starter project, the company pack, and data/tracks/testing/mini_sales.csv (eight rows whose answers you can work out by hand). DAX Studio is optional.",
+  "stage": "developer",
+  "topics": ["qa-data", "qa-model", "qa-security", "qa-ops", "qa-break"]
+}

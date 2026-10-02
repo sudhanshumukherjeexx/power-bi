@@ -1,0 +1,14 @@
+{
+  "mod-ai-0": {
+    "s": ["Line chart: Dates[Date] on the axis, Net Sales as value. Analytics pane → Forecast (length, seasonality, confidence interval). Right-click the line → Find anomalies (sensitivity).", "Higher sensitivity flags more points; the confidence interval widens with fewer, noisier observations.", "With ~90 days of daily data, weekly seasonality and negative return days, both outputs are weak: say so, or show weekly totals over a longer history instead."],
+    "check": "Features configured; judgement that the result is exploratory, not a prediction."
+  },
+  "mod-ai-1": {
+    "s": ["Scatter: CustomerName in Values, Net Sales on X, Orders on Y; ... → Automatically find clusters; it creates a cluster field.", "Compare with ABC classes (Advanced DAX): stable rules people can explain.", "Give Sales the rule-based segments; keep clusters for exploration, and note they may change when data changes."],
+    "check": "Clusters created and compared; rule-based segmentation recommended for operational use."
+  },
+  "mod-ai-2": {
+    "s": ["Only for DirectQuery / Direct Lake data; Import doesn't change between refreshes.", "Prefer change detection (refresh when a measure's value changes) over a fixed interval.", "Admins set minimum intervals on the capacity; each refresh sends queries, so frequent refresh on many viewers costs capacity and source load (recall the WMS spikes in Sprint 09).", "Agree the interval with Ops based on how fast they act; minutes is usually enough."],
+    "check": "DirectQuery/Direct Lake, change detection, agreed interval within admin limits."
+  }
+}

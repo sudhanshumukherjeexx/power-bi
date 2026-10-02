@@ -1,0 +1,34 @@
+{
+  "dw-dims-0": {
+    "s": ["Relate FactSales[OrderDate] (active), [ShipDate] and [PostingDate] (inactive) to DimDate[Date].", "Gross Sales (ship date) = CALCULATE([Gross Sales], USERELATIONSHIP(FactSales[ShipDate], DimDate[Date])), likewise for posting date.", "Note that ship-date value here is converted at the ship month's rate (that's how Operations' model does it), which also contributes to the difference."],
+    "code": [
+      { "lang": "DAX", "title": "Role-playing measures", "src": [
+        "Gross Sales (ship date) =",
+        "CALCULATE ( [Gross Sales], USERELATIONSHIP ( FactSales[ShipDate], DimDate[Date] ) )",
+        "",
+        "Gross Sales (posting date) =",
+        "CALCULATE ( [Gross Sales], USERELATIONSHIP ( FactSales[PostingDate], DimDate[Date] ) )"
+      ] }
+    ],
+    "check": "Order date {{q1_2026_gross|money0}} vs ship date {{rev_ops_model|money0}} for Q1 2026."
+  },
+  "dw-dims-1": {
+    "s": ["SELECT DISTINCT Channel, Status, Currency → assign OrderFlagsKey with ROW_NUMBER.", "Join the fact to it on the three columns at load time and keep only the key.", "Building only the combinations that occur keeps the dimension small and meaningful; a full cross join is fine when it's tiny (here 20 rows) and you want new combinations to work without reloading the dimension."],
+    "code": [
+      {
+        "lang": "SQL", "title": "dim_order_flags", "dialect": "portable",
+        "src": [
+          "WITH combos AS (SELECT DISTINCT Channel, Status, Currency FROM orders)",
+          "SELECT COUNT(*) AS Combinations FROM combos;"
+        ],
+        "expect": { "cols": ["Combinations"], "rows": [["{{dw_junk_combos|int}}"]] }
+      }
+    ],
+    "check": "{{dw_junk_combos|int}} combinations occur (of {{dw_junk_possible|int}} possible).",
+    "verify": "Executed in CI against SQLite."
+  },
+  "dw-dims-2": {
+    "s": ["Create a SegmentTier dimension (one row per Segment × Tier) and relate both DimCustomer and CustomerTargets to it (1:*).", "Actual sales flow DimCustomer → FactSales; targets live at SegmentTier. A matrix by SegmentTier attributes shows both correctly.", "At customer level, hide the target or show it as blank with ISINSCOPE: a segment target doesn't belong to one customer."],
+    "check": "Targets show at Segment × Tier and above; blank (by design) at customer level."
+  }
+}

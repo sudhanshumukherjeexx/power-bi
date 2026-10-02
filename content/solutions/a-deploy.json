@@ -1,0 +1,100 @@
+{
+  "a-deploy-0": {
+    "s": [
+      "File → Save as → Power BI Project (.pbip). Check the project folder: <name>.SemanticModel/definition/*.tmdl and <name>.Report/definition/ (PBIR). If you see report.json instead of a definition folder, your Desktop build is older than September 2026: update it.",
+      "Run the git commands below in the project folder.",
+      "Edit a measure in Desktop → save → git diff. Then edit the same measure in the .tmdl file in VS Code and save: Desktop shows \"Apply external changes\". Apply, and the model updates without reopening.",
+      "Fabric workspace → Workspace settings → Git integration → connect repo/branch → Commit/Update."
+    ],
+    "code": [
+      {
+        "lang": "Shell",
+        "title": "Git basics",
+        "src": [
+          "git init",
+          "git add .",
+          "git commit -m \"Initial PBIP\"",
+          "# after changing a measure in Desktop and saving:",
+          "git diff -- \"*.tmdl\""
+        ]
+      },
+      {
+        "lang": "TMDL",
+        "title": "A measure in tables/_Measures.tmdl",
+        "src": [
+          "\tmeasure 'Net Sales' = [Gross Sales] - [Discount Amt]",
+          "\t\tformatString: \\$#,0.00;(\\$#,0.00);\\$#,0.00",
+          "\t\tdisplayFolder: Sales"
+        ]
+      }
+    ],
+    "check": "git diff shows a single changed line: the measure expression."
+  },
+  "a-deploy-1": {
+    "s": [
+      "Deployment pipelines → Create → 3 stages → assign Northwind-Dev to Development.",
+      "Deploy to Test → Deployment rules (lightning icon) on the Test semantic model → Parameter rules → Environment = Test. Do the same for Prod.",
+      "Change a measure in Dev → the Test column shows \"Different\" → Compare → Deploy.",
+      "Select only the semantic model → Deploy (selective deployment)."
+    ],
+    "check": "Prod's model reads the Prod source. Nobody edited the PBIX.",
+    "note": "Deployment rules can rebind data sources for Import, DirectQuery and Direct Lake on SQL models, but not for Direct Lake on OneLake: for those, parameterise the connection or use Fabric variable libraries."
+  },
+  "a-deploy-2": {
+    "code": [
+      {
+        "lang": "C#",
+        "title": "Tabular Editor 2: create PY siblings for every *Sales measure",
+        "src": [
+          "foreach (var m in Model.AllMeasures.Where(x => x.Name.EndsWith(\"Sales\")).ToList())",
+          "{",
+          "    var py = m.Table.AddMeasure(",
+          "        m.Name + \" PY\",",
+          "        \"CALCULATE(\" + m.DaxObjectName + \", SAMEPERIODLASTYEAR('Dates'[Date]))\",",
+          "        m.DisplayFolder",
+          "    );",
+          "    py.FormatString = m.FormatString;",
+          "    py.Description = \"Prior-year version of \" + m.Name + \".\";",
+          "}",
+          "",
+          "// Format every measure with the built-in DAX formatter",
+          "Model.AllMeasures.FormatDax();"
+        ]
+      }
+    ],
+    "s": [
+      "Tools → Best Practice Analyzer → Manage rules → add the standard rule collection → Refresh → fix or ignore each item with a documented reason.",
+      "XMLA: File → Open → From DB → powerbi://api.powerbi.com/v1.0/myorg/<workspace>."
+    ],
+    "check": "BPA shows 0 errors. After saving via XMLA, the Service no longer lets you download the model as a .pbix."
+  },
+  "a-deploy-3": {
+    "code": [
+      {
+        "lang": "Shell",
+        "title": "Tag, break, roll back",
+        "src": [
+          "git tag -a v1.0 -m \"Release 1.0\"",
+          "git push origin v1.0",
+          "# ...breaking change deployed...",
+          "git checkout v1.0 -- \"Northwind.SemanticModel\"",
+          "git commit -m \"Roll back semantic model to v1.0\"",
+          "git push   # then Update all in the workspace Git panel"
+        ]
+      },
+      {
+        "lang": "Text",
+        "title": "Release note template",
+        "src": [
+          "Subject: Northwind model v1.1 – released <date>",
+          "What changed: <measures/columns added, renamed, removed>",
+          "Action needed: <none | update visuals that use X before <date>>",
+          "Why: <business reason in one sentence>",
+          "Rollback plan: <tag v1.0, contact>",
+          "Questions: <owner, channel>"
+        ]
+      }
+    ],
+    "check": "After the rollback sync the broken visual renders again, with no change to the report."
+  }
+}

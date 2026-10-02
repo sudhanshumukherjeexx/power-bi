@@ -1,0 +1,59 @@
+{
+  "id": "fab-directlake",
+  "name": "Direct Lake in depth: OneLake vs SQL endpoint, framing, fallback, guardrails",
+  "ds": [],
+  "skills": ["fabric", "performance", "modeling", "security"],
+  "stage": "senior",
+  "why": {
+    "matters": "Direct Lake gives near-Import speed on large data without copying it at refresh, but the two Direct Lake options behave differently when something isn't supported: one falls back to slower DirectQuery, the other fails.",
+    "failure": "A Direct Lake on SQL model silently runs as DirectQuery because a table is a SQL view; performance drops and nobody knows why.",
+    "use": "Direct Lake on OneLake for new models (multi-source, no fallback, can add Import tables); Direct Lake on SQL when you need SQL-endpoint features or a supported source only it handles; well-maintained Delta tables within the capacity guardrails.",
+    "avoid": "Treating every Direct Lake model as identical, or relying on fallback in production."
+  },
+  "verified": { "date": "2026-10-01", "context": "Direct Lake overview (Microsoft Learn, 2026-09-02); How Direct Lake works (2026-09-09)", "cert": "DP-600 (2026-10-19): Configure Direct Lake; Choose between Direct Lake on OneLake and on SQL analytics endpoint", "review_after_days": 60 },
+  "refs": [
+    { "title": "Direct Lake overview", "url": "https://learn.microsoft.com/en-us/fabric/fundamentals/direct-lake-overview" },
+    { "title": "How Direct Lake works", "url": "https://learn.microsoft.com/en-us/fabric/fundamentals/direct-lake-how-it-works" },
+    { "title": "Integrate Direct Lake security", "url": "https://learn.microsoft.com/en-us/fabric/fundamentals/direct-lake-security-integration" }
+  ],
+  "asg": [
+    {
+      "t": "Compare the two Direct Lake options",
+      "time": "30 min",
+      "ds": "—",
+      "guidance": "B",
+      "brief": "Write the one-page comparison you'd give a colleague choosing between Direct Lake on OneLake and Direct Lake on SQL analytics endpoint.",
+      "req": ["Sources each can combine; fallback behaviour; SQL views; SQL-endpoint security; composite models; calculated columns; what happens when guardrails are exceeded."],
+      "exp": "OneLake: one or more Fabric sources, can add Import tables, no DirectQuery fallback (errors instead), no non-materialised views, SQL-endpoint RLS/OLS not applied; recommended for new models. SQL: one source via its SQL analytics endpoint, falls back to DirectQuery for views, SQL-endpoint RLS/OLS and exceeded guardrails (controlled by Direct Lake behavior), can't mix with DirectQuery/Dual tables in the same model. Both: Fabric capacity only."
+    },
+    {
+      "t": "Prove which mode each table uses",
+      "time": "30 min",
+      "ds": "your lakehouse from the previous topic",
+      "guidance": "B",
+      "brief": "Build a Direct Lake model on the company pack and prove, table by table, whether queries are served by Direct Lake.",
+      "req": ["Run EVALUATE TABLETRAITS() and read DirectLakeFallbackInfo.", "Change Direct Lake behavior to DirectLakeOnly (SQL option) and observe.", "Disable automatic updates, change data, and show the model still returns the old data until you reframe."],
+      "exp": "TABLETRAITS shows None for each Delta table; a SQL view (SQL option) shows a fallback reason and fails under DirectLakeOnly; with automatic updates off, new data appears only after a refresh (framing)."
+    },
+    {
+      "t": "RLS for a Direct Lake model",
+      "time": "25 min",
+      "ds": "—",
+      "guidance": "C",
+      "brief": "Northwind needs regional RLS on the Direct Lake sales model (Sprint 09 phase 2). The data engineers propose defining RLS in the SQL analytics endpoint. Decide where RLS goes and why.",
+      "req": ["Consequences for each Direct Lake option.", "The recommended connection identity."],
+      "exp": "Define RLS in the semantic model. SQL-endpoint RLS isn't applied in Direct Lake on OneLake and forces DirectQuery fallback in Direct Lake on SQL. Microsoft strongly recommends a fixed-identity cloud connection for Direct Lake models with semantic-model RLS."
+    }
+  ],
+  "int": [
+    { "q": "What is framing in Direct Lake?", "a": "A refresh of a Direct Lake model: it reads the Delta logs and points the model at the latest table versions without copying data. Queries then see data as of the last successful framing; columns are loaded into memory on first use (transcoding)." },
+    { "q": "When does Direct Lake on SQL fall back to DirectQuery?", "a": "When a table is a non-materialised SQL view, when the SQL analytics endpoint enforces RLS, OLS or dynamic data masking, when a table exceeds the capacity guardrails, or when tables haven't been framed. The Direct Lake behavior property (Automatic, DirectLakeOnly, DirectQueryOnly) controls it." },
+    { "q": "Why might Direct Lake on OneLake be preferred for new models?", "a": "It isn't coupled to the SQL endpoint, so it can combine several Fabric sources and Import tables, has more efficient query plans, and never silently falls back; problems surface as errors you can fix." },
+    { "q": "What are Direct Lake guardrails?", "a": "Per-SKU limits on Parquet files, row groups and rows per table and on model size. Exceeding them makes Direct Lake on SQL fall back (if allowed) and Direct Lake on OneLake fail; keep Delta tables optimised (OPTIMIZE, V-Order) or size the capacity." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "A table in a Direct Lake on OneLake model exceeds the capacity's row-group guardrail. Queries:", "o": ["Fall back to DirectQuery", "Fail (refresh fails and the model can't be queried until fixed)", "Use Import automatically", "Ignore the guardrail"], "a": 1, "why": "Direct Lake on OneLake doesn't fall back." },
+    { "type": "mcq", "q": "Which property controls fallback in Direct Lake on SQL?", "o": ["Storage mode", "Direct Lake behavior (Automatic, DirectLakeOnly, DirectQueryOnly)", "Query folding", "Large model format"], "a": 1, "why": "It's a model property, set in the model properties or via TOM/TMSL." },
+    { "type": "task", "q": "Write the runbook entry \"Direct Lake report is suddenly slow\".", "hint": "Check TABLETRAITS for fallback, Delta table file and row-group counts against guardrails, capacity memory pressure, and whether framing is current." }
+  ]
+}

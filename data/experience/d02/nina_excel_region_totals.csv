@@ -1,0 +1,6 @@
+Region,Q1 2026 Sales (USD),Formula note
+West,64460.85,"SUMIFS over the customer list export, by customer region"
+South,49210.67,"SUMIFS over the customer list export, by customer region"
+East,48642.15,"SUMIFS over the customer list export, by customer region"
+Central,70386.49,"SUMIFS over the customer list export, by customer region"
+Europe,22050.48,"SUMIFS over the customer list export, by customer region"

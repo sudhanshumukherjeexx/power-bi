@@ -1,0 +1,144 @@
+{
+  "id": "i-model",
+  "name": "Modeling: many-to-many, bridges and grain",
+  "ds": [
+    "FactSales",
+    "FactBudget",
+    "CustomerTargets",
+    "DimCustomer",
+    "DimEmployee"
+  ],
+  "skills": [
+    "modeling"
+  ],
+  "stage": "developer",
+  "refs": [
+    {
+      "title": "Many-to-many relationship guidance",
+      "url": "https://learn.microsoft.com/en-us/power-bi/guidance/relationships-many-to-many"
+    },
+    {
+      "title": "Parent-child functions",
+      "url": "https://learn.microsoft.com/en-us/dax/understanding-functions-for-parent-child-hierarchies-in-dax"
+    }
+  ],
+  "asg": [
+    {
+      "t": "Budget vs actual at different grains",
+      "time": "40 min",
+      "ds": "FactSales, FactBudget",
+      "guidance": "A",
+      "steps": [
+        "FactBudget is at Month × Region × Category. FactSales is at Day × Product. They cannot join directly.",
+        "Create a DimCategory table = DISTINCT(DimProduct[Category]) and relate it to both DimProduct[Category] (1:*) and FactBudget[Category] (1:*).",
+        "Add YearMonth to your Dates table, and relate FactBudget[YearMonth] to a new DimMonth = DISTINCT(Dates[YearMonth]) which also filters Dates (1:*).",
+        "Relate DimRegion to FactBudget. Matrix: Category rows, YearMonth columns, Net Sales and Sum of BudgetAmount and Variance %."
+      ],
+      "exp": "Every Category × Month cell shows both actual and budget. Product-level rows show budget blank (correct: budget is not defined at product grain)."
+    },
+    {
+      "t": "Many-to-many with a bridge",
+      "time": "30 min",
+      "ds": "CustomerTargets, DimCustomer",
+      "guidance": "A",
+      "steps": [
+        "CustomerTargets keys on Segment + LoyaltyTier, which is not unique in either table.",
+        "Build a bridge: BridgeSegTier = SUMMARIZE(DimCustomer, DimCustomer[Segment], DimCustomer[LoyaltyTier]) plus a key column Segment & \"|\" & Tier.",
+        "Add the same key column to DimCustomer and CustomerTargets. Relate Bridge 1:* to both, with the Bridge → DimCustomer relationship set to bi-directional (only this one).",
+        "Table: Segment, LoyaltyTier, Net Sales, Sum of TargetRevenue.",
+        "Then do it again with a direct many-to-many relationship (cardinality *:*) and compare totals and behaviour."
+      ],
+      "exp": "Both approaches give the same numbers per row; the *:* version shows a warning icon and behaves differently on the total row."
+    },
+    {
+      "t": "Parent-child hierarchy",
+      "time": "30 min",
+      "ds": "DimEmployee, FactSales",
+      "guidance": "A",
+      "steps": [
+        "Add Path = PATH(DimEmployee[EmployeeKey], DimEmployee[ManagerKey]).",
+        "Add Level1 = LOOKUPVALUE(DimEmployee[EmployeeName], DimEmployee[EmployeeKey], PATHITEM([Path], 1, INTEGER)), and Level2, Level3, Level4.",
+        "Build a hierarchy Level1 → Level4 and a matrix of Net Sales by it.",
+        "Write Team Sales = CALCULATE([Net Sales], FILTER(ALL(DimEmployee), PATHCONTAINS(DimEmployee[Path], SELECTEDVALUE(DimEmployee[EmployeeKey])))) so a manager row includes their reports."
+      ],
+      "exp": "Grace Hollis row = grand total. Dana Whitfield row = West total. Nina Kowalski (Finance) row has sales blank."
+    },
+    {
+      "t": "Diagnose a bad grain",
+      "time": "15 min",
+      "ds": "FactInventory",
+      "guidance": "A",
+      "steps": [
+        "Load FactInventory and relate it to DimProduct and Dates.",
+        "Card: Sum of QuantityOnHand. Explain why the number is meaningless.",
+        "Do not fix it yet: that is the semi-additive assignment in Advanced DAX. Just write one sentence in a text box explaining the correct aggregation."
+      ],
+      "exp": "The sentence contains the words \"last snapshot\" or \"last date\"."
+    }
+  ],
+  "int": [
+    {
+      "q": "How do you handle budget at month grain against sales at day grain?",
+      "a": "Create shared dimensions at the common grain (Category, Month, Region) that filter both facts. Never join facts to each other. Alternatively, allocate budget to days in Power Query if daily comparison is needed."
+    },
+    {
+      "q": "Bridge table vs native many-to-many: which do you choose and why?",
+      "a": "Bridge with one bi-directional relationship is explicit, performs well, and totals behave predictably. Native *:* is quicker to build but totals ignore the relationship and it disables some features (e.g. no blank row, DAX like RELATED does not work)."
+    },
+    {
+      "q": "What is a degenerate dimension?",
+      "a": "An attribute that lives on the fact because it has no other attributes, like OrderID. You slice by it directly from the fact rather than creating a one-column dimension."
+    },
+    {
+      "q": "Explain the \"expanded table\" concept in DAX.",
+      "a": "Each table conceptually includes all columns of tables on the one side of its relationships. FactSales expanded includes DimProduct and DimCustomer columns; that is why RELATED works and why filters on a dimension filter the fact."
+    },
+    {
+      "q": "When is a snapshot fact table the right design?",
+      "a": "When the business asks \"what was the balance/level at a point in time\" (inventory, account balances, headcount). Sum across time is meaningless; use semi-additive measures."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "FactBudget and FactSales both have RegionKey. Correct model:",
+      "o": [
+        "Join FactSales to FactBudget on RegionKey",
+        "DimRegion filters both facts",
+        "Merge them in Power Query",
+        "Use a *:* between them"
+      ],
+      "a": 1,
+      "why": "Conformed dimensions filter multiple facts; facts never join to facts."
+    },
+    {
+      "type": "mcq",
+      "q": "PATH(EmployeeKey, ManagerKey) for Lily Chang (8) returns:",
+      "o": [
+        "\"8\"",
+        "\"1|2|6|8\"",
+        "\"8|6|2|1\"",
+        "\"2|6|8\""
+      ],
+      "a": 1,
+      "why": "PATH lists ancestors from the root to the item."
+    },
+    {
+      "type": "task",
+      "q": "Build the bridge for CustomerTargets and report the Q1 target versus Net Sales for Consumer × Gold.",
+      "hint": "If Net Sales is blank, the bridge → DimCustomer relationship is not bi-directional."
+    },
+    {
+      "type": "mcq",
+      "q": "Which relationship direction is required for the bridge pattern to work?",
+      "o": [
+        "Bridge ← Fact",
+        "Bridge ↔ Dimension (both)",
+        "Fact ↔ Bridge",
+        "No relationships, use TREATAS"
+      ],
+      "a": 1,
+      "why": "The dimension must be filtered through the bridge so the fact receives the filter."
+    }
+  ]
+}

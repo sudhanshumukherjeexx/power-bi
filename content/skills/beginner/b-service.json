@@ -1,0 +1,147 @@
+{
+  "id": "b-service",
+  "name": "Power BI Service basics",
+  "ds": [
+    "FactSales"
+  ],
+  "skills": [
+    "service"
+  ],
+  "stage": "analyst",
+  "verified": {
+    "date": "2026-10-01",
+    "context": "Power BI service sharing, apps and refresh docs, Sept 2026",
+    "cert": "PL-300 (2026-04-20)",
+    "review_after_days": 120
+  },
+  "refs": [
+    {
+      "title": "Ways to share your work",
+      "url": "https://learn.microsoft.com/en-us/power-bi/collaborate-share/service-share-dashboards"
+    },
+    {
+      "title": "Publish an app",
+      "url": "https://learn.microsoft.com/en-us/power-bi/collaborate-share/service-create-distribute-apps"
+    },
+    {
+      "title": "Configure scheduled refresh",
+      "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-scheduled-refresh"
+    }
+  ],
+  "asg": [
+    {
+      "t": "Publish and share properly",
+      "time": "25 min",
+      "ds": "Your report",
+      "guidance": "A",
+      "steps": [
+        "Create a workspace \"Northwind Dev\". Publish the report.",
+        "Open the semantic model settings. Note that Enter Data sources cannot be refreshed and that this is fine for now.",
+        "Share the report with a colleague (or a second account) with \"Allow recipients to share\" off and \"Build\" permission off.",
+        "Have them open it. Confirm they cannot see the workspace itself."
+      ],
+      "exp": "The colleague sees only the report, not the model or workspace."
+    },
+    {
+      "t": "App versus share",
+      "time": "20 min",
+      "ds": "Your report",
+      "guidance": "A",
+      "steps": [
+        "Create an App from the workspace with the report inside. Add an audience.",
+        "Compare what the consumer sees via the App link versus via direct share.",
+        "Update the report, republish, and update the App. Note that until you update the App, consumers see the old version."
+      ],
+      "exp": "You can explain when a change is visible to App users and when it is not."
+    },
+    {
+      "t": "Dashboard versus report",
+      "time": "15 min",
+      "ds": "Your report",
+      "guidance": "A",
+      "steps": [
+        "Pin the four cards to a new dashboard \"Northwind KPI\".",
+        "Set a data alert on the Net Sales tile.",
+        "Try to add a slicer to the dashboard. Notice that you cannot."
+      ],
+      "exp": "You can state two things a dashboard does that a report cannot (alerts, tiles from multiple reports) and two things it cannot do (slicers, interactions)."
+    },
+    {
+      "t": "Refresh that actually works",
+      "time": "20 min",
+      "ds": "Any CSV on OneDrive",
+      "guidance": "A",
+      "steps": [
+        "Save one of the datasets as CSV in OneDrive for Business. Point a new report at it via Get Data → Web using the OneDrive share link ending in ?download=1, or via the SharePoint folder connector.",
+        "Publish. Set credentials on the semantic model (OAuth). Schedule refresh daily at 6:00 in your timezone.",
+        "Edit the CSV, wait for or trigger a refresh, confirm the report changed."
+      ],
+      "exp": "Refresh history shows Completed. The edited value appears in the Service without republishing."
+    }
+  ],
+  "int": [
+    {
+      "q": "What is the difference between a report, a semantic model, a dashboard and an app?",
+      "a": "Semantic model = the data and measures; report = pages of visuals on top of one model; dashboard = single canvas of pinned tiles from one or more reports, no slicers; app = packaged, read-only distribution of workspace content with its own navigation and audiences."
+    },
+    {
+      "q": "A viewer says \"I can't see the report\". Walk through your checklist.",
+      "a": "License (Pro/PPU or Fabric capacity), permission on the report, permission on the underlying model if it lives in another workspace, RLS role membership, App audience membership, whether they opened the App link or the workspace link."
+    },
+    {
+      "q": "Why does a scheduled refresh fail for a file on your desktop?",
+      "a": "The Service cannot reach your machine. Either move the file to OneDrive/SharePoint or install an on-premises data gateway (personal mode is fine for one user, standard mode for teams)."
+    },
+    {
+      "q": "What does Build permission allow?",
+      "a": "Creating new reports on the shared semantic model (in the Service, Desktop live connect, Excel Analyze). Read permission only lets someone view existing reports."
+    },
+    {
+      "q": "What are the workspace roles and which one would you never give a business user?",
+      "a": "Viewer, Contributor, Member, Admin. Never Admin (can delete the workspace) and rarely Member (can share and publish apps)."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "You republish a report from Desktop. Which is true?",
+      "o": [
+        "App users see changes instantly",
+        "Direct-share users see changes instantly, App users after App update",
+        "Nobody sees changes until refresh",
+        "Both see changes after refresh"
+      ],
+      "a": 1,
+      "why": "Apps are a published snapshot of the workspace content."
+    },
+    {
+      "type": "mcq",
+      "q": "Data alerts can be set on:",
+      "o": [
+        "Any visual in a report",
+        "Cards, KPIs and gauges pinned to a dashboard",
+        "Slicers",
+        "Matrix cells"
+      ],
+      "a": 1,
+      "why": "Alerts are a dashboard feature for single-value tiles."
+    },
+    {
+      "type": "task",
+      "q": "Configure scheduled refresh for a OneDrive CSV, force a failure by renaming the file, read the error message, fix it, and write down the exact error text you saw.",
+      "hint": "The error mentions the path or 404; knowing what it looks like saves you 30 minutes in production."
+    },
+    {
+      "type": "mcq",
+      "q": "Minimum requirement for a colleague to view a report in a Pro workspace:",
+      "o": [
+        "Nothing",
+        "A free account",
+        "A Pro or PPU license",
+        "Fabric admin"
+      ],
+      "a": 2,
+      "why": "Pro workspaces require Pro/PPU for consumers; free users can only consume from capacity-backed workspaces."
+    }
+  ]
+}

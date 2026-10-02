@@ -1,0 +1,306 @@
+[
+  {
+    "key": "DimDate",
+    "name": "DimDate",
+    "desc": "90 continuous days, 1 Jan 2026 to 31 Mar 2026. Deliberately short: your first assignment is to replace it with a DAX date table.",
+    "profile": {
+      "rows": 90,
+      "unique": [
+        "DateKey",
+        "Date"
+      ],
+      "range": {
+        "Date": [
+          "2026-01-01",
+          "2026-03-31"
+        ]
+      }
+    }
+  },
+  {
+    "key": "DimProduct",
+    "name": "DimProduct",
+    "desc": "24 products in 4 categories. Includes a discontinued flag, unit cost and list price for margin calculations.",
+    "profile": {
+      "rows": 24,
+      "unique": [
+        "ProductKey",
+        "ProductName"
+      ],
+      "distinct": {
+        "Category": 4
+      },
+      "count": [
+        {
+          "col": "Discontinued",
+          "eq": "TRUE",
+          "n": 3
+        }
+      ]
+    }
+  },
+  {
+    "key": "DimCustomer",
+    "name": "DimCustomer",
+    "desc": "30 customers with segment, city, join date and loyalty tier. Some cities repeat across customers; join dates span 2022 to 2026 for cohort analysis.",
+    "profile": {
+      "rows": 30,
+      "unique": [
+        "CustomerKey",
+        "Email"
+      ],
+      "fk": [
+        {
+          "col": "RegionKey",
+          "ref": "DimRegion.RegionKey"
+        }
+      ]
+    }
+  },
+  {
+    "key": "DimRegion",
+    "name": "DimRegion",
+    "desc": "4 sales regions with the manager, target multiplier and country. The RegionKey is what FactSales, FactBudget and the RLS table join on.",
+    "profile": {
+      "rows": 4,
+      "unique": [
+        "RegionKey",
+        "RegionName"
+      ]
+    }
+  },
+  {
+    "key": "DimEmployee",
+    "name": "DimEmployee",
+    "desc": "18 employees in a parent-child hierarchy (ManagerKey points at another EmployeeKey). Built for PATH(), RLS by org position and hierarchy visuals.",
+    "profile": {
+      "rows": 18,
+      "unique": [
+        "EmployeeKey"
+      ],
+      "nulls": {
+        "ManagerKey": 1
+      },
+      "fk": [
+        {
+          "col": "RegionKey",
+          "ref": "DimRegion.RegionKey"
+        },
+        {
+          "col": "ManagerKey",
+          "ref": "DimEmployee.EmployeeKey",
+          "orphans": 1,
+          "why": "The CEO has no manager: the root of the parent-child hierarchy."
+        }
+      ]
+    }
+  },
+  {
+    "key": "FactSales",
+    "name": "FactSales",
+    "desc": "100 order lines, Jan–Mar 2026. Multiple lines share an OrderID (for DISTINCTCOUNT), some lines are returns (negative quantity), and OrderDate ≠ ShipDate (role-playing dimension). Discount is a fraction of ListPrice.",
+    "profile": {
+      "rows": 100,
+      "unique": [
+        "SalesKey"
+      ],
+      "distinct": {
+        "OrderID": 54,
+        "CustomerKey": 26
+      },
+      "range": {
+        "OrderDate": [
+          "2026-01-04",
+          "2026-03-31"
+        ]
+      },
+      "count": [
+        {
+          "col": "Quantity",
+          "lt": 0,
+          "n": 7,
+          "why": "Return lines (negative quantity)."
+        }
+      ],
+      "fk": [
+        {
+          "col": "CustomerKey",
+          "ref": "DimCustomer.CustomerKey"
+        },
+        {
+          "col": "ProductKey",
+          "ref": "DimProduct.ProductKey"
+        },
+        {
+          "col": "EmployeeKey",
+          "ref": "DimEmployee.EmployeeKey"
+        },
+        {
+          "col": "RegionKey",
+          "ref": "DimRegion.RegionKey"
+        },
+        {
+          "col": "OrderDate",
+          "ref": "DimDate.Date"
+        },
+        {
+          "col": "ShipDate",
+          "ref": "DimDate.Date",
+          "orphans": 1,
+          "why": "One order ships on 2 Apr, after the deliberately short DimDate ends. The first DAX assignment replaces DimDate."
+        }
+      ]
+    }
+  },
+  {
+    "key": "FactBudget",
+    "name": "FactBudget",
+    "desc": "48 rows: monthly budget by Region × Category for Jan–Mar 2026. Different grain from FactSales (month, not day; category, not product). Built for budget vs actual and TREATAS.",
+    "profile": {
+      "rows": 48,
+      "unique": [
+        "BudgetKey"
+      ],
+      "fk": [
+        {
+          "col": "RegionKey",
+          "ref": "DimRegion.RegionKey"
+        }
+      ]
+    }
+  },
+  {
+    "key": "FactInventory",
+    "name": "FactInventory",
+    "desc": "80 rows: weekly stock snapshot for 8 products × 10 weeks. A snapshot fact — summing QuantityOnHand across weeks is wrong. Built for semi-additive measures (LASTDATE, LASTNONBLANK).",
+    "profile": {
+      "rows": 80,
+      "distinct": {
+        "SnapshotDate": 10,
+        "ProductKey": 8
+      },
+      "fk": [
+        {
+          "col": "ProductKey",
+          "ref": "DimProduct.ProductKey"
+        },
+        {
+          "col": "SnapshotDate",
+          "ref": "DimDate.Date"
+        }
+      ]
+    }
+  },
+  {
+    "key": "RawOrdersExport",
+    "name": "RawOrdersExport (messy)",
+    "desc": "30 rows exported from a legacy system. Contains: header junk row, mixed date formats, currency symbols in numbers, trailing spaces, inconsistent casing, a fully null column, duplicate rows and \"N/A\" strings. Your Power Query playground.",
+    "profile": {
+      "rows": 30,
+      "duplicateRows": 1,
+      "nulls": {
+        "LegacyFlag": 30
+      },
+      "count": [
+        {
+          "col": "Qty",
+          "eq": "N/A",
+          "n": 2,
+          "why": "SO-5003 and SO-5026."
+        },
+        {
+          "col": "Qty",
+          "blank": true,
+          "n": 2,
+          "why": "The report-header row and SO-5015."
+        },
+        {
+          "col": "Unit Price",
+          "eq": "N/A",
+          "n": 1
+        },
+        {
+          "col": "Order Ref",
+          "eq": "TOTAL",
+          "n": 1
+        }
+      ]
+    }
+  },
+  {
+    "key": "SurveyWide",
+    "name": "SurveyWide (unpivot)",
+    "desc": "12 rows in a wide layout: one column per month. Built for Unpivot, and for the \"why is this the wrong shape\" conversation.",
+    "profile": {
+      "rows": 12,
+      "unique": [
+        "StoreCode"
+      ],
+      "fk": [
+        {
+          "col": "RegionKey",
+          "ref": "DimRegion.RegionKey"
+        }
+      ]
+    }
+  },
+  {
+    "key": "UserRegionMapping",
+    "name": "UserRegionMapping (RLS)",
+    "desc": "12 rows mapping a login to one or more regions. Some users have two rows (multi-region), one user has ALL. Built for dynamic RLS with USERPRINCIPALNAME().",
+    "profile": {
+      "rows": 12,
+      "distinct": {
+        "UserEmail": 11
+      },
+      "fk": [
+        {
+          "col": "RegionKey",
+          "ref": "DimRegion.RegionKey",
+          "orphans": 1,
+          "why": "RegionKey 0 means all regions (the AccessLevel = All row)."
+        }
+      ]
+    }
+  },
+  {
+    "key": "ExchangeRates",
+    "name": "ExchangeRates",
+    "desc": "39 rows: weekly USD rates for EUR, GBP, CAD. Rates only exist on Mondays, so lookups need \"last known rate\" logic. Built for currency conversion patterns.",
+    "profile": {
+      "rows": 39,
+      "distinct": {
+        "RateDate": 13,
+        "Currency": 3
+      }
+    }
+  },
+  {
+    "key": "CustomerTargets",
+    "name": "CustomerTargets (many-to-many)",
+    "desc": "20 rows: quarterly revenue targets by Segment and LoyaltyTier, not by customer. Neither column is unique, so it cannot join 1:many to DimCustomer. Built for bridge tables and many-to-many.",
+    "profile": {
+      "rows": 20
+    }
+  },
+  {
+    "key": "WebEvents",
+    "name": "WebEvents (sessions)",
+    "desc": "100 rows of click events with SessionID, UserKey and timestamp. Built for funnel analysis, EARLIER/window functions, session duration, and \"first purchase\" cohort logic.",
+    "profile": {
+      "rows": 100,
+      "unique": [
+        "EventKey"
+      ],
+      "distinct": {
+        "SessionID": 39
+      },
+      "fk": [
+        {
+          "col": "CustomerKey",
+          "ref": "DimCustomer.CustomerKey"
+        }
+      ]
+    }
+  }
+]

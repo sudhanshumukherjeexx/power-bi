@@ -1,0 +1,5 @@
+Page,FilterLevel,Field,Condition,AddedBy,Note
+Sales overview,Report,DimDate[Year],2026,sam.patel,
+Payroll by region,Page,DimRegion[RegionName],is West,sam.patel,West app audience only sees this page
+Payroll by region,Visual,DimEmployee[Department],is Sales,sam.patel,
+Team detail,Page,(none),,,

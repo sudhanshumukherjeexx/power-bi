@@ -1,0 +1,35 @@
+role 'Regional Manager'
+	modelPermission: read
+
+	tablePermission DimRegion =
+			VAR u = USERPRINCIPALNAME ()
+			RETURN
+			    DimRegion[RegionKey]
+			        IN CALCULATETABLE (
+			            VALUES ( SecurityUserRegion[RegionKey] ),
+			            SecurityUserRegion[UserEmail] = u
+			        )
+
+	member 'SG-Sales-Managers'
+
+role 'Sales Rep'
+	modelPermission: read
+
+	tablePermission DimRegion =
+			DimRegion[RegionKey]
+			    IN CALCULATETABLE (
+			        VALUES ( SecurityUserRegion[RegionKey] ),
+			        SecurityUserRegion[UserEmail] = USERPRINCIPALNAME ()
+			    )
+
+	member 'SG-Sales-Reps'
+
+role Finance
+	modelPermission: read
+
+	member 'SG-Finance'
+
+role Executive
+	modelPermission: read
+
+	member 'SG-Executive'

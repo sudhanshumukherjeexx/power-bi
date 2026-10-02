@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/app.css">
 <style>
 :root{
   --bg:#EEF1F5;--panel:#FFFFFF;--panel-2:#F6F8FA;--ink:#1B2430;--ink-2:#4A5568;--ink-3:#7A8594;
@@ -101,20 +102,22 @@ h1 .hl{color:var(--hl-ink)}
 </style>
 </head>
 <body>
-<header class="top"><div class="in">
-  <a class="brand" href="index.html"><span class="mark">BI</span>Cheat sheets</a>
+<a class="skip" href="#main">Skip to content</a>
+<!--nav:learn-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="learn.html" aria-current="true">Learn</a><a href="experience.html">Practice</a><a href="flashcards.html">Interview</a><a href="progress.html">Progress</a></nav>
   <span class="sp"></span>
-  <button class="btn iconbtn" type="button" data-open-search aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
-  <a class="btn" href="glossary.html">📖 <span class="clabel">Glossary</span></a>
-  <a class="btn" href="index.html">← <span class="clabel">Course</span></a>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
   <span data-theme-toggle-slot></span>
 </div></header>
-<main class="wrap">
+<!--/nav-->
+<main class="wrap" id="main" tabindex="-1">
   <h1>Power BI <span class="hl">cheat sheets</span></h1>
   <p class="lead">A compact sheet per level (about two printed pages each): the patterns, formulas and checklists you would otherwise look up. Choose a level and press Print. Your browser's print dialog can also <b>Save as PDF</b> (on iPhone/iPad: Share → Print, then pinch out on the preview to save it).</p>
   <div class="ctl">
-    <div class="seg" id="lvl" role="group" aria-label="Level"><button data-l="all" aria-pressed="true">All levels</button><button data-l="beginner" aria-pressed="false">Beginner</button><button data-l="intermediate" aria-pressed="false">Intermediate</button><button data-l="advanced" aria-pressed="false">Advanced</button></div>
-    <button class="btn primary" id="printBtn">🖨 Print / Save as PDF</button>
+    <div class="seg" id="lvl" role="group" aria-label="Level"><button type="button" data-l="all" aria-pressed="true">All levels</button><button type="button" data-l="beginner" aria-pressed="false">Beginner</button><button type="button" data-l="intermediate" aria-pressed="false">Intermediate</button><button type="button" data-l="advanced" aria-pressed="false">Advanced</button></div>
+    <button type="button" class="btn primary" id="printBtn">🖨 Print / Save as PDF</button>
   </div>
 
 <!-- ================= BEGINNER ================= -->
@@ -306,7 +309,7 @@ Running Sales =
       <ul><li>Executives: time, money, risk. No engine names.</li><li>Engineers: evidence (timings, sizes), then the change you need from them.</li><li>Always end with a recommendation and a decision to make.</li></ul></div>
   </div>
 </section>
-  <footer class="foot">Patterns use the course's Northwind Outdoors model: FactSales, DimProduct, DimCustomer, DimRegion, Dates. <a href="index.html">Back to the course</a> · <a href="glossary.html">Glossary</a> · <a href="flashcards.html">Flashcards</a></footer>
+  <footer class="foot">Patterns use the course's Northwind Outdoors model: FactSales, DimProduct, DimCustomer, DimRegion, Dates. <a href="learn.html">Back to Learn</a> · <a href="glossary.html">Glossary</a> · <a href="flashcards.html">Flashcards</a></footer>
 </main>
 <div class="toast" id="toast" role="status"></div>
 <script src="assets/js/content.js"></script>

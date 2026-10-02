@@ -1,0 +1,52 @@
+{
+  "pipeline": "Sales Analytics",
+  "stages": [
+    {
+      "order": 0,
+      "name": "Development",
+      "workspace": "Sales Analytics [Dev]"
+    },
+    {
+      "order": 1,
+      "name": "Test",
+      "workspace": "Sales Analytics [Test]",
+      "rules": [
+        {
+          "item": "Sales (semantic model)",
+          "type": "Parameter",
+          "parameter": "ServerName",
+          "value": "sql-test.northwind.local"
+        },
+        {
+          "item": "Sales (semantic model)",
+          "type": "Parameter",
+          "parameter": "DatabaseName",
+          "value": "NorthwindDW"
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "name": "Production",
+      "workspace": "Sales Analytics",
+      "rules": [
+        {
+          "item": "Sales (semantic model)",
+          "type": "Parameter",
+          "parameter": "ServerName",
+          "value": "sql-prod.northwind.local"
+        }
+      ]
+    }
+  ],
+  "lastDeployment": {
+    "from": "Test",
+    "to": "Production",
+    "at": "2026-06-01 18:12",
+    "by": "sam.patel",
+    "items": [
+      "Sales (semantic model)",
+      "Sales Overview (report)"
+    ]
+  }
+}

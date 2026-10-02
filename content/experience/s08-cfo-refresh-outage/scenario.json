@@ -1,0 +1,77 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "s08",
+  "slug": "s08-cfo-refresh-outage",
+  "type": "sprint",
+  "stage": "senior",
+  "order": 2,
+  "title": "The board pack refresh failed at 06:17",
+  "seo": "Power BI incident response scenario: the production semantic model refresh failed before the CFO's board meeting. Triage, mitigate, find the root causes, communicate and write the postmortem.",
+  "summary": "The Finance Board Pack model failed to refresh at 06:17. The CFO presents from it at 08:30. Decide what to do in the next hour, then fix it properly.",
+  "minutes": 240,
+  "skills": ["service", "power-query", "communication", "governance", "testing"],
+  "prereq": ["s07"],
+  "next": "s09",
+  "verified": { "date": "2026-10-01", "context": "Refresh troubleshooting and gateway data source docs (Microsoft Learn, Sept 2026)", "review_after_days": 180 },
+  "ticket": { "id": "INC-2071", "kind": "incident", "severity": "SEV1", "priority": "Critical", "status": "Open", "reporter": "nina", "opened": "Mon 8 Jun 2026, 07:02", "due": "CFO presents at 08:30", "labels": ["refresh", "gateway", "schema-change", "board"] },
+  "story": "Finance closed May on Friday 5 June at 18:00. The Finance Board Pack model refreshes every day at 05:30 and normally finishes by 06:10. Sam, the model's listed owner, is on holiday this week.",
+  "impact": "The CFO presents May results to the board at 08:30. If she presents wrong numbers, or cancels because she can't trust them, that's a board-level incident. The clock matters as much as the cause.",
+  "messages": [
+    { "from": "service", "to": "sam", "via": "alert", "at": "Mon 8 Jun, 06:17", "subject": "Refresh failed: Finance Board Pack", "body": ["Your semantic model Finance Board Pack in workspace Finance Board Pack couldn't be refreshed. DM_GWPipeline_Gateway_MashupDataAccessError. (Delivered to sam.patel@northwind.example; out-of-office reply sent.)"] },
+    { "from": "nina", "to": "you", "via": "chat", "at": "Mon 8 Jun, 07:02", "body": [
+      "Morning! The board pack dashboard says \"Data refreshed: Sun 7 Jun 06:05\". Sarah presents at 08:30 from it. Is that OK? Should it say today? I'm panicking a bit."
+    ] },
+    { "from": "sarah", "to": "you", "via": "email", "at": "Mon 8 Jun, 07:20", "subject": "Board pack", "body": [
+      "I'm told there's a problem with the board pack data. I need to know by 07:45 whether I can present from it, and if not, what I should use instead. Sarah"
+    ] },
+    { "from": "kenji", "to": "you", "via": "chat", "at": "Mon 8 Jun, 07:24", "body": [
+      "Heard there's a refresh issue. Nothing failed on our side overnight; the DW loads were all green. Shout if you need anything."
+    ] }
+  ],
+  "evidence": [
+    { "id": "err", "kind": "file", "title": "refresh_error.json", "file": "data/experience/s08/refresh_error.json", "desc": "Error details from the refresh history in the Service." },
+    { "id": "hist", "kind": "file", "title": "refresh_history.csv", "file": "data/experience/s08/refresh_history.csv" },
+    { "id": "gw", "kind": "file", "title": "gateway_status.csv", "file": "data/experience/s08/gateway_status.csv" },
+    { "id": "cols", "kind": "file", "title": "vw_customer_columns.csv", "file": "data/experience/s08/vw_customer_columns.csv", "desc": "Columns of dbo.vw_Customer yesterday and today (from the DW's schema history)." },
+    { "id": "cal", "kind": "file", "title": "change_calendar.csv", "file": "data/experience/s08/change_calendar.csv", "desc": "IT change calendar for the weekend." },
+    { "id": "cred", "kind": "file", "title": "datasource_credentials.csv", "file": "data/experience/s08/datasource_credentials.csv" },
+    { "id": "close", "kind": "doc", "title": "Finance close calendar (May 2026)", "body": ["- Last postings for May: Fri 5 Jun, 18:00. Ledger locked for May after that.\n- Board pack figures = May closed ledger. June postings are not shown in the pack."] }
+  ],
+  "tasks": [
+    "By 07:45: decide whether Sarah can present from the dashboard as it is, and tell her. Base it on evidence, not hope.",
+    "Restore a successful refresh as soon as it is safe, without making an emergency change that could make things worse.",
+    "Find every root cause (there may be more than one) and fix them permanently.",
+    "Keep stakeholders updated on a schedule, even when there's no news.",
+    "Write the incident report and the postmortem with preventive actions and owners."
+  ],
+  "deliverables": [
+    { "id": "decision", "t": "The 07:45 answer to the CFO, with the evidence behind it" },
+    { "id": "updates", "t": "Stakeholder updates (time-stamped)" },
+    { "id": "ir", "t": "Incident report: summary, impact, detection, timeline, root cause, mitigation, permanent fix", "artifact": "incident-report" },
+    { "id": "pm", "t": "Blameless postmortem with preventive actions, owners and dates", "artifact": "postmortem" },
+    { "id": "rb", "t": "Runbook update for refresh failures", "artifact": "runbook" }
+  ],
+  "hints": [
+    "Before fixing anything, answer the CFO's real question: does Sunday 06:05's data contain everything the board pack shows? Compare the refresh history with the close calendar.",
+    "refresh_error.json lists two separate errors on two separate sources. Find a weekend change in change_calendar.csv that explains each one.",
+    "One fix belongs in the model (or the view), the other in the gateway connection. A full refresh takes ~35 minutes: work out the latest time you can start one and still be safe, and whether you need it at all before 08:30."
+  ],
+  "rubric": [
+    { "id": "triage", "n": "Triage and impact analysis", "w": 25, "good": "Establishes by 07:45 that Sunday's data already contains the closed May ledger, so the CFO can present; says so clearly with the data timestamp." },
+    { "id": "rca", "n": "Root cause", "w": 20, "good": "Both causes identified with evidence: CHG-4471 renamed CustomerSegment, CHG-4472 rotated the treasury service account password." },
+    { "id": "fix", "n": "Mitigation and permanent fix", "w": 20, "good": "Safe mitigation (credential update, Power Query or view alias), a verified refresh, and permanent changes: contract for the view, credential managed by owner, alerts to a team." },
+    { "id": "comm", "n": "Communication", "w": 20, "good": "Scheduled updates; the CFO gets a yes/no with reasons; the postmortem is blameless and readable by non-engineers." },
+    { "id": "prevent", "n": "Prevention", "w": 15, "good": "Actions with owners and dates: alert routing, schema change notification/contract, credential rotation process, failure-tolerant design." }
+  ],
+  "retro": [
+    "What would you have done at 07:05 if the close had been on Sunday night instead of Friday?",
+    "Which of the two causes was a process failure and which was a technical one?",
+    "The failure email went to someone on holiday. What should alerting look like for a SEV1 model?",
+    "How would you know about the next upstream schema change before it breaks you?"
+  ],
+  "refs": [
+    { "title": "Troubleshoot refresh scenarios", "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-troubleshooting-refresh-scenarios" },
+    { "title": "Manage data sources for a gateway", "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/service-gateway-data-sources" },
+    { "title": "Configure scheduled refresh (failure notifications)", "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-scheduled-refresh" }
+  ]
+}

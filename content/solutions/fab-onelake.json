@@ -1,0 +1,14 @@
+{
+  "fab-onelake-0": {
+    "s": ["Lakehouse → Get data → Upload files; then right-click each file → Load to Tables → New table.", "SQL analytics endpoint → New SQL query → paste the sql-query-0 answer (table names lower-case as loaded).", "UPDATE returns an error: the endpoint is read-only. Writes go through Spark, Dataflow Gen2, pipelines, or a Warehouse."],
+    "check": "Seven tables; Q1 2026 total {{q1_2026_gross|money0}} as in the SQL track; UPDATE not allowed."
+  },
+  "fab-onelake-1": {
+    "s": ["Warehouse for gold: matches T-SQL skills, transactional loads (stored procedures), and its tables are Delta in OneLake so Direct Lake reads them directly.", "Keep bronze/silver in a lakehouse (files, Dataflow Gen2) or mirror sources directly.", "Views: OK for SQL users; for the semantic model, materialise them as tables (Direct Lake on OneLake can't use non-materialised views; Direct Lake on SQL falls back to DirectQuery for them)."],
+    "check": "Warehouse gold, materialised tables for the model."
+  },
+  "fab-onelake-2": {
+    "s": ["In Finance's lakehouse: New shortcut → Microsoft OneLake → pick the sales lakehouse table.", "Ownership and changes stay with the sales data team; Finance reads the same data.", "Access: Finance users need permission on the target data too; plan workspace/item permissions or OneLake security accordingly."],
+    "check": "One copy, two consumers, clear owner."
+  }
+}

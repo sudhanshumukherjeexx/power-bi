@@ -1,0 +1,64 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "d01",
+  "slug": "d01-requirements-interview",
+  "type": "drill",
+  "stage": "analyst",
+  "order": 3,
+  "title": "Four requests, zero requirements",
+  "seo": "BI requirements gathering drill: practise the questions to ask stakeholders before building a Power BI report (definitions, grain, latency, security, reconciliation).",
+  "summary": "Four stakeholders send one-line requests. Pick the questions you'd ask before building anything, then check them against an experienced BI developer's.",
+  "minutes": 30,
+  "skills": ["communication", "modeling", "governance"],
+  "ticket": { "id": "REQ-301", "kind": "ticket", "priority": "Normal", "reporter": "elena", "opened": "Thu 23 Apr 2026, 10:00", "labels": ["requirements"] },
+  "impact": "Most BI rework comes from building the right thing to the wrong definition. Ten minutes of questions saves a week of rebuilding, and a dashboard nobody trusts.",
+  "messages": [
+    { "from": "elena", "to": "you", "via": "chat", "at": "Thu 23 Apr, 10:00", "body": ["Four new requests came in this morning. Before anyone builds anything, I'd like to see the questions you'd ask each requester. Don't ask everything: ask what changes the design."] }
+  ],
+  "evidence": [],
+  "interactive": {
+    "type": "questions",
+    "intro": "Tick the questions you would ask, then press Check. Good questions change the design or the numbers; weak ones are answerable by you, too vague, or not the requester's to answer.",
+    "prompts": [
+      { "from": "sarah", "request": "We need profitability by customer.", "options": [
+        { "q": "Which costs should profitability include: product cost only, or also shipping, returns, discounts and service costs?", "good": true, "why": "\"Profit\" means four different numbers depending on which costs are in. This decides the model." },
+        { "q": "At what level: individual customer, customer segment, or account group (for wholesale chains)?", "good": true, "why": "The grain decides whether cost allocation is even possible." },
+        { "q": "Do you want a bar chart or a table?", "good": false, "why": "A design detail you can propose later; it doesn't change what data you need." },
+        { "q": "Which source should the numbers reconcile to: the ledger or the sales system?", "good": true, "why": "If it must tie to the ledger, posting dates and Finance's definitions apply (see Sprint 02)." },
+        { "q": "How often do you need it refreshed?", "good": true, "why": "Monthly after close and daily lead to different designs and sources." },
+        { "q": "Should I use Power BI?", "good": false, "why": "That's your decision, not the CFO's." }
+      ] },
+      { "from": "jordan", "request": "Can you just add margin to the existing dashboard?", "options": [
+        { "q": "Margin before or after returns and discounts, and should it match what Finance reports?", "good": true, "why": "\"Just add margin\" hides a definition decision, and margin is sensitive." },
+        { "q": "Who should be able to see margin? Everyone who sees the dashboard today, including sales reps?", "good": true, "why": "Cost and margin are often restricted; adding them to a widely shared report can be a leak." },
+        { "q": "Which colour should margin be?", "good": false, "why": "Not a requirement." },
+        { "q": "What decision will you make with it?", "good": true, "why": "The answer tells you whether you need margin % per product, per customer, or a trend." },
+        { "q": "Is product cost available and trusted for all products, including discontinued ones?", "good": false, "why": "Important, but that's a question for the data owner (Kenji or Finance), not for Jordan." }
+      ] },
+      { "from": "jordan", "request": "Marketing wants near-real-time reporting.", "options": [
+        { "q": "What decision will someone take within minutes of seeing the data, and who?", "good": true, "why": "If nobody acts within minutes, \"real time\" is a wish, and an expensive one." },
+        { "q": "What latency is actually acceptable: 1 minute, 15 minutes, 1 hour?", "good": true, "why": "Each answer leads to a different architecture (DirectQuery, frequent refresh, streaming, Direct Lake)." },
+        { "q": "Which metrics need to be fresh, and which can be daily?", "good": true, "why": "Usually only one or two numbers need freshness; the rest can stay cheap and fast." },
+        { "q": "Can the source system handle frequent queries?", "good": false, "why": "Vital, but ask the data engineer, not Marketing." },
+        { "q": "Do you want it in Power BI or Excel?", "good": false, "why": "Doesn't change the latency question." }
+      ] },
+      { "from": "sarah", "request": "Finance needs the numbers to match the board pack.", "options": [
+        { "q": "Which numbers exactly, and match to what tolerance (to the dollar, to the thousand)?", "good": true, "why": "\"The numbers\" is too vague to test. You need a list and a tolerance." },
+        { "q": "Which version of the board pack is authoritative, and when is it locked each month?", "good": true, "why": "Matching a moving target is impossible; you need the close calendar." },
+        { "q": "Who signs off that the dashboard matches?", "good": true, "why": "Acceptance needs an owner, otherwise it never ends." },
+        { "q": "Can we change the board pack to match the dashboard instead?", "good": false, "why": "The board pack is the controlled document; the dashboard follows it." }
+      ] }
+    ]
+  },
+  "tasks": ["For each request, choose the questions you'd ask first, then press Check.", "Write the three questions you think matter most across all four requests in your notes."],
+  "deliverables": [{ "id": "q", "t": "A short requirements question list per request", "artifact": "requirements" }],
+  "hints": ["A good requirements question changes the model, the number or who may see it. If the answer wouldn't change what you build, don't ask it yet."],
+  "rubric": [
+    { "id": "def", "n": "Definitions", "w": 35, "good": "Asked what each key word (profit, margin, real time, match) means in numbers." },
+    { "id": "use", "n": "Purpose and decisions", "w": 25, "good": "Asked what decision each output supports, which drives grain and latency." },
+    { "id": "sec", "n": "Security and audience", "w": 20, "good": "Noticed when a request widens who sees sensitive data." },
+    { "id": "focus", "n": "Focus", "w": 20, "good": "Didn't ask cosmetic or self-answerable questions; directed technical questions to the right person." }
+  ],
+  "retro": ["Which request would you have built wrong without asking?", "Which question will you now ask on every request?"],
+  "refs": [{ "title": "Power BI implementation planning: requirements and BI strategy", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/powerbi-implementation-planning-bi-strategy-overview" }]
+}

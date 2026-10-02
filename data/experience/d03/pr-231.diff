@@ -1,0 +1,37 @@
+diff --git a/Sales.SemanticModel/definition/tables/FactSales.tmdl b/Sales.SemanticModel/definition/tables/FactSales.tmdl
+@@ -41,6 +41,14 @@ table FactSales
+ 	column DiscountPct
+ 		dataType: int64
+ 		summarizeBy: none
++
++	column 'Line Margin' = FactSales[Qty] * ( FactSales[UnitPriceUSD] - RELATED ( DimProduct[UnitCostUSD] ) )
++		dataType: double
++		summarizeBy: sum
++
++	column 'Order Year Text' = FORMAT ( FactSales[OrderDate], "yyyy" )
++		dataType: string
++		summarizeBy: none
+diff --git a/Sales.SemanticModel/definition/tables/_Measures.tmdl b/Sales.SemanticModel/definition/tables/_Measures.tmdl
+@@ -18,3 +18,22 @@ table _Measures
+ 		displayFolder: Sales
++
++	measure m1 = SUM ( FactSales[Line Margin] ) / [Gross Sales]
++		formatString: 0.0%
++
++	measure 'Margin %' = DIVIDE ( SUM ( FactSales[Line Margin] ), [Gross Sales] )
++		formatString: 0.0%
++		displayFolder: Sales
++
++	measure 'Sales 2026' = CALCULATE ( [Gross Sales], FactSales[Order Year Text] = "2026" )
++		formatString: \$#,0
++
++	measure 'Top Customer Sales' = MAXX ( DimCustomer, [Gross Sales] )
++		formatString: \$#,0
+diff --git a/Sales.SemanticModel/definition/relationships.tmdl b/Sales.SemanticModel/definition/relationships.tmdl
+@@ -12,6 +12,11 @@ relationship 3f2a9c11-6b7d-4e21-a5f0-0c9d2b8e7a33
+ 	toColumn: DimDate.Date
++
++relationship 8b1d2e3f-4a5b-4c6d-9e7f-0a1b2c3d4e5f
++	crossFilteringBehavior: bothDirections
++	fromColumn: FactSales.CustomerKey
++	toColumn: DimCustomer.CustomerKey

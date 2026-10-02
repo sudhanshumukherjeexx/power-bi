@@ -1,0 +1,86 @@
+{
+  "dw-keys-0": {
+    "s": ["Remove exact duplicates first (SELECT DISTINCT on the business columns).", "Compare each row with the previous one for the same customer (LAG); keep it only if a tracked attribute changed, or if it's the first.", "ValidTo = the next version's ValidFrom (LEAD), or 9999-12-31 for the current one; IsCurrent = 1 when there is no next version.", "Assign the surrogate key with ROW_NUMBER over the natural key and date (in a real warehouse: an IDENTITY or sequence that never reuses numbers)."],
+    "code": [
+      {
+        "lang": "SQL", "title": "dim_customer as SCD type 2", "dialect": "portable",
+        "src": [
+          "DROP TABLE IF EXISTS dim_customer;",
+          "CREATE TABLE dim_customer AS",
+          "WITH feed AS (",
+          "    SELECT DISTINCT CustomerID, EffectiveDate, Segment, HomeRegionKey, LoyaltyTier FROM customer_changes",
+          "),",
+          "compared AS (",
+          "    SELECT f.*,",
+          "           LAG(Segment)       OVER (PARTITION BY CustomerID ORDER BY EffectiveDate) AS PrevSegment,",
+          "           LAG(HomeRegionKey) OVER (PARTITION BY CustomerID ORDER BY EffectiveDate) AS PrevRegion,",
+          "           LAG(LoyaltyTier)   OVER (PARTITION BY CustomerID ORDER BY EffectiveDate) AS PrevTier,",
+          "           ROW_NUMBER()       OVER (PARTITION BY CustomerID ORDER BY EffectiveDate) AS n",
+          "    FROM feed AS f",
+          "),",
+          "versions AS (",
+          "    SELECT CustomerID, EffectiveDate AS ValidFrom, Segment, HomeRegionKey, LoyaltyTier",
+          "    FROM compared",
+          "    WHERE n = 1 OR Segment <> PrevSegment OR HomeRegionKey <> PrevRegion OR LoyaltyTier <> PrevTier",
+          ")",
+          "SELECT ROW_NUMBER() OVER (ORDER BY CustomerID, ValidFrom) AS CustomerSK,",
+          "       CustomerID, Segment, HomeRegionKey, LoyaltyTier, ValidFrom,",
+          "       COALESCE(LEAD(ValidFrom) OVER (PARTITION BY CustomerID ORDER BY ValidFrom), '9999-12-31') AS ValidTo,",
+          "       CASE WHEN LEAD(ValidFrom) OVER (PARTITION BY CustomerID ORDER BY ValidFrom) IS NULL THEN 1 ELSE 0 END AS IsCurrent",
+          "FROM versions;",
+          "",
+          "SELECT (SELECT COUNT(*) FROM customer_changes) AS FeedRows,",
+          "       COUNT(*) AS Versions, SUM(IsCurrent) AS CurrentRows, COUNT(DISTINCT CustomerID) AS Customers",
+          "FROM dim_customer;"
+        ],
+        "expect": { "cols": ["FeedRows", "Versions", "CurrentRows", "Customers"], "rows": [["{{dw_change_rows|int}}", "{{dw_scd2_rows|int}}", "{{dw_current_rows|int}}", "{{dw_customers|int}}"]] }
+      }
+    ],
+    "check": "{{dw_change_rows|int}} feed rows → {{dw_scd2_rows|int}} versions ({{dw_duplicate_changes|int}} duplicate and {{dw_noop_changes|int}} no-op changes dropped); {{dw_current_rows|int}} current.",
+    "note": "In production the dimension is loaded incrementally: close the current row (set ValidTo, IsCurrent = 0) and insert the new one in one transaction, and use a sequence for the surrogate key so keys never change between loads.",
+    "verify": "Executed in CI against SQLite."
+  },
+  "dw-keys-1": {
+    "s": ["Join orders to dim_customer on CustomerID AND OrderDate >= ValidFrom AND OrderDate < ValidTo (half-open interval: exactly one version matches).", "Store the resulting CustomerSK on the fact at load time, so reports don't need the range join.", "Type 2: Segment, LoyaltyTier, HomeRegionKey (analysed over time). Type 1: name spelling, email, phone (corrections; history not useful)."],
+    "code": [
+      {
+        "lang": "SQL", "title": "Versions of the example customer", "dialect": "portable",
+        "src": [
+          "SELECT CustomerID, LoyaltyTier, ValidFrom, ValidTo, IsCurrent",
+          "FROM dim_customer",
+          "WHERE CustomerID = '{{dw_example_customer}}'",
+          "ORDER BY ValidFrom;"
+        ]
+      },
+      {
+        "lang": "SQL", "title": "Point-in-time join (facts get the version valid on the order date)", "dialect": "portable",
+        "src": [
+          "SELECT o.OrderID, o.OrderDate, d.CustomerSK, d.LoyaltyTier",
+          "FROM orders AS o",
+          "JOIN dim_customer AS d",
+          "  ON d.CustomerID = o.CustomerID",
+          " AND o.OrderDate >= d.ValidFrom AND o.OrderDate < d.ValidTo;"
+        ]
+      }
+    ],
+    "check": "{{dw_example_customer}}: {{dw_example_versions|int}} versions, {{dw_example_first_tier}} → {{dw_example_current_tier}} (latest {{dw_example_last_change}}).",
+    "note": "Only 120 customers are in the change feed; orders for other customers need an initial version (or the Unknown member) to join."
+  },
+  "dw-keys-2": {
+    "s": ["Add an Unknown member (CustomerSK = -1) to the dimension.", "When a fact's natural key isn't in the dimension: create an inferred member (CustomerID known, attributes \"Pending\") and point the fact to it. Never drop the fact.", "When the real row arrives, update the inferred member in place (type 1 update of a placeholder), then continue type 2 from there.", "Keys that never arrive stay visible: report \"facts on inferred members older than 7 days\" as a data quality check."],
+    "code": [
+      {
+        "lang": "SQL", "title": "Which early orders can be resolved?", "dialect": "portable",
+        "src": [
+          "SELECT COUNT(*) AS EarlyOrders,",
+          "       SUM(CASE WHEN EXISTS (SELECT 1 FROM customer_changes AS c WHERE c.CustomerID = e.CustomerID) THEN 1 ELSE 0 END) AS Resolvable,",
+          "       SUM(CASE WHEN NOT EXISTS (SELECT 1 FROM customer_changes AS c WHERE c.CustomerID = e.CustomerID) THEN 1 ELSE 0 END) AS StillUnknown",
+          "FROM early_orders AS e;"
+        ],
+        "expect": { "cols": ["EarlyOrders", "Resolvable", "StillUnknown"], "rows": [["{{dw_early_orders|int}}", "{{dw_early_resolved|int}}", "{{dw_early_unknown|int}}"]] }
+      }
+    ],
+    "check": "{{dw_early_orders|int}} early orders; {{dw_early_resolved|int}} resolvable, {{dw_early_unknown|int}} unknown.",
+    "verify": "Executed in CI against SQLite."
+  }
+}

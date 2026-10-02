@@ -1,0 +1,59 @@
+{
+  "id": "sql-load",
+  "name": "Views, incremental extraction and idempotent loads",
+  "ds": ["NWOrders", "NWOrderLines", "NWFx"],
+  "skills": ["sql", "warehousing", "deployment"],
+  "stage": "engineer",
+  "why": {
+    "matters": "Power BI should read from stable, documented views at a clear grain, and loads should be safe to re-run. That is what makes refresh failures recoverable.",
+    "failure": "A nightly load is re-run after a failure and appends the same day twice; March revenue doubles in the board pack.",
+    "use": "A view per fact and dimension that the model reads; watermark-based incremental extraction with a lookback; delete-and-insert or MERGE on the business key.",
+    "avoid": "Business logic spread across Power Query steps in five models; it belongs in one view (or the warehouse) so every consumer agrees."
+  },
+  "verified": { "date": "2026-10-01", "context": "Portable SQL tested on SQLite 3.47 in CI; MERGE syntax note for SQL Server", "review_after_days": 365 },
+  "refs": [
+    { "title": "CREATE VIEW (Transact-SQL)", "url": "https://learn.microsoft.com/en-us/sql/t-sql/statements/create-view-transact-sql" },
+    { "title": "MERGE (Transact-SQL)", "url": "https://learn.microsoft.com/en-us/sql/t-sql/statements/merge-transact-sql" },
+    { "title": "Incremental refresh and real-time data in Power BI", "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/incremental-refresh-overview" }
+  ],
+  "asg": [
+    {
+      "t": "A view Power BI can trust",
+      "time": "40 min",
+      "ds": "orders, order_lines, fx_rates",
+      "guidance": "B",
+      "brief": "Replace the Power Query steps from Sprint 01 with one view, vw_FactSales, that every model can read.",
+      "req": ["One row per order line, deduplicated; completed orders only; test customer excluded.", "Only the columns a model needs, with clear names and types; amounts in USD.", "Include OrderDate and PostingDate so both Sales and Finance definitions are possible."],
+      "exp": "For Q1 2026 the view returns {{sql_q1_lines|int}} rows totalling {{q1_2026_gross|money0}} gross USD, the same as the Sprint 01 model."
+    },
+    {
+      "t": "Incremental extraction with a watermark",
+      "time": "30 min",
+      "ds": "orders",
+      "guidance": "B",
+      "brief": "The last successful load ran with a watermark of {{sql_watermark}}. Extract only what changed since then, but remember that orders can still change status (cancellations) and get returns after they are first loaded.",
+      "req": ["Rows after the watermark.", "The same with a 7-day lookback, and why the lookback exists.", "Where the watermark should be stored and when it should move."],
+      "exp": "{{sql_incremental_orders|int}} orders after the watermark; {{sql_lookback_orders|int}} with a 7-day lookback (from {{sql_lookback_from}}). The full table has {{sql_all_orders|int}}."
+    },
+    {
+      "t": "The load that doubled March",
+      "time": "40 min",
+      "ds": "order_lines",
+      "guidance": "C",
+      "brief": "Last night's fact load failed half-way and was re-run. It uses INSERT INTO fact_sales SELECT … for the load date. The March total in the warehouse is now far too high. Make the load safe to run any number of times.",
+      "req": ["Show the failure mode with a small test (run the load twice).", "Write an idempotent version (delete-and-insert for the batch, or insert-where-not-exists on the key, or MERGE).", "Prove that running it twice leaves the same row count."],
+      "exp": "After two runs of the idempotent load the table has {{sql_distinct_rows|int}} rows, exactly as after one."
+    }
+  ],
+  "int": [
+    { "q": "Why point Power BI at views instead of tables?", "a": "A view is a contract: stable names, the right grain, business rules applied once, and only needed columns. The underlying tables can change without breaking every model, and query folding still works because a view is just a query." },
+    { "q": "What is a watermark and why use a lookback?", "a": "The highest change date (or ID) already loaded; the next load takes rows after it. A lookback re-reads the last few days because rows can still change after first load (late returns, status changes, late-arriving rows) and clocks or transactions can be out of order." },
+    { "q": "What makes a load idempotent?", "a": "Running it twice gives the same result as running it once. Typical patterns: delete the batch's partition then insert it; insert only keys that don't exist; or MERGE on the business key with update and insert branches." },
+    { "q": "How does Power BI incremental refresh relate to this?", "a": "Incremental refresh partitions the table by date using RangeStart/RangeEnd parameters, refreshes only recent partitions and can detect changes. It relies on query folding to push those filters to the source, so the view must be foldable and the date filter must be on a column the source can index." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "A nightly load runs INSERT INTO fact SELECT … WHERE LoadDate = @d. It fails half-way and is re-run. What happens?", "o": ["Nothing; databases prevent duplicates", "The rows inserted before the failure are inserted again", "The re-run updates the existing rows", "The table is truncated first"], "a": 1, "why": "A plain INSERT has no idea what's already there. Delete the batch first or insert only missing keys." },
+    { "q": "Which column is the best watermark for extracting changed orders?", "type": "mcq", "o": ["OrderDate", "A LastModified timestamp maintained by the source system", "OrderID", "The load date of the BI table"], "a": 1, "why": "Orders change after they are placed (cancellations, returns). Only a modification timestamp catches those; OrderDate misses them." },
+    { "type": "task", "q": "Write the view for dim_customer with one row per customer, including a row for \"Unknown\" (key -1) that facts can point to when the customer is missing.", "hint": "SELECT … FROM customers UNION ALL SELECT '-1', 'Unknown', … ; see the warehousing track for why the unknown member matters." }
+  ]
+}

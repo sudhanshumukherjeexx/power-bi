@@ -1,0 +1,5 @@
+Workspace,Item,DataSource,Gateway,GatewayConnection,CredentialType,CredentialOwner,Status
+Sales Analytics [Test],Sales,SQL sql-test.northwind.local;NorthwindDW,GW-PROD-01,conn-sql-test-dw,Windows (service account),svc_pbi_test,OK
+Sales Analytics [Test],Sales,SharePoint Targets.xlsx,(cloud),conn-sp-targets-test,OAuth2,svc_pbi_cloud,OK
+Sales Analytics,Sales,SQL sql-prod.northwind.local;NorthwindDW_Dev,GW-PROD-01,conn-sql-prod-dwdev,Windows (service account),svc_pbi_prod,OK
+Sales Analytics,Sales,SharePoint Targets.xlsx,(cloud),conn-sp-targets-prod,OAuth2,sam.patel@northwind.example,Expired 2026-05-27

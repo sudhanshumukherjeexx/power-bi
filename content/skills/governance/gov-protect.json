@@ -1,0 +1,63 @@
+{
+  "id": "gov-protect",
+  "name": "Sensitivity labels, OLS, export controls and tenant settings",
+  "ds": ["DimEmployee"],
+  "skills": ["governance", "security"],
+  "stage": "architect",
+  "why": {
+    "matters": "Data leaves Power BI through exports, Excel, emails and PDFs. Labels and settings decide whether protection travels with it.",
+    "failure": "A payroll export to Excel is emailed outside the company; nothing marked it as confidential and nothing stopped the export.",
+    "use": "Sensitivity labels on sensitive models and reports (inherited downstream and into exports), OLS for columns some users must not see, export settings per report, tenant settings restricted to security groups, least privilege everywhere.",
+    "avoid": "Turning off export for everyone: people screenshot or copy instead, and you lose the audit trail."
+  },
+  "verified": { "date": "2026-10-01", "context": "Sensitivity labels in Power BI/Fabric, OLS, export and tenant settings docs (Microsoft Learn, Sept 2026)", "review_after_days": 120 },
+  "refs": [
+    { "title": "Sensitivity labels in Power BI", "url": "https://learn.microsoft.com/en-us/fabric/enterprise/powerbi/service-security-sensitivity-label-overview" },
+    { "title": "Object-level security", "url": "https://learn.microsoft.com/en-us/fabric/security/service-admin-object-level-security" },
+    { "title": "About tenant settings", "url": "https://learn.microsoft.com/en-us/fabric/admin/tenant-settings-index" }
+  ],
+  "asg": [
+    {
+      "t": "Protect the payroll columns",
+      "time": "30 min",
+      "ds": "DimEmployee (course dataset)",
+      "guidance": "A",
+      "steps": [
+        "In the starter model, create a role \"Managers\" with RLS on region and a role \"Analysts\" with OLS on DimEmployee[Salary] (metadata permission None), using Tabular Editor or the TMDL view.",
+        "View as Analysts: build a table with EmployeeName and Salary. It errors; remove Salary and it works.",
+        "View as Managers: Salary visible, rows limited to the region.",
+        "Apply a sensitivity label (if your tenant has labels) and export to Excel: check the label travels with the file."
+      ],
+      "exp": "Analysts can't see that the Salary column exists; Managers see salaries for their region only; the exported file carries the label."
+    },
+    {
+      "t": "Decide the export and sharing settings",
+      "time": "30 min",
+      "ds": "—",
+      "guidance": "C",
+      "brief": "Ava (Compliance) wants all export disabled tenant-wide after the Sprint 03 incident. Sales says they need Excel every day. Propose settings that protect sensitive data without blocking everyone.",
+      "req": ["Which tenant settings you change and for which security groups.", "Report-level export settings for sensitive reports.", "What labels and audit provide that a blanket ban doesn't."],
+      "exp": "Keep export for most users, restricted by security groups in tenant settings; disable underlying-data export on sensitive reports; mandatory labels on sensitive models with protection that follows exports; audit logs for exports reviewed by Compliance. A blanket ban drives screenshots and copies, which nobody can audit."
+    },
+    {
+      "t": "Least privilege for a new analyst",
+      "time": "15 min",
+      "ds": "—",
+      "guidance": "B",
+      "brief": "A new Finance analyst needs to build reports on the certified board pack model, but not change the model or see payroll. What access do they get?",
+      "req": ["Workspace role or item permission.", "Build permission and why.", "Which security roles in the model they belong to."],
+      "exp": "No role in the model's workspace; Build permission on the semantic model (to create reports on it); membership of the Finance RLS/OLS role that excludes payroll; their own workspace (or a team workspace) for their reports."
+    }
+  ],
+  "int": [
+    { "q": "What does a sensitivity label do in Power BI?", "a": "It classifies content (e.g. Confidential), is shown to users, is inherited by downstream items and by exports to Excel, PowerPoint and PDF, and, with protection settings, can encrypt exported files so only authorised people can open them." },
+    { "q": "OLS vs hiding a column?", "a": "Hiding only removes it from the field list; queries can still use it. OLS removes the column (or table) for a role: it doesn't exist for those users, and any visual using it fails." },
+    { "q": "Why restrict tenant settings to security groups?", "a": "So powerful features (export, publish to web, external sharing, service principal APIs) are available to the people who need them and not to everyone, and you can review membership instead of individual cases." },
+    { "q": "What is least privilege in Power BI terms?", "a": "Consumers use apps or item sharing (Viewer-equivalent), builders get Build on models rather than workspace roles, only a few Admins per workspace, and RLS/OLS restrict what each role sees." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "A report built on a labelled \"Confidential\" model is exported to Excel. With label inheritance:", "o": ["The file has no label", "The file carries the Confidential label", "The export fails", "Only the first sheet is labelled"], "a": 1, "why": "Labels flow downstream and into supported exports." },
+    { "type": "mcq", "q": "An analyst should build reports on a model without seeing its workspace. Give them:", "o": ["Admin on the workspace", "Build permission on the semantic model", "Contributor on the workspace", "Nothing; it isn't possible"], "a": 1, "why": "Build permission allows creating content on the model without workspace access." },
+    { "type": "task", "q": "List the five tenant settings you'd review first in a new tenant, and the group each should be limited to.", "hint": "Export to Excel/CSV, publish to web, external sharing, service principals calling APIs, creating workspaces." }
+  ]
+}

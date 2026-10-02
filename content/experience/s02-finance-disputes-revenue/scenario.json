@@ -1,0 +1,97 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "s02",
+  "slug": "s02-finance-disputes-revenue",
+  "type": "sprint",
+  "stage": "analyst",
+  "order": 2,
+  "title": "Finance disputes the dashboard",
+  "seo": "Power BI reconciliation exercise: the CFO says the dashboard's net revenue is too high. Reconcile against the general ledger and find every cause.",
+  "summary": "The CFO says the Q1 net revenue on your new dashboard is too high and wants it explained before the board pack goes out.",
+  "minutes": 240,
+  "skills": ["dax", "modeling", "testing", "communication", "power-query"],
+  "prereq": ["s01"],
+  "next": "s03",
+  "ticket": { "id": "BI-1057", "kind": "ticket", "priority": "Urgent", "status": "Open", "reporter": "sarah", "opened": "Wed 15 Apr 2026, 08:14", "due": "Fri 17 Apr 2026, 12:00", "labels": ["finance", "reconciliation", "board-pack"] },
+  "story": "Your Q1 dashboard went to the leadership meeting on Monday and Jordan's slide was well received. On Tuesday Jordan forwarded the dashboard link to the CFO.",
+  "impact": "The board pack goes to the directors on Friday. If the board sees one revenue figure from Sales and another from Finance, the question stops being \"why is growth slowing\" and becomes \"can we trust any of our numbers\". Finance's number is the one the auditors will check.",
+  "messages": [
+    {
+      "from": "sarah", "to": "you", "via": "email", "at": "Wed 15 Apr, 08:14", "subject": "Q1 net revenue on the sales dashboard",
+      "body": [
+        "Good morning,",
+        "Jordan shared your Q1 dashboard with me. It shows net revenue of **{{dash_net_q1_2026|money0}}** for Q1 2026. Our ledger shows **{{fin_net_q1_2026|money0}}**. Your figure is **{{gap_q1_2026|money0}} too high**.",
+        "The board pack goes out on Friday at noon and it will show the ledger figure. Before then I need to understand exactly why the two differ, and I need the dashboard to either match the ledger or say clearly that it measures something else.",
+        "Nina will send you the ledger extract. Please don't change anything on the dashboard until we've spoken.",
+        "Sarah Chen, CFO"
+      ]
+    },
+    {
+      "from": "nina", "to": "you", "via": "email", "at": "Wed 15 Apr, 09:02", "subject": "RE: Q1 net revenue on the sales dashboard",
+      "body": [
+        "Hi, attached is the Q1 GL extract for the revenue accounts, by posting period. This is what goes into the board pack.",
+        "I don't know how your dashboard is built, so I can't tell you where the difference is. I tried by month in Excel and every month is off by a different amount, so it's not one thing. Happy to jump on a call."
+      ]
+    },
+    {
+      "from": "jordan", "to": "you", "via": "chat", "at": "Wed 15 Apr, 09:30",
+      "body": [
+        "Saw Sarah's email. My numbers are right, aren't they? Sales has always reported it this way. Please don't let Finance change our dashboard without talking to me."
+      ]
+    }
+  ],
+  "evidence": [
+    { "id": "gl", "kind": "file", "title": "finance_gl_q1_2026.csv (from Nina)", "file": "data/experience/s02/finance_gl_q1_2026.csv", "desc": "General ledger revenue accounts by posting period." },
+    { "id": "dash", "kind": "file", "title": "dashboard_q1_2026.csv", "file": "data/experience/s02/dashboard_q1_2026.csv", "desc": "Net Sales by month as shown on the dashboard (use your own model from Sprint 01 if you built one)." },
+    { "id": "orders", "kind": "file", "title": "orders.csv", "file": "data/experience/company/orders.csv" },
+    { "id": "lines", "kind": "file", "title": "order_lines.csv", "file": "data/experience/company/order_lines.csv" },
+    { "id": "returns", "kind": "file", "title": "returns.csv", "file": "data/experience/company/returns.csv" },
+    { "id": "fx", "kind": "file", "title": "fx_rates.csv", "file": "data/experience/company/fx_rates.csv" },
+    { "id": "policy", "kind": "doc", "title": "Finance policy manual, chapter 4: Revenue (extract)", "body": [
+      "**4.1** Revenue from the sale of goods is recognised in the period in which the sale is posted to the ledger.",
+      "**4.2** Purchases by employees under the staff discount scheme are recorded against account 6950 (staff benefit cost recovery) and are not revenue.",
+      "**4.3** Customer returns are recorded in account 4900 in the period in which the returned goods are received, regardless of when the original sale was made.",
+      "**4.4** Postage refunded to customers on returns is recorded in account 4910 and reduces net revenue.",
+      "**4.5** Gift cards are recognised when redeemed, not when sold.",
+      "**4.6** Intercompany sales between Northwind Outdoors Inc. and Northwind Outdoors GmbH are eliminated on consolidation.",
+      "**4.7** Foreign-currency revenue is translated at the average rate of the month in which it is recognised."
+    ] },
+    { "id": "kpi", "kind": "table", "title": "The Net Sales definition you agreed with Jordan in Sprint 01", "cols": ["Element", "Dashboard"], "rows": [["Sales", "Completed orders, by order date, after discount"], ["Returns", "Refunds deducted from the original order's period"], ["Currency", "EUR at the order month's average rate"], ["Channels", "All"]] }
+  ],
+  "tasks": [
+    "Build a monthly reconciliation between the dashboard and the ledger.",
+    "Find every reason the numbers differ and quantify each one, so that they add up exactly to the gap.",
+    "Decide what the dashboard should do: match Finance, keep the Sales view, or show both, clearly labelled. Justify it.",
+    "Implement the corrected measure(s) and prove nothing else broke (regression check).",
+    "Write the reply to Sarah (and copy Jordan): short, factual, no blame."
+  ],
+  "deliverables": [
+    { "id": "rec", "t": "Reconciliation table: dashboard → ledger, one line per cause, summing exactly to the gap", "artifact": "validation-plan" },
+    { "id": "rca", "t": "Root cause note: which definitions each team uses, and why both are internally consistent", "artifact": "incident-report" },
+    { "id": "kpi", "t": "Updated KPI dictionary with both definitions, named so nobody confuses them", "artifact": "kpi-dictionary" },
+    { "id": "dax", "t": "Corrected measures in the model, with a regression check on the Sprint 01 numbers" },
+    { "id": "mail", "t": "Reply to the CFO, copying the VP Sales" }
+  ],
+  "hints": [
+    "Nina says every month is off by a different amount, so it's several causes, not one. Read the policy extract line by line and ask of each one: does our dashboard do the same thing?",
+    "Compare which date each side uses for sales and for returns. Look closely at orders placed on the last evening of a month and at returns received in Q1 for orders placed in Q4.",
+    "Make a bridge: start from the dashboard number, change one rule at a time (channel, sales date, returns date, shipping refunds), and record the effect of each. The steps must sum to the gap to the cent."
+  ],
+  "rubric": [
+    { "id": "correct", "n": "Technical correctness", "w": 30, "good": "Every cause found and quantified; the bridge sums exactly to the gap; the corrected measure equals the ledger to the dollar." },
+    { "id": "invest", "n": "Investigation quality", "w": 20, "good": "Changed one rule at a time, by month, and used the policy as the specification rather than guessing." },
+    { "id": "testing", "n": "Testing", "w": 15, "good": "A regression check shows the Sprint 01 measures and other pages still return the agreed values." },
+    { "id": "maint", "n": "Maintainability", "w": 10, "good": "Two clearly named measures (e.g. Net Sales (Sales view) and Net Revenue (Ledger)) instead of one ambiguous one; definitions documented." },
+    { "id": "comm", "n": "Communication", "w": 25, "good": "The CFO gets the answer, the size of each cause and the fix in under 150 words, and Jordan is not made wrong: both definitions are valid for their purpose." }
+  ],
+  "retro": [
+    "Which of the causes would you have found without the policy document?",
+    "Should a sales dashboard ever show a different \"revenue\" from the ledger? When is that legitimate?",
+    "How would you stop the next analyst from creating a third definition?",
+    "What did you say to Jordan, and was it the same message you sent Sarah?"
+  ],
+  "refs": [
+    { "title": "Use DAX variables to make measures easier to debug", "url": "https://learn.microsoft.com/en-us/dax/best-practices/dax-variables" },
+    { "title": "USERELATIONSHIP (role-playing dates)", "url": "https://learn.microsoft.com/en-us/dax/userelationship-function-dax" }
+  ]
+}

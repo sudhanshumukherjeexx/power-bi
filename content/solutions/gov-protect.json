@@ -1,0 +1,24 @@
+{
+  "gov-protect-0": {
+    "s": ["Roles in TMDL view or Tabular Editor: Managers with a DimRegion filter; Analysts with tablePermission DimEmployee → columnPermission Salary = none.", "View as role to test both; record the results in the security matrix.", "Labels need Microsoft Purview Information Protection configured for the tenant; test the inherited label on an exported .xlsx."],
+    "code": [
+      { "lang": "TMDL", "title": "OLS on Salary", "src": [
+        "role Analysts",
+        "\tmodelPermission: read",
+        "",
+        "\ttablePermission DimEmployee",
+        "",
+        "\t\tcolumnPermission Salary = none"
+      ] }
+    ],
+    "check": "Analysts: column doesn't exist; Managers: salaries for their region; export labelled."
+  },
+  "gov-protect-1": {
+    "s": ["Tenant settings: export to Excel/CSV allowed for named groups (most staff), not everyone including guests; publish to web off or restricted to a tiny group.", "Report settings: disable underlying-data export on reports with personal data.", "Labels: mandatory labelling for sensitive workspaces; protection so exported files stay encrypted.", "Audit: review export events weekly for labelled content."],
+    "check": "Group-scoped export, report-level restrictions, labels with protection, audited exports."
+  },
+  "gov-protect-2": {
+    "s": ["Build permission on the board pack model (via the model's Manage permissions, or an app with build).", "Member of the Finance role that excludes payroll (RLS/OLS).", "A Finance team workspace (Contributor) for their own reports."],
+    "check": "Build, the right security role, their own workspace; no role in the model's workspace."
+  }
+}

@@ -1,0 +1,5 @@
+enterprise-data/
+node_modules/
+*.pbix.bak
+.pbi/localSettings.json
+.pbi/cache.abf

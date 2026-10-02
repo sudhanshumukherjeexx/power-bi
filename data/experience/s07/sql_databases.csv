@@ -1,0 +1,5 @@
+Server,Database,Purpose,LastRestored,RowsInFactSales,MaxOrderDate
+sql-dev.northwind.local,NorthwindDW_Dev,Development,2026-03-01,"2,184,210",2026-02-28
+sql-test.northwind.local,NorthwindDW,Test (nightly copy of prod),2026-06-01,"2,301,877",2026-05-31
+sql-prod.northwind.local,NorthwindDW,Production,,"2,302,415",2026-06-01
+sql-prod.northwind.local,NorthwindDW_Dev,Developer copy restored to prod server for a load test (should have been dropped),2026-03-01,"2,184,210",2026-02-28

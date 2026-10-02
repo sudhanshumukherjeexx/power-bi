@@ -1,0 +1,175 @@
+{
+  "id": "a-dax",
+  "name": "Advanced DAX: calculation groups, TREATAS, semi-additive, virtual tables",
+  "ds": [
+    "FactSales",
+    "FactInventory",
+    "FactBudget",
+    "ExchangeRates"
+  ],
+  "skills": [
+    "dax",
+    "modeling"
+  ],
+  "stage": "senior",
+  "why": {
+    "matters": "Advanced DAX patterns are how one certified model answers hundreds of questions without hundreds of near-duplicate measures.",
+    "failure": "A semi-additive stock measure sums weekly snapshots and inventory looks ten times larger than it is.",
+    "use": "Calculation groups for repeated transformations (time intelligence, currency); window functions for running totals and comparisons.",
+    "avoid": "Clever DAX that nobody else on the team can maintain. Prefer visual calculations for one-off visual math."
+  },
+  "verified": {
+    "date": "2026-10-01",
+    "context": "Calculation groups, window functions, visual calculations docs, Sept 2026",
+    "cert": "PL-300 (2026-04-20)",
+    "review_after_days": 120
+  },
+  "refs": [
+    {
+      "title": "Calculation groups",
+      "url": "https://learn.microsoft.com/en-us/power-bi/transform-model/calculation-groups"
+    },
+    {
+      "title": "WINDOW function",
+      "url": "https://learn.microsoft.com/en-us/dax/window-function-dax"
+    },
+    {
+      "title": "Visual calculations overview",
+      "url": "https://learn.microsoft.com/en-us/power-bi/transform-model/desktop-visual-calculations-overview"
+    }
+  ],
+  "asg": [
+    {
+      "t": "Semi-additive inventory",
+      "time": "30 min",
+      "ds": "FactInventory, Dates",
+      "guidance": "A",
+      "steps": [
+        "Stock On Hand = CALCULATE(SUM(FactInventory[QuantityOnHand]), LASTDATE(FactInventory[SnapshotDate])) — put it in a matrix by MonthName. Notice it uses the last snapshot date within each month.",
+        "Now the problem: LASTDATE over Dates gives blank for days with no snapshot. Rewrite with LASTNONBLANK: CALCULATE(SUM(QuantityOnHand), LASTNONBLANK(Dates[Date], CALCULATE(SUM(FactInventory[QuantityOnHand])))).",
+        "Add Below Reorder = COUNTROWS(FILTER(VALUES(DimProduct[ProductKey]), [Stock On Hand] < CALCULATE(MAX(FactInventory[ReorderPoint]))))."
+      ],
+      "exp": "Matrix by month shows the last week's level, not a sum. Below Reorder flags Hydro Filter Bottle at the end of January and Ridge Runner Boots at the end of February (both under their reorder point of 30); nothing is below reorder at the end of March."
+    },
+    {
+      "t": "Calculation group for time intelligence",
+      "time": "40 min",
+      "ds": "FactSales, Dates",
+      "guidance": "A",
+      "steps": [
+        "Tabular Editor 2 → New Calculation Group \"Time Calc\" with items: Current = SELECTEDMEASURE(), PM = CALCULATE(SELECTEDMEASURE(), DATEADD(Dates[Date], -1, MONTH)), MoM % = DIVIDE(SELECTEDMEASURE() - CALCULATE(SELECTEDMEASURE(), DATEADD(Dates[Date], -1, MONTH)), CALCULATE(SELECTEDMEASURE(), DATEADD(Dates[Date], -1, MONTH))), MTD = CALCULATE(SELECTEDMEASURE(), DATESMTD(Dates[Date])).",
+        "Set a format string expression on MoM % to \"0.0%\" and on the others to SELECTEDMEASUREFORMATSTRING().",
+        "Save to the model. Matrix: rows Category, columns Time Calc, values Net Sales, then switch value to Orders. Both get all four variants without new measures.",
+        "Set precedence and observe what happens when you add a second calculation group \"Currency\" (below)."
+      ],
+      "exp": "Format strings switch correctly per column. Implicit measures stop working (turn on Discourage implicit measures)."
+    },
+    {
+      "t": "Currency conversion calculation group",
+      "time": "30 min",
+      "ds": "FactSales, ExchangeRates",
+      "guidance": "A",
+      "steps": [
+        "Relate ExchangeRates to Dates on RateDate (inactive is fine). Build a rate lookup measure: Rate = VAR c = SELECTEDVALUE(Currency[Code]) VAR dte = MAX(Dates[Date]) RETURN CALCULATE(MAX(ExchangeRates[RateToUSD]), ExchangeRates[Currency] = c, ExchangeRates[RateDate] <= dte, LASTDATE(...)) — or a simpler LASTNONBLANK pattern.",
+        "Calculation group \"Currency\": USD = SELECTEDMEASURE(), Selected = SUMX(VALUES(Dates[Date]), CALCULATE(SELECTEDMEASURE()) / [Rate]) where Rate is the last known rate for that date.",
+        "Currency slicer from a disconnected table. Check Net Sales in EUR for January."
+      ],
+      "exp": "Converting per day then summing gives a different number than converting the monthly total by one rate; you can explain which is correct."
+    },
+    {
+      "t": "TREATAS and virtual relationships",
+      "time": "30 min",
+      "ds": "FactBudget, FactSales",
+      "guidance": "A",
+      "steps": [
+        "Delete the DimCategory relationship to FactBudget from the Intermediate model.",
+        "Budget via TREATAS = CALCULATE(SUM(FactBudget[BudgetAmount]), TREATAS(VALUES(DimProduct[Category]), FactBudget[Category]), TREATAS(VALUES(Dates[YearMonth]), FactBudget[YearMonth])).",
+        "Compare against the physical relationship version in DAX Studio timings.",
+        "Do the same with CROSSFILTER to temporarily change a relationship direction inside a measure."
+      ],
+      "exp": "Same numbers; TREATAS is slower on large budgets but has no model impact."
+    },
+    {
+      "t": "Virtual tables and window functions",
+      "time": "40 min",
+      "ds": "FactSales, DimCustomer",
+      "guidance": "A",
+      "steps": [
+        "Customer ABC Class = VAR t = ADDCOLUMNS(ALLSELECTED(DimCustomer[CustomerKey]), \"@s\", [Net Sales]) VAR total = SUMX(t, [@s]) VAR cur = [Net Sales] VAR cum = SUMX(FILTER(t, [@s] >= cur), [@s]) RETURN SWITCH(TRUE(), DIVIDE(cum,total) <= 0.7, \"A\", DIVIDE(cum,total) <= 0.9, \"B\", \"C\").",
+        "Rewrite the running total with WINDOW: Running Sales = CALCULATE([Net Sales], WINDOW(1, ABS, 0, REL, ALLSELECTED(DimCustomer[CustomerName]), ORDERBY([Net Sales], DESC))).",
+        "Use OFFSET to get the previous customer's sales in a sorted table, and RANK for the position.",
+        "Explain in a comment why WINDOW cannot be wrapped in a non-trivial FILTER."
+      ],
+      "exp": "A/B/C classification sums to 100% of customers; Running Sales in the last row equals the total."
+    }
+  ],
+  "int": [
+    {
+      "q": "Calculation group precedence: what does it decide?",
+      "a": "When two groups apply to the same cell, the higher-precedence group's expression is applied last (outermost). Time intelligence normally wraps currency conversion, so Time Calc gets higher precedence."
+    },
+    {
+      "q": "LASTDATE vs LASTNONBLANK vs MAX for semi-additive measures.",
+      "a": "LASTDATE returns the last date in the current date filter even if there is no data. LASTNONBLANK scans for the last date where the expression is non-blank. MAX(date) is faster than LASTDATE but returns a scalar, so wrap it in a filter. Prefer LASTNONBLANKVALUE for a single column."
+    },
+    {
+      "q": "TREATAS vs relationship: three differences.",
+      "a": "TREATAS is per-measure and has no model change; relationships are global and faster. TREATAS handles multi-column mappings with no key. Relationships propagate RLS; TREATAS does not filter other measures automatically."
+    },
+    {
+      "q": "What does SELECTEDMEASUREFORMATSTRING() solve?",
+      "a": "Calculation items that return the base measure should keep its format; without it every item defaults to the group's format string and Net Sales loses its $."
+    },
+    {
+      "q": "When do window functions (WINDOW, OFFSET, INDEX, RANK) beat the classic EARLIER / FILTER patterns?",
+      "a": "Whenever you need ordered access (previous row, running total, top-N within group). They are optimised for it and readable; the classic patterns are O(n²) iterators."
+    },
+    {
+      "q": "How do you handle a currency conversion where the rate is missing for a date?",
+      "a": "Use the last known rate before that date (LASTNONBLANK pattern or a forward-fill in Power Query). Surface missing rates as a data-quality measure rather than silently returning blank."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "Summing FactInventory[QuantityOnHand] over 10 weeks for one product gives:",
+      "o": [
+        "The current stock",
+        "10× the average stock, meaningless",
+        "Zero",
+        "An error"
+      ],
+      "a": 1,
+      "why": "Snapshot facts are non-additive across time."
+    },
+    {
+      "type": "mcq",
+      "q": "With calculation groups present, implicit measures (dragging a column):",
+      "o": [
+        "Work normally",
+        "Are ignored by calculation items and should be disabled",
+        "Become measures",
+        "Error"
+      ],
+      "a": 1,
+      "why": "Calculation items only apply to explicit measures; discourage implicit measures in the model."
+    },
+    {
+      "type": "task",
+      "q": "Build the Time Calc group and prove MTD works for Net Sales and for Orders without writing extra measures. Show the matrix with 8 columns.",
+      "hint": "If Orders MTD shows a $ sign, the format string expression is wrong."
+    },
+    {
+      "type": "mcq",
+      "q": "TREATAS(VALUES(DimProduct[Category]), FactBudget[Category]) fails silently if:",
+      "o": [
+        "Category has more than 4 values",
+        "The text values differ in case or spacing",
+        "FactBudget has more rows",
+        "Dates is not marked"
+      ],
+      "a": 1,
+      "why": "TREATAS matches values exactly; \"camping\" ≠ \"Camping\"."
+    }
+  ]
+}

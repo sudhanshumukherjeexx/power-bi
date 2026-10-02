@@ -1,0 +1,46 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "d07",
+  "slug": "d07-governance-maturity",
+  "type": "drill",
+  "stage": "architect",
+  "order": 3,
+  "title": "Governance maturity assessment",
+  "seo": "Power BI and Fabric governance maturity self-assessment: ownership, endorsement, security, lifecycle, monitoring and data quality, with next steps per dimension.",
+  "summary": "Assess Northwind's BI governance (or your own organisation's) on six dimensions and get the next step for each.",
+  "minutes": 30,
+  "skills": ["governance", "architecture", "security"],
+  "prereq": ["s10"],
+  "ticket": { "id": "GOV-050", "kind": "review", "priority": "Normal", "reporter": "elena", "opened": "Tue 22 Sep 2026, 10:00", "labels": ["governance", "maturity"] },
+  "impact": "A maturity assessment turns \"we should govern better\" into a short list of next steps the organisation can actually take this quarter.",
+  "messages": [
+    { "from": "elena", "to": "you", "via": "chat", "at": "Tue 22 Sep, 10:00", "body": ["Before the offsite, score where we are on each governance dimension. Be honest: the point is the next step, not the score. Use your own company instead if you prefer."] }
+  ],
+  "evidence": [
+    { "id": "s10", "kind": "doc", "title": "From the architecture review (Sprint 10)", "body": ["- {{s10_no_owner_models|int}} of {{s10_models|int}} models without owner; {{s10_zero_view_reports|int}} of {{s10_reports|int}} reports unused for 90 days.\n- {{s10_certified|int}} certified models; {{s10_pipelines|int}} workspaces with deployment pipelines.\n- Incident process and on-call alerts exist for certified models only."] }
+  ],
+  "interactive": {
+    "type": "assessment",
+    "title": "Score each dimension from 1 to 5",
+    "intro": "Choose the description that is true today, not the one you're planning.",
+    "labels": ["Initial", "Repeatable", "Defined", "Managed", "Optimised"],
+    "dims": [
+      { "n": "Ownership", "q": "Who is responsible for reports and models?", "levels": ["Nobody knows who owns most items.", "Owners are known informally for important items.", "Every item in production has a named owner in metadata.", "Owners review their items periodically; orphaned items are flagged automatically.", "Ownership transfers are part of joiner/mover/leaver processes."], "next": ["Run an ownership drive for everything used in the last 90 days.", "Record owners in metadata (contact list) and require it to publish.", "Add a quarterly owner review using usage and lineage.", "Automate orphan detection with the admin APIs.", "Keep it: audit ownership changes in HR processes."] },
+      { "n": "Definitions and endorsement", "q": "How are company KPIs defined and served?", "levels": ["Each report defines its own KPIs.", "A few shared models exist; KPIs still duplicated.", "Certified models serve company KPIs; a KPI dictionary exists.", "Certification has criteria and owners; non-certified KPI copies are tracked.", "Most consumption runs on certified models; definitions change through a governed process."], "next": ["Pick the top 5 KPIs and write them down with owners.", "Certify one shared model for those KPIs.", "Publish endorsement criteria and a certification process.", "Report certified share of views and chase the copies.", "Measure and review definition changes quarterly."] },
+      { "n": "Security", "q": "How is data access controlled and tested?", "levels": ["Access by sharing links; no RLS testing.", "Workspace roles and some RLS.", "RLS/OLS in models, groups not individuals, sensitivity labels on sensitive items.", "Security test matrices run on every release; access reviewed quarterly.", "Least privilege enforced by policy; access anomalies monitored."], "next": ["Move to group-based access and remove broad sharing links.", "Add RLS/OLS to sensitive models and label them.", "Create a test matrix per sensitive model and run it on release.", "Quarterly access reviews with owners.", "Monitor activity logs for unusual access."] },
+      { "n": "Lifecycle", "q": "How do changes reach production?", "levels": ["People publish from Desktop to production.", "Separate test workspace for some items.", "Dev/Test/Prod with deployment pipelines for certified content; PBIP in Git.", "Pull requests, automated checks (BPA, tests) and rollback for all production content.", "Release metrics tracked; failure rate and lead time improve."], "next": ["Create Dev/Test/Prod for the most-used models.", "Put certified models in Git as PBIP with pipelines.", "Add PR review and automated checks.", "Track change failure rate and time to restore.", "Keep improving the release process."] },
+      { "n": "Monitoring", "q": "How do you know something is wrong?", "levels": ["Users tell us.", "Refresh failure emails to individual owners.", "Alerts to a team for certified models; capacity metrics checked.", "SLOs for refresh and performance; usage reviewed monthly.", "Proactive: trends predict problems before users see them."], "next": ["Route failure notifications to a team mailbox.", "Define severity levels and on-call for certified models.", "Set refresh and performance SLOs; review monthly.", "Trend capacity and refresh duration to plan ahead.", "Keep it and share the learning."] },
+      { "n": "Data quality", "q": "How are numbers validated?", "levels": ["Not validated.", "Spot checks before big meetings.", "Reconciliations and data tests for certified models.", "Automated tests in the pipeline; contracts with source teams.", "Quality metrics published; issues fixed at the source."], "next": ["Write a reconciliation for the top KPIs.", "Automate data tests (row counts, uniqueness, totals).", "Agree data contracts with source owners.", "Publish quality metrics next to the KPIs.", "Keep it."] }
+    ]
+  },
+  "tasks": ["Score each dimension honestly.", "Pick the two next steps with the best value for effort, and say who would own them."],
+  "deliverables": [{ "id": "score", "t": "Maturity scores with evidence" }, { "id": "next", "t": "Top two next steps with owners and dates", "artifact": "ownership-matrix" }],
+  "hints": ["Score what's true for most of the estate, not for the BI team's showcase model."],
+  "rubric": [
+    { "id": "honest", "n": "Evidence-based scoring", "w": 40, "good": "Each score is backed by a fact from the inventory or experience, not by aspiration." },
+    { "id": "prio", "n": "Prioritisation", "w": 40, "good": "Next steps chosen for value and effort; owners named." },
+    { "id": "comm", "n": "Communication", "w": 20, "good": "Can be presented in two minutes." }
+  ],
+  "retro": ["Which dimension surprised you most?"],
+  "refs": [{ "title": "Power BI implementation planning: governance", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/powerbi-implementation-planning-governance" }]
+}

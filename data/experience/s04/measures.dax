@@ -1,0 +1,27 @@
+-- Measures on the executive page (as found in the model, unchanged)
+
+Net Sales = SUM ( FactSales[NetAmount] )
+
+Active Customers =
+COUNTROWS ( FILTER ( VALUES ( DimCustomer[CustomerKey] ), [Net Sales] > 0 ) )
+
+Customers Above Average =
+COUNTROWS (
+    FILTER (
+        DimCustomer,
+        [Net Sales] > AVERAGEX ( ALL ( DimCustomer ), [Net Sales] )
+    )
+)
+
+Store Sales YTD =
+CALCULATE (
+    [Net Sales],
+    FILTER (
+        ALL ( FactSales ),
+        FactSales[Channel] = "Store"
+            && FactSales[OrderDate] <= MAX ( DimDate[Date] )
+            && YEAR ( FactSales[OrderDate] ) = YEAR ( MAX ( DimDate[Date] ) )
+    )
+)
+
+Last Refreshed = MAX ( FactSales[OrderTimestamp] )

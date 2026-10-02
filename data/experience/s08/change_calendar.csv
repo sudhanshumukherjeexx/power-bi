@@ -1,0 +1,4 @@
+ChangeID,Window,System,Owner,Description,BI notified
+CHG-4471,2026-06-08 02:00-03:00,NorthwindDW (SQL),kenji.mori,"Customer view clean-up: rename columns to the new naming standard, add IsActive",No
+CHG-4472,2026-06-07 22:00-23:00,Active Directory,it.identity,Quarterly rotation of service account passwords (svc_* accounts),Mailing list it-changes@
+CHG-4480,2026-06-09 01:00-02:00,Gateway GW-PROD-01,it.infra,Monthly gateway update,Yes

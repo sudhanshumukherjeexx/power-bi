@@ -1,0 +1,399 @@
+{
+ "note": "Learner progress is stored by position (topicId-index) and flashcard progress by a hash of the question text. These pins stop a content edit from silently orphaning saved progress. Only update this file on purpose.",
+ "topics": {
+  "b-pq": {
+   "asg": 4,
+   "int": [
+    "t1o6y8p4",
+    "tnbpn0b",
+    "tlfvo9w",
+    "tbtutlh",
+    "tzl8nan"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    1,
+    1,
+    null,
+    1
+   ]
+  },
+  "b-model": {
+   "asg": 4,
+   "int": [
+    "t16xb8yz",
+    "t5arivj",
+    "tyrfrs5",
+    "t12bmwrf",
+    "tdni8wg"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    2,
+    2,
+    null,
+    1
+   ]
+  },
+  "b-dax": {
+   "asg": 4,
+   "int": [
+    "t1b00zsy",
+    "tq0qmx3",
+    "t1x6j55f",
+    "t1s7subq",
+    "tx4j2cv"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    1,
+    1,
+    null,
+    1
+   ]
+  },
+  "b-viz": {
+   "asg": 4,
+   "int": [
+    "tsk9pvr",
+    "t1behnt5",
+    "tq3hv9b",
+    "t1rsrtxi",
+    "t9i4pki"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    1,
+    1,
+    null,
+    1
+   ]
+  },
+  "b-service": {
+   "asg": 4,
+   "int": [
+    "tfa93e9",
+    "t17eth0h",
+    "tgx9e0i",
+    "td87hob",
+    "tblrcdo"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    1,
+    1,
+    null,
+    2
+   ]
+  },
+  "i-pq": {
+   "asg": 5,
+   "int": [
+    "t18g0ei4",
+    "t1qv21wd",
+    "t1q90bom",
+    "t3xs9to",
+    "tl81re0",
+    "t16ufaz5"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    1,
+    2,
+    null,
+    2
+   ]
+  },
+  "i-model": {
+   "asg": 4,
+   "int": [
+    "t1502lmg",
+    "trhk8op",
+    "t1p5xhsf",
+    "ttz69zu",
+    "t1o8ev1e"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    1,
+    1,
+    null,
+    1
+   ]
+  },
+  "i-dax": {
+   "asg": 5,
+   "int": [
+    "t9glde1",
+    "t1tkay5h",
+    "tal95oe",
+    "toubbu1",
+    "t1d8phvz",
+    "tzrg1dx"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    1,
+    0,
+    null,
+    1
+   ]
+  },
+  "i-viz": {
+   "asg": 5,
+   "int": [
+    "t6fqrff",
+    "t1u00ibp",
+    "t1o5ugiv",
+    "t4d8nkm",
+    "t7h82ar"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    1,
+    1,
+    null,
+    1
+   ]
+  },
+  "i-rls": {
+   "asg": 4,
+   "int": [
+    "t1ifci0c",
+    "tq3sx9b",
+    "tj23up4",
+    "tz49w98",
+    "t1btx3x"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    2,
+    1,
+    null,
+    1
+   ]
+  },
+  "i-service": {
+   "asg": 4,
+   "int": [
+    "t10ubrnx",
+    "ty3sr8o",
+    "twr0dwt",
+    "tcy6ezb",
+    "t1kavoby"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    1,
+    1,
+    null,
+    2
+   ]
+  },
+  "a-perf": {
+   "asg": 5,
+   "int": [
+    "t1kp9xg",
+    "t1g8dil1",
+    "tswp9kk",
+    "t1q50utu",
+    "thh0v2u",
+    "tfys1gs"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    1,
+    1,
+    null,
+    1
+   ]
+  },
+  "a-dax": {
+   "asg": 5,
+   "int": [
+    "t1n8cc02",
+    "thtgzud",
+    "t1v01laq",
+    "t1idtli0",
+    "tkp1qez",
+    "t1skq04"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    1,
+    1,
+    null,
+    1
+   ]
+  },
+  "a-composite": {
+   "asg": 4,
+   "int": [
+    "tzn46la",
+    "t18a8lig",
+    "tdz16ms",
+    "tn4e0x6",
+    "tz6oxdg"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    1,
+    2,
+    null,
+    1
+   ]
+  },
+  "a-deploy": {
+   "asg": 4,
+   "int": [
+    "t7ap8qp",
+    "t1ry7uz4",
+    "t13st0er",
+    "th9wcx6",
+    "t1vv9yov"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    1,
+    1,
+    null,
+    1
+   ]
+  },
+  "a-fabric": {
+   "asg": 4,
+   "int": [
+    "ts6db9l",
+    "tl0xpxe",
+    "t35amn5",
+    "timst2r",
+    "t161l53a"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    1,
+    1,
+    null,
+    1
+   ]
+  },
+  "a-gov": {
+   "asg": 4,
+   "int": [
+    "t1lise1y",
+    "t1r6joh2",
+    "t1j59opk",
+    "t1u5mc3v",
+    "t1l7ynut",
+    "tdsctcr"
+   ],
+   "ass": 4,
+   "mcqAnswers": [
+    1,
+    1,
+    null,
+    1
+   ]
+  }
+ },
+ "concepts": [
+  "cd0ncue",
+  "c5bpnpx",
+  "c140ni4j",
+  "c1navybr",
+  "crfnfyn",
+  "c1y7c98z",
+  "ccllfs6",
+  "cdx2k3o",
+  "c7dn53i",
+  "cvlup4p",
+  "c1heif2b",
+  "czyqzv2",
+  "cyfp5nz",
+  "cr3x3cl",
+  "c1vu5ppc",
+  "c173fzuz",
+  "cjsu4do",
+  "ccp831q",
+  "c1he3i7",
+  "cu17ueh",
+  "c1mh5oo0",
+  "c1oodssw",
+  "csyaadk",
+  "cqsk02",
+  "cjehanj",
+  "c14j85zr",
+  "c12z60g6",
+  "c10g7c5y",
+  "c1l9shix",
+  "c12u1kd6",
+  "c17nd6gq",
+  "c18vwqk7",
+  "c1sv2wmh",
+  "c197fyb5",
+  "c3148zi",
+  "c1hwk9v1",
+  "crgdd9g",
+  "c4uw8cv",
+  "c1bqxisl",
+  "c1pbasye",
+  "ceoka9i",
+  "c3tuz7o",
+  "c1j6nzif",
+  "czshi1b",
+  "cxl1wp7",
+  "c1b0uvcx",
+  "c1l1muhg",
+  "c1wjbltl",
+  "cpkokj8",
+  "c1qad77p",
+  "cwh838x",
+  "c15bgmjd",
+  "c8dpska",
+  "c1jw3gp6",
+  "c18ad67f",
+  "chkp2e6",
+  "ci0f0fr",
+  "cueondg",
+  "c33051a",
+  "c1ifesyd",
+  "c1lnez7e",
+  "c1w3mxy8",
+  "cc102mv",
+  "cimp1pk",
+  "c19egkzg",
+  "c1e4s1vm",
+  "c1k6qht7",
+  "c15jomkz",
+  "c1ozeh1j",
+  "clfczym",
+  "cjezzl1",
+  "c184owpk",
+  "ceu5nga",
+  "c1xdj5eu",
+  "c12o0i34",
+  "c10ste4l",
+  "c1j96jok",
+  "c1whbhjp",
+  "cqxfppw",
+  "c4yk1d9",
+  "cqazeor",
+  "c1hu9gmr",
+  "cbzfxun",
+  "c18o6lld",
+  "c1ri4oh8",
+  "c1vnaz1p",
+  "c1r1fyhy",
+  "cuk7toi",
+  "c1kvidzx",
+  "c1n646fq",
+  "cfbv662",
+  "cz4sgxb",
+  "c1oj7xg1",
+  "c9dx4rf",
+  "cfjm6gh",
+  "cmxzssf",
+  "c1czmp7c",
+  "cl7qnab"
+ ]
+}

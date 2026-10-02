@@ -1,0 +1,11 @@
+Report,Workspace,Model,Owner,ViewersLast90d,UsesRevenue
+Sales Overview,Sales Reporting,Sales Model,sam.patel,64,Yes
+Regional Performance,Sales Reporting,Sales Model,sam.patel,41,Yes
+Executive Summary,Executive,Sales Model,elena.torres,12,Yes
+Board Pack,Finance,Finance GL,nina.kowalski,9,Yes
+Monthly Close,Finance,Finance GL,nina.kowalski,7,Yes
+Fulfilment Daily,Ops Dashboards,Ops Fulfilment,kenji.mori,23,Yes
+Warehouse Backlog,Ops Dashboards,Ops Fulfilment,kenji.mori,18,No
+Customer Returns,Sales Reporting,Sales Model,sam.patel,15,Yes
+Marketing ROI,Marketing Analytics,Sales Model,,6,Yes
+Commission Calculator,Sales Reporting,Sales Model,sam.patel,33,Yes

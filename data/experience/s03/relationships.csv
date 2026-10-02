@@ -1,0 +1,7 @@
+FromTable,FromColumn,ToTable,ToColumn,Cardinality,CrossFilter,IsActive
+FactSales,RegionKey,DimRegion,RegionKey,Many-to-one,Single,TRUE
+FactSales,EmployeeKey,DimEmployee,EmployeeKey,Many-to-one,Single,TRUE
+FactSales,OrderDate,DimDate,Date,Many-to-one,Single,TRUE
+FactPayroll,EmployeeKey,DimEmployee,EmployeeKey,Many-to-one,Single,TRUE
+FactPayroll,MonthStart,DimDate,Date,Many-to-one,Single,TRUE
+DimEmployee,HomeRegionKey,DimRegion,RegionKey,Many-to-one,Single,FALSE

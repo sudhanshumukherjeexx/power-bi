@@ -1,0 +1,172 @@
+{
+  "id": "a-perf",
+  "name": "Performance: VertiPaq, query plans, aggregations, incremental refresh",
+  "ds": [
+    "FactSales",
+    "WebEvents"
+  ],
+  "skills": [
+    "performance"
+  ],
+  "stage": "senior",
+  "why": {
+    "matters": "Slow reports stop being used, and a model that is too big costs real capacity money every hour.",
+    "failure": "An executive page takes 18 seconds every Monday because one measure iterates the whole fact table per cell.",
+    "use": "Measure first: Performance Analyzer, DAX query view and Server Timings tell you whether the time is in visuals, the formula engine or the storage engine.",
+    "avoid": "Optimising without a baseline. Every change needs a before and after number."
+  },
+  "verified": {
+    "date": "2026-10-01",
+    "context": "Performance Analyzer, DAX query view, incremental refresh docs, Sept 2026",
+    "cert": "PL-300 (2026-04-20); DP-600 (2026-10-19)",
+    "review_after_days": 120
+  },
+  "refs": [
+    {
+      "title": "Optimization guide for Power BI",
+      "url": "https://learn.microsoft.com/en-us/power-bi/guidance/power-bi-optimization"
+    },
+    {
+      "title": "Performance Analyzer",
+      "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-performance-analyzer"
+    },
+    {
+      "title": "Incremental refresh overview",
+      "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/incremental-refresh-overview"
+    }
+  ],
+  "asg": [
+    {
+      "t": "Make a big fact and measure it",
+      "time": "40 min",
+      "ds": "FactSales",
+      "guidance": "A",
+      "steps": [
+        "In Power Query, reference FactSales and cross-join it with a 1,000-row list (List.Numbers) to get 100,000 rows; add a random offset to dates. Name it FactSalesBig.",
+        "Open DAX Studio → Advanced → View Metrics (VertiPaq Analyzer). Record total model size and the top 3 columns by size.",
+        "Change SalesKey to not loaded (remove it), and change UnitPrice from Decimal to Fixed Decimal. Re-run metrics. Record the size difference.",
+        "Split OrderDate/ShipDate into Date only (remove time). Record again."
+      ],
+      "exp": "A table with before/after sizes. The high-cardinality key column dominates size; removing it saves the most."
+    },
+    {
+      "t": "Read a query plan",
+      "time": "40 min",
+      "ds": "FactSalesBig",
+      "guidance": "A",
+      "steps": [
+        "Write the slow version: Customers Over 500 Slow = COUNTROWS(FILTER(FactSalesBig, [Net Sales] > 500)).",
+        "In DAX Studio, Server Timings on, run a matrix query using it. Record FE ms, SE ms, number of SE queries, and whether CallbackDataID appears.",
+        "Rewrite: COUNTROWS(FILTER(VALUES(DimCustomer[CustomerKey]), [Net Sales] > 500)). Re-run and compare.",
+        "Rewrite once more with SUMMARIZE + a filter on a pre-computed column; compare."
+      ],
+      "exp": "Version 1 shows one SE query per row or a CallbackDataID; version 2 is 10× fewer SE queries."
+    },
+    {
+      "t": "Aggregation table",
+      "time": "40 min",
+      "ds": "FactSalesBig",
+      "guidance": "A",
+      "steps": [
+        "Create AggSalesMonthCat in Power Query: group FactSalesBig by YearMonth, Category, RegionKey with Sum Quantity, Sum Amount, Count rows.",
+        "Set FactSalesBig to DirectQuery (or keep Import and just practise the mapping), AggSalesMonthCat to Import. Manage aggregations: map each column.",
+        "In DAX Studio, run a query by Category and check the \"Aggregation hit\" in the query plan event; then run by ProductName and confirm it misses."
+      ],
+      "exp": "One query hits the agg (Category grain), one misses (Product grain)."
+    },
+    {
+      "t": "Incremental refresh end to end",
+      "time": "40 min",
+      "ds": "FactSalesBig via SQL or a partitioned CSV folder",
+      "guidance": "A",
+      "steps": [
+        "RangeStart/RangeEnd parameters; filter step that folds.",
+        "Incremental refresh policy: archive 2 years, refresh 3 days, detect data changes on a ModifiedDate column if you have one.",
+        "Publish, refresh, then in SSMS or Tabular Editor via XMLA endpoint (needs capacity/PPU) look at the partitions created.",
+        "Simulate a late-arriving fact and confirm it is not picked up outside the refresh window. Then fix with a longer window."
+      ],
+      "exp": "Partition list shows year, quarter, month and day partitions."
+    },
+    {
+      "t": "Storage engine friendly DAX",
+      "time": "30 min",
+      "ds": "WebEvents",
+      "guidance": "A",
+      "steps": [
+        "Write Sessions With Purchase = CALCULATE(DISTINCTCOUNT(WebEvents[SessionID]), WebEvents[EventType] = \"Purchase\").",
+        "Write Conversion Rate = DIVIDE([Sessions With Purchase], DISTINCTCOUNT(WebEvents[SessionID])).",
+        "Write Avg Session Minutes two ways: (a) AVERAGEX(VALUES(SessionID), DATEDIFF(CALCULATE(MIN(EventTime)), CALCULATE(MAX(EventTime)), MINUTE)) and (b) with a calculated column SessionStart via EARLIER, then a measure. Compare the query plan cost and model size."
+      ],
+      "exp": "You can articulate when to pay the cost at refresh (column) versus at query (measure)."
+    }
+  ],
+  "int": [
+    {
+      "q": "How does VertiPaq compress data, and what is the single biggest lever?",
+      "a": "Dictionary encoding per column plus run-length encoding on the sorted values. Cardinality is the lever: fewer distinct values → smaller dictionary and longer runs. So remove high-cardinality columns, round decimals, split datetime into date and time."
+    },
+    {
+      "q": "Formula engine vs storage engine: what runs where?",
+      "a": "SE (VertiPaq) executes simple scans, filters and aggregations in parallel and is fast. FE is single-threaded and handles everything the SE cannot: iterators calling measures, complex conditions, TOPN over measures. Optimising = pushing work from FE to SE."
+    },
+    {
+      "q": "What is a CallbackDataID and why is it bad?",
+      "a": "The SE calling back into the FE per row because an expression inside an iterator cannot be executed by SE (e.g. IF, DIVIDE with a measure). It serialises the scan and defeats the SE cache."
+    },
+    {
+      "q": "Aggregations: when do they not help?",
+      "a": "When the query grain is finer than the agg table, when a measure uses DISTINCTCOUNT (needs the detail unless you build a count-distinct agg with GroupBy), or when RLS filters columns not in the agg table."
+    },
+    {
+      "q": "Incremental refresh: what happens on the first refresh after publishing, and how do you avoid a timeout?",
+      "a": "The first refresh loads all historical partitions and can time out. Publish the model with no partitions loaded, then refresh partitions in batches via XMLA (Tabular Editor / SSMS), or use bootstrap \"Apply refresh policy\" without data first."
+    },
+    {
+      "q": "Give three model-level performance rules you enforce in code review.",
+      "a": "No calculated columns on facts unless justified, no bi-directional relationships without a written reason, integer keys not text, dates without time, measures over iterators over facts, hide and remove unused columns, Fixed Decimal for currency."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "Which change reduces model size most?",
+      "o": [
+        "Rename columns",
+        "Remove a unique integer key column from a 100k-row fact",
+        "Change text to uppercase",
+        "Add a hierarchy"
+      ],
+      "a": 1,
+      "why": "Unique keys have a dictionary as large as the table."
+    },
+    {
+      "type": "mcq",
+      "q": "FILTER(FactSales, [Net Sales] > 500) versus FILTER(VALUES(DimCustomer[CustomerKey]), [Net Sales] > 500):",
+      "o": [
+        "Same cost",
+        "First is far more expensive due to per-row context transition",
+        "Second is more expensive",
+        "Both are storage-engine only"
+      ],
+      "a": 1,
+      "why": "Iterating 100k fact rows with a measure creates 100k context transitions."
+    },
+    {
+      "type": "task",
+      "q": "Produce a VertiPaq Analyzer before/after table for FactSalesBig with at least three optimisations and the % reduction of each.",
+      "hint": "Key removal, Fixed Decimal, date/time split, removing unused columns."
+    },
+    {
+      "type": "mcq",
+      "q": "Detect data changes in incremental refresh requires:",
+      "o": [
+        "A date column",
+        "A datetime column such as LastModified that folds",
+        "Nothing",
+        "A primary key"
+      ],
+      "a": 1,
+      "why": "The policy compares MAX(LastModified) per partition."
+    }
+  ]
+}

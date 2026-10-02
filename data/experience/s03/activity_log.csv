@@ -1,0 +1,7 @@
+Timestamp,User,Activity,Item,Client
+2026-04-14 08:02,dana.whitfield@northwind.example,ViewReport,Sales & Payroll (app),Browser
+2026-04-14 08:09,dana.whitfield@northwind.example,AnalyzeInExcel,Sales & Payroll model,Excel
+2026-04-14 08:11,dana.whitfield@northwind.example,ExecuteQueries,Sales & Payroll model,Excel
+2026-04-14 08:26,dana.whitfield@northwind.example,ExportReport,Sales & Payroll (app),Browser
+2026-04-14 09:40,bea.lindqvist@northwind.example,ViewReport,Sales & Payroll (app),Browser
+2026-04-14 09:44,bea.lindqvist@northwind.example,ExploreData,Sales & Payroll model,Browser

@@ -1,0 +1,99 @@
+{
+  "sql-query-0": {
+    "s": ["Deduplicate first, at the lowest grain, so nothing downstream is multiplied.", "Filter on the order header (status, customer, date) after joining lines to orders.", "Round each line to cents in its own currency, convert with the order month's rate, round again: the same convention Finance uses.", "Group by the region name; check that the five rows add up to the total."],
+    "code": [
+      {
+        "lang": "SQL", "title": "Q1 2026 gross sales by selling region (portable SQL)", "dialect": "portable",
+        "src": [
+          "WITH lines AS (",
+          "    SELECT DISTINCT * FROM order_lines             -- the March re-export duplicated some rows",
+          "),",
+          "q1 AS (",
+          "    SELECT o.SalesRegionKey,",
+          "           ROUND(ROUND(l.Qty * l.UnitPrice * (100 - l.DiscountPct) / 100.0, 2)",
+          "                 * COALESCE(fx.USDPerUnit, 1), 2) AS GrossUSD",
+          "    FROM lines AS l",
+          "    JOIN orders AS o ON o.OrderID = l.OrderID",
+          "    LEFT JOIN fx_rates AS fx",
+          "           ON fx.Month = SUBSTRING(CAST(o.OrderDate AS VARCHAR(10)), 1, 7)",
+          "          AND fx.Currency = o.Currency",
+          "    WHERE o.Status = 'Completed'",
+          "      AND o.CustomerID <> 'C19999'",
+          "      AND o.OrderDate >= '2026-01-01' AND o.OrderDate < '2026-04-01'",
+          ")",
+          "SELECT r.RegionName, ROUND(SUM(q1.GrossUSD), 2) AS GrossUSD",
+          "FROM q1",
+          "JOIN regions AS r ON r.RegionKey = q1.SalesRegionKey",
+          "GROUP BY r.RegionKey, r.RegionName",
+          "ORDER BY r.RegionKey;"
+        ],
+        "expect": { "cols": ["RegionName", "GrossUSD"], "rows": [["West", "{{uat_sales_west|num2}}"], ["South", "{{uat_sales_south|num2}}"], ["East", "{{uat_sales_east|num2}}"], ["Central", "{{uat_sales_central|num2}}"], ["Europe", "{{uat_sales_europe|num2}}"]] }
+      }
+    ],
+    "check": "West {{uat_sales_west|money0}} · South {{uat_sales_south|money0}} · East {{uat_sales_east|money0}} · Central {{uat_sales_central|money0}} · Europe {{uat_sales_europe|money0}} · total {{q1_2026_gross|money0}}.",
+    "note": "A date range (>= '2026-01-01' AND < '2026-04-01') rather than YEAR(OrderDate) = 2026 keeps the predicate index-friendly; you'll see why in the tuning topic.",
+    "verify": "Executed in CI against SQLite; expected values come from the same generated data."
+  },
+  "sql-query-1": {
+    "s": ["Count orders with COUNT(DISTINCT OrderID): after the join there is one row per line.", "Count lines with COUNT(*) on the deduplicated lines.", "Customers: COUNT(DISTINCT CustomerID). The channel rows will add up to more than the total, because some customers buy in several channels."],
+    "code": [
+      {
+        "lang": "SQL", "title": "Totals with correct counts", "dialect": "portable",
+        "src": [
+          "WITH lines AS (SELECT DISTINCT * FROM order_lines),",
+          "q1 AS (",
+          "    SELECT o.OrderID, o.CustomerID, o.Channel",
+          "    FROM lines AS l",
+          "    JOIN orders AS o ON o.OrderID = l.OrderID",
+          "    WHERE o.Status = 'Completed' AND o.CustomerID <> 'C19999'",
+          "      AND o.OrderDate >= '2026-01-01' AND o.OrderDate < '2026-04-01'",
+          ")",
+          "-- COUNT(*) here would count lines, not orders",
+          "SELECT COUNT(DISTINCT OrderID) AS Orders,",
+          "       COUNT(*) AS Lines,",
+          "       COUNT(DISTINCT CustomerID) AS Customers",
+          "FROM q1;"
+        ],
+        "expect": { "cols": ["Orders", "Lines", "Customers"], "rows": [["{{sql_q1_orders|int}}", "{{sql_q1_lines|int}}", "{{sql_buying_customers|int}}"]] }
+      }
+    ],
+    "check": "Totals: {{sql_q1_orders|int}} orders, {{sql_q1_lines|int}} lines, {{sql_buying_customers|int}} customers. Add GROUP BY Channel for the channel rows.",
+    "verify": "Executed in CI against SQLite."
+  },
+  "sql-query-2": {
+    "s": ["Start from the table whose rows you must keep: customers.", "Put every condition on the right-hand tables (status, dates, test customer) in the ON clauses, not in WHERE.", "Use COALESCE(SUM(...), 0) so customers without sales show 0, not NULL."],
+    "code": [
+      {
+        "lang": "SQL", "title": "All customers with their Q1 2026 sales", "dialect": "portable",
+        "src": [
+          "WITH lines AS (SELECT DISTINCT * FROM order_lines),",
+          "sales AS (",
+          "    SELECT o.CustomerID,",
+          "           SUM(ROUND(ROUND(l.Qty * l.UnitPrice * (100 - l.DiscountPct) / 100.0, 2) * COALESCE(fx.USDPerUnit, 1), 2)) AS GrossUSD",
+          "    FROM orders AS o",
+          "    JOIN lines AS l ON l.OrderID = o.OrderID",
+          "    LEFT JOIN fx_rates AS fx ON fx.Month = SUBSTRING(CAST(o.OrderDate AS VARCHAR(10)), 1, 7) AND fx.Currency = o.Currency",
+          "    WHERE o.Status = 'Completed' AND o.OrderDate >= '2026-01-01' AND o.OrderDate < '2026-04-01'",
+          "    GROUP BY o.CustomerID",
+          ")",
+          "SELECT COUNT(*) AS Customers,",
+          "       SUM(CASE WHEN s.CustomerID IS NULL THEN 1 ELSE 0 END) AS WithoutQ1Sales",
+          "FROM customers AS c",
+          "LEFT JOIN sales AS s ON s.CustomerID = c.CustomerID   -- filters live inside the CTE, not in WHERE",
+          "WHERE c.CustomerID <> 'C19999';"
+        ],
+        "expect": { "cols": ["Customers", "WithoutQ1Sales"], "rows": [["{{sql_customers_total|int}}", "{{sql_customers_without_q1|int}}"]] }
+      },
+      {
+        "lang": "SQL", "title": "The bug Marketing's query had", "dialect": "portable",
+        "src": [
+          "-- LEFT JOIN … WHERE o.OrderDate >= '2026-01-01'",
+          "-- For customers without orders, o.OrderDate is NULL, so the WHERE removes them:",
+          "-- the LEFT JOIN behaves like an INNER JOIN and only buying customers are returned."
+        ]
+      }
+    ],
+    "check": "{{sql_customers_total|int}} customers, {{sql_customers_without_q1|int}} with no Q1 2026 sales.",
+    "verify": "Executed in CI against SQLite."
+  }
+}

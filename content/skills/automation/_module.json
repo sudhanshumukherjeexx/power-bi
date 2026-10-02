@@ -1,0 +1,14 @@
+{
+  "id": "automation",
+  "kind": "track",
+  "order": 4,
+  "cls": "api",
+  "name": "Automation and APIs",
+  "tag": "Track",
+  "tagline": "REST APIs with service principals, tenant inventory, refresh automation, XMLA, TOM, TMSL and Tabular Editor scripting.",
+  "seo": "Power BI and Fabric automation practice: REST APIs, service principals, workspace inventory, refresh automation and monitoring, executeQueries, XMLA endpoint, TOM, TMSL and Tabular Editor scripts.",
+  "intro": "Once a team owns more than a handful of models, clicking stops scaling. This track covers the APIs and scripts BI engineers use to inventory a tenant, trigger and monitor refreshes, run tests and change models in bulk. You don't need a tenant: the files in data/tracks/automation are realistic API responses, so you can build and check your scripts offline, then point them at a real tenant when you have one.",
+  "setup": "Python 3 (requests, msal) or PowerShell 7 (MicrosoftPowerBIMgmt module). Optional: a Fabric trial tenant with an app registration. Never commit secrets: use environment variables or a key vault.",
+  "stage": "engineer",
+  "topics": ["api-rest", "api-refresh", "api-xmla"]
+}

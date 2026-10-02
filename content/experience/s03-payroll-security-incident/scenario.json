@@ -1,0 +1,92 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "s03",
+  "slug": "s03-payroll-security-incident",
+  "type": "sprint",
+  "stage": "developer",
+  "order": 1,
+  "title": "A regional manager can see other regions' payroll",
+  "seo": "Power BI row-level security incident: a West regional manager can see East payroll. Reproduce, find the RLS weakness, fix it and build an RLS test matrix.",
+  "summary": "The West regional manager opened the Sales & Payroll model in Excel and saw salaries for every region. Contain it, find out why, fix it and prove it's fixed.",
+  "minutes": 240,
+  "skills": ["security", "modeling", "testing", "governance", "communication"],
+  "prereq": ["s01"],
+  "next": "s04",
+  "verified": { "date": "2026-10-01", "context": "RLS and OLS behaviour per Microsoft Learn (Row-level security, Object-level security), Sept 2026", "review_after_days": 180 },
+  "ticket": { "id": "INC-2031", "kind": "incident", "severity": "SEV2", "priority": "High", "status": "Open", "reporter": "dana", "opened": "Tue 14 Apr 2026, 08:31", "due": "Containment within 4 hours", "labels": ["security", "rls", "payroll", "privacy"] },
+  "story": "Sam built the Sales & Payroll model last quarter so regional managers could see sales and their own team's pay in one place. It was published as an app with an audience per region.",
+  "impact": "Salary data is personal data. A manager seeing other teams' pay is a privacy breach that Compliance may have to log, and it damages trust between managers and HR. Until it is contained, every day adds people who might have seen something they shouldn't.",
+  "messages": [
+    {
+      "from": "dana", "to": "elena", "via": "email", "at": "Tue 14 Apr, 08:31", "subject": "Payroll numbers?",
+      "body": [
+        "Hi Elena, quick one. I opened the Sales & Payroll model in Excel this morning (Analyze in Excel) to build my own team summary and the pivot shows payroll for East and Central as well as West, names and all. I don't think I'm supposed to see that? In the app I only see West.",
+        "I haven't shared the file with anyone. Dana"
+      ]
+    },
+    {
+      "from": "elena", "to": "you", "via": "chat", "at": "Tue 14 Apr, 08:40",
+      "body": [
+        "Treat this as SEV2 until we know more. Contain first, investigate second. Sam is on leave today, so it's yours. I've told Ava (Compliance); she will want a written timeline.",
+        "Don't delete anything: logs and the current model definition are evidence."
+      ]
+    },
+    {
+      "from": "ava", "to": "you", "via": "email", "at": "Tue 14 Apr, 09:15", "subject": "INC-2031: what I need",
+      "body": [
+        "Hello. For my records I need: when the exposure started, who could have seen what, what was done to stop it and when, and how we know it is fixed. Please keep a timeline as you go.",
+        "Ava Martin, Compliance"
+      ]
+    }
+  ],
+  "evidence": [
+    { "id": "roles", "kind": "file", "title": "roles.tmdl (from the published model)", "file": "data/experience/s03/roles.tmdl", "desc": "The model's security roles as currently deployed." },
+    { "id": "rels", "kind": "file", "title": "relationships.csv", "file": "data/experience/s03/relationships.csv", "desc": "All relationships in the model, including cross-filter direction and whether they are active." },
+    { "id": "bridge", "kind": "file", "title": "security_user_region.csv", "file": "data/experience/s03/security_user_region.csv", "desc": "SecurityUserRegion table: which user may see which region." },
+    { "id": "emp", "kind": "file", "title": "employees.csv", "file": "data/experience/s03/employees.csv" },
+    { "id": "pay", "kind": "file", "title": "payroll_q1_2026.csv", "file": "data/experience/s03/payroll_q1_2026.csv", "desc": "FactPayroll: monthly gross pay and bonus per employee." },
+    { "id": "filters", "kind": "file", "title": "report_page_filters.csv", "file": "data/experience/s03/report_page_filters.csv", "desc": "Filters configured in the report (exported from the PBIR files)." },
+    { "id": "log", "kind": "file", "title": "activity_log.csv", "file": "data/experience/s03/activity_log.csv", "desc": "Activity events for the model and app since Monday." },
+    { "id": "app", "kind": "doc", "title": "App configuration", "body": [
+      "- App: Sales & Payroll. Audiences: West, South, East, Central, Europe managers; Sales reps; Finance.\n- Each manager audience sees the Payroll by region page; reps don't see that page.\n- Groups SG-Sales-Managers and SG-Sales-Reps have Build permission on the model so people can use Analyze in Excel."
+    ] }
+  ],
+  "tasks": [
+    "Contain the exposure within the first hour, without breaking the app for everyone else. Record what you did and when.",
+    "Reproduce the problem with View as role (or by querying as the user) and capture the evidence.",
+    "Find every reason the security didn't hold. There may be more than one.",
+    "Fix the model so security is enforced by the engine, not by the report.",
+    "Build an RLS/OLS test matrix covering each role and a representative user, and run it.",
+    "Classify the severity, write the incident notes Ava asked for, and list preventive actions."
+  ],
+  "deliverables": [
+    { "id": "contain", "t": "Containment action and timeline (what, who, when)", "artifact": "incident-report" },
+    { "id": "rca", "t": "Root cause analysis: each weakness, with evidence", "artifact": "postmortem" },
+    { "id": "fix", "t": "The corrected roles (TMDL or screenshots of Manage roles)" },
+    { "id": "matrix", "t": "RLS/OLS test matrix: user, role, expected regions, forbidden regions, payroll visible?, expected total, actual, pass/fail", "artifact": "rls-test-matrix" },
+    { "id": "comms", "t": "Notes for Compliance: exposure window, who could see what, how we know it's fixed" }
+  ],
+  "hints": [
+    "The app showed Dana only West, but Excel showed everything. Which of those two is enforced by the engine and which by the report? Look at report_page_filters.csv.",
+    "RLS filters flow along active relationships only. Which table holds the RLS filter, and is there an active path from that table to FactPayroll? relationships.csv has the answer.",
+    "There is a second problem that Dana didn't report. Read roles.tmdl again and ask what a Sales Rep can see of FactPayroll, then check who used Explore data."
+  ],
+  "rubric": [
+    { "id": "contain", "n": "Containment", "w": 15, "good": "Exposure stopped within the hour (e.g. remove Build permission or the payroll table from the app audience) without taking sales reporting down for everyone; timeline recorded." },
+    { "id": "correct", "n": "Technical correctness", "w": 25, "good": "Both weaknesses found and fixed in the model: payroll filtered by the user's regions through an active path, and reps blocked from payroll by object-level security." },
+    { "id": "testing", "n": "Testing", "w": 25, "good": "A test matrix with every role and at least one user per role, expected vs actual payroll totals, run after the fix, all passing, kept for future releases." },
+    { "id": "invest", "n": "Investigation quality", "w": 15, "good": "Evidence-based: activity log, relationships and roles cited; distinguishes report filters from security." },
+    { "id": "comm", "n": "Communication", "w": 20, "good": "Ava gets a factual timeline and exposure statement; Dana is thanked for reporting; no blame on Sam in writing." }
+  ],
+  "retro": [
+    "Why did the app look secure to everyone who tested it?",
+    "What would have caught this before release? Write it as a test that runs on every deployment.",
+    "Should payroll be in the same model as sales at all? Argue both sides.",
+    "Who else might have seen data they shouldn't, and how would you find out?"
+  ],
+  "refs": [
+    { "title": "Row-level security (RLS) with Power BI", "url": "https://learn.microsoft.com/en-us/fabric/security/service-admin-row-level-security" },
+    { "title": "Object-level security (OLS)", "url": "https://learn.microsoft.com/en-us/fabric/security/service-admin-object-level-security" },
+    { "title": "RLS guidance in Power BI Desktop", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/rls-guidance" }
+  ]
+}

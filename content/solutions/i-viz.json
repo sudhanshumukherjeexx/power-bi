@@ -1,0 +1,83 @@
+{
+  "i-viz-0": {
+    "s": [
+      "New page \"Customer Detail\". In the Visualizations pane → Drill through → add CustomerName. Keep all filters = On.",
+      "Power BI adds a back button automatically. Style it with Format → Button.",
+      "On the summary page, right-click a customer bar → Drill through → Customer Detail."
+    ],
+    "check": "The detail page shows that customer only, and the Region slicer selection carries over. Once you add ProductName as a second drillthrough field, either field can trigger the page."
+  },
+  "i-viz-1": {
+    "s": [
+      "New page → Format page → Page information → Allow use as tooltip = On. Canvas settings → Type: Tooltip.",
+      "Add a Net Sales card, a SubCategory bar chart and a card with the measure below.",
+      "Summary page → Category bar chart → Format → General → Tooltips → Type: Report page → Page: your tooltip page."
+    ],
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Tooltip text measure",
+        "src": [
+          "Tooltip Text = [Orders] & \" orders, \" & [Customers Buying] & \" customers\""
+        ]
+      }
+    ],
+    "check": "Hovering Water shows Water numbers only ($12,924.07 net)."
+  },
+  "i-viz-2": {
+    "s": [
+      "Modeling → New parameter → Fields → add Net Sales, Orders, Margin %, Total Qty → name \"Measure Picker\" → Add slicer.",
+      "Again for \"Axis Picker\" with Category, RegionName, Segment, MonthName.",
+      "Clustered bar chart: Y-axis = Axis Picker, X-axis = Measure Picker."
+    ],
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "What Power BI generates",
+        "src": [
+          "Measure Picker = {",
+          "    (\"Net Sales\", NAMEOF ( '_Measures'[Net Sales] ), 0),",
+          "    (\"Orders\", NAMEOF ( '_Measures'[Orders] ), 1),",
+          "    (\"Margin %\", NAMEOF ( '_Measures'[Margin %] ), 2),",
+          "    (\"Total Qty\", NAMEOF ( '_Measures'[Total Qty] ), 3)",
+          "}"
+        ]
+      }
+    ],
+    "check": "4 measures × 4 axes = 16 combinations. The third column is the sort order of the choices in the slicer."
+  },
+  "i-viz-3": {
+    "s": [
+      "Place the chart and the table at identical positions and sizes (Format → General → Properties).",
+      "View → Selection pane: hide the table → Bookmarks → Add \"Show chart\". Hide the chart, show the table → Add \"Show table\". Right-click each bookmark → untick Data and Current page, keep Display.",
+      "Add two buttons. In each bookmark, show the \"pressed\" style button and hide the other. Link each button → Action → Bookmark.",
+      "Group the four objects (Ctrl-click in Selection pane → Group)."
+    ],
+    "check": "Changing a slicer and then toggling keeps the slicer, because Data is unticked. Grouping or ungrouping can break bookmarks that captured the old structure: update them afterwards."
+  },
+  "i-viz-4": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Dynamic title and colour",
+        "src": [
+          "Title =",
+          "\"Net sales for \"",
+          "    & IF (",
+          "        ISFILTERED ( DimRegion[RegionName] ),",
+          "        SELECTEDVALUE ( DimRegion[RegionName], \"multiple regions\" ),",
+          "        \"all regions\"",
+          "    )",
+          "    & \" – \" & FORMAT ( MAX ( Dates[Date] ), \"MMM yyyy\" )",
+          "",
+          "Bar Colour = IF ( [Margin %] < 0.4, \"#B23A2E\", \"#1F7A4D\" )"
+        ]
+      }
+    ],
+    "s": [
+      "Chart → Format → Title → fx → Field value → Title.",
+      "Columns/Bars → Colour → fx → Format style: Field value → Bar Colour."
+    ],
+    "check": "Choose West: \"Net sales for West – Dec 2026\". MAX(Dates[Date]) returns the last date in the Dates table, so use MAX(FactSales[OrderDate]) if you want \"Mar 2026\"."
+  }
+}

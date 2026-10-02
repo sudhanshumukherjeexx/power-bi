@@ -1,0 +1,16 @@
+$ git log --oneline --graph --all -6
+* 8c41f2e (HEAD -> feature/exclude-staff) Exclude Staff channel from Net Sales; add Net Sales LY
+| * 51ab0d9 (origin/sam/rename-net-revenue) Rename Net Sales to Net Revenue (Finance wording); add Net Revenue %
+|/
+* 2e9d6c4 (origin/main, main) Add Refunds and Net Sales measures
+* a17b3f0 Initial PBIP: Sales semantic model
+
+$ git merge origin/sam/rename-net-revenue
+Auto-merging Sales.SemanticModel/definition/tables/_Measures.tmdl
+CONFLICT (content): Merge conflict in Sales.SemanticModel/definition/tables/_Measures.tmdl
+Automatic merge failed; fix conflicts and then commit the result.
+
+$ grep -rn "Net Sales" Sales.Report/definition/pages | head -5
+Sales.Report/definition/pages/1a2b/visuals/kpi01/visual.json:  "Measure": { "Property": "Net Sales" }
+Sales.Report/definition/pages/1a2b/visuals/line02/visual.json:  "Measure": { "Property": "Net Sales" }
+Sales.Report/definition/pages/9f3c/visuals/tbl01/visual.json:  "Measure": { "Property": "Net Sales" }

@@ -1,0 +1,32 @@
+{
+  "$schema": "../../schema/scenario-solution.schema.json",
+  "summary": "CR1 changes Q1 2026 net sales by {{cr1_delta|smoney0}} (to {{cr1_net_q1_2026|money0}}), CR2 by a further −{{cr2_ship|money0}} (to {{cr2_net_q1_2026|money0}}), CR3 changes security, not numbers, and CR4 changes Q1 itself: 13 weeks from 28 Dec to 28 Mar give {{cr4_gross_q1|money0}} of gross sales instead of {{q1_2026_gross|money0}} ({{cr4_delta|smoney0}}). Implement CR1 and CR2 as new or explicitly versioned measures (people have seen the old number), CR3 with object-level security, and CR4 as columns on the date table, never as a second date table.",
+  "steps": [
+    "CR1: returns now relate to DimDate through ReturnDate. Net Sales changes by {{cr1_delta|smoney0}} for Q1 2026: returns received in Q1 for 2025 orders now count, and April returns of Q1 orders move to April. Commission reports use Net Sales, so check with Sales before changing that measure, or add Net Sales (return-dated).",
+    "CR2: deduct ShippingRefund in the same measure: a further {{cr2_ship|money0}} for Q1. This is the ledger direction from Sprint 02; consider pointing users to Net Revenue (ledger) instead of creating a third definition.",
+    "CR3: a role for European contractors with OLS on the salary columns (or the payroll table). Test with the matrix from Sprint 03; no numbers change.",
+    "CR4: add FiscalYear445, FiscalPeriod445 and FiscalQuarter445 columns to DimDate (FY2026 starts Sun 28 Dec 2025; periods of 4, 4 and 5 weeks). P1 to 24 Jan {{cr4_p1|money0}}, P2 to 21 Feb {{cr4_p2|money0}}, P3 to 28 Mar {{cr4_p3|money0}}.",
+    "Regression: Gross Sales by calendar month unchanged by CR1–CR3; every RLS test still passes after CR3; YoY on the 4-4-5 calendar needs FY2025 periods too, so check with Finance which year-ago periods they compare to."
+  ],
+  "numbers": { "title": "Impact on Q1 2026", "cols": ["Change", "Before", "After", "Effect"], "rows": [
+    ["CR1 returns by return date", "{{q1_2026_net|money0}}", "{{cr1_net_q1_2026|money0}}", "{{cr1_delta|smoney0}}"],
+    ["CR2 shipping refunds deducted", "{{cr1_net_q1_2026|money0}}", "{{cr2_net_q1_2026|money0}}", "−{{cr2_ship|money0}}"],
+    ["CR3 salary security for EU contractors", "n/a", "n/a", "security only"],
+    ["CR4 Q1 on 4-4-5 (gross sales)", "{{q1_2026_gross|money0}}", "{{cr4_gross_q1|money0}}", "{{cr4_delta|smoney0}}"]
+  ] },
+  "artifacts": [{ "title": "Power Query: 4-4-5 columns on the date table", "lang": "M", "body": [
+    "// FY2026 starts on Sunday 28 Dec 2025; 52-week year in 4-4-5 periods",
+    "AddDays   = Table.AddColumn(Dates, \"FyDay\", each Duration.Days([Date] - #date(2025, 12, 28)), Int64.Type),",
+    "AddWeek   = Table.AddColumn(AddDays, \"FyWeek\", each Number.IntegerDivide([FyDay], 7) + 1, Int64.Type),",
+    "AddPeriod = Table.AddColumn(AddWeek, \"FiscalPeriod445\", each",
+    "    let w = Number.Mod([FyWeek] - 1, 13) + 1, q = Number.IntegerDivide([FyWeek] - 1, 13)",
+    "    in q * 3 + (if w <= 4 then 1 else if w <= 8 then 2 else 3), Int64.Type),",
+    "AddQuarter = Table.AddColumn(AddPeriod, \"FiscalQuarter445\", each \"FQ\" & Text.From(Number.IntegerDivide([FyWeek] - 1, 13) + 1), type text)"
+  ] }],
+  "review": {
+    "junior": "Edits Net Sales in place for CR1 and CR2 and adds a second date table for CR4.",
+    "competent": "Implements each CR correctly.",
+    "senior": "Quantifies each CR before implementing it, protects existing consumers, implements as separate reviewable changes and runs regression checks.",
+    "architect": "Uses the CRs to retire ad-hoc definitions: points Finance users to the certified ledger measure and puts fiscal calendars in the shared date dimension."
+  }
+}

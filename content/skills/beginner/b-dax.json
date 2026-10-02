@@ -1,0 +1,141 @@
+{
+  "id": "b-dax",
+  "name": "DAX fundamentals: measures that add up",
+  "ds": [
+    "FactSales",
+    "DimProduct",
+    "DimCustomer"
+  ],
+  "skills": [
+    "dax"
+  ],
+  "stage": "analyst",
+  "refs": [
+    {
+      "title": "DAX basics in Power BI Desktop",
+      "url": "https://learn.microsoft.com/en-us/power-bi/transform-model/desktop-quickstart-learn-dax-basics"
+    },
+    {
+      "title": "DAX function reference",
+      "url": "https://learn.microsoft.com/en-us/dax/dax-function-reference"
+    }
+  ],
+  "asg": [
+    {
+      "t": "The core measure set",
+      "time": "30 min",
+      "ds": "FactSales, DimProduct",
+      "guidance": "A",
+      "steps": [
+        "Create a dedicated \"_Measures\" table (Enter Data, one dummy column, delete it after the first measure).",
+        "Write: Total Qty, Gross Sales = SUMX(FactSales, FactSales[Quantity] * FactSales[UnitPrice]), Discount Amt = SUMX(FactSales, FactSales[Quantity] * FactSales[UnitPrice] * FactSales[Discount]), Net Sales = [Gross Sales] - [Discount Amt].",
+        "Write COGS = SUMX(FactSales, FactSales[Quantity] * RELATED(DimProduct[UnitCost])) and Margin % = DIVIDE([Net Sales] - [COGS], [Net Sales]).",
+        "Format every currency measure as $ with 2 decimals, Margin % as percentage with 1 decimal."
+      ],
+      "exp": "A card for Net Sales shows a positive number. Margin % between 40% and 65% at the total level. Returns (negative quantity) reduce the totals automatically."
+    },
+    {
+      "t": "Counting things correctly",
+      "time": "20 min",
+      "ds": "FactSales",
+      "guidance": "A",
+      "steps": [
+        "Write Order Lines = COUNTROWS(FactSales), Orders = DISTINCTCOUNT(FactSales[OrderID]), Customers Buying = DISTINCTCOUNT(FactSales[CustomerKey]).",
+        "Write Avg Order Value = DIVIDE([Net Sales], [Orders]).",
+        "Put all four in a table by Channel, then by Category. In both, check whether the Orders total equals the sum of the rows. Channel is stored on each line here, so one order can span channels as well as categories."
+      ],
+      "exp": "Order Lines total = 100. Orders total = 54. Orders by Channel adds up to 77 and Orders by Category to 89, both more than 54, because one order can span channels and categories. A distinct count never adds up across rows."
+    },
+    {
+      "t": "First CALCULATE",
+      "time": "25 min",
+      "ds": "FactSales, DimProduct",
+      "guidance": "A",
+      "steps": [
+        "Write Camping Sales = CALCULATE([Net Sales], DimProduct[Category] = \"Camping\").",
+        "Put it in a table by Category. Observe the same number on every row. Explain why to yourself before continuing.",
+        "Write Sales All Categories = CALCULATE([Net Sales], REMOVEFILTERS(DimProduct[Category])) and % of Total = DIVIDE([Net Sales], [Sales All Categories]).",
+        "Add a Region slicer. % of Total must still sum to 100% within the selected region."
+      ],
+      "exp": "% of Total column sums to exactly 100% with or without a region selected."
+    },
+    {
+      "t": "Calculated columns you can defend",
+      "time": "15 min",
+      "ds": "FactSales, DimCustomer",
+      "guidance": "A",
+      "steps": [
+        "On FactSales add Line Type = IF(FactSales[Quantity] < 0, \"Return\", \"Sale\").",
+        "On DimCustomer add Tenure Years = DATEDIFF(DimCustomer[JoinDate], DATE(2026,3,31), YEAR).",
+        "On DimCustomer add Tenure Band = SWITCH(TRUE(), [Tenure Years] >= 3, \"3+ yrs\", [Tenure Years] >= 1, \"1–2 yrs\", \"New\").",
+        "Use Line Type as a slicer and Tenure Band on an axis. Now explain why neither could have been a measure."
+      ],
+      "exp": "Slicer shows Sale / Return. Return count is 7."
+    }
+  ],
+  "int": [
+    {
+      "q": "Why SUMX(FactSales, Quantity * UnitPrice) rather than a calculated column Amount then SUM?",
+      "a": "The column stores 100 extra values (millions in real life) that compress poorly because they are nearly unique. SUMX computes on the fly and is usually just as fast for simple arithmetic. Rule: store what you slice by, compute what you sum."
+    },
+    {
+      "q": "What does DIVIDE do that / does not?",
+      "a": "Returns BLANK (or an alternate result) on division by zero instead of an error, and BLANK rows disappear from visuals, which is usually what you want."
+    },
+    {
+      "q": "Explain \"filter context\" with the Camping Sales example.",
+      "a": "Every cell in a visual is evaluated with filters coming from rows, columns, slicers and page filters. CALCULATE with Category = \"Camping\" overwrites the Category filter, so every row shows the Camping number regardless of the row's category."
+    },
+    {
+      "q": "Why do DISTINCTCOUNT totals not add up across rows?",
+      "a": "The same OrderID can appear under several categories; the total counts it once, the rows count it once each. Non-additive measures are correct by design; teach your users, do not \"fix\" the total."
+    },
+    {
+      "q": "What is the difference between BLANK and 0 in a visual, and how do you show 0?",
+      "a": "Blank rows are removed from visuals; zeros are shown. To force zeros use [Measure] + 0 (careful, it will show every dimension member) or the \"Show items with no data\" option."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "CALCULATE([Net Sales], DimProduct[Category] = \"Camping\") in a table by Category shows:",
+      "o": [
+        "Camping sales only on the Camping row",
+        "The Camping number on every row",
+        "An error",
+        "Blank on non-Camping rows"
+      ],
+      "a": 1,
+      "why": "The filter argument replaces the existing Category filter on every row."
+    },
+    {
+      "type": "mcq",
+      "q": "Which is correct for average price per unit sold?",
+      "o": [
+        "AVERAGE(FactSales[UnitPrice])",
+        "DIVIDE([Gross Sales], [Total Qty])",
+        "AVERAGEX(FactSales, FactSales[UnitPrice])",
+        "SUM(UnitPrice) / COUNTROWS(FactSales)"
+      ],
+      "a": 1,
+      "why": "A weighted average must divide total revenue by total units; the others average line prices regardless of quantity."
+    },
+    {
+      "type": "task",
+      "q": "Build a table: Segment, Net Sales, Margin %, Orders, Avg Order Value. Which Segment has the highest Avg Order Value? State the value.",
+      "hint": "Outfitter buys in larger quantities; check your DISTINCTCOUNT is on OrderID not SalesKey."
+    },
+    {
+      "type": "mcq",
+      "q": "Tenure Band should be a calculated column because:",
+      "o": [
+        "Measures cannot use SWITCH",
+        "It must be usable on an axis and slicer",
+        "It is faster",
+        "Columns can reference other columns"
+      ],
+      "a": 1,
+      "why": "Axes and slicers need stored values; measures only exist inside visual cells."
+    }
+  ]
+}

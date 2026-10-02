@@ -1,0 +1,8 @@
+Constraint,Detail
+Capacity,P1 Premium capacity is being retired at renewal (Dec 2026). Equivalent Fabric capacity is F64.
+Growth,Sales fact grows ~4M rows a month; web clickstream ~8M a month.
+Latency,Operations wants fulfilment status within 15 minutes; everyone else is daily or 4-hourly.
+Team,"2 BI developers (Power Query, DAX), 1 data engineer (SQL, some Python). No Spark experience."
+Budget,No increase in platform spend next year without a business case; one-off migration effort up to 8 person-weeks.
+Security,RLS by region on Sales; Finance data restricted to Finance group; audit wants one place to manage access.
+Source load,The WMS database team complains that DirectQuery from Power BI causes CPU spikes at 9am.

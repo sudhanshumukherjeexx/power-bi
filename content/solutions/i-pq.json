@@ -1,0 +1,144 @@
+{
+  "i-pq-0": {
+    "code": [
+      {
+        "lang": "M",
+        "title": "Unpivot with the target kept as a column",
+        "src": [
+          "let",
+          "    Source = SurveyWide,",
+          "    Targets = Table.SelectColumns(Source, {\"StoreCode\", \"Target-2026\"}),",
+          "    WithoutTarget = Table.RemoveColumns(Source, {\"Target-2026\"}),",
+          "    UnpivotedMonths = Table.UnpivotOtherColumns(WithoutTarget, {\"StoreCode\", \"StoreName\", \"RegionKey\"}, \"MonthYear\", \"Score\"),",
+          "    SplitMonthAndYear = Table.SplitColumn(UnpivotedMonths, \"MonthYear\", Splitter.SplitTextByDelimiter(\"-\"), {\"Month\", \"Year\"}),",
+          "    AddedMonthDate = Table.AddColumn(SplitMonthAndYear, \"MonthDate\",",
+          "        each Date.FromText(\"1 \" & [Month] & \" \" & [Year], [Culture = \"en-US\"]), type date),",
+          "    MergedTarget = Table.NestedJoin(AddedMonthDate, {\"StoreCode\"}, Targets, {\"StoreCode\"}, \"T\", JoinKind.LeftOuter),",
+          "    ExpandedTarget = Table.ExpandTableColumn(MergedTarget, \"T\", {\"Target-2026\"}, {\"Target\"}),",
+          "    Typed = Table.TransformColumnTypes(ExpandedTarget,",
+          "        {{\"RegionKey\", Int64.Type}, {\"Score\", type number}, {\"Target\", type number}})",
+          "in",
+          "    Typed"
+        ]
+      }
+    ],
+    "check": "36 rows (12 stores × 3 months). Target = 4.5 on every row.",
+    "note": "Unpivoting before removing Target-2026 produces 48 rows, with \"Target\" posing as a month."
+  },
+  "i-pq-1": {
+    "code": [
+      {
+        "lang": "M",
+        "title": "fnCleanMoney",
+        "src": [
+          "(t as nullable text) as nullable number =>",
+          "let",
+          "    s = Text.Remove(t ?? \"\", {\"$\", \" \", \"U\", \"S\", \"D\", \",\"}),",
+          "    n = try Number.From(s, \"en-US\") otherwise null",
+          "in",
+          "    n"
+        ]
+      },
+      {
+        "lang": "M",
+        "title": "fnParseDate (culture order decides ambiguous dates)",
+        "src": [
+          "(t as nullable text) as nullable date =>",
+          "let",
+          "    s = Text.Trim(t ?? \"\")",
+          "in",
+          "    if s = \"\" then null",
+          "    else try Date.FromText(s, [Culture = \"en-US\"])",
+          "    otherwise try Date.FromText(s, [Culture = \"en-GB\"])",
+          "    otherwise try Date.FromText(s)",
+          "    otherwise null"
+        ]
+      }
+    ],
+    "check": "Zero errors. \"N/A\" → null. With en-US tried first, 09-01-2026 becomes 1 Sep 2026 and 06/02/2026 becomes 2 Jun 2026, because en-US succeeds before en-GB is ever tried.",
+    "note": "Both of those are wrong for this export: the order sequence puts them on 9 Jan and 6 Feb. A culture list can't resolve genuinely ambiguous dates. Only a rule about the source can. Add a check step that flags dates outside Jan–Mar 2026."
+  },
+  "i-pq-2": {
+    "code": [
+      {
+        "lang": "M",
+        "title": "Config table and lookup",
+        "src": [
+          "// Query: Config",
+          "#table(",
+          "    type table [Environment = text, Path = text],",
+          "    {",
+          "        {\"Dev\",  \"https://contoso-my.sharepoint.com/personal/you/Documents/Dev/FactSales.csv\"},",
+          "        {\"Test\", \"https://contoso-my.sharepoint.com/personal/you/Documents/Test/FactSales.csv\"},",
+          "        {\"Prod\", \"https://contoso-my.sharepoint.com/personal/you/Documents/Prod/FactSales.csv\"}",
+          "    }",
+          ")",
+          "",
+          "// First steps of the main query",
+          "SourcePath = Table.SelectRows(Config, each [Environment] = Environment){0}[Path],",
+          "Source = Csv.Document(Web.Contents(SourcePath), [Delimiter = \",\", Encoding = 65001])"
+        ]
+      }
+    ],
+    "check": "Switching Environment and refreshing loads a different file with no code change.",
+    "note": "The Service may refuse scheduled refresh with \"dynamic data source\" because the URL is computed by a query. If that happens, make the path itself a parameter (with a list of allowed values). The Service treats parameter-driven sources as static."
+  },
+  "i-pq-3": {
+    "code": [
+      {
+        "lang": "M",
+        "title": "Approach A: merge on week start",
+        "src": [
+          "let",
+          "    Source = FactSales,",
+          "    AddedWeekStart = Table.AddColumn(Source, \"WeekStart\", each Date.StartOfWeek([OrderDate], Day.Monday), type date),",
+          "    EurRates = Table.SelectRows(ExchangeRates, each [Currency] = \"EUR\"),",
+          "    Merged = Table.NestedJoin(AddedWeekStart, {\"WeekStart\"}, EurRates, {\"RateDate\"}, \"Rate\", JoinKind.LeftOuter),",
+          "    Expanded = Table.ExpandTableColumn(Merged, \"Rate\", {\"RateToUSD\"}, {\"EURtoUSD\"})",
+          "in",
+          "    Expanded"
+        ]
+      },
+      {
+        "lang": "M",
+        "title": "Approach B: last rate on or before the date",
+        "src": [
+          "let",
+          "    Source = FactSales,",
+          "    EurRates = Table.Buffer(Table.SelectRows(ExchangeRates, each [Currency] = \"EUR\")),",
+          "    AddedRate = Table.AddColumn(Source, \"EURtoUSD\", each",
+          "        let",
+          "            d = [OrderDate],",
+          "            eligible = Table.SelectRows(EurRates, each [RateDate] <= d)",
+          "        in",
+          "            if Table.IsEmpty(eligible) then null",
+          "            else Table.Max(eligible, \"RateDate\")[RateToUSD], type number),",
+          "    AddedNetEUR = Table.AddColumn(AddedRate, \"NetSalesEUR\",",
+          "        each [Quantity] * [UnitPrice] * (1 - [Discount]) / [EURtoUSD], type number)",
+          "in",
+          "    AddedNetEUR"
+        ]
+      }
+    ],
+    "check": "99 of 100 rows get a rate. The one order dated before 5 Jan 2026 (the first Monday rate) gets null in both approaches. Fall back to the earliest rate if the business agrees.",
+    "note": "RateToUSD is USD per 1 EUR, so USD → EUR means divide, not multiply."
+  },
+  "i-pq-4": {
+    "code": [
+      {
+        "lang": "M",
+        "title": "Parameters and the filter step",
+        "src": [
+          "// Parameter queries (Manage Parameters → New, type Date/Time)",
+          "RangeStart = #datetime(2026, 1, 1, 0, 0, 0) meta [IsParameterQuery = true, Type = \"DateTime\", IsParameterQueryRequired = true]",
+          "RangeEnd   = #datetime(2026, 4, 1, 0, 0, 0) meta [IsParameterQuery = true, Type = \"DateTime\", IsParameterQueryRequired = true]",
+          "",
+          "// In FactSales, as early as possible",
+          "Filtered = Table.SelectRows(Source, each [OrderDate] >= RangeStart and [OrderDate] < RangeEnd)"
+        ]
+      }
+    ],
+    "check": "Against SQL, right-click Filtered → View Native Query shows a WHERE clause. Against a CSV the option is always greyed out: files never fold.",
+    "note": "Use >= on one end and < on the other, or rows on the boundary load twice. OrderDate must be Date/Time to compare with Date/Time parameters."
+  }
+}

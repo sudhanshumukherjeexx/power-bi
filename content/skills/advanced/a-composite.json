@@ -1,0 +1,156 @@
+{
+  "id": "a-composite",
+  "name": "Composite models, DirectQuery and hybrid tables",
+  "ds": [
+    "FactSales",
+    "DimProduct"
+  ],
+  "skills": [
+    "modeling",
+    "performance",
+    "architecture"
+  ],
+  "stage": "senior",
+  "why": {
+    "matters": "Storage mode is an architecture decision: it fixes latency, cost and which DAX features you can use.",
+    "failure": "A DirectQuery model \"for real-time\" hammers the ERP database at 9am and the operations team blocks the service account.",
+    "use": "Import by default; DirectQuery or hybrid tables when latency truly matters; Dual for shared dimensions; Direct Lake when data already lives in OneLake.",
+    "avoid": "Choosing DirectQuery because \"real time\" was said in a meeting. Ask what latency the decision actually needs."
+  },
+  "verified": {
+    "date": "2026-10-01",
+    "context": "Storage modes, composite models and Direct Lake docs, Sept 2026",
+    "cert": "PL-300 (2026-04-20); DP-600 (2026-10-19)",
+    "review_after_days": 120
+  },
+  "refs": [
+    {
+      "title": "Storage mode in Power BI Desktop",
+      "url": "https://learn.microsoft.com/en-us/power-bi/transform-model/desktop-storage-mode"
+    },
+    {
+      "title": "Use composite models",
+      "url": "https://learn.microsoft.com/en-us/power-bi/transform-model/desktop-composite-models"
+    },
+    {
+      "title": "Hybrid tables",
+      "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/service-dataset-modes-understand"
+    }
+  ],
+  "asg": [
+    {
+      "t": "DirectQuery reality check",
+      "time": "40 min",
+      "ds": "FactSalesBig in SQL (any free SQL: SQL Express, Postgres, or Fabric warehouse)",
+      "guidance": "A",
+      "steps": [
+        "Load FactSalesBig to a SQL database. Connect with DirectQuery. Import the dimensions.",
+        "Build the same summary page as Beginner. Open Performance Analyzer, copy a visual's DAX query and the generated SQL.",
+        "Add a measure with DISTINCTCOUNT and one with a text-based calculated column. Observe which one makes the SQL explode or fails (\"unsupported\").",
+        "Set \"Assume referential integrity\" on relationships and compare the SQL (INNER vs LEFT JOIN)."
+      ],
+      "exp": "You can show one generated SQL statement before and after Assume referential integrity."
+    },
+    {
+      "t": "Composite: extend a shared model",
+      "time": "40 min",
+      "ds": "Your published shared model",
+      "guidance": "A",
+      "steps": [
+        "Desktop → connect live to the published Northwind model. Then \"Make changes to this model\" to turn it into a DirectQuery-to-semantic-model composite.",
+        "Import a local Excel of sales targets and relate it to the remote DimRegion.",
+        "Note the \"limited relationship\" icon. Write a measure that uses both. Publish.",
+        "Delete a column in the source model and refresh the composite: read the error."
+      ],
+      "exp": "A chain: your report → composite → shared model. You can explain what breaks upstream changes."
+    },
+    {
+      "t": "Hybrid table",
+      "time": "30 min",
+      "ds": "FactSalesBig in SQL",
+      "guidance": "A",
+      "steps": [
+        "Incremental refresh policy on the DirectQuery table with \"Get the latest data in real time with DirectQuery\" on (needs Premium/Fabric capacity).",
+        "Publish, refresh, inspect partitions: import partitions for history and one DirectQuery partition for today.",
+        "Insert a row in SQL for today and confirm it appears without refresh."
+      ],
+      "exp": "Today's data is live; history is imported."
+    },
+    {
+      "t": "Storage mode decision table",
+      "time": "20 min",
+      "ds": "—",
+      "guidance": "A",
+      "steps": [
+        "Write a one-page decision table in a text box: for Import, DirectQuery, Dual, Direct Lake list max size, latency, DAX limitations, RLS behaviour, refresh needs.",
+        "Set DimProduct to Dual and explain in a comment why dimensions in a composite should be Dual."
+      ],
+      "exp": "You choose Dual for dimensions shared between an import agg and a DQ fact, and you can say why."
+    }
+  ],
+  "int": [
+    {
+      "q": "Why should dimensions be in Dual storage mode in a composite model?",
+      "a": "Dual lets the engine answer from cache when the query only touches imported tables (the agg) and fall back to DirectQuery when joined to the DQ fact. Import-only dimensions would force a limited relationship to the DQ fact."
+    },
+    {
+      "q": "What is a limited (weak) relationship?",
+      "a": "A relationship across source groups (e.g. import ↔ DirectQuery from different sources) or many-to-many. No blank row, RELATED does not work, referential integrity not assumed, filters pass as IN lists."
+    },
+    {
+      "q": "DirectQuery over a shared semantic model: what is the security and refresh story?",
+      "a": "RLS on the source model applies; the composite can add its own RLS on local tables only. The remote part never refreshes locally; local import tables need their own schedule. Both models must live in workspaces the consumer can access or use \"Single sign-on\"-like chaining permissions."
+    },
+    {
+      "q": "Give three DAX functions that are not supported or are slow over DirectQuery to SQL.",
+      "a": "Time intelligence over non-date columns, EARLIER-style iterators (turned into correlated subqueries), text functions in calculated columns, and DISTINCTCOUNT over large tables generating COUNT(DISTINCT) per group."
+    },
+    {
+      "q": "When is Import the wrong choice even if the data fits?",
+      "a": "Regulatory need for real-time data, source of truth that changes every minute, data that must not leave the source system, or a model size that exceeds capacity memory once refreshed (needs 2× during refresh)."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "Assume referential integrity changes the generated SQL from:",
+      "o": [
+        "UNION to JOIN",
+        "LEFT OUTER JOIN to INNER JOIN",
+        "INNER to LEFT",
+        "No change"
+      ],
+      "a": 1,
+      "why": "Inner joins are faster but hide fact rows with no matching dimension."
+    },
+    {
+      "type": "mcq",
+      "q": "A Dual-mode table:",
+      "o": [
+        "Is always imported",
+        "Is always DirectQuery",
+        "Behaves as import or DQ depending on the query",
+        "Is a hybrid table"
+      ],
+      "a": 2,
+      "why": "Dual is the definition of that behaviour."
+    },
+    {
+      "type": "task",
+      "q": "Build a composite model over your shared Northwind model plus a local targets table, publish it, and list every feature that became unavailable versus a pure import model.",
+      "hint": "Calculated tables on remote, some format options, Q&A, certain visuals."
+    },
+    {
+      "type": "mcq",
+      "q": "Hybrid tables require:",
+      "o": [
+        "Pro workspace",
+        "Premium/Fabric capacity",
+        "A gateway in personal mode",
+        "Dataflows"
+      ],
+      "a": 1,
+      "why": "DirectQuery partitions within an incremental refresh policy are a capacity feature."
+    }
+  ]
+}

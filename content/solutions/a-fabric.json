@@ -1,0 +1,104 @@
+{
+  "a-fabric-0": {
+    "s": [
+      "Fabric workspace → New → Dataflow Gen2 → Get data → Blank query → paste the Beginner clean-up M (replace Source with a OneLake file or web URL).",
+      "Query settings → Data destination → Lakehouse → new table \"orders_clean\" → Replace.",
+      "Model A: Lakehouse SQL analytics endpoint → New semantic model. Model B: Power BI Desktop → Get Data → Dataflows.",
+      "Rename a source column → refresh the dataflow → compare the error messages."
+    ],
+    "check": "Both models consume the same cleaned output. When the source changes, one fix in the dataflow repairs both."
+  },
+  "a-fabric-1": {
+    "s": [
+      "Lakehouse → Files → Upload → all 14 CSVs → right-click each → Load to Tables → New table.",
+      "New semantic model from the Lakehouse → select the tables → in the web modeling view drag the relationships from the Beginner star.",
+      "DAX query view: EVALUATE TABLETRAITS(). Every table should show [DirectLakeFallbackInfo] = None.",
+      "In the SQL analytics endpoint: CREATE VIEW dbo.vw_sales AS SELECT * FROM dbo.factsales WHERE Quantity > 0. Add it to a Direct Lake on SQL model, frame (refresh), rerun TABLETRAITS: the view reports a fallback reason. Model properties → Direct Lake behavior → DirectLakeOnly: the visual now errors.",
+      "On Direct Lake on OneLake the view cannot be added. Create the filtered table with a notebook or a materialized lake view instead."
+    ],
+    "check": "Direct Lake on SQL falls back for: non-materialized SQL views, RLS/OLS/dynamic data masking defined on the SQL analytics endpoint, a table exceeding the capacity guardrails (files, row groups, rows), and tables that have not been framed. Direct Lake on OneLake has no fallback: the same conditions fail the query or the refresh.",
+    "note": "Older material says calculated columns \"cause fallback\". They don't: Direct Lake on SQL doesn't support calculated columns that reference Direct Lake tables at all, and Direct Lake on OneLake supports them only in preview with user context. Check the date on anything you read about Direct Lake.",
+    "verify": "Checked against Microsoft Learn, Direct Lake overview (2026-09-02) and How Direct Lake works (2026-09-09)."
+  },
+  "a-fabric-2": {
+    "code": [
+      {
+        "lang": "Python",
+        "title": "PySpark notebook: sessions table",
+        "src": [
+          "from pyspark.sql import functions as F",
+          "",
+          "events = (spark.read.option(\"header\", True).option(\"inferSchema\", True)",
+          "          .csv(\"Files/WebEvents.csv\")",
+          "          .withColumn(\"EventTime\", F.to_timestamp(\"EventTime\")))",
+          "",
+          "stage = (F.when(F.col(\"EventType\") == \"PageView\", 1)",
+          "          .when(F.col(\"EventType\") == \"ProductView\", 2)",
+          "          .when(F.col(\"EventType\") == \"AddToCart\", 3)",
+          "          .when(F.col(\"EventType\") == \"Checkout\", 4)",
+          "          .when(F.col(\"EventType\") == \"Purchase\", 5))",
+          "",
+          "sessions = (events.withColumn(\"StageRank\", stage)",
+          "    .groupBy(\"SessionID\", \"CustomerKey\", \"DeviceType\")",
+          "    .agg(F.min(\"EventTime\").alias(\"FirstEvent\"),",
+          "         F.max(\"EventTime\").alias(\"LastEvent\"),",
+          "         F.max(\"StageRank\").alias(\"FurthestStage\"))",
+          "    .withColumn(\"SessionMinutes\",",
+          "                (F.col(\"LastEvent\").cast(\"long\") - F.col(\"FirstEvent\").cast(\"long\")) / 60))",
+          "",
+          "sessions.write.mode(\"overwrite\").format(\"delta\").saveAsTable(\"sessions\")"
+        ]
+      },
+      {
+        "lang": "DAX",
+        "title": "Funnel measure with a disconnected Stage table (Rank 1–5)",
+        "src": [
+          "Sessions Reaching Stage =",
+          "VAR s = SELECTEDVALUE ( Stage[Rank] )",
+          "RETURN CALCULATE ( COUNTROWS ( sessions ), sessions[FurthestStage] >= s )"
+        ]
+      }
+    ],
+    "check": "Funnel: PageView 39 → ProductView 28 → AddToCart 16 → Checkout 11 → Purchase 6."
+  },
+  "a-fabric-3": {
+    "tbl": [
+      [
+        "Logic",
+        "Where it lives",
+        "Why"
+      ],
+      [
+        "Currency conversion",
+        "Power Query / Lakehouse (daily rate per row); DAX only for a user-chosen currency",
+        "Row-level and stable: do it once at load."
+      ],
+      [
+        "Customer ABC class",
+        "DAX",
+        "Depends on the user's current filters (ALLSELECTED)."
+      ],
+      [
+        "Cleaning the messy export",
+        "Dataflow / Power Query",
+        "Pure data preparation, reused by every consumer."
+      ],
+      [
+        "Budget allocation to days",
+        "Lakehouse / Power Query",
+        "A fixed business rule that produces rows. Do it upstream."
+      ],
+      [
+        "RLS mapping",
+        "Source table (HR/security system), applied by a DAX role",
+        "Data upstream, enforcement in the model."
+      ],
+      [
+        "Session duration",
+        "Notebook / Lakehouse",
+        "Row-by-row sequence logic is cheap in Spark and expensive in DAX."
+      ]
+    ],
+    "check": "Only ABC class (and the RLS rule itself) land in DAX: two of six."
+  }
+}

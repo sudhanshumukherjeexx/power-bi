@@ -1,0 +1,63 @@
+{
+  "id": "mod-viscalc",
+  "name": "Visual calculations",
+  "ds": ["FactSales", "DimProduct", "DimDate"],
+  "skills": ["dax", "visuals"],
+  "stage": "analyst",
+  "why": {
+    "matters": "Running totals, moving averages, percent of parent and versus-previous are the most common report calculations. Visual calculations express them in one line on the visual, without filter-context gymnastics.",
+    "failure": "A model collects dozens of one-off measures (\"Running Sales for Chart 3\") that nobody else uses and nobody dares delete.",
+    "use": "Calculations that only make sense for one visual's layout: running sums along its axis, percent of the visual's parent, comparisons with the previous row.",
+    "avoid": "Business definitions that other reports need (put those in model measures), or anything you need to filter, sort or export: visual calculations can't be filtered, sorted, reused across visuals or exported."
+  },
+  "verified": { "date": "2026-10-01", "context": "Visual calculations overview (Microsoft Learn, 2026-08-31)", "cert": "PL-300 (2026-04-20): Create visual calculations by using DAX", "review_after_days": 90 },
+  "refs": [
+    { "title": "Visual calculations overview", "url": "https://learn.microsoft.com/en-us/power-bi/transform-model/desktop-visual-calculations-overview" },
+    { "title": "Create visual calculations", "url": "https://learn.microsoft.com/en-us/power-bi/transform-model/desktop-visual-calculations-create" }
+  ],
+  "asg": [
+    {
+      "t": "Four visual calculations in ten minutes",
+      "time": "25 min",
+      "ds": "FactSales, DimProduct, Dates",
+      "guidance": "A",
+      "steps": [
+        "Build a matrix with Dates[MonthName] on rows and [Net Sales] as the value (Beginner model).",
+        "Select the visual → New calculation. Add Running = RUNNINGSUM([Net Sales]).",
+        "Add vs Previous = [Net Sales] - PREVIOUS([Net Sales]) and Moving avg = MOVINGAVERAGE([Net Sales], 2).",
+        "Add Category to rows above MonthName and add Pct of parent = DIVIDE([Net Sales], COLLAPSE([Net Sales], ROWS)).",
+        "Try RUNNINGSUM([Net Sales], HIGHESTPARENT) and explain how it differs from the first running sum."
+      ],
+      "exp": "The running sum on the March row equals the visual's total; vs Previous is blank on the first row; percent of parent sums to 100% within each category; with Reset = HIGHESTPARENT the running sum restarts for each category."
+    },
+    {
+      "t": "Measure or visual calculation?",
+      "time": "20 min",
+      "ds": "—",
+      "guidance": "C",
+      "brief": "The executive page has six calculations. Decide for each whether it should be a model measure or a visual calculation, considering reuse, filtering, export and performance.",
+      "req": ["Net Sales YoY % (used on four pages).", "Running total on one line chart.", "Percent of category total in one matrix.", "Rank of customers used in a slicer.", "Margin % in the KPI dictionary.", "Difference from the first month in one table."],
+      "exp": "Measures: YoY %, customer rank (needs filtering/slicing), Margin % (shared definition). Visual calculations: the running total, percent of category in that matrix, difference from the first month (FIRST)."
+    },
+    {
+      "t": "Find the limits",
+      "time": "20 min",
+      "ds": "your matrix",
+      "guidance": "B",
+      "brief": "Before recommending visual calculations to the team, test what they can't do.",
+      "req": ["Try to filter or sort by a visual calculation.", "Export the visual's data.", "Copy the visual calculation to another visual.", "Use RELATED inside one."],
+      "exp": "No filtering or sorting by the calculation, results aren't included in data exports, it can't be reused on other visuals, and RELATED, RELATEDTABLE and USERELATIONSHIP aren't available."
+    }
+  ],
+  "int": [
+    { "q": "What is a visual calculation?", "a": "A DAX calculation defined on a visual and evaluated over the visual's own data (the visual matrix), not stored in the model. It can refer only to fields on the visual and is usually simpler and often faster for layout-dependent calculations like running sums." },
+    { "q": "What do the Axis and Reset parameters do?", "a": "Axis chooses which direction the calculation traverses the visual matrix (ROWS, COLUMNS, …). Reset decides when it restarts: NONE, HIGHESTPARENT (absolute), LOWESTPARENT (relative), or a level number or column." },
+    { "q": "Name some functions specific to visual calculations.", "a": "RUNNINGSUM, MOVINGAVERAGE, PREVIOUS, NEXT, FIRST, LAST, COLLAPSE, COLLAPSEALL, EXPAND, EXPANDALL, RANGE, LOOKUP, LOOKUPWITHTOTALS, ISATLEVEL." },
+    { "q": "When should you not use a visual calculation?", "a": "For business definitions others need (they can't be reused), when you need to filter or sort by it, when it must appear in exports, or when it needs relationships (RELATED, USERELATIONSHIP)." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "Which expression gives each row's share of its parent in a visual calculation?", "o": ["DIVIDE([Sales], CALCULATE([Sales], ALL(Product)))", "DIVIDE([Sales], COLLAPSE([Sales], ROWS))", "RUNNINGSUM([Sales])", "RELATED([Sales])"], "a": 1, "why": "COLLAPSE evaluates at the parent level of the axis." },
+    { "type": "mcq", "q": "A visual calculation's results in an Export data file:", "o": ["Are included", "Are excluded", "Replace the measures", "Cause the export to fail"], "a": 1, "why": "Exports exclude visual calculation results; hidden fields appear only in underlying-data exports." },
+    { "type": "task", "q": "Rebuild one running-total measure from the Intermediate DAX topic as a visual calculation, and compare the DAX length and Performance Analyzer timing.", "hint": "RUNNINGSUM([Net Sales]) vs a CALCULATE with a date filter; visual calculations operate on aggregated data, often faster." }
+  ]
+}

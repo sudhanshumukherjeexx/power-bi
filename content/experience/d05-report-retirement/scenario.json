@@ -1,0 +1,34 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "d05",
+  "slug": "d05-report-retirement",
+  "type": "drill",
+  "stage": "developer",
+  "order": 3,
+  "title": "Usage dropped 70%. Retire it?",
+  "seo": "Power BI governance drill: a report's usage dropped 70%. Check lineage, subscriptions and dependencies before retiring anything.",
+  "summary": "Regional Sales Weekly lost most of its viewers after the certified Sales Overview launched. Elena asks whether it can be deleted to tidy up.",
+  "minutes": 30,
+  "skills": ["governance", "service", "communication"],
+  "prereq": ["s05"],
+  "ticket": { "id": "GOV-044", "kind": "ticket", "priority": "Low", "reporter": "elena", "opened": "Mon 25 May 2026, 14:00", "labels": ["governance", "retirement", "lineage"] },
+  "impact": "Unused content costs refresh, capacity and confusion. Deleting content that something still depends on breaks payroll, a dashboard or a finance spreadsheet, usually on the day it's needed.",
+  "messages": [
+    { "from": "elena", "to": "you", "via": "chat", "at": "Mon 25 May, 14:00", "body": ["Regional Sales Weekly is down about 70% since Sales Overview launched. Can we delete it and its model to tidy up? Check first, please."] }
+  ],
+  "evidence": [
+    { "id": "usage", "kind": "file", "title": "usage_weekly.csv", "file": "data/experience/d05/usage_weekly.csv" },
+    { "id": "lineage", "kind": "file", "title": "lineage.csv", "file": "data/experience/d05/lineage.csv" },
+    { "id": "subs", "kind": "file", "title": "subscriptions.csv", "file": "data/experience/d05/subscriptions.csv" }
+  ],
+  "tasks": ["Confirm the usage drop and who still uses the report.", "List every dependency on the report and on its model.", "Recommend: retire, keep, or retire in steps, with a timeline and who to notify."],
+  "deliverables": [{ "id": "plan", "t": "Retirement plan with dependencies, notifications and dates", "artifact": "release-notes" }],
+  "hints": ["The report and its model are two different questions. What depends on the model, not just on the report?", "Usage metrics don't show subscriptions, paginated reports or Excel files. lineage.csv and subscriptions.csv do."],
+  "rubric": [
+    { "id": "deps", "n": "Dependency analysis", "w": 40, "good": "Finds the Commission Statement (payroll), the dashboard tile, the Finance Excel file and the subscription." },
+    { "id": "plan", "n": "Plan", "w": 35, "good": "Retire the report in steps (notify, banner, read-only, archive); keep the model until the paginated report and Excel are repointed." },
+    { "id": "comm", "n": "Communication", "w": 25, "good": "Owners and remaining viewers notified with dates and the replacement." }
+  ],
+  "retro": ["What would have broken if you had deleted the model today?"],
+  "refs": [{ "title": "Lineage view", "url": "https://learn.microsoft.com/en-us/fabric/governance/lineage" }, { "title": "Usage metrics for reports", "url": "https://learn.microsoft.com/en-us/power-bi/collaborate-share/service-modern-usage-metrics" }]
+}

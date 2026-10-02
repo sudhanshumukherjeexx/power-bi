@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "topic.schema.json",
+  "title": "Skill Mode topic",
+  "description": "One topic in a level or track: hands-on assignments, interview questions and an assessment. Assignment ids are topicId-index, so only ever APPEND assignments, questions and assessment items; never reorder or delete them (learner progress is stored by index).",
+  "type": "object",
+  "required": ["id", "name", "ds", "asg", "int", "ass"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string", "pattern": "^[a-z]+-[a-z0-9]+(-[a-z0-9]+)*$", "description": "module prefix + slug, e.g. b-pq, sql-window" },
+    "name": { "type": "string", "minLength": 3 },
+    "ds": { "type": "array", "items": { "type": "string" }, "description": "dataset keys from content/datasets/datasets.json or track datasets" },
+    "skills": { "type": "array", "items": { "type": "string" }, "description": "competency ids from content/skills.json this topic builds evidence for" },
+    "stage": { "type": "string", "description": "professional stage id from content/stages.json" },
+    "why": { "$ref": "#/$defs/why" },
+    "verified": { "$ref": "#/$defs/verified" },
+    "refs": { "type": "array", "items": { "$ref": "#/$defs/ref" } },
+    "asg": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/assignment" } },
+    "int": { "type": "array", "items": { "type": "object", "required": ["q", "a"], "additionalProperties": false, "properties": { "q": { "type": "string" }, "a": { "type": "string" } } } },
+    "ass": { "type": "array", "items": { "anyOf": [{ "$ref": "#/$defs/mcq" }, { "$ref": "#/$defs/task" }] } }
+  },
+  "$defs": {
+    "why": {
+      "type": "object", "additionalProperties": false, "required": ["matters"],
+      "properties": {
+        "matters": { "type": "string", "description": "Why a company cares (one or two sentences)" },
+        "failure": { "type": "string", "description": "Typical production failure" },
+        "use": { "type": "string", "description": "When to use it" },
+        "avoid": { "type": "string", "description": "When not to use it" }
+      }
+    },
+    "verified": {
+      "type": "object", "additionalProperties": false, "required": ["date"],
+      "properties": {
+        "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+        "context": { "type": "string", "description": "Product version or documentation state checked" },
+        "cert": { "type": "string", "description": "Certification outline version this maps to, e.g. PL-300 (2026-04-20)" },
+        "review_after_days": { "type": "integer", "minimum": 7 }
+      }
+    },
+    "ref": { "type": "object", "additionalProperties": false, "required": ["title", "url"], "properties": { "title": { "type": "string" }, "url": { "type": "string", "pattern": "^https://" } } },
+    "assignment": {
+      "type": "object",
+      "required": ["t", "time", "ds", "exp"],
+      "additionalProperties": false,
+      "properties": {
+        "t": { "type": "string", "minLength": 3 },
+        "time": { "type": "string" },
+        "ds": { "type": "string" },
+        "guidance": { "enum": ["A", "B", "C", "D"], "description": "A guided steps, B objective-based, C problem-based, D senior ambiguity" },
+        "steps": { "type": "array", "items": { "type": "string" }, "description": "Level A: the procedure" },
+        "brief": { "type": "string", "description": "Levels B-D: the objective or problem, without the procedure" },
+        "req": { "type": "array", "items": { "type": "string" }, "description": "Levels B-D: requirements or questions to answer" },
+        "deliverables": { "type": "array", "items": { "type": "string" } },
+        "exp": { "type": "string", "description": "Expected result. Numbers here must be covered by tests/curriculum/assertions.json" },
+        "skills": { "type": "array", "items": { "type": "string" } }
+      },
+      "anyOf": [{ "required": ["steps"] }, { "required": ["brief"] }]
+    },
+    "mcq": {
+      "type": "object", "required": ["type", "q", "o", "a", "why"], "additionalProperties": false,
+      "properties": { "type": { "const": "mcq" }, "q": { "type": "string" }, "o": { "type": "array", "minItems": 2, "items": { "type": "string" } }, "a": { "type": "integer", "minimum": 0 }, "why": { "type": "string" } }
+    },
+    "task": {
+      "type": "object", "required": ["type", "q", "hint"], "additionalProperties": false,
+      "properties": { "type": { "const": "task" }, "q": { "type": "string" }, "hint": { "type": "string" } }
+    }
+  }
+}

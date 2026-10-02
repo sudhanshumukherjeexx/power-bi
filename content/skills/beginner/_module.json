@@ -1,0 +1,18 @@
+{
+  "id": "beginner",
+  "kind": "level",
+  "order": 1,
+  "cls": "beg",
+  "name": "Beginner",
+  "years": "Year 0 – 1",
+  "tagline": "Clean messy data, build a star schema, write the core measures and ship one trustworthy page.",
+  "seo": "Beginner Power BI practice: clean data in Power Query, build a star schema, write core DAX measures and publish a report. Every assignment has a checkable result and a worked solution.",
+  "intro": "Everything here is done in Power BI Desktop with the mouse. If you can finish all five topics you are employable as a junior. Do not skip the date-table assignment: every later level assumes you did it.",
+  "topics": [
+    "b-pq",
+    "b-model",
+    "b-dax",
+    "b-viz",
+    "b-service"
+  ]
+}

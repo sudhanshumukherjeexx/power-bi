@@ -1,0 +1,72 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "s07",
+  "slug": "s07-test-prod-deployment-failure",
+  "type": "sprint",
+  "stage": "engineer",
+  "order": 2,
+  "title": "Test is right, Production is wrong",
+  "seo": "Power BI deployment pipeline troubleshooting: after promoting from Test to Production the numbers differ. Diagnose deployment rules, parameters, data source bindings and credentials.",
+  "summary": "After Monday's release, Production shows nothing for May and last month's targets, while Test looks perfect. Same model, same report. Find out why.",
+  "minutes": 180,
+  "skills": ["deployment", "service", "testing", "automation"],
+  "prereq": ["s06"],
+  "next": "s08",
+  "verified": { "date": "2026-10-01", "context": "Deployment pipelines and deployment rules (Microsoft Learn, Sept 2026)", "review_after_days": 120 },
+  "ticket": { "id": "INC-2058", "kind": "incident", "severity": "SEV2", "priority": "High", "status": "Open", "reporter": "jordan", "opened": "Wed 3 Jun 2026, 08:47", "due": "Today", "labels": ["deployment", "pipeline", "production"] },
+  "story": "The release from Sprint 06 was promoted through the deployment pipeline on Monday evening: Development → Test (checked by Nina) → Production.",
+  "impact": "Regional managers plan this week's targets from Production. With no May sales and last month's targets they will under-plan, and anyone comparing Production with Test will stop trusting both.",
+  "messages": [
+    { "from": "jordan", "to": "elena", "via": "email", "at": "Wed 3 Jun, 08:47", "subject": "May is blank??", "body": [
+      "The sales app shows nothing for May and the targets look like last month's. Nina says the Test version is fine. What happened on Monday?"
+    ] },
+    { "from": "elena", "to": "you", "via": "chat", "at": "Wed 3 Jun, 08:55", "body": [
+      "Sam deployed Test → Prod on Monday at 18:12 and refresh says Completed every day since. Please find out why Prod differs from Test, fix it properly (not by editing Prod by hand) and tell me how we stop it happening again."
+    ] },
+    { "from": "kenji", "to": "you", "via": "chat", "at": "Wed 3 Jun, 09:10", "body": [
+      "Nothing changed on the warehouse side. Prod DW loaded fine last night: max order date is 1 June. Oh, and I still need to drop that load-test copy I restored on the prod server in March, sorry."
+    ] }
+  ],
+  "evidence": [
+    { "id": "pipe", "kind": "file", "title": "deployment_pipeline.json", "file": "data/experience/s07/deployment_pipeline.json", "desc": "Stages, workspaces and deployment rules." },
+    { "id": "params", "kind": "file", "title": "parameters_by_stage.csv", "file": "data/experience/s07/parameters_by_stage.csv", "desc": "Parameter values in each stage's semantic model after Monday's deployment." },
+    { "id": "dbs", "kind": "file", "title": "sql_databases.csv", "file": "data/experience/s07/sql_databases.csv" },
+    { "id": "bind", "kind": "file", "title": "datasource_bindings.csv", "file": "data/experience/s07/datasource_bindings.csv", "desc": "Gateway and cloud connections bound to each stage's model." },
+    { "id": "refresh", "kind": "file", "title": "refresh_history_prod.csv", "file": "data/experience/s07/refresh_history_prod.csv" },
+    { "id": "compare", "kind": "file", "title": "stage_comparison.csv", "file": "data/experience/s07/stage_comparison.csv", "desc": "A few checks Nina ran in Test and Production this morning." }
+  ],
+  "tasks": [
+    "Explain every difference between Test and Production in stage_comparison.csv, with the piece of configuration that causes it.",
+    "Fix Production through the pipeline (rules, bindings, credentials), not by editing the published model by hand.",
+    "Verify Production against the warehouse after the fix.",
+    "Propose preventive controls: what should a deployment check before and after it runs?"
+  ],
+  "deliverables": [
+    { "id": "rca", "t": "Root cause: each Test/Prod difference mapped to its cause", "artifact": "incident-report" },
+    { "id": "fix", "t": "The configuration changes (rules, connection, credential owner)" },
+    { "id": "check", "t": "Post-deployment checklist (automatable)", "artifact": "deployment-checklist" },
+    { "id": "runbook", "t": "Runbook entry: how to diagnose \"Test fine, Prod wrong\" next time", "artifact": "runbook" }
+  ],
+  "hints": [
+    "\"Refresh: Completed\" only says the model loaded data successfully, not that it loaded the right data. Compare row counts and max dates in stage_comparison.csv with sql_databases.csv: which database has exactly those numbers?",
+    "Deployment rules only change what they're told to change. Compare the Test and Production rules for the same item. What happens to a parameter that has no rule in the target stage?",
+    "Targets come from a different source. Read the Message column in the refresh history and look at whose credential the Production connection uses."
+  ],
+  "rubric": [
+    { "id": "invest", "n": "Investigation quality", "w": 25, "good": "Both causes proven with matching numbers (rows and max date equal NorthwindDW_Dev; Targets stale with a warning) rather than guessed." },
+    { "id": "correct", "n": "Technical correctness", "w": 25, "good": "DatabaseName rule added for Production; Targets connection uses a service credential; Prod refreshed and matches the warehouse." },
+    { "id": "prevent", "n": "Prevention", "w": 25, "good": "Rules for every environment-specific parameter; post-deployment checks (row count, max date, connection target) that fail loudly; refresh warnings treated as failures; the stray database dropped." },
+    { "id": "comm", "n": "Communication", "w": 15, "good": "Jordan hears what was wrong, since when, that it's fixed and what to re-check; no jargon." },
+    { "id": "proc", "n": "Process", "w": 10, "good": "Fix goes through the pipeline and is documented in the runbook; nobody edits Production by hand." }
+  ],
+  "retro": [
+    "Why did every refresh report Completed while the data was wrong?",
+    "Which of the two causes would an automated post-deployment test catch, and which needs monitoring?",
+    "Who should own the credentials of a production data source?"
+  ],
+  "refs": [
+    { "title": "Deployment pipelines overview", "url": "https://learn.microsoft.com/en-us/fabric/cicd/deployment-pipelines/intro-to-deployment-pipelines" },
+    { "title": "Create deployment rules", "url": "https://learn.microsoft.com/en-us/fabric/cicd/deployment-pipelines/create-rules" },
+    { "title": "Manage data sources for a gateway", "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/service-gateway-data-sources" }
+  ]
+}

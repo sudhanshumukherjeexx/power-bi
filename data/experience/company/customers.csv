@@ -1,0 +1,422 @@
+CustomerID,CustomerName,Segment,HomeRegionKey,JoinDate
+C10001,Riverbend Outfitters,Small Business,5,2025-02-06
+C10002,Timberline Outfitters,Outfitter,3,2022-07-12
+C10003,Eli Reyes,Consumer,3,2024-10-20
+C10004,Lucas Novak,Consumer,2,2020-03-05
+C10005,Aiden Singh,Consumer,4,2025-11-28
+C10006,Ruby Dube,Consumer,3,2021-02-13
+C10007,Ines Ali,Consumer,2,2024-12-02
+C10008,Canyon Outfitters,Small Business,3,2022-08-09
+C10009,Yuki Weber,Consumer,1,2021-06-01
+C10010,Hana Ali,Consumer,2,2019-09-07
+C10011,Mateo Kowal,Consumer,4,2020-01-12
+C10012,Cole Dube,Consumer,3,2021-12-12
+C10013,Lucas Singh,Consumer,4,2024-03-28
+C10014,Riverbend Supply,Small Business,3,2020-01-08
+C10015,Yuki Larsen,Consumer,4,2022-06-04
+C10016,Timberline Sports,Small Business,1,2024-12-26
+C10017,Ridgeway Expeditions,Small Business,1,2021-01-02
+C10018,Arjun Okafor,Consumer,1,2025-12-19
+C10019,Elif Singh,Consumer,3,2021-08-12
+C10020,Sara Costa,Consumer,1,2023-03-21
+C10021,Basecamp Supply,Small Business,3,2024-12-05
+C10022,Trailhead Supply,Small Business,5,2023-09-06
+C10023,Theo Fischer,Consumer,3,2022-07-18
+C10024,Elif Bakr,Consumer,3,2022-11-04
+C10025,Eli Meyer,Consumer,2,2020-08-08
+C10026,Ines Kowal,Consumer,2,2022-06-08
+C10027,Lena Singh,Consumer,2,2025-05-07
+C10028,Nia Weber,Consumer,3,2026-01-29
+C10029,Pinecrest Gear Shop,Small Business,2,2023-05-01
+C10030,Ivy Bakr,Consumer,3,2025-08-29
+C10031,Leo Reyes,Consumer,3,2023-06-16
+C10032,Chloe Tanaka,Consumer,3,2019-10-15
+C10033,Theo Nguyen,Consumer,3,2022-05-09
+C10034,Kai Byrne,Consumer,1,2021-09-27
+C10035,Yuki Ortiz,Consumer,3,2025-01-18
+C10036,Riverbend Sports,Outfitter,2,2021-11-14
+C10037,Ridgeway Mountain Goods,Small Business,1,2021-04-03
+C10038,Lucas Okafor,Consumer,1,2024-01-27
+C10039,Cedar Adventure Co.,Outfitter,5,2019-12-30
+C10040,Timberline Expeditions,Small Business,1,2024-03-16
+C10041,Peak Mountain Goods,Outfitter,4,2019-10-06
+C10042,Peak Supply,Outfitter,3,2024-10-10
+C10043,Aiden Ali,Consumer,5,2025-10-22
+C10044,Leo Costa,Consumer,4,2023-06-13
+C10045,Lucas Bakr,Consumer,1,2021-05-19
+C10046,Basecamp Outfitters,Small Business,1,2019-06-02
+C10047,Chloe Reyes,Consumer,4,2023-09-10
+C10048,Nora Dube,Consumer,1,2024-08-17
+C10049,Jonas Singh,Consumer,2,2020-03-22
+C10050,Mia Weber,Consumer,2,2023-08-18
+C10051,Pinecrest Supply,Outfitter,3,2024-01-11
+C10052,Lakeside Expeditions,Small Business,3,2022-11-15
+C10053,Ines Larsen,Consumer,2,2025-09-03
+C10054,Liam Patel,Consumer,2,2020-12-29
+C10055,Owen Nguyen,Consumer,5,2022-03-05
+C10056,Olivia Lund,Consumer,2,2026-01-07
+C10057,Wildflower Outdoor Store,Small Business,1,2023-03-23
+C10058,Mason Lund,Consumer,2,2026-02-28
+C10059,Timberline Outdoor Store,Outfitter,4,2023-11-23
+C10060,Elif Bakr,Consumer,3,2020-11-05
+C10061,Hana Ortiz,Consumer,3,2023-06-20
+C10062,Granite Supply,Small Business,2,2024-09-24
+C10063,Nora Kim,Consumer,3,2023-06-18
+C10064,Lakeside Outfitters,Small Business,5,2021-06-24
+C10065,Arjun Haddad,Consumer,1,2023-01-16
+C10066,Jonas Patel,Consumer,3,2020-08-22
+C10067,Sara Patel,Consumer,1,2020-12-29
+C10068,Mason Costa,Consumer,4,2020-12-06
+C10069,Kai Fischer,Consumer,3,2019-10-18
+C10070,Cole Moore,Consumer,5,2019-04-01
+C10071,Lucas Meyer,Consumer,2,2023-05-22
+C10072,Maya Haddad,Consumer,3,2024-09-13
+C10073,Ridgeway Sports,Small Business,1,2023-04-11
+C10074,Aiden Kim,Consumer,1,2022-10-21
+C10075,Kai Kim,Consumer,3,2020-01-21
+C10076,Maya Nguyen,Consumer,2,2019-09-28
+C10077,Summit Outfitters Co.,Outfitter,4,2018-06-11
+C10078,Liam Nguyen,Consumer,2,2023-11-24
+C10079,Granite Gear Shop,Outfitter,3,2021-08-10
+C10080,Leo Brown,Consumer,1,2024-06-18
+C10081,Olivia Schmidt,Consumer,3,2025-09-26
+C10082,Owen Bakr,Consumer,1,2023-06-12
+C10083,Wildflower Supply,Small Business,4,2019-02-07
+C10084,Peak Supply,Outfitter,2,2025-09-20
+C10085,Eli Kowal,Consumer,1,2025-04-15
+C10086,Ridgeway Adventure Co.,Small Business,5,2021-12-22
+C10087,Mateo Ortiz,Consumer,3,2025-06-10
+C10088,Basecamp Mountain Goods,Small Business,3,2020-05-08
+C10089,Zoe Kim,Consumer,2,2020-02-17
+C10090,Ridgeway Adventure Co.,Outfitter,3,2023-05-23
+C10091,Ivy Schmidt,Consumer,3,2022-06-22
+C10092,Finn Chen,Consumer,2,2024-08-26
+C10093,Lucas Ali,Consumer,1,2024-09-01
+C10094,Ines Weber,Consumer,1,2023-02-09
+C10095,Owen Garcia,Consumer,4,2023-06-04
+C10096,Mateo Schmidt,Consumer,2,2020-05-27
+C10097,Arjun Okafor,Consumer,4,2023-10-08
+C10098,Jonas Costa,Consumer,2,2020-02-25
+C10099,Riverbend Sports,Small Business,5,2020-06-27
+C10100,Nia Hughes,Consumer,4,2020-04-14
+C10101,Lucas Fischer,Consumer,2,2025-03-24
+C10102,Mason Nguyen,Consumer,1,2019-09-04
+C10103,Cedar Outdoor Store,Small Business,5,2025-04-19
+C10104,Olivia Dube,Consumer,2,2020-03-03
+C10105,Theo Tanaka,Consumer,3,2022-01-24
+C10106,Basecamp Adventure Co.,Small Business,3,2023-03-20
+C10107,Noah Dube,Consumer,1,2024-02-12
+C10108,Lucas Kowal,Consumer,2,2020-08-26
+C10109,Noah Adler,Consumer,3,2020-12-30
+C10110,Ivy Novak,Consumer,4,2022-05-17
+C10111,Hana Ortiz,Consumer,5,2019-12-15
+C10112,Peak Sports,Small Business,1,2021-09-03
+C10113,Timberline Supply,Outfitter,3,2025-03-24
+C10114,Hana Okafor,Consumer,3,2025-03-21
+C10115,Isla Patel,Consumer,1,2024-01-11
+C10116,Cole Garcia,Consumer,2,2021-11-10
+C10117,Kai Walsh,Consumer,2,2021-04-08
+C10118,Eli Ali,Consumer,1,2019-03-19
+C10119,Ivy Reyes,Consumer,1,2019-09-29
+C10120,Hana Reyes,Consumer,1,2021-11-08
+C10121,Ridgeway Mountain Goods,Small Business,4,2023-02-20
+C10122,Aiden Haddad,Consumer,3,2021-12-20
+C10123,Owen Walsh,Consumer,2,2023-03-12
+C10124,Ines Adler,Consumer,3,2025-12-20
+C10125,Nia Reyes,Consumer,3,2019-10-19
+C10126,Northstar Adventure Co.,Outfitter,5,2022-02-17
+C10127,Ava Tanaka,Consumer,3,2020-05-19
+C10128,Cole Kim,Consumer,3,2020-09-10
+C10129,Owen Dube,Consumer,4,2024-09-26
+C10130,Ruby Moore,Consumer,1,2020-07-12
+C10131,Arjun Chen,Consumer,2,2022-12-19
+C10132,Zoe Rossi,Consumer,4,2019-12-20
+C10133,Cole Walsh,Consumer,1,2022-06-30
+C10134,Aiden Rana,Consumer,4,2020-05-08
+C10135,Timberline Supply,Small Business,2,2024-10-27
+C10136,Ava Byrne,Consumer,3,2024-07-11
+C10137,Olivia Okafor,Consumer,4,2019-01-30
+C10138,Jack Chen,Consumer,4,2022-06-10
+C10139,Ironwood Sports,Small Business,1,2020-02-20
+C10140,Ethan Hughes,Consumer,3,2024-05-21
+C10141,Pinecrest Outdoor Store,Small Business,1,2023-07-16
+C10142,Finn Patel,Consumer,2,2021-11-06
+C10143,Peak Outfitters,Small Business,1,2021-05-14
+C10144,Max Brown,Consumer,4,2022-11-05
+C10145,Ines Meyer,Consumer,1,2023-11-24
+C10146,Kai Hughes,Consumer,3,2021-10-25
+C10147,Leo Singh,Consumer,1,2021-08-16
+C10148,Wildflower Outdoor Store,Small Business,5,2021-07-17
+C10149,Chloe Rossi,Consumer,4,2020-01-29
+C10150,Nora Costa,Consumer,4,2023-04-11
+C10151,Hana Haddad,Consumer,4,2022-05-29
+C10152,Leo Larsen,Consumer,5,2021-07-31
+C10153,Pinecrest Outfitters,Small Business,1,2023-08-06
+C10154,Sara Dube,Consumer,5,2022-02-08
+C10155,Eli Rana,Consumer,2,2023-05-08
+C10156,Ines Okafor,Consumer,5,2022-08-20
+C10157,Riverbend Gear Shop,Outfitter,4,2025-09-16
+C10158,Mason Rana,Consumer,4,2019-05-12
+C10159,Arjun Byrne,Consumer,4,2025-07-20
+C10160,Aiden Kowal,Consumer,2,2022-05-25
+C10161,Arjun Ortiz,Consumer,1,2021-09-24
+C10162,Kai Bakr,Consumer,2,2019-09-02
+C10163,Owen Bakr,Consumer,3,2025-06-15
+C10164,Zoe Ortiz,Consumer,2,2021-03-19
+C10165,Nia Reyes,Consumer,5,2024-12-08
+C10166,Bluewater Supply,Small Business,1,2019-09-27
+C10167,Cole Dube,Consumer,3,2022-08-18
+C10168,Max Weber,Consumer,1,2025-12-09
+C10169,Ethan Chen,Consumer,3,2024-07-19
+C10170,Ruby Dube,Consumer,3,2022-11-24
+C10171,Northstar Supply,Small Business,2,2025-12-03
+C10172,Ava Nguyen,Consumer,2,2020-07-02
+C10173,Ava Lund,Consumer,1,2019-08-25
+C10174,Sara Garcia,Consumer,5,2021-06-25
+C10175,Liam Bakr,Consumer,1,2020-03-09
+C10176,Jonas Costa,Consumer,5,2019-06-14
+C10177,Pinecrest Mountain Goods,Outfitter,1,2021-08-19
+C10178,Aiden Weber,Consumer,2,2023-08-17
+C10179,Lucas Rana,Consumer,3,2020-08-04
+C10180,Aiden Weber,Consumer,2,2020-10-17
+C10181,Cole Adler,Consumer,3,2024-04-24
+C10182,Liam Moore,Consumer,2,2024-09-30
+C10183,Ridgeway Outfitters,Outfitter,2,2022-06-25
+C10184,Nia Patel,Consumer,3,2020-03-01
+C10185,Pinecrest Outfitters,Outfitter,1,2021-08-23
+C10186,Olivia Kowal,Consumer,3,2019-09-20
+C10187,Emma Ali,Consumer,2,2019-02-21
+C10188,Emma Rossi,Consumer,4,2020-04-05
+C10189,Bluewater Outfitters,Small Business,5,2024-03-19
+C10190,Ivy Silva,Consumer,1,2019-11-01
+C10191,Ruby Silva,Consumer,1,2019-05-11
+C10192,Wildflower Gear Shop,Small Business,3,2023-01-10
+C10193,Aiden Ali,Consumer,3,2022-05-18
+C10194,Ivy Ali,Consumer,5,2020-08-21
+C10195,Canyon Outfitters,Outfitter,3,2022-12-26
+C10196,Peak Mountain Goods,Small Business,4,2022-09-02
+C10197,Highland Mountain Goods,Small Business,3,2023-06-12
+C10198,Eli Hughes,Consumer,2,2025-09-04
+C10199,Hana Bakr,Consumer,5,2020-10-20
+C10200,Ava Costa,Consumer,2,2023-02-15
+C10201,Jack Larsen,Consumer,3,2019-08-06
+C10202,Basecamp Outfitters,Small Business,4,2023-06-16
+C10203,Bluewater Outdoor Store,Small Business,3,2020-10-12
+C10204,Highland Outdoor Store,Small Business,1,2021-12-15
+C10205,Aiden Adler,Consumer,1,2024-12-27
+C10206,Ivy Kim,Consumer,1,2020-11-27
+C10207,Kai Costa,Consumer,3,2021-10-14
+C10208,Sara Novak,Consumer,1,2022-07-10
+C10209,Mateo Brown,Consumer,2,2021-05-10
+C10210,Ironwood Adventure Co.,Outfitter,2,2025-02-10
+C10211,Lucas Weber,Consumer,3,2024-11-22
+C10212,Isla Dube,Consumer,3,2023-06-19
+C10213,Mason Dube,Consumer,1,2024-02-22
+C10214,Zoe Ali,Consumer,5,2022-02-13
+C10215,Northstar Expeditions,Outfitter,2,2023-07-27
+C10216,Canyon Outfitters,Small Business,2,2024-03-09
+C10217,Canyon Outdoor Store,Outfitter,3,2022-04-28
+C10218,Ivy Byrne,Consumer,1,2023-10-31
+C10219,Cole Byrne,Consumer,3,2024-05-24
+C10220,Eli Nguyen,Consumer,1,2021-12-14
+C10221,Kai Patel,Consumer,1,2024-10-11
+C10222,Northstar Adventure Co.,Outfitter,2,2020-05-24
+C10223,Olivia Ali,Consumer,1,2023-08-13
+C10224,Zoe Novak,Consumer,3,2023-09-08
+C10225,Nora Kowal,Consumer,5,2022-01-07
+C10226,Zoe Fischer,Consumer,3,2020-11-23
+C10227,Ruby Weber,Consumer,1,2024-10-16
+C10228,Hana Kowal,Consumer,1,2025-06-01
+C10229,Ivy Schmidt,Consumer,4,2023-01-15
+C10230,Jack Rana,Consumer,3,2023-08-15
+C10231,Bluewater Adventure Co.,Small Business,3,2026-02-18
+C10232,Liam Novak,Consumer,3,2021-10-24
+C10233,Wildflower Expeditions,Small Business,1,2023-12-28
+C10234,Timberline Sports,Small Business,5,2023-08-17
+C10235,Leo Singh,Consumer,4,2024-02-01
+C10236,Kai Brown,Consumer,3,2019-11-20
+C10237,Aiden Meyer,Consumer,5,2021-04-11
+C10238,Mateo Chen,Consumer,5,2021-08-19
+C10239,Owen Fischer,Consumer,2,2020-10-30
+C10240,Kai Larsen,Consumer,1,2023-07-06
+C10241,Maya Lund,Consumer,2,2023-10-07
+C10242,Eli Brown,Consumer,1,2021-11-15
+C10243,Eli Byrne,Consumer,3,2024-10-10
+C10244,Mateo Kowal,Consumer,1,2025-08-08
+C10245,Theo Ali,Consumer,2,2025-10-22
+C10246,Leo Tanaka,Consumer,1,2024-12-06
+C10247,Sara Brown,Consumer,5,2024-08-19
+C10248,Wildflower Outdoor Store,Outfitter,1,2024-02-12
+C10249,Chloe Rana,Consumer,1,2025-08-24
+C10250,Ethan Haddad,Consumer,4,2024-03-25
+C10251,Theo Patel,Consumer,2,2021-06-23
+C10252,Lucas Larsen,Consumer,3,2023-07-20
+C10253,Nia Nguyen,Consumer,2,2021-07-15
+C10254,Northstar Gear Shop,Small Business,5,2021-02-13
+C10255,Wildflower Outdoor Store,Small Business,3,2025-01-01
+C10256,Emma Fischer,Consumer,1,2024-10-01
+C10257,Nora Rana,Consumer,3,2021-05-15
+C10258,Noah Fischer,Consumer,3,2019-11-29
+C10259,Bluewater Outdoor Store,Outfitter,4,2023-01-03
+C10260,Noah Weber,Consumer,1,2019-05-25
+C10261,Ethan Larsen,Consumer,3,2022-12-08
+C10262,Mason Singh,Consumer,5,2024-12-05
+C10263,Mason Kowal,Consumer,1,2024-11-19
+C10264,Ava Reyes,Consumer,4,2025-09-18
+C10265,Canyon Outdoor Store,Small Business,4,2025-11-14
+C10266,Ironwood Outdoor Store,Outfitter,3,2019-05-24
+C10267,Mason Haddad,Consumer,1,2024-07-10
+C10268,Maya Tanaka,Consumer,1,2022-11-08
+C10269,Theo Brown,Consumer,2,2020-04-12
+C10270,Yuki Haddad,Consumer,3,2023-04-06
+C10271,Sara Brown,Consumer,3,2019-08-06
+C10272,Ava Rossi,Consumer,1,2023-11-14
+C10273,Chloe Reyes,Consumer,3,2024-12-10
+C10274,Theo Tanaka,Consumer,5,2020-01-17
+C10275,Timberline Gear Shop,Small Business,2,2024-02-05
+C10276,Timberline Mountain Goods,Small Business,2,2025-08-05
+C10277,Mia Lund,Consumer,2,2021-12-04
+C10278,Yuki Costa,Consumer,5,2020-02-14
+C10279,Highland Sports,Small Business,3,2019-05-22
+C10280,Ethan Novak,Consumer,1,2023-06-26
+C10281,Kai Ali,Consumer,3,2019-07-09
+C10282,Nora Nguyen,Consumer,3,2021-06-04
+C10283,Theo Novak,Consumer,2,2023-08-10
+C10284,Pinecrest Supply,Small Business,4,2025-09-07
+C10285,Hana Hughes,Consumer,2,2022-01-09
+C10286,Lena Garcia,Consumer,2,2023-11-22
+C10287,Nia Singh,Consumer,2,2022-08-29
+C10288,Eli Reyes,Consumer,2,2022-07-24
+C10289,Ava Weber,Consumer,4,2022-04-30
+C10290,Chloe Rossi,Consumer,5,2026-01-24
+C10291,Mateo Schmidt,Consumer,2,2019-07-26
+C10292,Mason Walsh,Consumer,5,2020-02-17
+C10293,Cole Weber,Consumer,2,2020-06-13
+C10294,Eli Meyer,Consumer,1,2021-01-19
+C10295,Pinecrest Expeditions,Small Business,5,2019-05-09
+C10296,Canyon Outfitters,Outfitter,5,2024-07-08
+C10297,Cole Tanaka,Consumer,2,2025-11-08
+C10298,Ruby Okafor,Consumer,2,2021-01-15
+C10299,Leo Ali,Consumer,2,2024-07-10
+C10300,Max Nguyen,Consumer,4,2020-12-25
+C10301,Ridgeway Expeditions,Small Business,1,2022-11-06
+C10302,Kai Meyer,Consumer,3,2025-06-10
+C10303,Mason Hughes,Consumer,5,2022-02-14
+C10304,Ridgeway Expeditions,Small Business,2,2020-07-01
+C10305,Ruby Moore,Consumer,3,2025-11-30
+C10306,Zoe Nguyen,Consumer,4,2025-08-14
+C10307,Arjun Garcia,Consumer,1,2022-09-05
+C10308,Lakeside Gear Shop,Small Business,1,2019-07-04
+C10309,Nora Chen,Consumer,4,2021-09-07
+C10310,Nora Chen,Consumer,5,2020-10-19
+C10311,Mia Moore,Consumer,2,2019-10-30
+C10312,Zoe Novak,Consumer,2,2020-02-21
+C10313,Hana Moore,Consumer,1,2023-03-11
+C10314,Max Silva,Consumer,3,2024-12-13
+C10315,Cole Schmidt,Consumer,3,2020-12-31
+C10316,Elif Byrne,Consumer,1,2023-07-19
+C10317,Nia Fischer,Consumer,5,2026-01-24
+C10318,Emma Silva,Consumer,2,2021-05-05
+C10319,Sara Nguyen,Consumer,1,2025-05-07
+C10320,Sara Rana,Consumer,3,2025-11-20
+C10321,Nia Novak,Consumer,1,2023-09-26
+C10322,Elif Rana,Consumer,1,2019-04-27
+C10323,Trailhead Outdoor Store,Outfitter,2,2020-12-27
+C10324,Peak Adventure Co.,Small Business,2,2024-11-09
+C10325,Ironwood Gear Shop,Small Business,2,2024-08-09
+C10326,Owen Ali,Consumer,2,2023-12-18
+C10327,Peak Mountain Goods,Outfitter,3,2021-12-03
+C10328,Ethan Tanaka,Consumer,1,2020-02-17
+C10329,Ava Larsen,Consumer,3,2025-01-29
+C10330,Ethan Ali,Consumer,4,2024-09-17
+C10331,Kai Weber,Consumer,5,2022-10-21
+C10332,Eli Schmidt,Consumer,2,2020-05-23
+C10333,Pinecrest Mountain Goods,Small Business,1,2025-08-08
+C10334,Jonas Garcia,Consumer,2,2020-12-27
+C10335,Noah Rana,Consumer,1,2021-04-27
+C10336,Hana Weber,Consumer,3,2019-10-08
+C10337,Lena Patel,Consumer,2,2023-06-11
+C10338,Wildflower Outfitters,Outfitter,2,2024-09-17
+C10339,Mason Lund,Consumer,1,2022-01-25
+C10340,Lena Moore,Consumer,1,2022-01-08
+C10341,Noah Novak,Consumer,2,2021-06-20
+C10342,Trailhead Outdoor Store,Small Business,5,2024-06-09
+C10343,Ava Bakr,Consumer,5,2021-04-06
+C10344,Emma Larsen,Consumer,4,2024-09-05
+C10345,Canyon Sports,Outfitter,2,2021-07-15
+C10346,Emma Adler,Consumer,1,2025-11-14
+C10347,Olivia Patel,Consumer,1,2026-01-26
+C10348,Ridgeway Adventure Co.,Outfitter,1,2020-08-15
+C10349,Riverbend Sports,Outfitter,4,2023-07-19
+C10350,Granite Adventure Co.,Small Business,1,2020-07-15
+C10351,Nora Novak,Consumer,2,2019-01-31
+C10352,Highland Supply,Small Business,1,2025-11-29
+C10353,Ethan Moore,Consumer,3,2024-12-31
+C10354,Riverbend Sports,Small Business,3,2020-01-09
+C10355,Leo Brown,Consumer,2,2020-04-19
+C10356,Kai Reyes,Consumer,3,2020-04-07
+C10357,Ironwood Adventure Co.,Outfitter,1,2022-05-25
+C10358,Emma Silva,Consumer,3,2020-12-17
+C10359,Chloe Patel,Consumer,1,2025-06-06
+C10360,Mia Walsh,Consumer,1,2021-04-12
+C10361,Ivy Tanaka,Consumer,3,2023-10-31
+C10362,Isla Bakr,Consumer,2,2023-05-11
+C10363,Ridgeway Adventure Co.,Small Business,5,2025-03-04
+C10364,Granite Outfitters,Outfitter,2,2023-06-27
+C10365,Sara Costa,Consumer,2,2022-02-06
+C10366,Lucas Ali,Consumer,1,2021-05-29
+C10367,Northstar Outdoor Store,Small Business,5,2023-08-07
+C10368,Theo Kim,Consumer,1,2019-06-01
+C10369,Mateo Silva,Consumer,4,2022-11-19
+C10370,Riverbend Gear Shop,Outfitter,1,2020-11-08
+C10371,Mateo Singh,Consumer,3,2026-02-21
+C10372,Jack Kowal,Consumer,2,2025-07-19
+C10373,Basecamp Adventure Co.,Small Business,4,2020-07-04
+C10374,Finn Hughes,Consumer,2,2021-05-14
+C10375,Zoe Meyer,Consumer,3,2025-01-23
+C10376,Pinecrest Gear Shop,Small Business,1,2020-05-24
+C10377,Timberline Expeditions,Small Business,3,2025-09-10
+C10378,Zoe Garcia,Consumer,2,2023-06-07
+C10379,Nora Kowal,Consumer,2,2024-07-01
+C10380,Riverbend Gear Shop,Outfitter,2,2024-03-31
+C10381,Basecamp Mountain Goods,Small Business,4,2020-09-21
+C10382,Ironwood Mountain Goods,Small Business,5,2023-05-04
+C10383,Lucas Singh,Consumer,1,2019-08-05
+C10384,Eli Brown,Consumer,1,2020-11-17
+C10385,Cole Silva,Consumer,1,2023-08-10
+C10386,Ava Hughes,Consumer,1,2022-08-30
+C10387,Ridgeway Sports,Outfitter,1,2020-01-31
+C10388,Aiden Lund,Consumer,3,2021-12-17
+C10389,Maya Weber,Consumer,1,2023-08-01
+C10390,Lakeside Outdoor Store,Small Business,3,2021-11-20
+C10391,Highland Gear Shop,Small Business,2,2020-06-10
+C10392,Olivia Byrne,Consumer,5,2021-08-28
+C10393,Chloe Hughes,Consumer,2,2021-02-17
+C10394,Bluewater Outdoor Store,Small Business,5,2024-06-21
+C10395,Pinecrest Gear Shop,Outfitter,1,2022-03-24
+C10396,Peak Outdoor Store,Small Business,1,2019-04-08
+C10397,Mia Adler,Consumer,3,2024-09-25
+C10398,Nora Lund,Consumer,3,2021-05-15
+C10399,Nora Kim,Consumer,4,2025-06-26
+C10400,Granite Outfitters,Small Business,1,2024-09-22
+C10401,Sara Tanaka,Consumer,2,2025-12-09
+C10402,Jonas Patel,Consumer,4,2020-01-19
+C10403,Olivia Ortiz,Consumer,2,2021-10-18
+C10404,Jonas Weber,Consumer,2,2022-12-20
+C10405,Arjun Kim,Consumer,5,2020-08-22
+C10406,Mateo Costa,Consumer,2,2021-06-20
+C10407,Zoe Rana,Consumer,4,2021-05-02
+C10408,Lucas Costa,Consumer,2,2025-07-30
+C10409,Jack Hughes,Consumer,4,2019-01-21
+C10410,Lena Larsen,Consumer,3,2024-06-03
+C10411,Cole Kim,Consumer,2,2019-09-24
+C10412,Jack Okafor,Consumer,2,2023-12-09
+C10413,Mateo Kim,Consumer,5,2021-04-02
+C10414,Cedar Gear Shop,Outfitter,5,2025-08-08
+C10415,Ethan Novak,Consumer,3,2025-08-27
+C10416,Bluewater Outfitters,Small Business,3,2020-09-15
+C10417,Aiden Hughes,Consumer,2,2023-01-14
+C10418,Finn Garcia,Consumer,3,2022-03-20
+C10419,Noah Larsen,Consumer,2,2025-04-24
+C10420,Riverbend Expeditions,Small Business,4,2023-04-20
+C19999,TEST ACCOUNT - DO NOT USE,Consumer,1,2025-05-02

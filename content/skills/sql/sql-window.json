@@ -1,0 +1,58 @@
+{
+  "id": "sql-window",
+  "name": "CTEs, window functions and deduplication",
+  "ds": ["NWOrderLines", "NWOrders", "NWCustomers", "NWProducts"],
+  "skills": ["sql", "testing"],
+  "stage": "developer",
+  "why": {
+    "matters": "Window functions answer the questions BI is asked every day (top N, running totals, previous period, latest row per key) without self-joins, and ROW_NUMBER is the standard tool for removing duplicates safely.",
+    "failure": "A load deduplicates with SELECT DISTINCT on a table that has a changing timestamp column: nothing is removed, and the fact doubles.",
+    "use": "Ranking, running totals, period-over-period, keeping the latest version of a row, gaps and islands.",
+    "avoid": "Using window functions to do what the semantic model will do anyway at query time (running totals over the visual's axis are often better as DAX or visual calculations)."
+  },
+  "verified": { "date": "2026-10-01", "context": "Portable SQL tested on SQLite 3.47 in CI", "review_after_days": 365 },
+  "refs": [
+    { "title": "OVER clause (Transact-SQL)", "url": "https://learn.microsoft.com/en-us/sql/t-sql/queries/select-over-clause-transact-sql" },
+    { "title": "ROW_NUMBER (Transact-SQL)", "url": "https://learn.microsoft.com/en-us/sql/t-sql/functions/row-number-transact-sql" }
+  ],
+  "asg": [
+    {
+      "t": "Remove the duplicated lines with ROW_NUMBER",
+      "time": "25 min",
+      "ds": "order_lines",
+      "guidance": "B",
+      "brief": "The March re-export duplicated some order lines. SELECT DISTINCT works today, but next time the duplicates may differ in a load timestamp. Write a deduplication that keeps exactly one row per (OrderID, LineNo) whatever the other columns contain.",
+      "req": ["One row per (OrderID, LineNo).", "Say how many rows you removed, and how you would choose which copy to keep if the copies differed."],
+      "exp": "{{sql_exported_rows|int}} rows in, {{sql_distinct_rows|int}} rows out: {{sql_dup_rows|int}} duplicates removed."
+    },
+    {
+      "t": "Top products and a running total",
+      "time": "30 min",
+      "ds": "order_lines, orders, products",
+      "guidance": "B",
+      "brief": "For the Q1 2026 review, Jordan wants the top three products by gross sales and the cumulative gross sales month by month.",
+      "req": ["Use RANK or ROW_NUMBER for the top three (no TOP or LIMIT, so it works everywhere).", "Running total by month with SUM() OVER (ORDER BY …).", "Same filters and currency rules as the previous topic."],
+      "exp": "Top three: {{sql_top1_product}} {{sql_top1_product_gross|money0}}, {{sql_top2_product}} {{sql_top2_product_gross|money0}}, {{sql_top3_product}} {{sql_top3_product_gross|money0}}. Running total: January {{sql_running_jan|money0}}, February {{sql_running_feb|money0}}, March {{sql_running_mar|money0}}."
+    },
+    {
+      "t": "How dependent are we on one customer?",
+      "time": "30 min",
+      "ds": "order_lines, orders, customers",
+      "guidance": "C",
+      "brief": "The CFO asks how concentrated Q1 2026 sales are. Answer with numbers, and say whether the business should worry.",
+      "req": ["Share of Q1 gross sales from the largest customer, and from the top 10.", "A one-sentence answer for the CFO."],
+      "exp": "The largest customer, {{sql_top_customer}}, is {{sql_top_share|pct1}} of Q1 2026 gross sales ({{sql_top_customer_gross|money0}}). Combined with Sprint 01 (they stopped ordering in February) that is a material risk."
+    }
+  ],
+  "int": [
+    { "q": "ROW_NUMBER, RANK and DENSE_RANK: what's the difference?", "a": "All number rows within a partition in a given order. ROW_NUMBER gives unique numbers even for ties; RANK gives ties the same number and skips the next ones (1, 1, 3); DENSE_RANK gives ties the same number without gaps (1, 1, 2). For deduplication use ROW_NUMBER; for \"top 3 including ties\" use RANK or DENSE_RANK." },
+    { "q": "How do you keep the latest version of each customer row?", "a": "ROW_NUMBER() OVER (PARTITION BY CustomerID ORDER BY UpdatedAt DESC) AS rn, then keep rn = 1. Make the ORDER BY deterministic (add a tie-breaker) or the chosen row can change between runs." },
+    { "q": "When is a CTE better than a subquery?", "a": "For readability and reuse within one statement: each step gets a name, and you can test the steps one at a time. Performance is usually the same; a CTE is not a temporary table unless your engine materialises it." },
+    { "q": "What does the window frame in SUM() OVER (ORDER BY Month) default to, and why does it matter?", "a": "With ORDER BY and no frame, most engines use RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW, which treats ties in the ORDER BY as the same position. For running totals over unique keys that's fine; with duplicates in the ordering column, specify ROWS BETWEEN … explicitly." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "Which removes duplicates even when the duplicate rows differ in a LoadedAt column?", "o": ["SELECT DISTINCT *", "ROW_NUMBER() OVER (PARTITION BY OrderID, LineNo ORDER BY LoadedAt DESC) = 1", "GROUP BY *", "UNION"], "a": 1, "why": "DISTINCT compares all columns, so rows that differ in LoadedAt survive. Partitioning by the business key keeps exactly one per key." },
+    { "type": "mcq", "q": "Two products tie for second place. Which function returns 1, 2, 2, 4?", "o": ["ROW_NUMBER", "RANK", "DENSE_RANK", "NTILE"], "a": 1, "why": "RANK gives ties the same rank and skips the next number." },
+    { "type": "task", "q": "Write a query that shows, for each month of 2026, gross sales and the change versus the previous month, using LAG.", "hint": "Aggregate to one row per month in a CTE first, then LAG(Gross) OVER (ORDER BY Month)." }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": "qa-data",
+  "name": "Data quality tests",
+  "ds": ["NWOrders", "NWOrderLines", "NWReturns", "NWFx", "RawOrdersExport"],
+  "skills": ["testing", "sql", "power-query"],
+  "stage": "developer",
+  "why": {
+    "matters": "Every report inherits the quality of its data. Tests that run on every load catch duplicates, orphans and impossible values before an executive does.",
+    "failure": "A re-run export duplicates 37 lines; nobody notices for a quarter because the totals \"looked about right\".",
+    "use": "Uniqueness of keys, non-null required columns, referential integrity, valid ranges, row-count and total reconciliation with the source, and freshness. Run them on every load; fail loudly.",
+    "avoid": "Testing only in Power Query by eye. Tests that aren't automated stop being run."
+  },
+  "verified": { "date": "2026-10-01", "context": "Portable SQL tested on SQLite in CI; Power Query profiling docs", "review_after_days": 365 },
+  "refs": [
+    { "title": "Data profiling tools in Power Query", "url": "https://learn.microsoft.com/en-us/power-query/data-profiling-tools" }
+  ],
+  "asg": [
+    {
+      "t": "A data quality suite for the company pack",
+      "time": "45 min",
+      "ds": "orders, order_lines, returns, fx_rates",
+      "guidance": "B",
+      "brief": "Write one query (or one script) that runs a set of named data quality tests and returns, for each, the number of failing rows. It must run after every load and be easy to read.",
+      "req": ["Uniqueness of (OrderID, LineNo) in order_lines.", "Referential integrity: lines and returns point to existing orders.", "Valid ranges: quantity > 0; returned quantity not above the sold quantity; ship date not before order date.", "Every EUR order month has an exchange rate.", "Flag test customers."],
+      "exp": "Failures: duplicate line keys {{sql_dup_rows|int}}, orphan lines {{qa_orphan_lines|int}}, orphan returns {{qa_orphan_returns|int}}, non-positive quantities {{qa_nonpositive_qty|int}}, over-returns {{qa_returns_over_qty|int}}, ship before order {{qa_ship_before_order|int}}, missing FX months {{qa_missing_fx|int}}, test-customer orders {{qa_test_customer_orders|int}}."
+    },
+    {
+      "t": "Reconcile row counts and totals, source to model",
+      "time": "30 min",
+      "ds": "RawOrdersExport (course dataset)",
+      "guidance": "B",
+      "brief": "For the Beginner clean-up of RawOrdersExport, write the reconciliation that proves where every source row went: kept, removed as header or total, or removed as a duplicate.",
+      "req": ["Row counts at each step.", "A check that kept + removed = source.", "Where you would put this so it runs on every refresh."],
+      "exp": "30 source rows = 27 kept + 1 report header + 1 TOTAL row + 1 duplicate. A Power Query step or a validation query that compares the counts on every refresh."
+    },
+    {
+      "t": "Which tests should block a release?",
+      "time": "20 min",
+      "ds": "—",
+      "guidance": "D",
+      "brief": "Elena asks you to classify data tests into \"block the load\", \"warn and continue\" and \"report weekly\". There is no single right answer: justify yours.",
+      "req": ["Duplicate keys in a fact.", "A dimension member missing for some facts.", "A 15% drop in daily row count.", "Nulls in an optional column.", "A refresh finishing 30 minutes later than usual."],
+      "exp": "A defensible split, e.g. block: duplicate fact keys; warn: missing dimension members (route to Unknown) and a large row-count drop; weekly: nulls in optional columns and refresh duration trends, with reasons tied to business impact."
+    }
+  ],
+  "int": [
+    { "q": "Which data quality tests would you always run on a fact table?", "a": "Key uniqueness at the declared grain, required columns not null, foreign keys that resolve (or are mapped to Unknown), values in valid ranges, row count and total reconciliation against the source, and freshness (max date)." },
+    { "q": "Where should data quality tests run?", "a": "As close to the source as possible (in the warehouse load or the view), so every consumer benefits, and again in the semantic model for the few rules that matter to its measures. Power BI-only checks catch problems late and only for one model." },
+    { "q": "What's the difference between a failed test and a known defect?", "a": "A known defect is documented, has an owner and a planned treatment (for example routing to Unknown). A failed test is a surprise. Track known defects explicitly so tests stay green for the right reasons." },
+    { "q": "Why reconcile counts, not just totals?", "a": "Totals can match by coincidence (duplicates plus missing rows), and counts tell you which rows went where. Reconcile both at each step." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "A fact table's key isn't unique. The safest treatment is:", "o": ["Ignore it", "Fail the load and investigate", "Average the duplicates", "Remove the key column"], "a": 1, "why": "Duplicate fact keys double-count. Stop and find out why before anyone sees the numbers." },
+    { "type": "mcq", "q": "Sales lines reference a product that isn't in DimProduct. Best practice:", "o": ["Drop those lines", "Map them to an Unknown product member and report the count", "Delete the product dimension", "Use a bi-directional relationship"], "a": 1, "why": "Never lose facts; make the gap visible and fix the source." },
+    { "type": "task", "q": "Add a Data Quality page to your Sprint 01 report: one card per test with its failing-row count, red when above zero.", "hint": "Measures like COUNTROWS(FILTER(VALUES(FactSales[LineKey]), CALCULATE(COUNTROWS(FactSales)) > 1)) for duplicates; keep it on a hidden or admin page." }
+  ]
+}

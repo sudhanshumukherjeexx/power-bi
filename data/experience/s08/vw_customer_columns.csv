@@ -1,0 +1,8 @@
+Column,Before (2026-06-07),After (2026-06-08 02:10)
+CustomerID,nvarchar(10),nvarchar(10)
+CustomerName,nvarchar(120),nvarchar(120)
+CustomerSegment,nvarchar(30),(removed)
+Segment,(none),nvarchar(30)
+HomeRegionKey,int,int
+JoinDate,date,date
+IsActive,(none),bit

@@ -1,0 +1,74 @@
+{
+  "i-rls-0": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Role table filter (on DimRegion)",
+        "src": [
+          "[RegionName] = \"West\""
+        ]
+      }
+    ],
+    "s": [
+      "Modeling → Manage roles → New → table DimRegion → switch to the DAX editor → paste the filter. Repeat for South, East, Central.",
+      "Modeling → View as → tick West.",
+      "Service → semantic model → … → Security → West → add the test user."
+    ],
+    "check": "Cards show West only: $12,164.13 net sales.",
+    "note": "RLS doesn't apply to workspace Admins, Members or Contributors. Test with a Viewer or an app user."
+  },
+  "i-rls-1": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Role \"Dynamic\": table filter on DimRegion",
+        "src": [
+          "VAR u = USERPRINCIPALNAME ()",
+          "VAR IsAll =",
+          "    NOT ISEMPTY (",
+          "        FILTER (",
+          "            UserRegionMapping,",
+          "            UserRegionMapping[UserEmail] = u",
+          "                && UserRegionMapping[AccessLevel] = \"All\"",
+          "        )",
+          "    )",
+          "RETURN",
+          "    IsAll",
+          "        || CONTAINS (",
+          "            UserRegionMapping,",
+          "            UserRegionMapping[UserEmail], u,",
+          "            UserRegionMapping[RegionKey], DimRegion[RegionKey]",
+          "        )"
+        ]
+      }
+    ],
+    "s": [
+      "With the filter on DimRegion, you don't need a filter on UserRegionMapping or a bi-directional relationship. Hide UserRegionMapping from report view.",
+      "View as → tick \"Other user\" (enter the email) and tick the role \"Dynamic\"."
+    ],
+    "check": "nina.kowalski@ → West and East. grace.hollis@ → all four (AccessLevel \"All\", RegionKey 0). dana.whitfield@ → West."
+  },
+  "i-rls-2": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Role \"MyTeam\": table filter on DimEmployee",
+        "src": [
+          "PATHCONTAINS (",
+          "    DimEmployee[Path],",
+          "    LOOKUPVALUE ( DimEmployee[EmployeeKey], DimEmployee[Email], USERPRINCIPALNAME () )",
+          ")"
+        ]
+      }
+    ],
+    "check": "dana.whitfield@ → 5 employees (Dana, Rosa Delgado, Ken Osei, Lily Chang, Jonah Pike), $12,164.13. lily.chang@ → only herself, $1,967.54."
+  },
+  "i-rls-3": {
+    "s": [
+      "As the restricted user: Analyze in Excel → PivotTable shows only their regions. New report on the model (needs Build) → same.",
+      "Measure: CALCULATE([Net Sales], ALL(DimRegion)) still returns only the permitted total.",
+      "Publish the same PBIX to another workspace → Security page is empty there."
+    ],
+    "check": "RLS filters are applied before any DAX runs, so ALL() can't lift them. Role membership is stored per semantic model in the Service, not in the PBIX."
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "id": "b-pq",
+  "name": "Getting data and cleaning it in Power Query",
+  "ds": [
+    "RawOrdersExport",
+    "DimProduct"
+  ],
+  "skills": [
+    "power-query"
+  ],
+  "stage": "analyst",
+  "refs": [
+    {
+      "title": "Power Query overview",
+      "url": "https://learn.microsoft.com/en-us/power-query/power-query-what-is-power-query"
+    },
+    {
+      "title": "Data profiling tools",
+      "url": "https://learn.microsoft.com/en-us/power-query/data-profiling-tools"
+    }
+  ],
+  "asg": [
+    {
+      "t": "Turn the messy export into a clean table",
+      "time": "45 min",
+      "ds": "RawOrdersExport",
+      "guidance": "A",
+      "steps": [
+        "Load RawOrdersExport with Get Data → Enter Data.",
+        "Remove the first row (report header) and the last row (TOTAL) using Remove Top Rows and Remove Bottom Rows, not by filtering on a value.",
+        "Trim and Clean every text column. Rename headers to PascalCase with no spaces.",
+        "Fix Order Dt: use Column From Examples or Locale-aware Change Type so all seven date formats become one Date column. Check every row.",
+        "Strip $ and \" USD\" from Unit Price and convert to Decimal Number. Replace \"N/A\" with null, then convert Qty to Whole Number.",
+        "Capitalize Each Word on customer name and Region, so \"west \" and \"WEST\" both become \"West\".",
+        "Remove exact duplicate rows. Delete the fully empty LegacyFlag column."
+      ],
+      "exp": "27 rows, 8 columns, no errors, no text-typed numbers. Qty column shows 3 nulls (two \"N/A\" values and one blank). Exactly 4 distinct Region values."
+    },
+    {
+      "t": "Reproduce the same clean-up as a reusable query",
+      "time": "20 min",
+      "ds": "RawOrdersExport",
+      "guidance": "A",
+      "steps": [
+        "Right-click your cleaned query → Reference. Name it \"Orders Clean\".",
+        "In the original query, disable Enable Load so only the referenced query lands in the model.",
+        "Change one input value in the Enter Data source (e.g. change $199.99 to $209.99) and refresh: the clean query must update without a single manual step."
+      ],
+      "exp": "Model contains one table, \"Orders Clean\". Query pane shows the raw query in italics (not loaded)."
+    },
+    {
+      "t": "Join product attributes",
+      "time": "20 min",
+      "ds": "RawOrdersExport, DimProduct",
+      "guidance": "A",
+      "steps": [
+        "Load DimProduct.",
+        "In Orders Clean, Merge Queries with DimProduct on product name. Notice that \"TRAIL CHEF STOVE\" does not match: fix casing before the merge, not after.",
+        "Expand only Category and ProductKey.",
+        "Use Left Outer, then check the row count. Then try Inner and see which rows disappeared and why."
+      ],
+      "exp": "All 27 rows keep a Category after the casing fix. The Inner join initially loses 1 row before the fix."
+    },
+    {
+      "t": "Profile before you trust",
+      "time": "10 min",
+      "ds": "RawOrdersExport",
+      "guidance": "A",
+      "steps": [
+        "Turn on Column quality, Column distribution and Column profile in the View ribbon.",
+        "Change profiling from \"top 1000 rows\" to \"entire data set\".",
+        "Write down, for Qty: % valid, % error, % empty, distinct count, unique count."
+      ],
+      "exp": "You can explain the difference between distinct and unique out loud (distinct = different values, unique = values that occur exactly once)."
+    }
+  ],
+  "int": [
+    {
+      "q": "What is the difference between Remove Duplicates and Remove Rows → Remove Errors, and when would each silently corrupt your data?",
+      "a": "Remove Duplicates only checks the selected columns, so selecting one column drops rows that differ elsewhere. Remove Errors removes the entire row, so a single unparseable date deletes a real sale. Fix the type conversion (locale, Replace Values) so errors don't occur, and only remove errors as a last resort you can justify."
+    },
+    {
+      "q": "Why does Change Type to Date fail on \"Jan 7 2026\" and \"06/02/2026\" in the same column, and how do you fix it?",
+      "a": "Type detection uses one culture. Use Change Type with Locale for a consistent format, or Column From Examples to build a parsing step. For truly mixed formats, split into a conditional column that tries Date.FromText with different cultures via try…otherwise."
+    },
+    {
+      "q": "Someone applied steps in the wrong order: Change Type before Replace Values. What breaks?",
+      "a": "The type step errors on \"$199.99\" before replace runs. Steps are a pipeline; drag Replace Values above Change Type, or delete the auto-detected Changed Type step and re-add it at the end."
+    },
+    {
+      "q": "What is query folding and how can a beginner check whether a step folds?",
+      "a": "Folding pushes the transformation back to the source as SQL. Right-click a step → View Native Query. If it is greyed out, folding stopped at or before that step. Enter Data never folds because there is no source engine."
+    },
+    {
+      "q": "When is a Reference better than a Duplicate?",
+      "a": "Reference keeps a live link so the cleaning logic exists once. Duplicate copies the steps and they drift apart. Use Reference for staging → clean → model layers, Duplicate when you intentionally want two independent queries."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "After Remove Top Rows(1) and Remove Bottom Rows(1) on RawOrdersExport, how many rows remain before de-duplication?",
+      "o": [
+        "27",
+        "28",
+        "29",
+        "30"
+      ],
+      "a": 1,
+      "why": "30 total minus the header row and the TOTAL row = 28. Removing the one duplicate SO-5001 line gets you to 27."
+    },
+    {
+      "type": "mcq",
+      "q": "Which step turns \"$699.99\" into a usable number with the fewest chances of error?",
+      "o": [
+        "Change Type → Decimal Number directly",
+        "Replace \"$\" with \"\" then Change Type",
+        "Split column by delimiter \"$\"",
+        "Extract text after delimiter"
+      ],
+      "a": 1,
+      "why": "Replace then type-convert is explicit and survives future values like \"$1,299.00\" after you also replace commas."
+    },
+    {
+      "type": "task",
+      "q": "Load RawOrdersExport and produce a table with exactly these column types: OrderRef Text, OrderDate Date, CustomerName Text, Product Text, Qty Whole Number, UnitPrice Decimal, Region Text, Notes Text. Zero error cells. Screenshot the Applied Steps pane.",
+      "hint": "Order of steps: remove rows → replace values → trim/clean/capitalize → change type → remove duplicates."
+    },
+    {
+      "type": "mcq",
+      "q": "Column profile says Qty has distinct = 9 and unique = 3. What does unique = 3 mean?",
+      "o": [
+        "3 rows have Qty",
+        "3 different values of Qty appear only once",
+        "3 nulls",
+        "3 errors"
+      ],
+      "a": 1,
+      "why": "Unique counts values that occur exactly one time; distinct counts different values."
+    }
+  ]
+}

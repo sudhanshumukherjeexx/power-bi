@@ -1,0 +1,19 @@
+{
+  "id": "advanced",
+  "kind": "level",
+  "order": 3,
+  "cls": "adv",
+  "name": "Advanced",
+  "years": "Year 3 – 5",
+  "tagline": "Performance tuning, calculation groups, composite models, deployment, Fabric and governance.",
+  "seo": "Advanced Power BI practice: DAX Studio and VertiPaq tuning, calculation groups, composite models, PBIP and Git, Fabric Direct Lake and governance.",
+  "intro": "At this level the questions are \"why is it slow\", \"how do 40 reports share one model without breaking\", and \"how do we ship changes safely\". Tools: DAX Studio, Tabular Editor 2 or 3, VertiPaq Analyzer, a Fabric trial, Git.",
+  "topics": [
+    "a-perf",
+    "a-dax",
+    "a-composite",
+    "a-deploy",
+    "a-fabric",
+    "a-gov"
+  ]
+}

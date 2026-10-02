@@ -1,0 +1,60 @@
+{
+  "$schema": "../../schema/scenario-solution.schema.json",
+  "summary": "Two independent problems. First, Production has a deployment rule for ServerName but not for DatabaseName, so the parameter kept the Development value (NorthwindDW_Dev) and Production reads the stale load-test copy that happens to exist on the production server: 2,184,210 rows up to 28 February. Second, the Targets connection in Production uses Sam's personal OAuth credential, which expired on 27 May; refresh keeps the old Targets and only warns. Both refreshes say Completed, which is why nobody noticed.",
+  "root_cause": [
+    "deployment_pipeline.json: the Production stage has a ServerName rule only. parameters_by_stage.csv shows DatabaseName = NorthwindDW_Dev in Production, \"copied from source stage\".",
+    "sql_databases.csv: NorthwindDW_Dev exists on sql-prod (a March load-test restore that was never dropped), so the connection succeeds and the data looks plausible: 2,184,210 rows and max OrderDate 28 Feb, exactly what Production shows.",
+    "datasource_bindings.csv: Production's SharePoint Targets connection authenticates as sam.patel@ (OAuth), expired on 27 May. refresh_history_prod.csv shows the warning \"Targets was not refreshed; previous data kept\" on every run.",
+    "Contributing factor: refresh status Completed with warnings isn't monitored, and there is no post-deployment check of row counts or max dates."
+  ],
+  "steps": [
+    "Start from the symptom numbers: Production's 2,184,210 rows and max date 28 Feb match exactly one database in sql_databases.csv, NorthwindDW_Dev. That's the proof.",
+    "Trace why: parameters_by_stage.csv shows DatabaseName = NorthwindDW_Dev in Prod. The pipeline only rewrites parameters that have a rule in the target stage; Test has both rules, Prod has one.",
+    "Fix through the pipeline: add a DatabaseName = NorthwindDW rule to the Production stage and redeploy (or apply the rule), then refresh. Don't edit the published model by hand: the next deployment would undo it.",
+    "Targets: read the refresh message and the binding. Replace the personal OAuth credential with the service account the Test connection already uses, then refresh Targets.",
+    "Verify against source: rows = 2,302,415, max OrderDate = 1 June, Targets latest month = 2026-06. Then send Jordan the all-clear.",
+    "Prevent: rules for every environment-specific parameter (and a test that fails if a parameter in Prod still contains \"Dev\"), a post-deployment check of row counts and max dates against the warehouse, refresh warnings alerting like failures, service credentials only for production sources, and drop NorthwindDW_Dev from the production server."
+  ],
+  "numbers": {
+    "title": "Each difference and its cause",
+    "cols": ["Check", "Test", "Production", "Matches", "Cause"],
+    "rows": [
+      ["FactSales rows", "2,301,877", "2,184,210", "NorthwindDW_Dev", "missing DatabaseName rule"],
+      ["Max OrderDate", "2026-05-31", "2026-02-28", "NorthwindDW_Dev", "missing DatabaseName rule"],
+      ["Net Sales, May", "$98,730", "(blank)", "no May rows in the Dev copy", "missing DatabaseName rule"],
+      ["Targets rows / latest month", "60 / 2026-06", "55 / 2026-05", "last successful refresh before 27 May", "expired personal OAuth credential"]
+    ]
+  },
+  "artifacts": [
+    { "title": "Post-deployment checks (run after every promotion)", "lang": "md", "body": [
+      "- Every parameter that differs by environment has a rule in every target stage. Fail if any Prod parameter value contains \"dev\" or \"test\".",
+      "- Each data source connection in Prod uses a service principal or service account, not a person.",
+      "- After refresh: FactSales row count and max OrderDate equal the source (query the warehouse and the model via XMLA or the REST executeQueries API).",
+      "- Refresh status Completed with warnings counts as failed for production models; alert the owner.",
+      "- Compare three headline measures between Test and Prod for the same period; they must match when both point at the same data."
+    ] },
+    { "title": "Runbook: \"Test is fine, Production is wrong\"", "lang": "md", "body": [
+      "1. Compare row counts and max dates per stage with each candidate source. The numbers tell you which database Prod is really reading.",
+      "2. Check parameters and data source settings per stage against the pipeline rules.",
+      "3. Check refresh history messages, not just status.",
+      "4. Check credential owners and expiry on gateway and cloud connections.",
+      "5. Fix through rules or connections, redeploy, refresh, verify against source, then communicate."
+    ] }
+  ],
+  "communication": {
+    "executive": "Since Monday's update the production sales app was reading an old test copy of the data, and the targets stopped updating on 27 May. Both are fixed and checked against the source. Please re-check any plans made from the app since Monday. We've added automatic checks so a release can't quietly point at the wrong data again.",
+    "engineer": "Prod stage lacked a DatabaseName rule, so the parameter stayed NorthwindDW_Dev, which exists on sql-prod (load-test restore) → stale 2.18M rows to 28 Feb. Targets: Prod SharePoint connection on sam.patel OAuth expired 27 May; refresh warned only. Added the rule, switched to svc_pbi_cloud, refreshed, verified rows/max date vs DW. Post-deploy checks plus warning alerts added; DBA ticket to drop NorthwindDW_Dev."
+  },
+  "pitfalls": [
+    "Fixing the parameter by hand in the Production workspace: the next deployment overwrites it.",
+    "Trusting \"Completed\". The model loaded successfully from the wrong place.",
+    "Renewing Sam's personal credential: it will expire again, and access shouldn't depend on one person.",
+    "Leaving NorthwindDW_Dev on the production server. A missing rule would have failed loudly without it."
+  ],
+  "review": {
+    "junior": "Republishes from Desktop to Production, which overwrites the pipeline content and hides the cause.",
+    "competent": "Finds the DatabaseName parameter and fixes the rule.",
+    "senior": "Proves the cause from the numbers, finds the second, unrelated credential problem from the refresh messages, fixes both through the pipeline, verifies against source and adds post-deployment checks.",
+    "architect": "Standardises environment configuration (rules or variable libraries), requires service principals for production connections, treats refresh warnings as failures, and adds automated release gates so this class of error can't reach Production."
+  }
+}

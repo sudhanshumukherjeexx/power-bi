@@ -1,0 +1,14 @@
+{
+  "gov-workspace-0": {
+    "s": ["Group the 19 workspaces by department; personal shares and old dev copies become candidates to archive.", "One domain per business area, owned by a named business lead with a BI contact.", "Naming: \"Sales – Analytics\", \"Sales – Analytics [Dev]\", \"[Test]\" so the stage is always visible.", "Roles: 2–3 Admins (BI team + domain owner), Members/Contributors for builders, consumers through apps or audiences.", "Pipelines for any workspace with certified or widely used models; personal and test workspaces never feed production reports."],
+    "check": "Domains with owners, a naming convention, minimal Admins, apps for consumers, pipelines for production content."
+  },
+  "gov-workspace-1": {
+    "s": ["Criteria: owners (business + technical); documentation (KPI dictionary, descriptions); tests (data, model, security) passing; refresh monitored with team alerts; performance budget met; changes via Git + pipeline; no personal credentials.", "Process: owner requests → BI CoE reviews against the checklist → certifier approves; yearly re-review; certification removed if an owner leaves or tests fail for 30 days."],
+    "check": "One page of criteria plus a short review and removal process."
+  },
+  "gov-workspace-2": {
+    "s": ["Certified: the shared sales model and the Finance board pack model meet ownership, documentation and reconciliation standards.", "Promoted: Marketing's model is maintained and useful to its team; document it before considering certification.", "Neither: the copy (fold the measure into the shared model, retire it) and the one-off analysis (personal workspace; delete after the meeting)."],
+    "check": "2 certified, 1 promoted, 2 neither."
+  }
+}

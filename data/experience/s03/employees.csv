@@ -1,0 +1,32 @@
+EmployeeKey,EmployeeName,Title,Department,HomeRegionKey,ManagerKey,Email
+1,Grace Hollis,CEO,Executive,0,,grace.hollis@northwind.example
+2,Jordan Reed,VP Sales,Sales,0,1,jordan.reed@northwind.example
+3,Sarah Chen,CFO,Finance,0,1,sarah.chen@northwind.example
+4,Nina Kowalski,Finance Analyst,Finance,0,3,nina.kowalski@northwind.example
+5,Dana Whitfield,Regional Sales Manager,Sales,1,2,dana.whitfield@northwind.example
+6,Rosa Delgado,Sales Representative,Sales,1,5,rosa.delgado@northwind.example
+7,Ken Osei,Sales Representative,Sales,1,5,ken.osei@northwind.example
+8,Lily Chang,Sales Representative,Sales,1,5,lily.chang@northwind.example
+9,Jonah Pike,Sales Representative,Sales,1,5,jonah.pike@northwind.example
+10,Mae Fontaine,Sales Representative,Sales,1,5,mae.fontaine@northwind.example
+11,Marcus Bell,Regional Sales Manager,Sales,2,2,marcus.bell@northwind.example
+12,Amara Diallo,Sales Representative,Sales,2,11,amara.diallo@northwind.example
+13,Sofia Reyes,Sales Representative,Sales,2,11,sofia.reyes@northwind.example
+14,Ben Carver,Sales Representative,Sales,2,11,ben.carver@northwind.example
+15,Iris Novak,Sales Representative,Sales,2,11,iris.novak@northwind.example
+16,Priya Raman,Regional Sales Manager,Sales,3,2,priya.raman@northwind.example
+17,Bea Lindqvist,Sales Representative,Sales,3,16,bea.lindqvist@northwind.example
+18,Omar Haddad,Sales Representative,Sales,3,16,omar.haddad@northwind.example
+19,Grace Kim,Sales Representative,Sales,3,16,grace.kim@northwind.example
+20,Dev Mehta,Sales Representative,Sales,3,16,dev.mehta@northwind.example
+21,Lucia Moretti,Sales Representative,Sales,3,16,lucia.moretti@northwind.example
+22,Tomas Ekberg,Regional Sales Manager,Sales,4,2,tomas.ekberg@northwind.example
+23,Victor Ilunga,Sales Representative,Sales,4,22,victor.ilunga@northwind.example
+24,Hanna Berg,Sales Representative,Sales,4,22,hanna.berg@northwind.example
+25,Paul Okoye,Sales Representative,Sales,4,22,paul.okoye@northwind.example
+26,Nadia Petrov,Sales Representative,Sales,4,22,nadia.petrov@northwind.example
+27,Lea Brandt,Regional Sales Manager,Sales,5,2,lea.brandt@northwind.example
+28,Jonas Weber,Sales Representative,Sales,5,27,jonas.weber@northwind.example
+29,Elif Aydin,Sales Representative,Sales,5,27,elif.aydin@northwind.example
+30,Mateo Rossi,Sales Representative,Sales,5,27,mateo.rossi@northwind.example
+31,Ines Duarte,Sales Representative,Sales,5,27,ines.duarte@northwind.example

@@ -1,0 +1,273 @@
+{
+  "id": "dp600",
+  "order": 2,
+  "code": "DP-600",
+  "name": "Microsoft Fabric Analytics Engineer Associate",
+  "blurb": "The next step for Fabric work: lakehouses, warehouses, dataflows, enterprise semantic models and lifecycle management.",
+  "url": "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-600",
+  "verified": {
+    "date": "2026-10-01",
+    "source": "Microsoft Learn study guide, updated 2026-09-18 (skills measured as of 19 October 2026)",
+    "review_after_days": 60
+  },
+  "note": "DP-600 expects SQL, KQL and DAX. The SQL and Fabric tracks cover the hands-on side; Experience Mode's Fabric migration sprint covers the decisions.",
+  "versions": [
+    {
+      "id": "pre-2026-10-19",
+      "label": "Before 19 October 2026",
+      "effective": "2025-01-01",
+      "changes": "The outline in force until 18 October 2026. Same three skill areas and weights. Microsoft lists only a minor change in Query and analyze data for the new version, so the skills below apply to both, apart from small wording differences in that group.",
+      "areas": [
+        {
+          "n": "Maintain a data analytics solution",
+          "w": "25–30%",
+          "topics": [
+            "i-rls",
+            "a-deploy",
+            "a-gov",
+            "gov-protect",
+            "gov-workspace",
+            "api-xmla"
+          ],
+          "cards": [
+            "Security & governance",
+            "Fabric & enterprise"
+          ]
+        },
+        {
+          "n": "Prepare data",
+          "w": "45–50%",
+          "topics": [
+            "i-pq",
+            "i-model",
+            "a-fabric",
+            "sql-query",
+            "sql-window",
+            "sql-load",
+            "dw-keys",
+            "fab-onelake",
+            "fab-pipelines"
+          ],
+          "cards": [
+            "Power Query & data prep",
+            "Fabric & enterprise"
+          ]
+        },
+        {
+          "n": "Implement and manage semantic models",
+          "w": "25–30%",
+          "topics": [
+            "a-perf",
+            "a-dax",
+            "a-composite",
+            "i-dax",
+            "fab-directlake",
+            "sql-tune"
+          ],
+          "cards": [
+            "DAX concepts",
+            "Performance",
+            "Data modeling"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2026-10-19",
+      "label": "As of 19 October 2026",
+      "effective": "2026-10-19",
+      "changes": "Minor change in Query and analyze data. The outline also distinguishes Direct Lake on OneLake from Direct Lake on SQL analytics endpoint and includes OneLake integration for Eventhouse and semantic models.",
+      "areas": [
+        {
+          "n": "Maintain a data analytics solution",
+          "w": "25–30%",
+          "topics": [
+            "i-rls",
+            "a-deploy",
+            "a-gov",
+            "gov-protect",
+            "gov-workspace",
+            "qa-security",
+            "api-xmla",
+            "gov-monitor"
+          ],
+          "cards": [
+            "Security & governance",
+            "Fabric & enterprise"
+          ],
+          "skills": [
+            {
+              "n": "Implement security and governance",
+              "items": [
+                "Implement workspace-level access controls",
+                "Implement item-level access controls",
+                "Implement row-level, column-level, object-level, and file-level access control",
+                "Apply sensitivity labels to items",
+                "Endorse items"
+              ],
+              "topics": [
+                "i-rls",
+                "a-gov",
+                "gov-protect",
+                "gov-workspace",
+                "qa-security"
+              ]
+            },
+            {
+              "n": "Maintain the analytics development lifecycle",
+              "items": [
+                "Configure version control for a workspace",
+                "Create and manage a Power BI Desktop project (.pbip)",
+                "Create and configure deployment pipelines",
+                "Perform impact analysis of downstream dependencies from lakehouses, warehouses, dataflows, and semantic models",
+                "Deploy and manage semantic models by using the XMLA endpoint",
+                "Create and update reusable assets, including Power BI template (.pbit) files, Power BI data source (.pbids) files, and shared semantic models"
+              ],
+              "topics": [
+                "a-deploy",
+                "a-gov",
+                "api-xmla",
+                "gov-monitor"
+              ]
+            }
+          ]
+        },
+        {
+          "n": "Prepare data",
+          "w": "45–50%",
+          "topics": [
+            "i-pq",
+            "i-model",
+            "a-fabric",
+            "fab-onelake",
+            "fab-pipelines",
+            "sql-load",
+            "dw-keys",
+            "dw-dims",
+            "qa-data",
+            "sql-query",
+            "sql-window"
+          ],
+          "cards": [
+            "Power Query & data prep",
+            "Fabric & enterprise"
+          ],
+          "skills": [
+            {
+              "n": "Get data",
+              "items": [
+                "Create a data connection",
+                "Discover data by using OneLake catalog and Real-Time hub",
+                "Ingest or access data as needed",
+                "Choose between different data stores",
+                "Implement OneLake integration for Eventhouse and semantic models"
+              ],
+              "topics": [
+                "a-fabric",
+                "fab-onelake",
+                "fab-pipelines"
+              ]
+            },
+            {
+              "n": "Transform data",
+              "items": [
+                "Create views, functions, and stored procedures",
+                "Enrich data by adding new columns or tables",
+                "Implement a star schema for a lakehouse or warehouse",
+                "Denormalize data",
+                "Aggregate data",
+                "Merge or join data",
+                "Identify and resolve duplicate data, missing data, or null values",
+                "Convert column data types",
+                "Filter data"
+              ],
+              "topics": [
+                "i-pq",
+                "i-model",
+                "a-fabric",
+                "sql-load",
+                "dw-keys",
+                "dw-dims",
+                "fab-pipelines",
+                "qa-data"
+              ]
+            },
+            {
+              "n": "Query and analyze data",
+              "items": [
+                "Select, filter, and aggregate data by using the Visual query editor",
+                "Select, filter, and aggregate data by using SQL",
+                "Select, filter, and aggregate data by using KQL",
+                "Select, filter, and aggregate data by using DAX"
+              ],
+              "topics": [
+                "a-fabric",
+                "i-dax",
+                "sql-query",
+                "sql-window"
+              ]
+            }
+          ]
+        },
+        {
+          "n": "Implement and manage semantic models",
+          "w": "25–30%",
+          "topics": [
+            "a-perf",
+            "a-dax",
+            "a-composite",
+            "i-dax",
+            "a-fabric",
+            "dw-facts",
+            "dw-time",
+            "fab-directlake",
+            "sql-tune"
+          ],
+          "cards": [
+            "DAX concepts",
+            "Performance",
+            "Data modeling"
+          ],
+          "skills": [
+            {
+              "n": "Design and build semantic models",
+              "items": [
+                "Choose a storage mode",
+                "Implement a star schema for a semantic model",
+                "Implement relationships, such as bridge tables and many-to-many relationships",
+                "Write calculations that use DAX variables and functions, such as iterators, table filtering, windowing, and information functions",
+                "Implement calculation groups, dynamic format strings, and field parameters",
+                "Identify use cases for and configure large semantic model storage format",
+                "Design and build composite models"
+              ],
+              "topics": [
+                "a-composite",
+                "i-model",
+                "i-dax",
+                "a-dax",
+                "dw-facts",
+                "dw-time"
+              ]
+            },
+            {
+              "n": "Optimize enterprise-scale semantic models",
+              "items": [
+                "Implement performance improvements in queries and report visuals",
+                "Improve DAX performance",
+                "Configure Direct Lake, including default fallback and refresh behavior",
+                "Choose between Direct Lake on OneLake and Direct Lake on SQL analytics endpoint",
+                "Implement incremental refresh for semantic models"
+              ],
+              "topics": [
+                "a-perf",
+                "a-fabric",
+                "fab-directlake",
+                "sql-tune"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

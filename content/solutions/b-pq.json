@@ -1,0 +1,103 @@
+{
+  "b-pq-0": {
+    "s": [
+      "Load the CSV (or Enter Data) and use Home → Remove Rows → Remove Top Rows (1) and Remove Bottom Rows (1).",
+      "Rename headers first: the raw headers contain trailing spaces (\"customer name \", \"Region \") that are easy to miss.",
+      "Clean the text columns, then replace \"$\", \" USD\", \"N/A\" and blanks, then fix the dates, then set types, and remove duplicates last.",
+      "The date column has no single right culture: 01/03/2026 is US (3 Jan) but 06/02/2026 is day-first (6 Feb: it sits between orders on 5 Feb and 10 Feb). Fix that one value explicitly and write down why."
+    ],
+    "code": [
+      {
+        "lang": "M",
+        "title": "Full cleaned query (paste into Advanced Editor, adjust the Source step)",
+        "src": [
+          "let",
+          "    // If you used Enter Data, keep your own Source step and delete the next two lines",
+          "    Source = Csv.Document(File.Contents(\"C:\\PowerBI\\data\\RawOrdersExport.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),",
+          "    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),",
+          "    RemovedReportHeader = Table.Skip(Promoted, 1),",
+          "    RemovedTotalRow = Table.RemoveLastN(RemovedReportHeader, 1),",
+          "    RemovedLegacyFlag = Table.RemoveColumns(RemovedTotalRow, {\"LegacyFlag\"}),",
+          "    Renamed = Table.RenameColumns(RemovedLegacyFlag, {",
+          "        {\"Order Ref\", \"OrderRef\"}, {\"Order Dt\", \"OrderDate\"}, {\"customer name \", \"CustomerName\"},",
+          "        {\"PRODUCT\", \"Product\"}, {\"Unit Price\", \"UnitPrice\"}, {\"Region \", \"Region\"}}),",
+          "    TrimmedAndCleaned = Table.TransformColumns(Renamed, {}, each if _ is text then Text.Clean(Text.Trim(_)) else _),",
+          "    StrippedCurrency = Table.TransformColumns(TrimmedAndCleaned,",
+          "        {{\"UnitPrice\", each Text.Replace(Text.Replace(_, \"$\", \"\"), \" USD\", \"\"), type text}}),",
+          "    NAToNull = Table.ReplaceValue(StrippedCurrency, \"N/A\", null, Replacer.ReplaceValue, {\"Qty\", \"UnitPrice\"}),",
+          "    BlankToNull = Table.ReplaceValue(NAToNull, \"\", null, Replacer.ReplaceValue, {\"Qty\", \"Notes\"}),",
+          "    // 06/02/2026 is day-first in this export (order sequence proves it); every other slash date is US",
+          "    FixedAmbiguousDate = Table.ReplaceValue(BlankToNull, \"06/02/2026\", \"2026-02-06\", Replacer.ReplaceValue, {\"OrderDate\"}),",
+          "    ParsedDates = Table.TransformColumns(FixedAmbiguousDate, {{\"OrderDate\", each",
+          "        if Text.Middle(_, 2, 1) = \"-\" then Date.FromText(_, [Format = \"dd-MM-yyyy\"])",
+          "        else Date.FromText(_, [Culture = \"en-US\"]), type date}}),",
+          "    ProperCase = Table.TransformColumns(ParsedDates, {{\"CustomerName\", Text.Proper, type text}, {\"Region\", Text.Proper, type text}}),",
+          "    Typed = Table.TransformColumnTypes(ProperCase, {",
+          "        {\"OrderRef\", type text}, {\"Product\", type text}, {\"Qty\", Int64.Type},",
+          "        {\"UnitPrice\", type number}, {\"Notes\", type text}}, \"en-US\"),",
+          "    RemovedDuplicates = Table.Distinct(Typed)",
+          "in",
+          "    RemovedDuplicates"
+        ]
+      }
+    ],
+    "check": "27 rows × 8 columns, zero errors. Region = West, South, East, Central. UnitPrice is null for SO-5026 (it was \"N/A\").",
+    "note": "The 3 Qty nulls are SO-5003 and SO-5026 (\"N/A\") and SO-5015 (blank in the source). Don't use Text.Proper on Product: it turns \"2P\", \"65L\" and \"III\" into \"2p\", \"65l\" and \"Iii\", which breaks the merge in the next assignment."
+  },
+  "b-pq-1": {
+    "s": [
+      "Right-click your cleaned query → Reference. Rename the new query \"Orders Clean\".",
+      "Right-click the original query → untick Enable Load. It turns italic.",
+      "Edit the Source step (Enter Data → gear icon) or the CSV, then Home → Refresh Preview / Close & Apply."
+    ],
+    "code": [
+      {
+        "lang": "M",
+        "title": "What Reference creates (the whole query)",
+        "src": [
+          "let",
+          "    Source = #\"RawOrdersExport\"",
+          "in",
+          "    Source"
+        ]
+      }
+    ],
+    "check": "Model view shows exactly one table, \"Orders Clean\". The changed price appears after refresh with no extra steps.",
+    "note": "Duplicate would copy all the steps. Your fix would then live in two places and drift apart."
+  },
+  "b-pq-2": {
+    "s": [
+      "Load DimProduct. In Orders Clean: Home → Merge Queries → pick Product and ProductName.",
+      "Case matters in Power Query joins. Only \"TRAIL CHEF STOVE\" fails. Join on an upper-cased key (below) rather than proper-casing the product names.",
+      "Expand only Category and ProductKey. Compare the row counts for Left Outer vs Inner."
+    ],
+    "code": [
+      {
+        "lang": "M",
+        "title": "Case-insensitive merge on an upper-cased key",
+        "src": [
+          "let",
+          "    Source = #\"Orders Clean\",",
+          "    WithKey = Table.AddColumn(Source, \"ProductUpper\", each Text.Upper([Product]), type text),",
+          "    ProductsWithKey = Table.AddColumn(DimProduct, \"ProductUpper\", each Text.Upper([ProductName]), type text),",
+          "    Merged = Table.NestedJoin(WithKey, {\"ProductUpper\"}, ProductsWithKey, {\"ProductUpper\"}, \"Product\", JoinKind.LeftOuter),",
+          "    Expanded = Table.ExpandTableColumn(Merged, \"Product\", {\"Category\", \"ProductKey\"}),",
+          "    RemovedKey = Table.RemoveColumns(Expanded, {\"ProductUpper\"})",
+          "in",
+          "    RemovedKey"
+        ]
+      }
+    ],
+    "check": "Before the fix: Left Outer = 27 rows with 1 null Category; Inner = 26 rows. After the fix both give 27 rows, all with a Category.",
+    "note": "Fixing it after the merge, e.g. by filling the null Category by hand, hides the root cause, and the next new product will fail silently. If Power BI asks for privacy levels when you merge two files, set both to Organizational (File → Options and settings → Data source settings → Edit permissions)."
+  },
+  "b-pq-3": {
+    "s": [
+      "View ribbon → tick Column quality, Column distribution, Column profile.",
+      "Click the text \"Column profiling based on top 1000 rows\" in the status bar → Entire data set.",
+      "Select the Qty column and read the three panels."
+    ],
+    "check": "On the cleaned query, Qty: 24 valid (89%), 0 errors, 3 empty (11%). 7 distinct non-null values (1, 2, 3, 4, 5, 12, -1), and 3 of them are unique (4, 12, -1, each appearing once). Power Query may count the empty value as an 8th distinct value.",
+    "note": "Profiling the raw query (before cleaning) shows errors instead of empties. Profile the step you actually load."
+  }
+}

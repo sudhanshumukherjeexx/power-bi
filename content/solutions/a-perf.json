@@ -1,0 +1,136 @@
+{
+  "a-perf-0": {
+    "code": [
+      {
+        "lang": "M",
+        "title": "FactSalesBig: 100,000 deterministic rows",
+        "src": [
+          "let",
+          "    Source = FactSales,",
+          "    Copies = Table.FromList(List.Numbers(1, 1000), Splitter.SplitByNothing(), {\"Copy\"}),",
+          "    CrossJoined = Table.ExpandTableColumn(Table.AddColumn(Source, \"C\", each Copies), \"C\", {\"Copy\"}),",
+          "    // deterministic \"random\" shift of 0–364 days keeps dates inside the Dates table",
+          "    AddedOffset = Table.AddColumn(CrossJoined, \"DayOffset\", each Number.Mod([Copy] * 37 + [SalesKey] * 11, 365), Int64.Type),",
+          "    NewOrderDate = Table.AddColumn(AddedOffset, \"OrderDate2\", each Date.AddDays([OrderDate], -[DayOffset]), type date),",
+          "    NewShipDate = Table.AddColumn(NewOrderDate, \"ShipDate2\", each Date.AddDays([ShipDate], -[DayOffset]), type date),",
+          "    NewOrderID = Table.AddColumn(NewShipDate, \"OrderID2\", each [OrderID] & \"-\" & Text.From([Copy]), type text),",
+          "    Dropped = Table.RemoveColumns(NewOrderID, {\"OrderDate\", \"ShipDate\", \"OrderID\", \"DayOffset\", \"Copy\", \"SalesKey\"}),",
+          "    Renamed = Table.RenameColumns(Dropped, {{\"OrderDate2\", \"OrderDate\"}, {\"ShipDate2\", \"ShipDate\"}, {\"OrderID2\", \"OrderID\"}}),",
+          "    AddedKey = Table.AddIndexColumn(Renamed, \"SalesKey\", 1, 1, Int64.Type)",
+          "in",
+          "    AddedKey"
+        ]
+      }
+    ],
+    "s": [
+      "DAX Studio → connect to the open PBIX → Advanced → View Metrics. Record the Tables and Columns tabs (Total Size).",
+      "Remove SalesKey (it is unique per row), change UnitPrice to Fixed decimal number, keep dates as Date, not Date/Time. Refresh and record again."
+    ],
+    "check": "100,000 rows. Before the change, SalesKey (100,000 distinct values) and OrderID are the largest columns. Removing SalesKey gives the biggest saving."
+  },
+  "a-perf-1": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Three versions",
+        "src": [
+          "-- create first, on FactSalesBig",
+          "Net Sales Big = SUMX ( FactSalesBig, FactSalesBig[Quantity] * FactSalesBig[UnitPrice] * ( 1 - FactSalesBig[Discount] ) )",
+          "",
+          "-- 1: iterates every fact row and calls the measure per row (context transition each time)",
+          "Customers Over 500 Slow = COUNTROWS ( FILTER ( FactSalesBig, [Net Sales Big] > 500 ) )",
+          "",
+          "-- 2: iterates customers only",
+          "Customers Over 500 = COUNTROWS ( FILTER ( VALUES ( DimCustomer[CustomerKey] ), [Net Sales Big] > 500 ) )",
+          "",
+          "-- 3: iterates the distinct customer keys present in the fact",
+          "Customers Over 500 v3 = COUNTROWS ( FILTER ( SUMMARIZE ( FactSalesBig, FactSalesBig[CustomerKey] ), [Net Sales Big] > 500 ) )"
+        ]
+      },
+      {
+        "lang": "DAX",
+        "title": "Query to time in DAX Studio",
+        "src": [
+          "EVALUATE",
+          "SUMMARIZECOLUMNS (",
+          "    DimRegion[RegionName],",
+          "    \"Slow\", [Customers Over 500 Slow],",
+          "    \"Fast\", [Customers Over 500]",
+          ")"
+        ]
+      }
+    ],
+    "check": "Version 1 shows far more storage engine queries and/or CallbackDataID. Version 2 is a handful of SE queries.",
+    "note": "Version 1 is not only slow, it answers a different question: it counts fact rows over 500, not customers. Fast and wrong is still wrong, so always check the number first."
+  },
+  "a-perf-2": {
+    "code": [
+      {
+        "lang": "M",
+        "title": "AggSalesMonthCat",
+        "src": [
+          "let",
+          "    Source = FactSalesBig,",
+          "    AddedYearMonth = Table.AddColumn(Source, \"YearMonth\", each Date.ToText([OrderDate], [Format = \"yyyy-MM\"]), type text),",
+          "    MergedProduct = Table.NestedJoin(AddedYearMonth, {\"ProductKey\"}, DimProduct, {\"ProductKey\"}, \"P\", JoinKind.LeftOuter),",
+          "    ExpandedCategory = Table.ExpandTableColumn(MergedProduct, \"P\", {\"Category\"}),",
+          "    AddedAmount = Table.AddColumn(ExpandedCategory, \"Amount\", each [Quantity] * [UnitPrice] * (1 - [Discount]), type number),",
+          "    Grouped = Table.Group(AddedAmount, {\"YearMonth\", \"Category\", \"RegionKey\"}, {",
+          "        {\"SumQuantity\", each List.Sum([Quantity]), type number},",
+          "        {\"SumAmount\", each List.Sum([Amount]), type number},",
+          "        {\"CountRows\", each Table.RowCount(_), Int64.Type}})",
+          "in",
+          "    Grouped"
+        ]
+      }
+    ],
+    "s": [
+      "Model view → AggSalesMonthCat → Manage aggregations: SumQuantity → Sum of FactSalesBig[Quantity], CountRows → Count table rows of FactSalesBig, Category → GroupBy DimProduct[Category], RegionKey → GroupBy FactSalesBig[RegionKey], YearMonth → GroupBy Dates[YearMonth].",
+      "SumAmount can only map to a physical column. Add an Amount column to FactSalesBig so the mapping has a detail column.",
+      "DAX Studio → All Queries/Query Plan with \"Aggregate Rewrite Attempt\" events visible."
+    ],
+    "check": "A query by Category shows a successful match. A query by ProductName shows a miss and goes to the detail table.",
+    "note": "Aggregations only kick in automatically when the detail table is DirectQuery. With everything in Import you are only practising the mapping."
+  },
+  "a-perf-3": {
+    "s": [
+      "Filter step: OrderDate >= RangeStart and < RangeEnd, and confirm it folds (View Native Query).",
+      "Table → Incremental refresh: Archive 2 years, Incrementally refresh 3 days, optionally Detect data changes (ModifiedDate) and Only refresh complete days.",
+      "Publish → Refresh once. SSMS → connect to powerbi://api.powerbi.com/v1.0/myorg/<workspace> → table → Partitions.",
+      "Insert a row dated 10 days ago → refresh → it doesn't appear. Widen the incremental window → refresh → it appears."
+    ],
+    "check": "Partitions: whole years for old data, then quarters, months, and days for the most recent period.",
+    "note": "The first refresh after publishing loads the whole archive. Plan it outside business hours."
+  },
+  "a-perf-4": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Two ways to compute session length",
+        "src": [
+          "Sessions = DISTINCTCOUNT ( WebEvents[SessionID] )",
+          "",
+          "Sessions With Purchase = CALCULATE ( [Sessions], WebEvents[EventType] = \"Purchase\" )",
+          "",
+          "Conversion Rate = DIVIDE ( [Sessions With Purchase], [Sessions] )",
+          "",
+          "-- (a) all at query time",
+          "Avg Session Minutes =",
+          "AVERAGEX (",
+          "    VALUES ( WebEvents[SessionID] ),",
+          "    DATEDIFF ( CALCULATE ( MIN ( WebEvents[EventTime] ) ), CALCULATE ( MAX ( WebEvents[EventTime] ) ), MINUTE )",
+          ")",
+          "",
+          "-- (b) pay at refresh: calculated columns",
+          "SessionStart = MINX ( FILTER ( WebEvents, WebEvents[SessionID] = EARLIER ( WebEvents[SessionID] ) ), WebEvents[EventTime] )",
+          "SessionEnd   = MAXX ( FILTER ( WebEvents, WebEvents[SessionID] = EARLIER ( WebEvents[SessionID] ) ), WebEvents[EventTime] )",
+          "",
+          "Avg Session Minutes (col) =",
+          "AVERAGEX ( VALUES ( WebEvents[SessionID] ), DATEDIFF ( MIN ( WebEvents[SessionStart] ), MIN ( WebEvents[SessionEnd] ), MINUTE ) )"
+        ]
+      }
+    ],
+    "check": "Sessions 39 · Sessions With Purchase 6 · Conversion Rate 15.4% · Avg Session Minutes 8.18.",
+    "note": "In (b), CALCULATE(MIN(...), ALLEXCEPT(WebEvents, WebEvents[SessionID])) is a clearer modern alternative to EARLIER."
+  }
+}

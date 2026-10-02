@@ -1,0 +1,45 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "d04",
+  "slug": "d04-hotfix-or-rollback",
+  "type": "drill",
+  "stage": "senior",
+  "order": 3,
+  "title": "Hotfix, rollback or wait?",
+  "seo": "BI release management drill: a production KPI is wrong after a release. Choose between a normal release, a hotfix and a rollback, and justify it.",
+  "summary": "Release 2.3 went live last night. This morning one KPI on the sales app is wrong. The board pack is tomorrow. Choose: normal release, hotfix or rollback.",
+  "minutes": 30,
+  "skills": ["deployment", "testing", "communication", "architecture"],
+  "prereq": ["s07"],
+  "ticket": { "id": "INC-2079", "kind": "decision", "severity": "SEV2", "priority": "High", "reporter": "jordan", "opened": "Wed 10 Jun 2026, 08:15", "labels": ["release", "hotfix", "rollback"] },
+  "impact": "Every option has a cost. Rolling back also undoes fixes people are waiting for; a rushed hotfix can break something else the day before the board pack; waiting leaves a wrong number in front of managers.",
+  "messages": [
+    { "from": "jordan", "to": "elena", "via": "email", "at": "Wed 10 Jun, 08:15", "subject": "Avg order value is off", "body": ["Avg Order Value on the sales app jumped from about $210 to $340 overnight. Nothing like that happened in the business. Managers are asking."] },
+    { "from": "elena", "to": "you", "via": "chat", "at": "Wed 10 Jun, 08:30", "body": ["Your call; tell me by 10:00 and why. Release notes attached. Next normal release train is Thursday 15:00, after the board pack goes out."] }
+  ],
+  "evidence": [
+    { "id": "notes", "kind": "doc", "title": "Release 2.3 notes (deployed Tue 9 Jun, 18:00)", "body": ["- 14 changes. Includes: Staff exclusion fix for Finance (requested for the board pack), schema migration of FactReturns (new column ReturnChannel; the previous release can't read the new table), two new pages for Ops, and AOV now uses [Orders (completed)].\n- All tests passed in Test. Rollback: redeploy release 2.2 from Git (requires reverting the FactReturns schema migration in the warehouse first)."] },
+    { "id": "diff", "kind": "code", "lang": "DAX", "title": "The AOV change in release 2.3", "body": "-- 2.2\nAvg Order Value = DIVIDE ( [Net Sales (orders)], [Orders] )\n\n-- 2.3\nAvg Order Value = DIVIDE ( [Net Sales (orders)], [Orders (completed)] )\n-- [Orders (completed)] = CALCULATE ( DISTINCTCOUNT ( FactSales[OrderID] ), FactSales[Status] = \"Completed\", FactSales[Channel] = \"Online\" )" }
+  ],
+  "decision": {
+    "adr": "CHG-2079",
+    "title": "How to correct Avg Order Value in production",
+    "question": "What do you do?",
+    "options": [
+      { "id": "wait", "t": "Wait for Thursday's normal release train", "d": "No risk of a rushed change; the wrong KPI stays live until Thursday afternoon." },
+      { "id": "hotfix", "t": "Hotfix: a one-line change to [Orders (completed)], tested and deployed today through the pipeline", "d": "Fast and small; needs a test and a deployment outside the train." },
+      { "id": "rollback", "t": "Roll back to release 2.2", "d": "Restores the old AOV and everything else from before last night." }
+    ]
+  },
+  "tasks": ["Find what's actually wrong in the AOV change.", "Weigh the three options against the facts in the release notes.", "Record your decision with its justification and the safeguards you'd require."],
+  "deliverables": [{ "id": "dec", "t": "Decision with justification and safeguards" }, { "id": "rn", "t": "Hotfix release note (if you chose it)", "artifact": "release-notes" }],
+  "hints": ["Read [Orders (completed)] carefully: it filters more than its name says.", "What else would a rollback take away, and what has to happen in the warehouse before 2.2 can even run?"],
+  "rubric": [
+    { "id": "diag", "n": "Diagnosis", "w": 30, "good": "Finds the extra Channel = \"Online\" filter that shrinks the denominator." },
+    { "id": "dec", "n": "Decision quality", "w": 35, "good": "Chooses a tested hotfix; rejects rollback because it removes the Finance fix needed for the board pack and requires reverting a schema migration; rejects waiting because managers act on the KPI today." },
+    { "id": "safe", "n": "Safeguards", "w": 20, "good": "Hotfix through the pipeline with a regression check of AOV and other KPIs, and a follow-up test so it can't recur." },
+    { "id": "comm", "n": "Communication", "w": 15, "good": "Jordan and the managers told what was wrong and when it's fixed." }
+  ],
+  "retro": ["Which test in Test would have caught this?", "When is a rollback the right answer?"],
+  "refs": [{ "title": "Deployment pipelines: deploy content", "url": "https://learn.microsoft.com/en-us/fabric/cicd/deployment-pipelines/deploy-content" }]
+}

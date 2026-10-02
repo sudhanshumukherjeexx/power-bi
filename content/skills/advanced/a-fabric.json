@@ -1,0 +1,158 @@
+{
+  "id": "a-fabric",
+  "name": "Dataflows, Fabric Lakehouse and Direct Lake",
+  "ds": [
+    "FactSales",
+    "FactInventory",
+    "WebEvents"
+  ],
+  "skills": [
+    "fabric",
+    "modeling",
+    "performance"
+  ],
+  "stage": "engineer",
+  "why": {
+    "matters": "Storage mode decides how fresh the numbers are, how fast reports are and what the capacity costs. Choosing it wrongly is expensive to undo.",
+    "failure": "A Direct Lake on SQL model built over SQL views silently runs every query as DirectQuery, and the dashboard that was fast in the demo takes 20 seconds in production.",
+    "use": "Direct Lake when the data already lands in OneLake as Delta tables and is too large or too fresh to copy with Import.",
+    "avoid": "When the model author cannot change the upstream tables and needs Power Query transformations: use Import tables (possibly combined with Direct Lake on OneLake)."
+  },
+  "verified": {
+    "date": "2026-10-01",
+    "context": "Direct Lake overview (Microsoft Learn, 2026-09-02) and How Direct Lake works (2026-09-09)",
+    "cert": "DP-600 (2026-10-19)",
+    "review_after_days": 90
+  },
+  "refs": [
+    {
+      "title": "Direct Lake overview",
+      "url": "https://learn.microsoft.com/en-us/fabric/fundamentals/direct-lake-overview"
+    },
+    {
+      "title": "How Direct Lake works: framing, transcoding and fallback",
+      "url": "https://learn.microsoft.com/en-us/fabric/fundamentals/direct-lake-how-it-works"
+    },
+    {
+      "title": "Dataflow Gen2 overview",
+      "url": "https://learn.microsoft.com/en-us/fabric/data-factory/dataflows-gen2-overview"
+    },
+    {
+      "title": "What is a lakehouse in Microsoft Fabric?",
+      "url": "https://learn.microsoft.com/en-us/fabric/data-engineering/lakehouse-overview"
+    }
+  ],
+  "asg": [
+    {
+      "t": "Dataflow Gen2 as a shared staging layer",
+      "time": "40 min",
+      "ds": "RawOrdersExport",
+      "steps": [
+        "Create a Dataflow Gen2 in a Fabric workspace. Paste the RawOrdersExport clean-up M from Beginner.",
+        "Set the output destination to a Lakehouse table \"orders_clean\".",
+        "Point a new semantic model at the Lakehouse (SQL endpoint) and another at the Dataflow directly. Compare refresh behaviour.",
+        "Break the source (rename a column) and read the Dataflow error versus the model error."
+      ],
+      "exp": "One transformation, two consumers, one place to fix it."
+    },
+    {
+      "t": "Lakehouse and Direct Lake",
+      "time": "40 min",
+      "ds": "All datasets as CSV",
+      "steps": [
+        "Upload all fourteen CSVs to a Lakehouse Files area. Load each to a Delta table.",
+        "Create a Direct Lake semantic model from the Lakehouse and note which option you created: Direct Lake on OneLake (the recommended option for new models) or Direct Lake on SQL analytics endpoint. Build relationships in the web modeling view.",
+        "In DAX query view run EVALUATE TABLETRAITS() and read [DirectLakeFallbackInfo] for each table. None means the table is served by Direct Lake.",
+        "In the SQL analytics endpoint, create a view over FactSales and add it to a Direct Lake on SQL model. Run TABLETRAITS again: the view falls back to DirectQuery. Set the model's Direct Lake behavior to DirectLakeOnly and watch the same visual fail instead of falling back.",
+        "Try the same on a Direct Lake on OneLake model: it will not accept a non-materialized view at all. Materialize the logic as a Delta table instead."
+      ],
+      "exp": "You can say what forces DirectQuery fallback in Direct Lake on SQL (SQL views, SQL-endpoint RLS, OLS or masking, guardrails exceeded, tables not yet framed) and why Direct Lake on OneLake never falls back: it errors instead, so you design to stay inside its limits."
+    },
+    {
+      "t": "Notebook to Power BI",
+      "time": "40 min",
+      "ds": "WebEvents",
+      "steps": [
+        "In a Fabric notebook (PySpark or Python), load WebEvents, compute per-session first and last event and a funnel stage, write a Delta table \"sessions\".",
+        "Refresh the Direct Lake model (reframe) and build a funnel visual.",
+        "Schedule the notebook and the reframe in a pipeline."
+      ],
+      "exp": "Funnel shows PageView → Purchase drop-off from the notebook output, not from DAX."
+    },
+    {
+      "t": "Choose the right layer",
+      "time": "20 min",
+      "ds": "—",
+      "steps": [
+        "For each of these, write where the logic lives and why: currency conversion, customer ABC class, data cleaning of the messy export, budget allocation to days, RLS mapping, session duration.",
+        "Rule you are testing: transform as far upstream as possible, as far downstream as necessary."
+      ],
+      "exp": "At most two of the six land in DAX."
+    }
+  ],
+  "int": [
+    {
+      "q": "Direct Lake vs Import vs DirectQuery.",
+      "a": "Import copies the data into VertiPaq at refresh time. DirectQuery sends every query to the source. Direct Lake loads Delta/Parquet columns from OneLake into VertiPaq on demand, so it is close to Import speed without copying data at refresh; \"refresh\" only reframes metadata. There are two Direct Lake options: Direct Lake on OneLake (recommended for new models, can combine several Fabric sources and Import tables, never falls back to DirectQuery) and Direct Lake on SQL analytics endpoint (one source, falls back to DirectQuery for SQL views, SQL-endpoint security or exceeded guardrails, controlled by the Direct Lake behavior property)."
+    },
+    {
+      "q": "What is \"reframing\" in Direct Lake?",
+      "a": "Framing (\"reframing\") makes the model point at the latest version of each Delta table by reading the Delta log. No data is copied, and only changed column segments are reloaded on the next query. It runs automatically when \"Keep your Direct Lake data up to date\" is on, or on demand, on a schedule or through the API when you need ETL to finish before users see new data."
+    },
+    {
+      "q": "When does a Dataflow beat Power Query inside the model?",
+      "a": "When multiple models need the same transformed table, when the transformation is heavy and should run once, when you want a lakehouse table other tools can read, or when the source needs a gateway that only the dataflow should touch."
+    },
+    {
+      "q": "Where should a business rule like \"returns are excluded from revenue\" live?",
+      "a": "As upstream as possible in a shared table (Lakehouse view or dataflow) so every tool agrees, then exposed as a documented measure in a certified model. Never in individual reports."
+    },
+    {
+      "q": "What is the SQL analytics endpoint and what is it not for?",
+      "a": "A read-only T-SQL surface over Lakehouse Delta tables. Good for ad-hoc queries and views; not for writes and not the preferred path for Power BI when Direct Lake is available."
+    }
+  ],
+  "ass": [
+    {
+      "type": "mcq",
+      "q": "A Direct Lake on SQL analytics endpoint model falls back to DirectQuery when:",
+      "o": [
+        "The model has more than 4 tables",
+        "A table is based on a non-materialized SQL view, or the SQL endpoint applies RLS/OLS",
+        "It is refreshed (framed)",
+        "The semantic model itself has RLS roles"
+      ],
+      "a": 1,
+      "why": "SQL views and SQL-endpoint security force DirectQuery fallback in Direct Lake on SQL. Semantic-model RLS does not. Direct Lake on OneLake never falls back: those cases error instead."
+    },
+    {
+      "type": "mcq",
+      "q": "Dataflow Gen2 output destination options include:",
+      "o": [
+        "Only the dataflow storage",
+        "Lakehouse, Warehouse, KQL DB, Azure SQL among others",
+        "Only OneDrive",
+        "Only Excel"
+      ],
+      "a": 1,
+      "why": "Gen2 can write to multiple Fabric and Azure destinations."
+    },
+    {
+      "type": "task",
+      "q": "Build a Direct Lake model over the 14 CSVs and reproduce the Beginner executive page. Prove one visual is served by Direct Lake, not fallback.",
+      "hint": "Run EVALUATE TABLETRAITS() and check [DirectLakeFallbackInfo] = None for every table, or look for DirectQuery events in a DAX Studio trace."
+    },
+    {
+      "type": "mcq",
+      "q": "Reframing a Direct Lake model:",
+      "o": [
+        "Copies all data again",
+        "Re-reads Delta metadata only",
+        "Requires a gateway",
+        "Deletes the cache permanently"
+      ],
+      "a": 1,
+      "why": "Framing is a metadata operation: it points the model at the latest Delta files. Columns load into memory on first query (transcoding)."
+    }
+  ]
+}

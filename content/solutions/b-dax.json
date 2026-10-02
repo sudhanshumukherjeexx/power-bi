@@ -1,0 +1,90 @@
+{
+  "b-dax-0": {
+    "s": [
+      "Home → Enter Data → name the table _Measures, one column, Load. Create the first measure on it, then delete the dummy column: the table moves to the top of the field list.",
+      "Create each measure with New measure, then set the format in Measure tools."
+    ],
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Core measure set",
+        "src": [
+          "Total Qty = SUM ( FactSales[Quantity] )",
+          "",
+          "Gross Sales = SUMX ( FactSales, FactSales[Quantity] * FactSales[UnitPrice] )",
+          "",
+          "Discount Amt = SUMX ( FactSales, FactSales[Quantity] * FactSales[UnitPrice] * FactSales[Discount] )",
+          "",
+          "Net Sales = [Gross Sales] - [Discount Amt]",
+          "",
+          "COGS = SUMX ( FactSales, FactSales[Quantity] * RELATED ( DimProduct[UnitCost] ) )",
+          "",
+          "Margin % = DIVIDE ( [Net Sales] - [COGS], [Net Sales] )"
+        ]
+      }
+    ],
+    "check": "Total Qty 333 · Gross Sales $36,070.67 · Discount Amt $2,679.54 · Net Sales $33,391.13 · COGS $14,268.50 · Margin % 57.3%.",
+    "note": "RELATED only works from the many side (FactSales) to the one side (DimProduct), and only if the relationship exists."
+  },
+  "b-dax-1": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Counting measures",
+        "src": [
+          "Order Lines = COUNTROWS ( FactSales )",
+          "",
+          "Orders = DISTINCTCOUNT ( FactSales[OrderID] )",
+          "",
+          "Customers Buying = DISTINCTCOUNT ( FactSales[CustomerKey] )",
+          "",
+          "Avg Order Value = DIVIDE ( [Net Sales], [Orders] )"
+        ]
+      }
+    ],
+    "check": "Order Lines 100 · Orders 54 · Customers Buying 26 · Avg Order Value $618.35. Orders by Channel: Online 30, Store 30, Wholesale 17 (sum 77 > 54). Orders by Category: Hiking 25, Camping 24, Water 21, Apparel 19 (sum 89 > 54).",
+    "note": "If your channel rows add up to exactly 54 you used a column that holds one value per order. Here the channel is stored on each line, so an order that was partly online and partly in store counts once in each row."
+  },
+  "b-dax-2": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "First CALCULATE and % of total",
+        "src": [
+          "Camping Sales = CALCULATE ( [Net Sales], DimProduct[Category] = \"Camping\" )",
+          "",
+          "Sales All Categories = CALCULATE ( [Net Sales], REMOVEFILTERS ( DimProduct[Category] ) )",
+          "",
+          "% of Total = DIVIDE ( [Net Sales], [Sales All Categories] )"
+        ]
+      }
+    ],
+    "check": "Camping Sales shows $6,936.23 on every row: the filter argument replaces the row's Category filter. % of Total with no slicer: Water 38.7%, Hiking 26.6%, Camping 20.8%, Apparel 14.0%.",
+    "note": "REMOVEFILTERS(DimProduct[Category]) only removes the Category filter. The Region slicer still applies, which is why each region's percentages still sum to 100%."
+  },
+  "b-dax-3": {
+    "code": [
+      {
+        "lang": "DAX",
+        "title": "Calculated columns",
+        "src": [
+          "-- on FactSales",
+          "Line Type = IF ( FactSales[Quantity] < 0, \"Return\", \"Sale\" )",
+          "",
+          "-- on DimCustomer",
+          "Tenure Years = DATEDIFF ( DimCustomer[JoinDate], DATE ( 2026, 3, 31 ), YEAR )",
+          "",
+          "Tenure Band =",
+          "SWITCH (",
+          "    TRUE (),",
+          "    DimCustomer[Tenure Years] >= 3, \"3+ yrs\",",
+          "    DimCustomer[Tenure Years] >= 1, \"1–2 yrs\",",
+          "    \"New\"",
+          ")"
+        ]
+      }
+    ],
+    "check": "Slicer shows Sale / Return. Return lines = 7.",
+    "note": "DATEDIFF with YEAR counts calendar-year boundaries crossed, not full years. A customer who joined in Dec 2025 already shows 1."
+  }
+}

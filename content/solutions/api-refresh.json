@@ -1,0 +1,61 @@
+{
+  "api-refresh-0": {
+    "s": ["POST the refresh; with enhanced refresh the Location header points at the request to poll.", "Poll the refresh history (or the request) with waits of 10, 20, 40… seconds up to a maximum, and a total timeout.", "Exit with a non-zero code on Failed or timeout so the calling pipeline fails.", "From the mock history: count statuses; group failures by dataset."],
+    "code": [
+      { "lang": "Python", "title": "refresh_and_wait.py", "src": [
+        "import os, sys, time, requests",
+        "BASE = 'https://api.powerbi.com/v1.0/myorg'",
+        "H = {'Authorization': f\"Bearer {os.environ['PBI_TOKEN']}\"}       # token from the service principal (see previous topic)",
+        "g, d = os.environ['WORKSPACE_ID'], os.environ['DATASET_ID']",
+        "",
+        "r = requests.post(f'{BASE}/groups/{g}/datasets/{d}/refreshes', headers=H, json={'notifyOption': 'NoNotification'}, timeout=30)",
+        "r.raise_for_status()",
+        "start, wait = time.time(), 10",
+        "while True:",
+        "    time.sleep(wait)",
+        "    last = requests.get(f'{BASE}/groups/{g}/datasets/{d}/refreshes?$top=1', headers=H, timeout=30).json()['value'][0]",
+        "    status = last['status']                                      # Unknown = still running",
+        "    print(time.strftime('%H:%M:%S'), status, flush=True)",
+        "    if status in ('Completed', 'Failed', 'Disabled', 'Cancelled'):",
+        "        break",
+        "    if time.time() - start > 2 * 3600:",
+        "        print('timeout'); sys.exit(2)",
+        "    wait = min(wait * 2, 300)",
+        "print('log', last.get('startTime'), last.get('endTime'), status, last.get('serviceExceptionJson'))",
+        "sys.exit(0 if status == 'Completed' else 1)"
+      ] },
+      { "lang": "Python", "title": "Failure rate from the mock history", "src": [
+        "import json, collections",
+        "runs = json.load(open('data/tracks/automation/refreshes.json'))['value']",
+        "failed = [r for r in runs if r['status'] == 'Failed']",
+        "print(len(failed), 'of', len(runs), 'failed')",
+        "print(collections.Counter(r['datasetId'] for r in failed).most_common(1))"
+      ] }
+    ],
+    "check": "{{api_failed_runs|int}} of {{api_refresh_runs|int}} runs failed in the mock history.",
+    "verify": "The mock-history script was run locally; the counts match the build's computed values."
+  },
+  "api-refresh-1": {
+    "s": ["POST /groups/{groupId}/datasets/{datasetId}/executeQueries with {\"queries\":[{\"query\":\"EVALUATE …\"}]}.", "Parse results[0].tables[0].rows; each row is a dict keyed by column names like [Test], [Pass].", "Fail when any Pass is false; print the failing tests.", "Permissions: Build on the model; RLS applies to the caller's identity, so test security with the right identity."],
+    "code": [
+      { "lang": "Python", "title": "run_model_tests.py", "src": [
+        "import os, sys, requests",
+        "BASE = 'https://api.powerbi.com/v1.0/myorg'",
+        "H = {'Authorization': f\"Bearer {os.environ['PBI_TOKEN']}\"}",
+        "dax = open('tests/model_tests.dax', encoding='utf-8').read()",
+        "r = requests.post(f\"{BASE}/groups/{os.environ['WORKSPACE_ID']}/datasets/{os.environ['DATASET_ID']}/executeQueries\",",
+        "                  headers=H, json={'queries': [{'query': dax}], 'serializerSettings': {'includeNulls': True}}, timeout=60)",
+        "r.raise_for_status()",
+        "rows = r.json()['results'][0]['tables'][0]['rows']",
+        "failed = [x for x in rows if not x.get('[Pass]')]",
+        "for x in failed: print('FAIL', x)",
+        "sys.exit(1 if failed else 0)"
+      ] }
+    ],
+    "check": "Pipeline fails when any model test fails; passes otherwise."
+  },
+  "api-refresh-2": {
+    "s": ["Source: refresh history via REST for certified models every 15 minutes (or workspace monitoring/Log Analytics where available); capacity metrics for duration and CU trends.", "Routing: certified models → team channel or on-call (SEV by consumers and endorsement); others → owner, daily digest.", "Fatigue: alert once per incident, auto-resolve on the next success, weekly digest for warnings and slow trends, review noisy alerts monthly."],
+    "check": "15-minute detection for certified models, team routing, suppression of repeats, weekly trend report."
+  }
+}

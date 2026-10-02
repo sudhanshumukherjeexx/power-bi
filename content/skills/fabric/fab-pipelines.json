@@ -1,0 +1,59 @@
+{
+  "id": "fab-pipelines",
+  "name": "Dataflow Gen2, pipelines, mirroring and medallion design",
+  "ds": ["RawOrdersExport", "NWOrderLines"],
+  "skills": ["fabric", "power-query", "deployment", "warehousing"],
+  "stage": "engineer",
+  "why": {
+    "matters": "In Fabric, data preparation moves out of each semantic model into shared, scheduled layers. That's what makes one definition possible for many models.",
+    "failure": "Five models each clean the same export with slightly different Power Query steps, and five \"Revenue\" numbers appear (Sprint 05, again).",
+    "use": "Bronze (raw, as landed), silver (cleaned, conformed), gold (star schema for models); Dataflow Gen2 for Power Query-style transformations, pipelines to orchestrate, mirroring to replicate operational databases continuously.",
+    "avoid": "Medallion layers for their own sake on small data. Two layers are fine if they're clearly owned."
+  },
+  "verified": { "date": "2026-10-01", "context": "Dataflow Gen2, pipelines, mirroring (SQL Server, updated 2026-07-06) and medallion docs (Microsoft Learn)", "cert": "DP-600 (2026-10-19)", "review_after_days": 90 },
+  "refs": [
+    { "title": "Dataflow Gen2 overview", "url": "https://learn.microsoft.com/en-us/fabric/data-factory/dataflows-gen2-overview" },
+    { "title": "Mirroring SQL Server in Fabric", "url": "https://learn.microsoft.com/en-us/fabric/mirroring/sql-server" },
+    { "title": "Medallion lakehouse architecture", "url": "https://learn.microsoft.com/en-us/fabric/onelake/onelake-medallion-lakehouse-architecture" }
+  ],
+  "asg": [
+    {
+      "t": "Move the clean-up out of the model",
+      "time": "40 min",
+      "ds": "RawOrdersExport (course dataset)",
+      "guidance": "B",
+      "brief": "Turn the Beginner RawOrdersExport clean-up into a Dataflow Gen2 that writes a silver table, so every model reads the same cleaned data.",
+      "req": ["Same rules as Beginner (header and total rows, dates, prices, duplicates).", "Output destination: a lakehouse or warehouse table, with an explicit schema.", "Refresh on a schedule; show two models reading the same table."],
+      "exp": "A silver table with 27 rows and 8 columns, refreshed by the dataflow; both models read it, so a fix in the dataflow fixes both."
+    },
+    {
+      "t": "Design the medallion layers for Northwind",
+      "time": "30 min",
+      "ds": "—",
+      "guidance": "C",
+      "brief": "Following ADR-009 (Sprint 09), design bronze, silver and gold for the sales data: what lands where, which tool writes each layer, who owns it, and which data-quality checks run between layers.",
+      "req": ["Mirroring or pipelines for the operational database.", "Where deduplication, currency conversion and the test-customer rule live.", "The gold tables the semantic model reads."],
+      "exp": "Bronze: mirrored NorthwindDW and landed files (owner: data engineering). Silver: deduplicated, typed, conformed tables with DQ tests (dedup, test customer, FX). Gold: star schema materialised in a Warehouse (FactSales, FactReturns, dimensions), read by a Direct Lake on OneLake model. Tests block promotion from silver to gold."
+    },
+    {
+      "t": "Orchestrate: load, test, frame, notify",
+      "time": "30 min",
+      "ds": "—",
+      "guidance": "B",
+      "brief": "Build (or design) a pipeline that runs the nightly sequence so the semantic model only shows data that passed its tests.",
+      "req": ["Steps: refresh the dataflow or wait for mirroring, run data-quality checks, load gold, refresh (frame) the semantic model, run model tests, notify.", "What happens when a step fails."],
+      "exp": "A pipeline: Dataflow → stored procedure DQ checks (fail stops the run) → gold load → semantic model refresh activity → test query → notify team channel; failures stop downstream steps and alert, so users keep seeing the last good data."
+    }
+  ],
+  "int": [
+    { "q": "Dataflow Gen2 vs Power Query in the model?", "a": "Both use Power Query. Dataflow Gen2 runs once and writes to a destination (lakehouse, warehouse and others) that many models and tools can read; Power Query in the model only serves that model. Use dataflows for shared preparation." },
+    { "q": "What does mirroring do?", "a": "Continuously replicates a supported database (for example SQL Server 2016 and later, through a gateway for on-premises) into OneLake as Delta tables with a SQL analytics endpoint, without building ETL. Replication compute is free; querying uses capacity." },
+    { "q": "Explain the medallion architecture.", "a": "Bronze holds raw data as landed, silver holds cleaned and conformed data, gold holds business-ready models (often star schemas). Each layer has an owner and tests between layers, so problems are caught before reports." },
+    { "q": "Why orchestrate refresh in a pipeline rather than schedule each item?", "a": "Dependencies: the model should refresh only after its data is loaded and tested. A pipeline encodes the order, stops on failure and notifies, so users never see half-loaded data." }
+  ],
+  "ass": [
+    { "type": "mcq", "q": "Five models clean the same export differently. Best fix in Fabric:", "o": ["Copy the best query into all five", "One Dataflow Gen2 writing a shared table that all five read", "DirectQuery to the CSV", "Calculated columns"], "a": 1, "why": "One shared preparation step, one definition." },
+    { "type": "mcq", "q": "Mirroring an on-premises SQL Server into Fabric requires:", "o": ["Nothing", "A supported SQL Server version and a data gateway (on-premises or VNet) for connectivity", "A Spark notebook", "Premium per user"], "a": 1, "why": "On-premises sources are reached through a gateway; SQL Server 2016–2022 uses CDC, 2025 uses the change feed with Azure Arc." },
+    { "type": "task", "q": "Draw the Northwind data flow from source to report on one page, marking owners and test points.", "hint": "NorthwindDW → mirror (bronze) → silver tables → gold warehouse → Direct Lake model → reports; tests at silver→gold and after model refresh." }
+  ]
+}

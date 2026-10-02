@@ -1,0 +1,7 @@
+Stage,Parameter,ValueInModel,Source
+Development,ServerName,sql-dev.northwind.local,PBIP default
+Development,DatabaseName,NorthwindDW_Dev,PBIP default
+Test,ServerName,sql-test.northwind.local,Deployment rule
+Test,DatabaseName,NorthwindDW,Deployment rule
+Production,ServerName,sql-prod.northwind.local,Deployment rule
+Production,DatabaseName,NorthwindDW_Dev,Copied from source stage

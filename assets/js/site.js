@@ -5,6 +5,8 @@
 'use strict';
 const KEYS={main:'pbi-holy-grail-v1',cards:'pbi-holy-grail-cards-v1'};
 const PBI=window.PBI={KEYS};
+/* pages in a sub-folder (experience/) set <body data-root="../"> so links resolve from the site root */
+PBI.ROOT=(document.body&&document.body.dataset.root)||'';
 const pad2=n=>String(n).padStart(2,'0');
 
 /* ---------- small helpers ---------- */
@@ -15,6 +17,27 @@ PBI.today=()=>{const d=new Date();return d.getFullYear()+'-'+pad2(d.getMonth()+1
 PBI.addDays=(iso,n)=>{const [y,m,d]=iso.split('-').map(Number);const t=new Date(y,m-1,d+n);return t.getFullYear()+'-'+pad2(t.getMonth()+1)+'-'+pad2(t.getDate())};
 PBI.load=key=>{try{return JSON.parse(localStorage.getItem(key)||'{}')||{}}catch(e){return {}}};
 PBI.save=(key,val)=>{try{localStorage.setItem(key,JSON.stringify(val))}catch(e){}};
+/* read-modify-write, so two open tabs don't overwrite each other's fields */
+PBI.update=(key,fn)=>{const st=PBI.load(key);const r=fn(st);PBI.save(key,r||st);return r||st};
+
+/* ---------- progress schema: v1 (course ticks, quiz, solutions, theme) → v2 (adds goal, diagnostic,
+   Experience Mode scenarios, recent activity). v1 fields are kept exactly as they were. ---------- */
+PBI.SCHEMA=2;
+PBI.migrate=st=>{
+  st=st&&typeof st==='object'?st:{};
+  const v=st.schemaVersion||1;
+  if(v<2){st.goal=st.goal||null;st.diag=st.diag||null;st.xp=st.xp||{};st.seen=st.seen||{};st.last=st.last||null}
+  ['done','quiz','sol','navOpen','xp','seen'].forEach(k=>{if(!st[k]||typeof st[k]!=='object')st[k]={}});
+  st.schemaVersion=PBI.SCHEMA;
+  return st;
+};
+(function(){const raw=PBI.load(KEYS.main);if(raw.schemaVersion!==PBI.SCHEMA)PBI.save(KEYS.main,PBI.migrate(raw))})();
+/* remember where the learner was, for "Continue" on the home page */
+PBI.touch=(title,href)=>{
+  const base=document.body.dataset.root||'';
+  const here=href||(location.pathname.split('/').slice(base?-2:-1).join('/')+location.hash);
+  PBI.update(KEYS.main,st=>{PBI.migrate(st);st.last={href:here,title:title||document.title,at:new Date().toISOString()};st.seen[here.split('#')[0]]=PBI.today();return st});
+};
 PBI.toast=msg=>{let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=msg;t.classList.add('show');clearTimeout(PBI.toast._t);PBI.toast._t=setTimeout(()=>t.classList.remove('show'),1800)};
 PBI.cardId={concept:q=>'c'+PBI.hash(q),topic:q=>'t'+PBI.hash(q)};
 
@@ -82,7 +105,7 @@ PBI.initTheme=()=>PBI.initThemeToggles();
 
 /* ---------- progress export / import ---------- */
 PBI.exportProgress=()=>{
-  const payload={app:'power-bi-holy-grail',version:1,exported:new Date().toISOString(),data:{}};
+  const payload={app:'power-bi-holy-grail',version:2,schemaVersion:PBI.SCHEMA,exported:new Date().toISOString(),data:{}};
   Object.values(KEYS).forEach(k=>payload.data[k]=PBI.load(k));
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='power-bi-progress-'+PBI.today()+'.json';
@@ -98,8 +121,10 @@ PBI.importProgress=()=>{
       try{
         const p=JSON.parse(rd.result);
         if(p.app!=='power-bi-holy-grail'||!p.data)throw new Error('not a progress file');
+        if((p.version||1)>2){PBI.toast('This progress file comes from a newer version of the site');return}
         if(!confirm('Replace the progress in this browser with the file from '+(p.exported||'').slice(0,10)+'?'))return;
-        Object.values(KEYS).forEach(k=>{if(p.data[k])PBI.save(k,p.data[k])});
+        /* version 1 files only have the v1 fields; migrate fills in the rest */
+        Object.values(KEYS).forEach(k=>{if(p.data[k])PBI.save(k,k===KEYS.main?PBI.migrate(p.data[k]):p.data[k])});
         PBI.toast('Progress imported');setTimeout(()=>location.reload(),600);
       }catch(e){PBI.toast('That file is not a Power BI Holy Grail progress file')}
     };
@@ -162,8 +187,8 @@ function initPopover(){
     pop.querySelector('.gpop-t').textContent=g.t;
     pop.querySelector('.gpop-d').textContent=g.d;
     const see=(g.s||[]).filter(Boolean);
-    pop.querySelector('.gpop-s').innerHTML=see.length?'See also: '+see.map(s=>`<a href="glossary.html#${PBI.slug(s)}">${PBI.esc(s)}</a>`).join(', '):'';
-    pop.querySelector('.gpop-link').href='glossary.html#'+PBI.slug(g.t);
+    pop.querySelector('.gpop-s').innerHTML=see.length?'See also: '+see.map(s=>`<a href="${PBI.ROOT}glossary.html#${PBI.slug(s)}">${PBI.esc(s)}</a>`).join(', '):'';
+    pop.querySelector('.gpop-link').href=PBI.ROOT+'glossary.html#'+PBI.slug(g.t);
     pop.hidden=false;
     if(innerWidth<=600){pop.classList.add('sheet');pop.style.left=pop.style.top='';}
     else{
@@ -189,35 +214,33 @@ function initPopover(){
   document.addEventListener('scroll',()=>{if(!pop.hidden&&!pop.classList.contains('sheet'))close()},{passive:true});
 }
 
-/* ---------- search across everything ---------- */
-let index=null;
-function buildIndex(){
-  if(index)return index;index=[];
-  const add=(type,title,sub,text,href)=>index.push({type,title,sub,href,lt:title.toLowerCase(),lx:(title+' '+text).toLowerCase(),text});
-  [['Page','Course: all levels and topics','index.html','index.html#roadmap'],['Page','Beginner page','Year 0 – 1 topics on one page','beginner.html'],['Page','Intermediate page','Year 1 – 3 topics on one page','intermediate.html'],['Page','Advanced page','Year 3 – 5 topics on one page','advanced.html'],['Page','Resources page','Study tools, starter project, datasets','resources.html'],['Page','Interview flashcards','Spaced repetition, 188 cards','flashcards.html'],['Page','Mock interview','Timed questions, out loud','flashcards.html#mock'],['Page','Glossary','Plain-English definitions','glossary.html'],['Page','Cheat sheets','Printable, one per level','cheatsheet.html'],['Page','Pick your path','Analyst, Developer, Engineer, Lead','index.html#paths'],['Page','Certification map','PL-300 and DP-600','index.html#certs'],['Page','Starter Power BI project','Model with every CSV loaded and related','index.html#starter']].forEach(p=>add(p[0],p[1],p[2],p[2],p[3]));
-  if(typeof LEVELS!=='undefined')LEVELS.forEach(L=>L.topics.forEach(T=>{
-    add('Topic',T.name,L.name,T.ds.join(' '),'index.html#'+T.id);
-    T.asg.forEach((a,i)=>add('Assignment',a.t,T.name,a.steps.join(' ')+' '+a.exp,`index.html#${T.id}:asg:${i}`));
-    T.int.forEach((q,i)=>add('Interview',q.q,T.name,q.a,`index.html#${T.id}:int:${i}`));
-    T.ass.forEach((q,i)=>add('Assessment',q.q,T.name,(q.o||[]).join(' ')+' '+(q.why||q.hint||''),`index.html#${T.id}:ass:${i}`));
-  }));
-  if(typeof DS!=='undefined')Object.entries(DS).forEach(([k,v])=>add('Dataset',v.name,v.rows.length+' rows · '+v.cols.length+' cols',v.desc+' '+v.cols.join(' '),'index.html#ds-'+k));
-  if(typeof CONCEPTS!=='undefined')CONCEPTS.forEach(c=>add('Flashcard',c.q,c.c,c.a+' '+(c.x||''),'flashcards.html#card='+PBI.cardId.concept(c.q)));
-  if(typeof GLOSSARY!=='undefined')GLOSSARY.forEach(g=>add('Glossary',g.t,g.c,(g.k||[]).join(' ')+' '+g.d,'glossary.html#'+PBI.slug(g.t)));
-  return index;
+/* ---------- search across everything ----------
+   The index (assets/js/search-index.js, generated) is loaded on first use so pages stay light.
+   Entries are [type, title, sub, text, href, facet]; facet is a level, track or stage id. */
+let index=null,loading=null;
+function loadIndex(){
+  if(index)return Promise.resolve(index);
+  if(loading)return loading;
+  loading=new Promise((res,rej)=>{
+    if(typeof SEARCH_INDEX!=='undefined')return res();
+    const s=document.createElement('script');s.src=PBI.ROOT+'assets/js/search-index.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);
+  }).then(()=>{index=SEARCH_INDEX.map(([type,title,sub,text,href,facet])=>({type,title,sub,text,href:PBI.ROOT+href,facet:facet||'',lt:title.toLowerCase(),lx:(title+' '+sub+' '+text).toLowerCase()}));return index});
+  return loading;
 }
-const TYPES=['All','Assignment','Interview','Flashcard','Glossary','Dataset','Topic'];
-function runSearch(q,type){
-  const toks=q.toLowerCase().split(/\s+/).filter(Boolean);if(!toks.length)return [];
+const TYPES=[['All','All'],['Topic','Topics'],['Assignment','Assignments'],['Scenario','Scenarios'],['Interview','Interview'],['Flashcard','Flashcards'],['Glossary','Glossary'],['Template','Templates'],['Certification','Certification'],['Dataset','Datasets']];
+const GROUP={Page:'Topic',Assessment:'Interview',Drill:'Scenario',Track:'Topic',Level:'Topic'};
+function runSearch(q,type,facet){
+  const toks=q.toLowerCase().split(/\s+/).filter(Boolean);if(!toks.length&&!facet)return [];
   const res=[];
-  for(const it of buildIndex()){
-    if(type!=='All'&&it.type!==type&&!(type==='Topic'&&it.type==='Page'))continue;
+  for(const it of index||[]){
+    if(type!=='All'&&it.type!==type&&GROUP[it.type]!==type)continue;
+    if(facet&&it.facet!==facet&&!it.facet.split(' ').includes(facet))continue;
     let s=0,okAll=true;
     for(const t of toks){if(!it.lx.includes(t)){okAll=false;break}s+=it.lt.includes(t)?10:1}
     if(!okAll)continue;
-    if(it.lt===toks.join(' '))s+=60;
-    if(it.lt.startsWith(toks[0]))s+=15;
-    if(it.type==='Topic'||it.type==='Page'||it.type==='Glossary')s+=4;
+    if(toks.length&&it.lt===toks.join(' '))s+=60;
+    if(toks.length&&it.lt.startsWith(toks[0]))s+=15;
+    if(['Topic','Page','Glossary','Scenario','Level','Track'].includes(it.type))s+=4;
     res.push([s,it]);
   }
   return res.sort((a,b)=>b[0]-a[0]).slice(0,60).map(r=>r[1]);
@@ -230,20 +253,24 @@ function snippet(it,toks){
 }
 function initSearch(){
   const box=document.createElement('div');box.className='srch';box.hidden=true;box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.setAttribute('aria-label','Search');
-  box.innerHTML=`<div class="srch-box"><div class="srch-head"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input type="search" id="srchInput" placeholder="Search lessons, questions, cards, glossary…" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-label="Search"><button class="btn sm" type="button" id="srchClose">Close</button></div><div class="srch-types" role="group" aria-label="Filter results">${TYPES.map(t=>`<button type="button" data-st="${t}" aria-pressed="${t==='All'}">${t==='All'?'All':t+'s'}</button>`).join('')}</div><div class="srch-res" id="srchRes"></div><div class="srch-foot"><span><kbd>↑</kbd><kbd>↓</kbd> move</span><span><kbd>Enter</kbd> open</span><span><kbd>Esc</kbd> close</span></div></div>`;
+  box.innerHTML=`<div class="srch-box"><div class="srch-head"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input type="search" id="srchInput" placeholder="Search lessons, scenarios, cards, glossary…" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-label="Search" aria-controls="srchRes"><button class="btn sm" type="button" id="srchClose">Close</button></div><div class="srch-filters"><div class="srch-types" role="group" aria-label="Type of result">${TYPES.map(([t,l])=>`<button type="button" data-st="${t}" aria-pressed="${t==='All'}">${l}</button>`).join('')}</div><label class="srch-facet"><span class="vh">Where</span><select id="srchFacet" aria-label="Limit to a level, track or stage"><option value="">Anywhere</option></select></label></div><div class="srch-res" id="srchRes" aria-live="polite"></div><div class="srch-foot"><span><kbd>↑</kbd><kbd>↓</kbd> move</span><span><kbd>Enter</kbd> open</span><span><kbd>Esc</kbd> close</span></div></div>`;
   document.body.appendChild(box);
-  const inp=box.querySelector('#srchInput'),out=box.querySelector('#srchRes');let type='All',sel=0,items=[],last=null;
+  const inp=box.querySelector('#srchInput'),out=box.querySelector('#srchRes'),fsel=box.querySelector('#srchFacet');let type='All',sel=0,items=[],last=null;
+  const fillFacets=()=>{if(fsel.options.length>1||typeof SEARCH_FACETS==='undefined')return;fsel.insertAdjacentHTML('beforeend',SEARCH_FACETS.map(g=>`<optgroup label="${PBI.esc(g.g)}">${g.items.map(([v,l])=>`<option value="${v}">${PBI.esc(l)}</option>`).join('')}</optgroup>`).join(''))};
   const render=()=>{
-    const q=inp.value.trim();items=q?runSearch(q,type):[];sel=0;
+    const q=inp.value.trim(),facet=fsel.value;
+    if(!index){out.innerHTML='<div class="srch-empty">Loading the search index…</div>';loadIndex().then(()=>{fillFacets();render()}).catch(()=>{out.innerHTML='<div class="srch-empty">Search needs the site files. Reload the page while online once.</div>'});return}
+    items=(q||facet)?runSearch(q,type,facet):[];sel=0;
     const toks=q.toLowerCase().split(/\s+/).filter(Boolean);
-    if(!q){out.innerHTML='<div class="srch-empty">Try <b>CALCULATE</b>, <b>unpivot</b>, <b>RLS</b>, <b>date table</b> or <b>FactSales</b>.</div>';return}
-    if(!items.length){out.innerHTML=`<div class="srch-empty">Nothing matches “${PBI.esc(q)}”. Try fewer words.</div>`;return}
+    if(!q&&!facet){out.innerHTML='<div class="srch-empty">Try <b>CALCULATE</b>, <b>refresh failed</b>, <b>RLS</b>, <b>SCD type 2</b>, <b>window function</b> or <b>postmortem</b>.</div>';return}
+    if(!items.length){out.innerHTML=`<div class="srch-empty">Nothing matches “${PBI.esc(q)}”${facet?' there':''}. Try fewer words${facet?' or search Anywhere':''}.</div>`;return}
     out.innerHTML=items.map((it,i)=>`<a class="srch-item${i===0?' sel':''}" href="${it.href}" data-i="${i}"><span class="srch-type t-${it.type}">${it.type}</span><span class="srch-main"><span class="srch-title">${hl(it.title,toks)}</span><span class="srch-sub">${PBI.esc(it.sub)}</span><span class="srch-snip">${hl(snippet(it,toks),toks)}</span></span></a>`).join('');
   };
   const move=d=>{const els=out.querySelectorAll('.srch-item');if(!els.length)return;els[sel].classList.remove('sel');sel=(sel+d+els.length)%els.length;els[sel].classList.add('sel');els[sel].scrollIntoView({block:'nearest'})};
   PBI.openSearch=(q)=>{last=document.activeElement;box.hidden=false;document.body.classList.add('srch-open');if(q!==undefined)inp.value=q;render();setTimeout(()=>{inp.focus();inp.select()},30)};
   const close=()=>{box.hidden=true;document.body.classList.remove('srch-open');if(last&&last.focus)last.focus()};
   let t;inp.addEventListener('input',()=>{clearTimeout(t);t=setTimeout(render,80)});
+  fsel.addEventListener('change',()=>{render();inp.focus()});
   inp.addEventListener('keydown',e=>{
     if(e.key==='ArrowDown'){e.preventDefault();move(1)}
     else if(e.key==='ArrowUp'){e.preventDefault();move(-1)}
@@ -254,6 +281,14 @@ function initSearch(){
     if(e.target.closest('#srchClose')||e.target===box){close();return}
     if(e.target.closest('.srch-item'))close();
   });
+  /* keep keyboard focus inside the dialog while it is open */
+  box.addEventListener('keydown',e=>{
+    if(e.key!=='Tab')return;
+    const f=[...box.querySelectorAll('input,select,button,a[href]')].filter(x=>x.offsetParent!==null);
+    if(!f.length)return;const first=f[0],lastEl=f[f.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();lastEl.focus()}
+    else if(!e.shiftKey&&document.activeElement===lastEl){e.preventDefault();first.focus()}
+  });
   document.addEventListener('keydown',e=>{
     if(e.key==='Escape'&&!box.hidden){close();return}
     const tag=(e.target.tagName||'').toLowerCase();const typing=['input','textarea','select'].includes(tag)||e.target.isContentEditable;
@@ -261,6 +296,7 @@ function initSearch(){
   });
   document.addEventListener('click',e=>{const o=e.target.closest('[data-open-search]');if(o){e.preventDefault();PBI.openSearch()}});
 }
+
 
 /* ---------- install prompt and offline support ---------- */
 let deferred=null;
@@ -274,7 +310,7 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-install]')){e.p
   if(e.target.closest('[data-export]')){e.preventDefault();PBI.exportProgress()}
   if(e.target.closest('[data-import]')){e.preventDefault();PBI.importProgress()}});
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1')){
-  addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  addEventListener('load',()=>navigator.serviceWorker.register(PBI.ROOT+'sw.js').catch(()=>{}));
 }
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
 document.addEventListener('DOMContentLoaded',()=>{if(!standalone)document.querySelectorAll('[data-install]').forEach(b=>b.hidden=false)});

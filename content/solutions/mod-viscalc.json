@@ -1,0 +1,15 @@
+{
+  "mod-viscalc-0": {
+    "s": ["Select the matrix → Home → New calculation (or right-click the visual) to open the visual calculations editor.", "RUNNINGSUM without Reset never restarts; with HIGHESTPARENT it restarts at each top-level row (Category).", "PREVIOUS is blank on the first row because there is no previous row on the axis."],
+    "code": [{ "lang": "DAX", "title": "The four visual calculations", "src": ["Running = RUNNINGSUM ( [Net Sales] )", "vs Previous = [Net Sales] - PREVIOUS ( [Net Sales] )", "Moving avg = MOVINGAVERAGE ( [Net Sales], 2 )", "Pct of parent = DIVIDE ( [Net Sales], COLLAPSE ( [Net Sales], ROWS ) )", "Running per category = RUNNINGSUM ( [Net Sales], HIGHESTPARENT )"] }],
+    "check": "Running on the last row = visual total; vs Previous blank on row 1; Pct of parent sums to 100% per category; HIGHESTPARENT restarts per category."
+  },
+  "mod-viscalc-1": {
+    "s": ["Shared definitions and anything used for slicing or filtering → model measures (YoY %, rank, Margin %).", "Layout-dependent, single-visual calculations → visual calculations (running total, percent of parent, versus first)."],
+    "check": "3 measures, 3 visual calculations."
+  },
+  "mod-viscalc-2": {
+    "s": ["Filter pane and sort options don't offer the visual calculation.", "Export data: the column is missing.", "There's no copy/paste of a visual calculation to another visual.", "RELATED, RELATEDTABLE and USERELATIONSHIP aren't available inside visual calculations."],
+    "check": "All four limitations confirmed (per Microsoft's considerations and limitations list)."
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "d08",
+  "slug": "d08-explain-it-twice",
+  "type": "drill",
+  "stage": "senior",
+  "order": 4,
+  "title": "Explain it twice",
+  "seo": "Communication drill for BI developers: explain the same technical finding to an executive and to an engineer, using Problem, Impact, Evidence, Options, Recommendation, Risk, Ask.",
+  "summary": "Same finding, two audiences. Write the executive version and the engineering version, using the senior conversation structure.",
+  "minutes": 30,
+  "skills": ["communication", "performance"],
+  "prereq": ["s04"],
+  "ticket": { "id": "COMM-12", "kind": "ticket", "priority": "Normal", "reporter": "elena", "opened": "Tue 12 May 2026, 16:00", "labels": ["communication"] },
+  "impact": "Senior developers are trusted because they can be understood. The same facts, told the wrong way, get either ignored by executives or dismissed by engineers.",
+  "messages": [
+    { "from": "elena", "to": "you", "via": "chat", "at": "Tue 12 May, 16:00", "body": ["Grace asked me why the capacity is near its limit every morning, and Kenji asked the same thing in the platform channel. Same facts below. Write both replies. Max 120 words each."] }
+  ],
+  "evidence": [
+    { "id": "facts", "kind": "doc", "title": "The facts", "body": ["- Capacity F64. Weekday 08:30–09:30 interactive load peaks at 96% of CU; throttling (delays) seen on 3 mornings last week.\n- Two causes: the Sales model refresh was moved to 08:00 by mistake (it used to run at 05:30), and a new Marketing report runs 40 visuals per page with no filters.\n- Options: move the refresh back (free, today); redesign the Marketing report (2 days); upgrade to F128 (doubles the cost).\n- Recommendation: first two; review the CU trend in four weeks before considering F128."] }
+  ],
+  "tasks": ["Write the executive reply for Grace (Problem, Impact, Recommendation, Ask).", "Write the engineering reply for Kenji (Evidence, Options, Risk, with numbers).", "Check each against: could the reader act on it without asking a follow-up question?"],
+  "deliverables": [{ "id": "exec", "t": "Executive version (≤120 words)" }, { "id": "eng", "t": "Engineering version (≤120 words)" }],
+  "hints": ["The executive cares about impact, cost and what you need from her; the engineer cares about evidence, mechanism and risk. Same facts, different order and vocabulary."],
+  "rubric": [
+    { "id": "exec", "n": "Executive version", "w": 40, "good": "No jargon (no CU, throttling, visuals); impact in business terms; a clear recommendation and a specific ask." },
+    { "id": "eng", "n": "Engineering version", "w": 40, "good": "Numbers, mechanism, options with cost and risk, and the monitoring plan." },
+    { "id": "consistent", "n": "Consistency", "w": 20, "good": "Both say the same thing: nothing promised to one audience contradicts the other." }
+  ],
+  "retro": ["Which version was harder to write, and why?"],
+  "refs": [{ "title": "Fabric Capacity Metrics app", "url": "https://learn.microsoft.com/en-us/fabric/enterprise/metrics-app" }]
+}

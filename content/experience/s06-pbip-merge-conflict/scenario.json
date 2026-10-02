@@ -1,0 +1,72 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "id": "s06",
+  "slug": "s06-pbip-merge-conflict",
+  "type": "sprint",
+  "stage": "engineer",
+  "order": 1,
+  "title": "Two developers, one measure",
+  "seo": "Power BI PBIP and TMDL Git merge conflict exercise: resolve a conflict in a semantic model, run Best Practice Analyzer, and write the pull request.",
+  "summary": "You and Sam changed the same measure in the shared semantic model on different branches. Git can't merge it. Resolve it without losing either change.",
+  "minutes": 180,
+  "skills": ["deployment", "testing", "dax", "communication"],
+  "prereq": ["s05"],
+  "next": "s07",
+  "verified": { "date": "2026-10-01", "context": "PBIP/TMDL/PBIR project format (Microsoft Learn, 2026-09-23); Tabular Editor 2 BPA", "review_after_days": 120 },
+  "ticket": { "id": "PR-214", "kind": "review", "priority": "Medium", "status": "Blocked: merge conflict", "reporter": "sam", "opened": "Tue 26 May 2026, 14:40", "due": "Release train Thu 28 May", "labels": ["git", "pbip", "tmdl", "pull-request"] },
+  "story": "The shared model from Sprint 05 now lives in Git as a PBIP project. Every change goes through a pull request reviewed by someone else before Elena deploys it.",
+  "impact": "A careless merge silently drops someone's change, or renames a measure that twenty visuals still reference, and nobody notices until a report shows blanks in production. Merging well is what makes team development safe.",
+  "messages": [
+    { "from": "sam", "to": "you", "via": "chat", "at": "Tue 26 May, 14:40", "body": [
+      "Hey, my branch renames Net Sales to Net Revenue (Finance asked for the wording after the consolidation) and adds Net Revenue %. Yours excludes Staff and adds Net Sales LY, right? Git says conflict in _Measures.tmdl. Can you sort it out? I'm in workshops all afternoon. Just take mine if in doubt 😅"
+    ] },
+    { "from": "elena", "to": "you", "via": "pr", "at": "Tue 26 May, 15:05", "subject": "Review checklist for the release train", "body": [
+      "- Both changes kept unless one is wrong.\n- No broken references in measures or in report visuals.\n- BPA: no new errors (severity 3); warnings explained.\n- PR description: what changed, why, how it was tested, risk, rollback."
+    ] },
+    { "from": "nina", "to": "you", "via": "email", "at": "Tue 26 May, 15:20", "subject": "Net Revenue name", "body": [
+      "Just so you know: in the KPI dictionary \"Net Revenue (ledger)\" is the Finance measure. I asked Sam to rename the order-based one, but I didn't mean to call it plain \"Net Revenue\"! Can we make sure the names don't clash?"
+    ] }
+  ],
+  "evidence": [
+    { "id": "log", "kind": "file", "title": "git_log.txt", "file": "data/experience/s06/git_log.txt", "desc": "Branch graph, the failed merge, and where the report uses the measure." },
+    { "id": "base", "kind": "file", "title": "base/_Measures.tmdl (common ancestor)", "file": "data/experience/s06/base/_Measures.tmdl" },
+    { "id": "ours", "kind": "file", "title": "ours/_Measures.tmdl (your branch)", "file": "data/experience/s06/ours/_Measures.tmdl" },
+    { "id": "theirs", "kind": "file", "title": "theirs/_Measures.tmdl (Sam's branch)", "file": "data/experience/s06/theirs/_Measures.tmdl" },
+    { "id": "conflict", "kind": "file", "title": "conflicted/_Measures.tmdl (what Git left you)", "file": "data/experience/s06/conflicted/_Measures.tmdl" },
+    { "id": "bpa", "kind": "file", "title": "bpa_results.json (on your branch, before merging)", "file": "data/experience/s06/bpa_results.json" }
+  ],
+  "tasks": [
+    "Work out what each branch changed relative to the common ancestor (a three-way comparison, not two files side by side).",
+    "Resolve the conflict so both intentions survive, and so no measure or visual references a name that no longer exists.",
+    "Validate: the file must open in Power BI Desktop (or parse in Tabular Editor), every measure must evaluate, and BPA must show no new errors.",
+    "Commit with a meaningful message and write the pull request description, including risk and rollback."
+  ],
+  "deliverables": [
+    { "id": "res", "t": "Resolved _Measures.tmdl" },
+    { "id": "refs", "t": "List of every reference you had to update (measures and report visuals)" },
+    { "id": "bpa", "t": "BPA result after the merge, with each remaining warning explained" },
+    { "id": "pr", "t": "Pull request description", "artifact": "pull-request" }
+  ],
+  "hints": [
+    "Diff base→ours and base→theirs separately. List each change as a sentence (\"ours: Net Sales now excludes Staff\"). The conflict is only where both sentences touch the same lines.",
+    "Both branches changed the same measure: one changed its expression, the other its name and format. The resolved measure needs one name, one expression and one format. Then look for everything that still says [Net Sales]: a measure on your branch and three visuals in the report.",
+    "Before you pick the new name, read Nina's email and the KPI dictionary from Sprint 05. What should the order-based measure be called so it can never be confused with the ledger one?"
+  ],
+  "rubric": [
+    { "id": "correct", "n": "Technical correctness", "w": 30, "good": "Resolved file keeps the Staff exclusion, the LY measure and the % measure, uses one agreed name everywhere, has no conflict markers and evaluates." },
+    { "id": "refs", "n": "Dependency awareness", "w": 20, "good": "Finds and updates every reference: the LY measure, the % measure and the three report visuals (or keeps the old name and explains why)." },
+    { "id": "testing", "n": "Testing", "w": 20, "good": "Opens the project, refreshes, compares values before and after, runs BPA and explains remaining warnings." },
+    { "id": "comm", "n": "Pull request and communication", "w": 20, "good": "PR description says what, why, how tested, risk and rollback; Sam and Nina know the final name." },
+    { "id": "git", "n": "Git hygiene", "w": 10, "good": "Merge commit message is meaningful; no unrelated files (localSettings.json, cache.abf) committed." }
+  ],
+  "retro": [
+    "Why did Git produce a conflict here when it merged other files automatically?",
+    "What working agreement would make this conflict less likely next time?",
+    "How do renames interact with reports that reference measures by name?"
+  ],
+  "refs": [
+    { "title": "Power BI Desktop projects (PBIP)", "url": "https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-overview" },
+    { "title": "Project semantic model folder (TMDL)", "url": "https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-dataset" },
+    { "title": "Tabular Model Definition Language (TMDL)", "url": "https://learn.microsoft.com/en-us/analysis-services/tmdl/tmdl-overview" }
+  ]
+}
