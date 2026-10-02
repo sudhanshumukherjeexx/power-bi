@@ -16,17 +16,39 @@ Preview locally with any static server from the project root, for example `npx s
 
 ## How the project is organised
 
+### Source: edit these
+
 | Path | What it is |
 |---|---|
-| `content/` | **The source of truth.** All lessons, scenarios, flashcards, glossary, certifications and templates, as JSON or Markdown. Edit these. |
+| `content/skills/`, `content/solutions/` | Skill Mode levels and tracks: topics, assignments, quizzes and worked solutions (JSON). |
+| `content/experience/` | Experience Mode scenarios and their model answers. |
+| `content/toolkit/` | The BI Developer Toolkit: `index.json` (doors and tags) and one Markdown guide per file in `guides/`, plus downloads in `files/`. |
+| `content/resources/` | The external resource catalog shown on Resources, under topics and on scenario pages. |
+| `content/templates/` | Professional templates (Markdown) and their index. |
+| `content/flashcards/`, `content/glossary/`, `content/certifications/`, `content/career-paths/`, `content/datasets/` | Flashcards, glossary, versioned exam outlines, career paths, dataset descriptions. |
+| `content/*.json` | Stages, skills, goals, personas, diagnostic and site settings. |
 | `content/schema/` | JSON Schemas for the content files. VS Code validates against them automatically via `$schema`. |
-| `assets/js/*.js`, `*.html` (most), `experience/`, `sw.js` | **Generated** by `tools/build.js`. Files say `GENERATED` at the top. Don't edit them by hand. |
-| `data/` | CSVs generated from fixed seeds by `tools/generate-data.js` (course data, company pack, track files). |
-| `tools/` | Build, data generators, starter-project builder, enterprise data generator. |
-| `tests/` | Everything CI runs. |
-| `docs/` | Architecture and migration notes. |
+| Hand-written pages | `index.html`, `learn.html`, `experience.html`, `progress.html`, `diagnostic.html`, `templates.html`, `flashcards.html`, `glossary.html`, `cheatsheet.html`, `404.html`. Edit them directly; the build only rewrites the navigation between `<!--nav:…-->` and `<!--/nav-->`. |
+| Hand-written scripts | `assets/js/` `site.js` (shared helpers, search, progress storage), `progress.js`, `course.js`, `levelpage.js`, `learn.js`, `home.js`, `diagnostic.js`, `progresspage.js`, `xp.js`, `xphub.js`, `tplpage.js`, `tkhub.js`, `tkguide.js`. |
+| `assets/css/`, `assets/icons/`, `manifest.webmanifest` | Styles, icons and the app manifest. |
+| `tools/` | The build (`build.js` and `tools/lib/`), data generators, starter-project builder, enterprise data generator. |
+| `tests/` | Everything CI runs (`node tests/run.js`), plus the external link checker. |
+| `docs/` | Project documentation; see [docs/README.md](docs/README.md). |
 
-Hand-written pages (`index.html`, `learn.html`, `experience.html`, `progress.html`, `diagnostic.html`, `templates.html`, `flashcards.html`, `glossary.html`, `cheatsheet.html`) are edited directly. The build only rewrites the navigation between `<!--nav:…-->` and `<!--/nav-->`.
+### Generated: never edit by hand
+
+These are built from the source above and committed, so the site deploys without a build step. Generated files start with a `GENERATED` banner, and CI fails if one is out of date: change the source and run `npm run build`.
+
+| Path | Built from |
+|---|---|
+| `assets/js/` (every other script: `content.js`, `tracks.js`, `solutions*.js`, `experience.js`, `xp/`, `toolkit.js`, `external.js`, `search-index.js`, …) | `content/` |
+| Level and track pages (`beginner.html` … `advanced.html`, `sql.html` … `modern.html`) and `resources.html` | `content/skills/`, by `tools/lib/build-pages.js` |
+| `experience/*.html` | `content/experience/` |
+| `toolkit.html`, `toolkit/` (hub, door pages, guide pages, `.md` and file downloads) | `content/toolkit/` |
+| `templates/*.md` (downloads) | `content/templates/` |
+| `data/` | Seeded generators in `tools/generate-data.js` (`npm run data`) |
+| `starter/northwind-starter.zip` | `tools/build-starter.js` |
+| `sw.js` | The offline cache list and version, from every file above |
 
 ## Adding or fixing Skill Mode content
 
@@ -74,6 +96,19 @@ Any topic about Fabric, Service features, licensing or certifications needs `ver
 4. **Rubric:** weights sum to 100.
 5. **Hints:** at least three for sprints; they narrow where to look and never give the answer.
 6. **Content:** every scenario says why a real company would care (`impact`), and every solution has the four-level review (junior, competent, senior, architect).
+
+## Adding or fixing a Toolkit guide
+
+The BI Developer Toolkit (`toolkit.html`) is built from `content/toolkit/`:
+
+- `index.json` holds the six doors and the tag lists (tools and problems) the hub filters by.
+- `guides/<id>.md` is one guide: JSON front matter between `---` lines, then Markdown. The build renders it to `toolkit/<id>.html`.
+
+1. **Front matter:** `id` (same as the file name), `title`, `summary` (the problem it solves), `door`, `kind`, and `verified.date`. Tag it with `stages`, `skills`, `tools`, `problems` and `certs` so search and filters find it. Link `lessons`, `scenarios` and `templates` by ID; the build fails if an ID doesn't exist.
+2. **References:** each entry in `refs` has a title, an `https` URL and a source tier (`official`, `specialist`, `community`, `third-party` or `book`). Mark paid resources with `"paid": true`. No tracking parameters.
+3. **Markdown:** write links to site pages from the site root (`beginner.html#b-pq`, `toolkit/dax-debugging.html`). Fenced `tree` blocks become decision trees, `- [ ]` lists become checklists that remember ticks, and `> **Warning:**` (or Note, Tip, Senior, Rule) becomes a callout.
+4. **Macros:** `::: datasets`, `::: track-files`, `::: templates`, `::: scenarios` and `::: cert-chain <cert-id>` insert tables generated from the course data, so they never go stale.
+5. **Facts:** state only what you checked against the cited source, and update `verified` when you re-check. `npm run links:external` checks every external link.
 
 ## Certification outlines
 

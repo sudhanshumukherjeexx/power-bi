@@ -72,7 +72,7 @@
   ],
   "refs": [
     { "title": "Optimization guide for Power BI", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/power-bi-optimization" },
-    { "title": "Use Performance Analyzer", "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-performance-analyzer" },
+    { "title": "Use Performance Analyzer", "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/performance-analyzer" },
     { "title": "Avoid using FILTER as a filter argument", "url": "https://learn.microsoft.com/en-us/dax/best-practices/dax-avoid-avoid-filter-as-filter-argument" },
     { "title": "Bi-directional relationship guidance", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/relationships-bidirectional-filtering" }
   ]

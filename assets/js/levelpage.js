@@ -16,6 +16,36 @@ const prev=PAGES[i-1],next=PAGES[i+1];
 const pager=`<div class="pager">${prev?`<a href="${prev.id}.html"><span>← Previous</span>${esc(prev.name)}</a>`:`<a href="learn.html"><span>← Back</span>All levels and tracks</a>`}${next?`<a class="next" href="${next.id}.html"><span>Next →</span>${esc(next.name)}</a>`:`<a class="next" href="experience.html"><span>Next →</span>Practise real work</a>`}</div>`;
 const crumbs=`<nav class="crumbs" aria-label="Breadcrumb"><a href="learn.html">Learn</a><span aria-hidden="true">/</span>${kind==='track'?'<a href="learn.html#tracks">Tracks</a><span aria-hidden="true">/</span>':''}<span aria-current="page">${esc(mod?mod.name:'Resources')}</span></nav>`;
 
+/* ---------- external resource catalog (assets/js/external.js) ---------- */
+const TIER={official:'Official',specialist:'Specialist',community:'Community','third-party':'Third party',book:'Book'};
+function extItem(x){
+  const rel=[...x.l.map(l=>`<a href="${l[1]}">${esc(l[2])}</a>`),...x.s.map(s=>`<a href="${s[1]}">${esc(s[2])}</a>`)];
+  return `<li data-x="${esc((x.t+' '+x.d+' '+x.sn).toLowerCase())}" data-src="${x.src}" data-stage="${x.stage}"><a href="${esc(x.u)}" rel="noopener" target="_blank" class="ext">${esc(x.t)}</a><span class="xm"><span class="tier ${x.src}">${TIER[x.src]}</span>${x.cost==='paid'?'<span class="tier paid">Paid</span>':''}<span class="chip">${esc(x.sn)}</span></span><span class="d">${esc(x.d)}</span>${rel.length?`<span class="rel">Use it with: ${rel.join(' · ')}</span>`:''}</li>`;
+}
+function extSection(){
+  if(typeof EXTERNAL==='undefined')return '';
+  const d=new Date(EXTERNAL.verified+'T00:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+  const stages=[...new Map(EXTERNAL.items.map(x=>[x.stage,x.sn])).entries()];
+  return `<section class="sect" id="external"><h2>External resources</h2>
+    <p class="muted" style="max-width:70ch">${esc(EXTERNAL.intro)} <span class="verified">Checked ${d}</span></p>
+    <div class="xfilters"><label><span class="vh">Search external resources</span><input type="search" id="xq" placeholder="Search: DAX, folding, RLS, Direct Lake, Git…" autocomplete="off"></label>
+      <label><span>Source</span><select id="xsrc"><option value="">Any</option>${Object.entries(TIER).filter(([k])=>EXTERNAL.items.some(x=>x.src===k)).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></label>
+      <label><span>Stage</span><select id="xstage"><option value="">Any</option>${stages.map(([k,v])=>`<option value="${k}">${esc(v)}</option>`).join('')}</select></label>
+      <span class="small muted" id="xcount" aria-live="polite"></span></div>
+    <div class="xcats">${EXTERNAL.cats.map(([id,name])=>{const its=EXTERNAL.items.filter(x=>x.c===id);return `<details class="xcat" data-cat="${id}"><summary>${esc(name)} <span class="n">${its.length}</span></summary><ul>${its.map(extItem).join('')}</ul></details>`}).join('')}</div>
+    <p class="small muted">Something outdated or missing? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues">Open an issue</a>. More curated guides: the <a href="toolkit.html">BI Developer Toolkit</a>.</p>
+  </section>`;
+}
+function initExternal(){
+  const q=document.getElementById('xq');if(!q)return;
+  const src=document.getElementById('xsrc'),st=document.getElementById('xstage'),count=document.getElementById('xcount');
+  const run=()=>{
+    const words=q.value.toLowerCase().split(/s+/).filter(Boolean),active=words.length||src.value||st.value;let n=0;
+    document.querySelectorAll('.xcat').forEach(cat=>{let k=0;cat.querySelectorAll('li').forEach(li=>{const ok=words.every(w=>li.dataset.x.includes(w)||cat.querySelector('summary').textContent.toLowerCase().includes(w))&&(!src.value||li.dataset.src===src.value)&&(!st.value||li.dataset.stage===st.value);li.hidden=!ok;if(ok)k++});cat.hidden=!k;cat.querySelector('.n').textContent=k;if(active)cat.open=k>0;n+=k});
+    count.textContent=active?`${n} of ${EXTERNAL.items.length} shown`:`${EXTERNAL.items.length} resources`;
+  };
+  q.addEventListener('input',run);src.addEventListener('change',run);st.addEventListener('change',run);run();
+}
 if(page==='resources'){
   const trackFiles=typeof TRACK_DATA!=='undefined'?Object.entries(TRACK_DATA):[];
   const tpls=typeof TEMPLATES!=='undefined'?TEMPLATES:[];
@@ -24,12 +54,13 @@ if(page==='resources'){
     ['flashcards.html#mock','⏱ Mock interview','Timed questions, answered out loud.'],
     ['glossary.html','📖 Glossary',`${GLOSSARY.length} terms explained without jargon.`],
     ['cheatsheet.html','🖨 Cheat sheets','Printable, one per level.'],
+    ['toolkit.html','🧰 BI Developer Toolkit','Troubleshooting trees, field guides, checklists and playbooks for real work.'],
     ['templates.html','🗂 Professional templates','Requirements, ADR, incident report, postmortem and more.'],
     ['diagnostic.html','🧪 Diagnostic','Find your starting point in a few minutes.'],
     ['learn.html#paths','🧭 Pick your path','Analyst, Developer, Engineer or Lead.'],
     ['learn.html#certs','🎓 Certification map','PL-300 and DP-600, current outline.'],
     ['progress.html','📈 Your progress','Stage, competencies, portfolio and decision log.']];
-  const jumps=[['tools','Study tools'],['glossary','Glossary'],...(tpls.length?[['templates','Templates']]:[]),['cheatsheets','Cheat sheets'],['starter','Starter project'],['datasets','Datasets'],...(trackFiles.length?[['trackdata','Track files']]:[]),['enterprise','Enterprise pack']];
+  const jumps=[['tools','Study tools'],['glossary','Glossary'],...(tpls.length?[['templates','Templates']]:[]),['cheatsheets','Cheat sheets'],...(typeof EXTERNAL!=='undefined'?[['external','External resources']]:[]),['starter','Starter project'],['datasets','Datasets'],...(trackFiles.length?[['trackdata','Track files']]:[]),['enterprise','Enterprise pack']];
   const gcats=[...new Set(GLOSSARY.map(g=>g.c))];
   const gloss=gcats.map(c=>{const ts=GLOSSARY.filter(g=>g.c===c).sort((a,b)=>a.t.localeCompare(b.t));return `<details><summary>${esc(c)} <span class="n">${ts.length}</span></summary><div class="rterms">${ts.map(g=>`<a href="glossary.html#${PBI.slug(g.t)}" title="${esc(g.d.length>140?g.d.slice(0,140)+'…':g.d)}">${esc(g.t)}</a>`).join('')}</div></details>`}).join('');
   app.innerHTML=`<section class="intro"><h1><span class="hl">Resources</span> <span class="tag res">Tools &amp; data</span></h1><p>Everything you need beside the lessons: study tools you can use without Power BI, the glossary, professional templates, cheat sheets, a ready-made Power BI project and the practice datasets.</p></section>
@@ -48,6 +79,7 @@ if(page==='resources'){
     <p class="muted" style="max-width:70ch">One printable page per level with the patterns you reach for most. Print or save as PDF from the cheat sheet page.</p>
     <div class="tools">${levels.map(L=>`<a href="cheatsheet.html#${L.id}"><b><span class="dot" style="background:var(--${L.cls})"></span>${esc(L.name)}</b><span>${L.topics.length} topics on one printable page.</span></a>`).join('')}<a href="cheatsheet.html"><b>All levels</b><span>Every sheet, ready to print.</span></a></div>
   </section>
+  ${extSection()}
   <section class="sect" id="starter"><h2>Starter Power BI project</h2>
     <p class="muted" style="max-width:70ch">Want to skip ahead to DAX? This Power BI project has 12 clean tables loaded, typed and related in a star schema, with DimDate marked as the date table. The Beginner modeling topic asks you to build this model yourself, so use the starter only to skip ahead. RawOrdersExport and SurveyWide aren't included: cleaning them is part of the Power Query topics.</p>
     <div class="tools">
@@ -65,6 +97,7 @@ if(page==='resources'){
   <section class="sect" id="enterprise"><h2>Enterprise scale pack</h2><p class="muted" style="max-width:70ch">Small data teaches the logic; big data teaches the design. Generate 100 thousand to 50 million realistic sales rows on your own machine (skewed customers, late arrivals, duplicates, several currencies, slowly changing customers) with Node.js: <code>node tools/generate-enterprise-data.js --rows 1000000</code>. See <a href="https://github.com/sudhanshumukherjeexx/power-bi/blob/main/docs/enterprise-data.md">the guide</a> for what each size teaches.</p></section>`;
   document.getElementById('dataUrl').textContent=new URL('data/',location.href).href;
   document.addEventListener('click',e=>{if(e.target.closest('#copyDataUrl'))Course.copyText(document.getElementById('dataUrl').textContent,'Data address copied')});
+  initExternal();
   PBI.touch('Resources');
 }else if(mod){
   const L=mod;

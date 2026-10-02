@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Power BI production runbook · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="What to do, in order, when production breaks: refresh failures, offline gateways, expired credentials, slow models, stale apps, access problems, wrong RLS, changed sources, overloaded capacity and rollbacks.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/production-runbook.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="Power BI production runbook · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="What to do, in order, when production breaks: refresh failures, offline gateways, expired credentials, slow models, stale apps, access problems, wrong RLS, changed sources, overloaded capacity and rollbacks.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/production-runbook.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="production-runbook">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/patterns.html">Patterns &amp; Playbooks</a><span aria-hidden="true">/</span><span aria-current="page">Power BI production runbook</span></nav>
+<header class="intro tkhead">
+<div class="kicker">🧩 Patterns &amp; Playbooks · Runbook</div>
+<h1>Power BI production runbook</h1>
+<p class="lead">What to do, in order, when production breaks: refresh failures, offline gateways, expired credentials, slow models, stale apps, access problems, wrong RLS, changed sources, overloaded capacity and rollbacks.</p>
+<div class="tkmeta"><span class="chip">BI Developer</span><span class="chip">Senior BI Developer</span><span class="chip">BI Engineer</span><span class="chip">BI Architect / Lead</span><span class="chip tool">Power BI Service</span><span class="chip tool">On-premises data gateway</span><span class="chip tool">Fabric Capacity Metrics</span><span class="chip tool">Power BI REST API</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><a class="btn sm" href="../toolkit/production-runbook.md" download>Download .md</a><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(11)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#during-any-incident">During any incident</a><a href="#refresh-failed">Refresh failed</a><a href="#gateway-offline">Gateway offline</a><a href="#credentials-expired">Credentials expired</a><a href="#semantic-model-slow">Semantic model slow</a><a href="#app-content-stale">App content stale</a><a href="#user-can-t-see-the-report">User can't see the report</a><a href="#rls-incorrect">RLS incorrect</a><a href="#data-source-changed">Data source changed</a><a href="#capacity-overloaded">Capacity overloaded</a><a href="#need-rollback">Need rollback</a></nav></details>
+<article class="tkbody">
+<h2 id="during-any-incident">During any incident</h2>
+<ol><li><b>Assess impact in one sentence:</b> who can't do what, since when, and is any number they can see wrong? Wrong numbers that people act on are worse than an outage.</li><li><b>Set the severity</b> (example scale: Sev 1 = executives or customers see wrong data or a critical report is down; Sev 2 = a team is blocked; Sev 3 = degraded, with a workaround).</li><li><b>Communicate early:</b> a short status update to affected users before you know the cause (&quot;We know the Sales report hasn't refreshed since 06:00. Next update at 09:30.&quot;).</li><li><b>Mitigate before you fix:</b> roll back, show the last good data with a banner, or hide the broken page.</li><li><b>Keep a timeline</b> as you go; it becomes the <a href="../templates.html#tpl-incident-report">incident report</a> and the <a href="../templates.html#tpl-postmortem">postmortem</a>.</li></ol>
+<p><a href="../experience/s08-cfo-refresh-outage.html">Sprint 08</a> is a complete incident to practise on.</p>
+<h2 id="refresh-failed">Refresh failed</h2>
+<ol><li>Open the semantic model's <b>refresh history</b> and read the full error (expand details; copy the activity and request IDs).</li><li>Classify it with the <a href="../toolkit/error-decoder.html#refresh">error decoder</a>: credentials, gateway, source schema, memory, timeout or dynamic source.</li><li>If users need data now and the previous refresh was good, tell them the data is as of the last success; don't let them assume it's current.</li><li>Fix and run an on-demand refresh; watch it complete.</li><li>If the schedule was disabled after repeated failures, re-enable it.</li><li>Make sure failure notifications go to a monitored group or channel, and consider automated checks (<a href="../automation.html#api-refresh">refresh automation</a>).</li></ol>
+<h2 id="gateway-offline">Gateway offline</h2>
+<ol><li>In <b>Manage connections and gateways</b>, check the cluster's status and which members are offline.</li><li>On the gateway machine: is it running, is the gateway service started, did Windows update restart it, did the service account password change?</li><li>Run the gateway's network diagnostics; check for new firewall or proxy rules.</li><li>Restart the gateway service; if other cluster members are healthy, traffic moves to them.</li><li>Prevent it: at least two members per cluster, patching one at a time, gateway updates on a schedule, CPU and memory monitoring. Size for concurrency, refresh volume, DirectQuery and RLS load (<a href="https://learn.microsoft.com/en-us/power-bi/guidance/gateway-onprem-sizing" rel="noopener" target="_blank" class="ext">sizing guidance</a>).</li></ol>
+<h2 id="credentials-expired">Credentials expired</h2>
+<ol><li>The error names the data source. Find which models and connections use it (lineage view, or the scanner API inventory).</li><li>Update the credentials on the connection (gateway connection or cloud connection), then refresh.</li><li>Prevent it: no personal accounts for production sources; service accounts or service principals with an owner, a documented expiry, and a calendar reminder before it expires.</li></ol>
+<h2 id="semantic-model-slow">Semantic model slow</h2>
+<ol><li>Is it slow for everyone or for some users? Some users only: RLS rules making queries heavier, or their region's data volume.</li><li>Is it slow at specific times? Check the capacity first (below).</li><li>Reproduce with Performance Analyzer and DAX Studio, then follow the <a href="../toolkit/performance-clinic.html">Performance Clinic</a>.</li><li>If a recent deployment caused it, roll back while you investigate.</li></ol>
+<h2 id="app-content-stale">App content stale</h2>
+<p>The report in the workspace is right but users see the old version in the app:</p>
+<ol><li>Publishing to the workspace doesn't update the app: <b>Update app</b> is a separate step.</li><li>Check the app's audiences include the content and the people.</li><li>If the report is right but the numbers are old, it's a refresh problem, not an app problem.</li><li>Add &quot;update the app&quot; to the <a href="../templates.html#tpl-deployment-checklist">deployment checklist</a>.</li></ol>
+<h2 id="user-can-t-see-the-report">User can't see the report</h2>
+<p>Check, in order, and stop at the first gap:</p>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Layer</th><th scope="col">Question</th></tr></thead><tbody><tr><td>Licence</td><td>Does the user have Pro or PPU, or is the content on F64+ or P capacity for free viewers?</td></tr><tr><td>App</td><td>Is the user (or a group they're in) in the app audience that includes this report?</td></tr><tr><td>Workspace</td><td>Do they have a workspace role, if that's how access is given?</td></tr><tr><td>Item</td><td>Was the report shared directly, and with what permissions?</td></tr><tr><td>Semantic model</td><td>Does a report in another workspace need Build permission on the model?</td></tr><tr><td>RLS</td><td>Is the user in a role, and does the role return rows for them?</td></tr><tr><td>Sensitivity and policies</td><td>Does a label or conditional access policy block them?</td></tr></tbody></table></div>
+<p>See <a href="../toolkit/security-field-guide.html#why-can-this-user-see-this-row">why can this user see this row</a> for the RLS half.</p>
+<h2 id="rls-incorrect">RLS incorrect</h2>
+<ol><li>Treat users seeing data they shouldn't as a <b>security incident</b> (Sev 1): restrict access first (remove the user from the role or the app, or unpublish the page), then investigate.</li><li>Reproduce with <b>Test as role</b> / <b>View as</b> for the specific user.</li><li>Check role membership, overlapping roles (union of permissions), the mapping table's contents, and relationship direction from the security table.</li><li>Add the case to the <a href="../templates.html#tpl-rls-test-matrix">RLS test matrix</a> so it's tested every release. <a href="../experience/s03-payroll-security-incident.html">Sprint 03</a> is this incident.</li></ol>
+<h2 id="data-source-changed">Data source changed</h2>
+<ol><li>The error is usually &quot;column not found&quot; or a type conversion failure; occasionally the refresh succeeds but numbers change because a column's meaning changed.</li><li>Compare the source schema with what the model expects; ask the source owner what changed and why.</li><li>Fix the query defensively (<a href="../toolkit/power-query-field-guide.html#schema-drift">schema drift</a>), refresh, and reconcile one number with the source.</li><li>Agree a <a href="../templates.html#tpl-data-contract">data contract</a> with notice periods for future changes.</li></ol>
+<h2 id="capacity-overloaded">Capacity overloaded</h2>
+<ol><li>Open the Capacity Metrics app: is the capacity throttling (interactive delays or rejections), and since when?</li><li>Find the top consumers by CU: one refresh, a notebook, a runaway report, a DirectQuery model hammered at 9:00?</li><li>Short term: move or reschedule the heaviest background jobs, pause non-critical items, or temporarily scale the capacity if your organisation allows it.</li><li>Long term: optimise the top consumers, separate workloads onto different capacities (for example production reports vs data engineering), and set alerts before throttling starts.</li><li>Escalate with numbers: &quot;Item X used Y% of the capacity between 08:00 and 10:00 on three days this week&quot; gets action; &quot;Power BI is slow&quot; doesn't.</li></ol>
+<h2 id="need-rollback">Need rollback</h2>
+<ol><li>Decide quickly: is the new release causing wrong data or an outage, and is there no small, safe fix? Then roll back.</li><li>Redeploy the previous release (previous Git tag through the pipeline, or redeploy from the previous stage in deployment pipelines).</li><li>Refresh if the rollback changes the model's structure; check one known number.</li><li>Tell users what happened and that the previous version is back.</li><li>Follow up with a fix through the normal path and a postmortem. Practise the call in the <a href="../experience/d04-hotfix-or-rollback.html">hotfix or rollback drill</a>.</li></ol>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../intermediate.html#i-service">Service</a> <span class="small muted">Intermediate</span></li><li><a href="../automation.html#api-refresh">Refresh automation, monitoring and tests through the API</a> <span class="small muted">Automation and APIs</span></li><li><a href="../governance.html#gov-monitor">Monitoring, lineage, usage and retirement</a> <span class="small muted">Governance</span></li><li><a href="../testing.html#qa-ops">Refresh tests, performance budgets and regression</a> <span class="small muted">Testing and validation</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s08-cfo-refresh-outage.html">INC-2071: The board pack refresh failed at 06:17</a></li><li><a href="../experience/s07-test-prod-deployment-failure.html">INC-2058: Test is right, Production is wrong</a></li><li><a href="../experience/s03-payroll-security-incident.html">INC-2031: A regional manager can see other regions' payroll</a></li><li><a href="../experience/d04-hotfix-or-rollback.html">INC-2079: Hotfix, rollback or wait?</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-runbook">Runbook</a></li><li><a href="../templates.html#tpl-incident-report">Incident report</a></li><li><a href="../templates.html#tpl-postmortem">Blameless postmortem</a></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-troubleshooting-refresh-scenarios" rel="noopener" target="_blank" class="ext">Troubleshoot refresh scenarios</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/data-integration/gateway/service-gateway-tshoot" rel="noopener" target="_blank" class="ext">Troubleshoot the on-premises data gateway</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/gateway-onprem-sizing" rel="noopener" target="_blank" class="ext">On-premises data gateway sizing</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/enterprise/metrics-app" rel="noopener" target="_blank" class="ext">Fabric Capacity Metrics app</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/enterprise/throttling" rel="noopener" target="_blank" class="ext">Fabric throttling</a> <span class="tier official">Official</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20Power%20BI%20production%20runbook">Open an issue</a> or edit <code>content/toolkit/guides/production-runbook.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

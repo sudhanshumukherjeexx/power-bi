@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Your first 30 days as a BI developer · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="A week-by-week plan for a new BI job: understand the environment, then the models and their owners, ship small changes, and own something by the end of the month, with the questions to ask.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/first-30-days.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="Your first 30 days as a BI developer · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="A week-by-week plan for a new BI job: understand the environment, then the models and their owners, ship small changes, and own something by the end of the month, with the questions to ask.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/first-30-days.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="first-30-days">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/career.html">Career &amp; Certification</a><span aria-hidden="true">/</span><span aria-current="page">Your first 30 days as a BI developer</span></nav>
+<header class="intro tkhead">
+<div class="kicker">🎯 Career &amp; Certification · Career</div>
+<h1>Your first 30 days as a BI developer</h1>
+<p class="lead">A week-by-week plan for a new BI job: understand the environment, then the models and their owners, ship small changes, and own something by the end of the month, with the questions to ask.</p>
+<div class="tkmeta"><span class="chip">Data Analyst</span><span class="chip">BI Developer</span><span class="chip">Senior BI Developer</span><span class="chip tool">Power BI Service</span><span class="chip tool">Git</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><a class="btn sm" href="../toolkit/first-30-days.md" download>Download .md</a><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(7)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#the-goal">The goal</a><a href="#days-1-5-understand-the-environment">Days 1–5: understand the environment</a><a href="#week-2-understand-the-models-and-their-owners">Week 2: understand the models and their owners</a><a href="#week-3-ship-small-changes">Week 3: ship small changes</a><a href="#week-4-own-something">Week 4: own something</a><a href="#questions-to-ask">Questions to ask</a><a href="#avoid">Avoid</a></nav></details>
+<article class="tkbody">
+<h2 id="the-goal">The goal</h2>
+<p>In 30 days nobody expects you to fix the platform. They expect you to understand it, earn trust with small correct changes, and take ownership of one thing. Write down what you learn as you go: your notes become the onboarding guide the next person wishes existed.</p>
+<h2 id="days-1-5-understand-the-environment">Days 1–5: understand the environment</h2>
+<ul><li>Get access: workspaces (as a Contributor in Dev, Viewer elsewhere), Git repositories, source databases (read-only), the ticket system, the team channel.</li><li>Find the map: which workspaces exist, which semantic models are certified, which reports executives open every Monday.</li><li>Sit with users of the most important report and watch how they actually use it.</li><li>Read the last three incidents and their postmortems, if they exist.</li><li>Ship nothing yet. Ask a lot.</li></ul>
+<h2 id="week-2-understand-the-models-and-their-owners">Week 2: understand the models and their owners</h2>
+<ul><li>Open the main models in Desktop (or from Git): grain of each fact, relationships, RLS roles, the measures everyone uses.</li><li>Find who owns each key definition (Revenue, Customer, Headcount). If nobody does, note it: that's a finding, not your job to fix this week.</li><li>Trace one number from a report back to the source system.</li><li>Learn the deployment path: how does a change get from someone's laptop to Production?</li></ul>
+<h2 id="week-3-ship-small-changes">Week 3: ship small changes</h2>
+<ul><li>Take two or three small tickets: a new measure, a fix to a visual, a description added.</li><li>Follow the team's process exactly (branch, PR, review, deployment), even if you'd do it differently. Earn the right to change the process.</li><li>Reconcile every number you touch and say so in the PR.</li></ul>
+<h2 id="week-4-own-something">Week 4: own something</h2>
+<ul><li>Volunteer to own one thing: a model's documentation, the refresh monitoring, a report's next release.</li><li>Write one useful document: a runbook for a failure you saw, an ownership matrix, or the onboarding notes you've been keeping.</li><li>Book a short review with your manager: what you've learned, what surprised you, what you'd like to own next.</li></ul>
+<h2 id="questions-to-ask">Questions to ask</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Ask</th><th scope="col">Why it matters</th></tr></thead><tbody><tr><td>Where do the data sources live, and who owns each?</td><td>You'll need them for every &quot;the number is wrong&quot; question</td></tr><tr><td>Who owns the definition of Revenue (and the other key metrics)?</td><td>Disagreements end with the owner, not with you</td></tr><tr><td>How is production deployed? Is there Git, a pipeline, a checklist?</td><td>So you don't break it in week two</td></tr><tr><td>How are incidents handled, and who is on call?</td><td>So you know what to do when it breaks at 7 a.m.</td></tr><tr><td>Who approves RLS changes and access requests?</td><td>Security changes need the right approver</td></tr><tr><td>Which workspaces are production? Which are sandboxes?</td><td>So you don't edit Production by accident</td></tr><tr><td>Where is the gateway, and who administers it?</td><td>Refresh failures often end there</td></tr><tr><td>Which models are certified, and what's the bar?</td><td>Build on them instead of creating another copy</td></tr><tr><td>What's the one report that must never be wrong?</td><td>Prioritise your understanding accordingly</td></tr></tbody></table></div>
+<h2 id="avoid">Avoid</h2>
+<ul><li>Rebuilding something in week one because &quot;it's badly designed&quot;. It may be badly designed for reasons you don't know yet.</li><li>Making changes directly in Production, however small.</li><li>Saying yes to every request: write it down, ask about priority, and confirm with your manager.</li></ul>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../beginner.html#b-service">Power BI Service basics</a> <span class="small muted">Beginner</span></li><li><a href="../governance.html#gov-workspace">Workspaces, domains, ownership and endorsement</a> <span class="small muted">Governance</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s01-executive-sales-dashboard.html">BI-1042: Executive sales dashboard</a></li><li><a href="../experience/d01-requirements-interview.html">REQ-301: Four requests, zero requirements</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-ownership-matrix">Ownership matrix (RACI)</a></li><li><a href="../templates.html#tpl-runbook">Runbook</a></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20Your%20first%2030%20days%20as%20a%20BI%20developer">Open an issue</a> or edit <code>content/toolkit/guides/first-30-days.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

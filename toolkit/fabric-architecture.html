@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Which Fabric architecture should I choose? · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="Where analytical data should live (Lakehouse, Warehouse, Eventhouse or existing SQL), how it gets there, how the semantic layer reads it, and five reference architectures from a small team to real-time.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/fabric-architecture.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="Which Fabric architecture should I choose? · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="Where analytical data should live (Lakehouse, Warehouse, Eventhouse or existing SQL), how it gets there, how the semantic layer reads it, and five reference architectures from a small team to real-time.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/fabric-architecture.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="fabric-architecture">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/reference.html">Reference</a><span aria-hidden="true">/</span><span aria-current="page">Which Fabric architecture should I choose?</span></nav>
+<header class="intro tkhead">
+<div class="kicker">📖 Reference · Decisions</div>
+<h1>Which Fabric architecture should I choose?</h1>
+<p class="lead">Where analytical data should live (Lakehouse, Warehouse, Eventhouse or existing SQL), how it gets there, how the semantic layer reads it, and five reference architectures from a small team to real-time.</p>
+<div class="tkmeta"><span class="chip">Senior BI Developer</span><span class="chip">BI Engineer</span><span class="chip">BI Architect / Lead</span><span class="chip tool">Microsoft Fabric</span><span class="chip tool">SQL engine</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(7)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#start-with-the-decision-not-the-product">Start with the decision, not the product</a><a href="#storage">Storage</a><a href="#ingestion">Ingestion</a><a href="#semantic-layer">Semantic layer</a><a href="#reference-architectures">Reference architectures</a><a href="#capacity-and-licensing-basics">Capacity and licensing basics</a><a href="#write-the-decision-down">Write the decision down</a></nav></details>
+<article class="tkbody">
+<h2 id="start-with-the-decision-not-the-product">Start with the decision, not the product</h2>
+<p>Fabric gives you several places to put analytical data, all stored in OneLake as Delta tables (Eventhouse uses its own format and can make tables available in OneLake). The right choice depends on <b>who builds it, in what language, and how fresh it must be</b>:</p>
+<div class="tree"><ul><li>Where should my analytical data live?<ul><li>The team writes T-SQL, needs multi-table transactions, and thinks in tables and stored procedures?<ul><li class="act">→ Warehouse</li></ul></li><li>The team uses Spark or Python, data arrives as files, or there are semi-structured and unstructured sources?<ul><li class="act">→ Lakehouse (with its read-only SQL analytics endpoint for SQL users)</li></ul></li><li>Data is events or telemetry, queried within seconds, often with time-series questions?<ul><li class="act">→ Eventhouse (KQL)</li></ul></li><li>A well-run SQL Server or Azure SQL warehouse already exists and works?<ul><li class="act">→ Keep it. Mirror it into OneLake only if you need Direct Lake or to combine it with other Fabric data</li></ul></li><li>Data lives in another cloud store and must not be copied?<ul><li class="act">→ OneLake shortcuts to ADLS Gen2, Amazon S3 and other supported sources</li></ul></li></ul></li></ul></div>
+<p>Most enterprise designs end up with a Lakehouse for raw and cleaned data and either a Warehouse or a &quot;gold&quot; Lakehouse for the dimensional model that semantic models read.</p>
+<h2 id="storage">Storage</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Item</th><th scope="col">What it is</th><th scope="col">Write with</th><th scope="col">Read with</th></tr></thead><tbody><tr><td><b>OneLake</b></td><td>One logical data lake per tenant; every Fabric item stores its data here</td><td>Each item's engine</td><td>Any Fabric engine, and ADLS-compatible APIs</td></tr><tr><td><b>Lakehouse</b></td><td>Files and Delta tables, plus an automatic SQL analytics endpoint</td><td>Spark, Dataflow Gen2, pipelines</td><td>Spark, SQL (read-only through the endpoint), Direct Lake</td></tr><tr><td><b>Warehouse</b></td><td>Relational warehouse with full T-SQL DDL and DML</td><td>T-SQL, pipelines, Dataflow Gen2</td><td>T-SQL, Direct Lake, Spark (read)</td></tr><tr><td><b>Eventhouse</b></td><td>KQL databases for streaming and time-series data</td><td>Eventstreams, ingestion APIs</td><td>KQL, Real-Time dashboards, OneLake availability</td></tr><tr><td><b>Delta</b></td><td>The open table format (Parquet plus a transaction log) behind Lakehouse and Warehouse tables</td><td></td><td></td></tr><tr><td><b>Shortcuts</b></td><td>Pointers to data in other OneLake locations or external stores, without copying</td><td></td><td>Like local tables</td></tr></tbody></table></div>
+<h2 id="ingestion">Ingestion</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Tool</th><th scope="col">Best for</th></tr></thead><tbody><tr><td><b>Mirroring</b></td><td>Near real-time replication of supported operational databases into OneLake (for example Azure SQL, Snowflake, Cosmos DB and SQL Server through a gateway) with no pipelines to maintain</td></tr><tr><td><b>Pipelines</b></td><td>Orchestration: copy activities, scheduling, dependencies, calling notebooks and stored procedures</td></tr><tr><td><b>Dataflow Gen2</b></td><td>Low-code Power Query transformations, writing to a Lakehouse or Warehouse; the natural step up from Power Query in a model</td></tr><tr><td><b>Notebooks</b></td><td>Spark (PySpark, Spark SQL) for large-scale or complex transformation and data engineering</td></tr><tr><td><b>Shortcuts</b></td><td>Making data available without moving it</td></tr></tbody></table></div>
+<p>The medallion pattern (bronze raw, silver cleaned, gold modelled) is a sensible default for organising those steps. It is a convention, not a feature, so keep the layers your team can actually maintain.</p>
+<h2 id="semantic-layer">Semantic layer</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Mode</th><th scope="col">How it reads data</th><th scope="col">Choose it when</th></tr></thead><tbody><tr><td><b>Import</b></td><td>Copies data into the model at refresh</td><td>Small to large models, any source, fastest queries, data can be minutes to hours old</td></tr><tr><td><b>DirectQuery</b></td><td>Sends queries to the source per visual</td><td>Data must be current to the second, or is too big to import, and the source is fast</td></tr><tr><td><b>Direct Lake on OneLake</b></td><td>Reads Delta tables from OneLake directly into the VertiPaq engine; can combine tables from several Fabric items</td><td>Data is already in Fabric as Delta; you want import-like speed without scheduled copies</td></tr><tr><td><b>Direct Lake on SQL endpoint</b></td><td>Reads Delta tables through one Lakehouse's or Warehouse's SQL analytics endpoint</td><td>You need to use SQL views, or want automatic fallback to DirectQuery</td></tr><tr><td><b>Composite</b></td><td>Mixes storage modes in one model</td><td>Aggregations in Import over a DirectQuery detail table, or a local model extending a shared one</td></tr></tbody></table></div>
+<div class="callout warning" role="note"><p><b>Warning:</b> The two Direct Lake variants behave differently. <b>Direct Lake on OneLake doesn't fall back to DirectQuery</b>: if a query can't be answered in Direct Lake it errors rather than silently becoming slow. <b>Direct Lake on SQL endpoint can fall back to DirectQuery</b> (for example when it reads a SQL view, when SQL-endpoint security applies, or when a table exceeds capacity guardrails), and the <code>DirectLakeBehavior</code> property controls whether that's allowed. Know which one your model uses before you promise performance. The <a href="../fabric.html#fab-directlake">Direct Lake in depth</a> topic has hands-on exercises.</p>
+</div>
+<h2 id="reference-architectures">Reference architectures</h2>
+<h3 id="small-team-power-bi-only">Small team, Power BI only</h3>
+<pre class="diagram" role="img" aria-label="Which Fabric architecture should I choose? diagram"> Sources ──► Power Query in each model ──► Import semantic models ──► Reports &amp; apps
+   (SQL, files, SaaS)        (Pro or PPU workspaces, gateway for on-premises sources)</pre>
+<p>No Fabric capacity needed. Upgrade when the same cleaning logic is copied into several models, or a model hits size and refresh limits.</p>
+<h3 id="enterprise-bi-on-fabric">Enterprise BI on Fabric</h3>
+<pre class="diagram" role="img" aria-label="Which Fabric architecture should I choose? diagram"> Sources ──► Pipelines / Mirroring ──► Lakehouse (bronze, silver) ──► Warehouse or gold Lakehouse
+                                                                          │ star schema
+                                                                          ▼
+                                    Certified Direct Lake or Import semantic models ──► Reports &amp; apps</pre>
+<p>One certified model per business domain; reports connect to it with live connections.</p>
+<h3 id="lakehouse-centric">Lakehouse-centric</h3>
+<p>Spark-heavy teams land everything in Lakehouses and build gold Delta tables with notebooks; analysts query through the SQL analytics endpoint; semantic models use Direct Lake on OneLake.</p>
+<h3 id="warehouse-centric">Warehouse-centric</h3>
+<p>SQL teams load staging tables with pipelines and transform with stored procedures in a Warehouse. It's the closest to a classic SQL Server warehouse, with T-SQL skills reused directly.</p>
+<h3 id="real-time-analytics">Real-time analytics</h3>
+<pre class="diagram" role="img" aria-label="Which Fabric architecture should I choose? diagram"> Event sources ──► Eventstream ──► Eventhouse (KQL) ──► Real-Time dashboards / alerts
+                                         │ OneLake availability
+                                         ▼
+                                Lakehouse / semantic model for historical reporting</pre>
+<h2 id="capacity-and-licensing-basics">Capacity and licensing basics</h2>
+<ul><li>Fabric items need a Fabric capacity (F SKUs) or a trial. Power BI-only workloads can still run on Pro or Premium Per User.</li><li>Viewers without a Pro or PPU licence can consume content only in workspaces on F64 or larger capacities (or P SKUs).</li><li>Everything on a capacity shares its compute: one heavy notebook or refresh can throttle reports. Watch the <a href="https://learn.microsoft.com/en-us/fabric/enterprise/metrics-app" rel="noopener" target="_blank" class="ext">Fabric Capacity Metrics app</a> and see the <a href="../toolkit/production-runbook.html#capacity-overloaded">production runbook</a>.</li></ul>
+<h2 id="write-the-decision-down">Write the decision down</h2>
+<p>Whatever you choose, record the context, options, decision and the trigger to revisit it in an <a href="../templates.html#tpl-adr">architecture decision record</a>. <a href="../experience/s09-fabric-migration-decision.html">Sprint 09</a> is a full Fabric migration decision to practise on, and the <a href="../toolkit/decision-library.html#lakehouse-vs-warehouse">decision library</a> compares the common pairs.</p>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../fabric.html#fab-onelake">OneLake, Lakehouse, Warehouse and the SQL analytics endpoint</a> <span class="small muted">Microsoft Fabric for BI developers</span></li><li><a href="../fabric.html#fab-directlake">Direct Lake in depth</a> <span class="small muted">Microsoft Fabric for BI developers</span></li><li><a href="../fabric.html#fab-pipelines">Dataflow Gen2, pipelines, mirroring and medallion design</a> <span class="small muted">Microsoft Fabric for BI developers</span></li><li><a href="../advanced.html#a-fabric">Dataflows, Fabric Lakehouse and Direct Lake</a> <span class="small muted">Advanced</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s09-fabric-migration-decision.html">ARCH-009: Should Northwind move to Fabric, and how?</a></li><li><a href="../experience/s10-bi-architecture-review.html">ARCH-012: Architecture review: 80 reports, 19 models, no owner</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-adr">Architecture decision record (ADR)</a></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://learn.microsoft.com/en-us/fabric/fundamentals/decision-guide-data-store" rel="noopener" target="_blank" class="ext">Fabric decision guide: choose a data store</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/onelake/onelake-overview" rel="noopener" target="_blank" class="ext">OneLake overview</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/fundamentals/direct-lake-overview" rel="noopener" target="_blank" class="ext">Direct Lake overview</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/onelake/onelake-shortcuts" rel="noopener" target="_blank" class="ext">OneLake shortcuts</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/mirroring/overview" rel="noopener" target="_blank" class="ext">Mirroring in Fabric</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/onelake/onelake-medallion-lakehouse-architecture" rel="noopener" target="_blank" class="ext">Medallion lakehouse architecture</a> <span class="tier official">Official</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20Which%20Fabric%20architecture%20should%20I%20choose%3F">Open an issue</a> or edit <code>content/toolkit/guides/fabric-architecture.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

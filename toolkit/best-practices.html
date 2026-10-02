@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Best-practice library · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="Opinionated, checkable standards for measure and table naming, display folders, descriptions, hidden keys, explicit measures, relationships, date tables, documentation, DAX formatting, workspaces and Git, and how to automate them with Best Practice Analyzer.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/best-practices.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="Best-practice library · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="Opinionated, checkable standards for measure and table naming, display folders, descriptions, hidden keys, explicit measures, relationships, date tables, documentation, DAX formatting, workspaces and Git, and how to automate them with Best Practice Analyzer.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/best-practices.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="best-practices">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/patterns.html">Patterns &amp; Playbooks</a><span aria-hidden="true">/</span><span aria-current="page">Best-practice library</span></nav>
+<header class="intro tkhead">
+<div class="kicker">🧩 Patterns &amp; Playbooks · Patterns</div>
+<h1>Best-practice library</h1>
+<p class="lead">Opinionated, checkable standards for measure and table naming, display folders, descriptions, hidden keys, explicit measures, relationships, date tables, documentation, DAX formatting, workspaces and Git, and how to automate them with Best Practice Analyzer.</p>
+<div class="tkmeta"><span class="chip">BI Developer</span><span class="chip">Senior BI Developer</span><span class="chip">BI Engineer</span><span class="chip tool">Tabular Editor</span><span class="chip tool">Best Practice Analyzer</span><span class="chip tool">Power BI Desktop</span><span class="chip tool">Git</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><a class="btn sm" href="../toolkit/best-practices.md" download>Download .md</a><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(12)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#why-standards">Why standards</a><a href="#measure-naming">Measure naming</a><a href="#table-and-column-naming">Table and column naming</a><a href="#display-folders-and-descriptions">Display folders and descriptions</a><a href="#hide-keys-use-explicit-measures">Hide keys, use explicit measures</a><a href="#relationship-rules">Relationship rules</a><a href="#date-table-standards">Date table standards</a><a href="#model-documentation">Model documentation</a><a href="#dax-formatting">DAX formatting</a><a href="#workspace-naming">Workspace naming</a><a href="#git-standards">Git standards</a><a href="#automate-it-with-bpa">Automate it with BPA</a></nav></details>
+<article class="tkbody">
+<h2 id="why-standards">Why standards</h2>
+<p>Standards aren't about taste. They make a model readable by the next person (often you in six months), make review faster, and let tools check the boring things so humans can review the logic. Pick a standard, write it down, and automate it. The rules below are a good default; changing one is fine as long as the team changes it everywhere.</p>
+<h2 id="measure-naming">Measure naming</h2>
+<ul><li><b>Business names, title case, with spaces:</b> <code>Net Sales</code>, <code>Gross Margin %</code>, <code>Orders (Distinct)</code>. Not <code>TotalSalesAmt_v2</code>.</li><li><b>Units and transformations as suffixes:</b> <code>Net Sales PY</code>, <code>Net Sales YoY %</code>, <code>Net Sales YTD</code>.</li><li><b>No table prefixes</b> in measure names: measures live in a measure table or their home fact table, and the name must make sense on its own on a visual.</li><li><b>One meaning per name across the organisation:</b> if <code>Revenue</code> means net of returns in one model, it means that everywhere (<a href="../templates.html#tpl-kpi-dictionary">KPI dictionary</a>).</li></ul>
+<h2 id="table-and-column-naming">Table and column naming</h2>
+<ul><li>Tables: <code>Sales</code>, <code>Customer</code>, <code>Date</code> for business users, or <code>FactSales</code> / <code>DimCustomer</code> if your team prefers to see roles. Pick one convention for the whole model.</li><li>Columns users see: business names with spaces (<code>Order Date</code>, <code>Customer Segment</code>). Keys and technical columns keep their technical names and are hidden.</li><li>No abbreviations users won't recognise.</li></ul>
+<h2 id="display-folders-and-descriptions">Display folders and descriptions</h2>
+<ul><li>Group measures in display folders by subject (<code>Sales</code>, <code>Margin</code>, <code>Time comparisons</code>), not by author or ticket.</li><li><b>Every measure and every visible column has a description</b>: what it means, what it includes and excludes. Descriptions show as tooltips in the field list and feed Copilot and Q&amp;A.</li></ul>
+<h2 id="hide-keys-use-explicit-measures">Hide keys, use explicit measures</h2>
+<ul><li>Hide every key and every column used only for relationships or sorting.</li><li>Set <b>Summarize by: None</b> on numeric columns that shouldn't be summed (IDs, years, rates), or hide them and provide measures.</li><li>Write explicit measures for every number on a visual; don't rely on implicit &quot;Sum of Quantity&quot;. Explicit measures are required for calculation groups and give you one place to fix a definition.</li></ul>
+<h2 id="relationship-rules">Relationship rules</h2>
+<ul><li>One-to-many, single direction, from dimension to fact.</li><li>Integer surrogate keys where possible.</li><li>Bidirectional, many-to-many and inactive relationships each have a description saying why.</li><li>Never relate two fact tables directly.</li></ul>
+<h2 id="date-table-standards">Date table standards</h2>
+<ul><li>One date table, marked as a date table, continuous days covering every fact date (whole years).</li><li>Columns for Year, Quarter, Month (with a sort-by-month-number column), Week, fiscal periods, and flags such as <code>IsWorkingDay</code>.</li><li>Auto date/time <b>off</b>.</li><li>Role-playing dates handled with <code>USERELATIONSHIP</code> or explicit second date tables, never with auto date/time.</li></ul>
+<h2 id="model-documentation">Model documentation</h2>
+<p>Generate it from the model rather than writing it twice: descriptions in the model, the <a href="../templates.html#tpl-data-dictionary">data dictionary</a> exported from them, and the <a href="../templates.html#tpl-model-design">model design document</a> for the decisions (grain, sources, refresh, security) that the model can't hold.</p>
+<h2 id="dax-formatting">DAX formatting</h2>
+<ul><li>Format with <a href="https://www.daxformatter.com/" rel="noopener" target="_blank" class="ext">DAX Formatter</a> or Tabular Editor's formatter; agree long-line or short-line style once.</li><li>Variables for anything used twice and for every intermediate result worth debugging.</li><li><code>DIVIDE</code> instead of <code>/</code>; <code>REMOVEFILTERS</code> instead of <code>ALL</code> when you mean &quot;remove filters&quot;; column references fully qualified (<code>FactSales[Quantity]</code>), measure references unqualified (<code>[Net Sales]</code>).</li></ul>
+<h2 id="workspace-naming">Workspace naming</h2>
+<p><code>&lt;Domain&gt; &lt;Purpose&gt; [&lt;Stage&gt;]</code>, for example <code>Sales Analytics [Dev]</code>, <code>Sales Analytics [Test]</code>, <code>Sales Analytics</code>. Use a consistent pattern so lineage, deployment pipelines and scripts can rely on it. Download the <a href="../templates.html#tpl-workspace-naming-standard">workspace naming standard</a>.</p>
+<h2 id="git-standards">Git standards</h2>
+<ul><li>Commit messages start with the ticket: <code>BI-1103: certified Revenue excludes returns</code>.</li><li>One logical change per commit; never commit <code>.pbi/localSettings.json</code> or <code>cache.abf</code>.</li><li>Branch per ticket, PR per branch, at least one reviewer for anything reaching <code>main</code> (<a href="../toolkit/files/branching-guide.md">branching guide</a>).</li></ul>
+<h2 id="automate-it-with-bpa">Automate it with BPA</h2>
+<p>Tabular Editor's <b>Best Practice Analyzer</b> checks rules like these automatically: naming, descriptions, hidden keys, data types, DAX anti-patterns and performance smells. Start with <a href="https://github.com/microsoft/Analysis-Services/tree/master/BestPracticeRules" rel="noopener" target="_blank" class="ext">Microsoft's published rule set</a>, switch off rules your team has decided against, and add your own (for example &quot;measures must have a display folder&quot;). Run it before every PR, and in CI when the model is in PBIP, so standards are enforced by a tool and reviews can focus on logic.</p>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../intermediate.html#i-model">Modeling</a> <span class="small muted">Intermediate</span></li><li><a href="../advanced.html#a-gov">Governance, enterprise architecture and the &quot;senior&quot; conversations</a> <span class="small muted">Advanced</span></li><li><a href="../testing.html#qa-model">Semantic model tests</a> <span class="small muted">Testing and validation</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s05-one-revenue-semantic-model.html">BI-1103: Three models, three Revenues</a></li><li><a href="../experience/d03-pull-request-review.html">PR-231: Review Sam's pull request</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-data-dictionary">Data dictionary</a></li><li><a href="../templates.html#tpl-workspace-naming-standard">Workspace and content naming standard</a></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://docs.tabulareditor.com/features/using-bpa.html" rel="noopener" target="_blank" class="ext">Tabular Editor: Best Practice Analyzer</a> <span class="tier specialist">Specialist</span></li><li><a href="https://github.com/microsoft/Analysis-Services/tree/master/BestPracticeRules" rel="noopener" target="_blank" class="ext">Microsoft's BPA rules</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/star-schema" rel="noopener" target="_blank" class="ext">Star schema guidance</a> <span class="tier official">Official</span></li><li><a href="https://www.daxformatter.com/" rel="noopener" target="_blank" class="ext">DAX Formatter</a> <span class="tier specialist">Specialist</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20Best-practice%20library">Open an issue</a> or edit <code>content/toolkit/guides/best-practices.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

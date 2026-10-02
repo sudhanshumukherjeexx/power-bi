@@ -72,6 +72,6 @@
   "refs": [
     { "title": "Endorsement: promote and certify content", "url": "https://learn.microsoft.com/en-us/fabric/governance/endorsement-overview" },
     { "title": "Connect to semantic models (thin reports)", "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/service-datasets-discover-across-workspaces" },
-    { "title": "Power BI implementation planning: content ownership", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/powerbi-implementation-planning-content-ownership-and-management" }
+    { "title": "Power BI implementation planning: content ownership", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/fabric-adoption-roadmap-content-ownership-and-management" }
   ]
 }

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Automate Power BI · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="Copy-ready samples for the jobs admins and BI engineers automate: list workspaces, reports and models, trigger and check refreshes, scan the tenant, find stale content, list gateways, export metadata and deploy, in PowerShell, Python, the Fabric CLI, TMSL and Tabular Editor scripts.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/automate-power-bi.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="Automate Power BI · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="Copy-ready samples for the jobs admins and BI engineers automate: list workspaces, reports and models, trigger and check refreshes, scan the tenant, find stale content, list gateways, export metadata and deploy, in PowerShell, Python, the Fabric CLI, TMSL and Tabular Editor scripts.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/automate-power-bi.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="automate-power-bi">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/tools.html">Tools</a><span aria-hidden="true">/</span><span aria-current="page">Automate Power BI</span></nav>
+<header class="intro tkhead">
+<div class="kicker">🛠 Tools · Guide</div>
+<h1>Automate Power BI</h1>
+<p class="lead">Copy-ready samples for the jobs admins and BI engineers automate: list workspaces, reports and models, trigger and check refreshes, scan the tenant, find stale content, list gateways, export metadata and deploy, in PowerShell, Python, the Fabric CLI, TMSL and Tabular Editor scripts.</p>
+<div class="tkmeta"><span class="chip">BI Engineer</span><span class="chip">BI Architect / Lead</span><span class="chip tool">Power BI REST API</span><span class="chip tool">Fabric REST API</span><span class="chip tool">PowerShell</span><span class="chip tool">Python</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><a class="btn sm" href="../toolkit/automate-power-bi.md" download>Download .md</a><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(12)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#before-you-automate-anything">Before you automate anything</a><a href="#authentication">Authentication</a><a href="#list-workspaces-reports-and-semantic-models">List workspaces, reports and semantic models</a><a href="#trigger-a-refresh-and-check-its-status">Trigger a refresh and check its status</a><a href="#inventory-the-tenant-and-extract-lineage">Inventory the tenant and extract lineage</a><a href="#find-stale-content">Find stale content</a><a href="#list-gateways-and-their-data-sources">List gateways and their data sources</a><a href="#export-model-metadata">Export model metadata</a><a href="#tmsl-and-tom-through-the-xmla-endpoint">TMSL and TOM through the XMLA endpoint</a><a href="#tabular-editor-scripts">Tabular Editor scripts</a><a href="#fabric-cli">Fabric CLI</a><a href="#deploy-pbip">Deploy PBIP</a></nav></details>
+<article class="tkbody">
+<h2 id="before-you-automate-anything">Before you automate anything</h2>
+<ul><li><b>Use a service principal for anything scheduled.</b> A script that runs as you breaks when you go on holiday or leave. Register an app in Microsoft Entra ID, put it in a security group, and allow that group in the Fabric admin portal's developer settings (<b>Service principals can call Fabric public APIs</b>; admin APIs have their own read-only admin API setting).</li><li><b>Give it the least access that works:</b> workspace Member or Contributor only where it deploys or refreshes; admin APIs only for an inventory principal.</li><li><b>Keep secrets out of code and out of Git.</b> Read them from environment variables, a pipeline secret or Azure Key Vault. The samples below use placeholders like <code>&lt;tenant-id&gt;</code> and environment variables; nothing in them is a real credential.</li><li><b>Respect limits.</b> Back off on HTTP 429 and honour <code>Retry-After</code>; the scanner API, for example, allows a limited number of requests per hour.</li></ul>
+<p>The <a href="../automation.html">automation track</a> has hands-on assignments with mock responses, so you can practise without a tenant.</p>
+<h2 id="authentication">Authentication</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">API</th><th scope="col">Base URL</th><th scope="col">Token scope</th></tr></thead><tbody><tr><td>Power BI REST</td><td><code>https://api.powerbi.com/v1.0/myorg</code></td><td><code>https://analysis.windows.net/powerbi/api/.default</code></td></tr><tr><td>Fabric REST</td><td><code>https://api.fabric.microsoft.com/v1</code></td><td><code>https://api.fabric.microsoft.com/.default</code></td></tr></tbody></table></div>
+<h3 id="python-msal-client-credentials">Python (MSAL, client credentials)</h3>
+<div class="codewrap"><span class="lang">python</span><button class="cp" type="button" data-copycode>Copy</button><pre><code># pip install msal requests
+import os, msal, requests
+
+TENANT = os.environ[&quot;PBI_TENANT_ID&quot;]          # never hard-code these
+CLIENT = os.environ[&quot;PBI_CLIENT_ID&quot;]
+SECRET = os.environ[&quot;PBI_CLIENT_SECRET&quot;]
+
+app = msal.ConfidentialClientApplication(CLIENT, authority=f&quot;https://login.microsoftonline.com/{TENANT}&quot;, client_credential=SECRET)
+
+def token(scope=&quot;https://analysis.windows.net/powerbi/api/.default&quot;):
+    result = app.acquire_token_for_client(scopes=[scope])
+    if &quot;access_token&quot; not in result:
+        raise RuntimeError(result.get(&quot;error_description&quot;))
+    return result[&quot;access_token&quot;]
+
+def pbi(method, path, **kw):
+    r = requests.request(method, &quot;https://api.powerbi.com/v1.0/myorg&quot; + path,
+                         headers={&quot;Authorization&quot;: f&quot;Bearer {token()}&quot;}, timeout=60, **kw)
+    r.raise_for_status()
+    return r.json() if r.content else None</code></pre></div>
+<h3 id="powershell-microsoftpowerbimgmt">PowerShell (MicrosoftPowerBIMgmt)</h3>
+<div class="codewrap"><span class="lang">powershell</span><button class="cp" type="button" data-copycode>Copy</button><pre><code># Install-Module MicrosoftPowerBIMgmt -Scope CurrentUser
+$cred = New-Object PSCredential($env:PBI_CLIENT_ID, (ConvertTo-SecureString $env:PBI_CLIENT_SECRET -AsPlainText -Force))
+Connect-PowerBIServiceAccount -ServicePrincipal -Credential $cred -Tenant $env:PBI_TENANT_ID
+
+# any REST call, with the module handling the token
+Invoke-PowerBIRestMethod -Url &quot;groups&quot; -Method Get | ConvertFrom-Json</code></pre></div>
+<h2 id="list-workspaces-reports-and-semantic-models">List workspaces, reports and semantic models</h2>
+<div class="codewrap"><span class="lang">python</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>for ws in pbi(&quot;GET&quot;, &quot;/groups&quot;)[&quot;value&quot;]:
+    reports = pbi(&quot;GET&quot;, f&quot;/groups/{ws['id']}/reports&quot;)[&quot;value&quot;]
+    models  = pbi(&quot;GET&quot;, f&quot;/groups/{ws['id']}/datasets&quot;)[&quot;value&quot;]
+    print(ws[&quot;name&quot;], len(reports), &quot;reports,&quot;, len(models), &quot;semantic models&quot;)</code></pre></div>
+<p><code>/groups</code> returns the workspaces the identity is a member of. For every workspace in the tenant, use the admin APIs (next sections).</p>
+<h2 id="trigger-a-refresh-and-check-its-status">Trigger a refresh and check its status</h2>
+<div class="codewrap"><span class="lang">python</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>ws, model = &quot;&lt;workspace-id&gt;&quot;, &quot;&lt;semantic-model-id&gt;&quot;
+
+# service principals must use NoNotification
+pbi(&quot;POST&quot;, f&quot;/groups/{ws}/datasets/{model}/refreshes&quot;, json={&quot;notifyOption&quot;: &quot;NoNotification&quot;})
+
+last = pbi(&quot;GET&quot;, f&quot;/groups/{ws}/datasets/{model}/refreshes?$top=1&quot;)[&quot;value&quot;][0]
+print(last[&quot;status&quot;], last.get(&quot;startTime&quot;), last.get(&quot;endTime&quot;))
+# status: Unknown (still running), Completed, Failed or Disabled; read serviceExceptionJson on failure</code></pre></div>
+<p>For large models, <b>enhanced refresh</b> (same endpoint, with a body like <code>{&quot;type&quot;: &quot;Full&quot;, &quot;objects&quot;: [{&quot;table&quot;: &quot;FactSales&quot;}], &quot;commitMode&quot;: &quot;transactional&quot;}</code>) refreshes chosen tables or partitions and can be cancelled. Poll the refresh by its ID rather than in a tight loop: once a minute is plenty.</p>
+<h2 id="inventory-the-tenant-and-extract-lineage">Inventory the tenant and extract lineage</h2>
+<p>The admin scanner APIs return workspaces with their items, users, data sources, lineage and (if metadata scanning is enabled) tables, columns, measures and expressions.</p>
+<div class="codewrap"><span class="lang">python</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>import time
+modified = pbi(&quot;GET&quot;, &quot;/admin/workspaces/modified?excludePersonalWorkspaces=True&quot;)
+ids = [w[&quot;id&quot;] for w in modified]
+
+results = []
+for i in range(0, len(ids), 100):                      # up to 100 workspaces per scan
+    scan = pbi(&quot;POST&quot;, &quot;/admin/workspaces/getInfo?lineage=True&amp;datasourceDetails=True&amp;datasetSchema=True&amp;datasetExpressions=True&quot;,
+               json={&quot;workspaces&quot;: ids[i:i + 100]})
+    while pbi(&quot;GET&quot;, f&quot;/admin/workspaces/scanStatus/{scan['id']}&quot;)[&quot;status&quot;] != &quot;Succeeded&quot;:
+        time.sleep(10)
+    results.append(pbi(&quot;GET&quot;, f&quot;/admin/workspaces/scanResult/{scan['id']}&quot;))</code></pre></div>
+<p>Save the results as JSON or load them into a Lakehouse, and you have the raw material for the inventory in <a href="../experience/s10-bi-architecture-review.html">Sprint 10's architecture review</a>: owners, endorsement, data sources, duplicated measures and refresh health.</p>
+<h2 id="find-stale-content">Find stale content</h2>
+<p>Combine the inventory with the activity log: reports nobody opened in 90 days are retirement candidates (not deletion candidates; see <a href="../experience/d05-report-retirement.html">report retirement</a>).</p>
+<div class="codewrap"><span class="lang">python</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>from datetime import date, timedelta
+viewed = set()
+for d in range(30):                                     # one UTC day per call
+    day = date.today() - timedelta(days=d + 1)
+    url = f&quot;/admin/activityevents?startDateTime='{day}T00:00:00Z'&amp;endDateTime='{day}T23:59:59Z'&amp;$filter=Activity eq 'viewreport'&quot;
+    page = pbi(&quot;GET&quot;, url)
+    while True:
+        viewed.update(e.get(&quot;ReportId&quot;) for e in page.get(&quot;activityEventEntities&quot;, []))
+        if page.get(&quot;lastResultSet&quot;):
+            break
+        page = requests.get(page[&quot;continuationUri&quot;], headers={&quot;Authorization&quot;: f&quot;Bearer {token()}&quot;}).json()</code></pre></div>
+<p>Keep your own history: the activity log only goes back a limited number of days, so export it daily if you want trends.</p>
+<h2 id="list-gateways-and-their-data-sources">List gateways and their data sources</h2>
+<div class="codewrap"><span class="lang">python</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>for gw in pbi(&quot;GET&quot;, &quot;/gateways&quot;)[&quot;value&quot;]:
+    sources = pbi(&quot;GET&quot;, f&quot;/gateways/{gw['id']}/datasources&quot;)[&quot;value&quot;]
+    print(gw[&quot;name&quot;], [s[&quot;datasourceType&quot;] for s in sources])</code></pre></div>
+<p>The identity sees only gateways it administers.</p>
+<h2 id="export-model-metadata">Export model metadata</h2>
+<ul><li><b>Fabric REST:</b> <code>POST /v1/workspaces/{workspaceId}/semanticModels/{modelId}/getDefinition</code> returns the model definition (TMDL parts) as a long-running operation.</li><li><b>XMLA:</b> in SSMS or with TOM, script the database as TMSL.</li><li><b>PBIP in Git:</b> if the model already lives in Git, the repository <i>is</i> the metadata. This is the best option.</li></ul>
+<h2 id="tmsl-and-tom-through-the-xmla-endpoint">TMSL and TOM through the XMLA endpoint</h2>
+<p>Refresh one table's partitions with TMSL (run in SSMS against <code>powerbi://api.powerbi.com/v1.0/myorg/&lt;workspace name&gt;</code>):</p>
+<div class="codewrap"><span class="lang">json</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>{
+  &quot;refresh&quot;: {
+    &quot;type&quot;: &quot;full&quot;,
+    &quot;objects&quot;: [ { &quot;database&quot;: &quot;Sales Model&quot;, &quot;table&quot;: &quot;FactSales&quot; } ]
+  }
+}</code></pre></div>
+<p>With TOM in PowerShell (the Analysis Services client libraries installed):</p>
+<div class="codewrap"><span class="lang">powershell</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>Add-Type -Path &quot;Microsoft.AnalysisServices.Tabular.dll&quot;
+$server = New-Object Microsoft.AnalysisServices.Tabular.Server
+$server.Connect(&quot;Data Source=powerbi://api.powerbi.com/v1.0/myorg/Sales;User ID=app:$($env:PBI_CLIENT_ID)@$($env:PBI_TENANT_ID);Password=$($env:PBI_CLIENT_SECRET)&quot;)
+$model = $server.Databases.GetByName(&quot;Sales Model&quot;).Model
+$model.Tables | ForEach-Object { &quot;{0}: {1} measures&quot; -f $_.Name, $_.Measures.Count }
+$server.Disconnect()</code></pre></div>
+<h2 id="tabular-editor-scripts">Tabular Editor scripts</h2>
+<p>C# scripts in Tabular Editor automate model hygiene:</p>
+<div class="codewrap"><span class="lang">csharp</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>// Give every measure without a description a TODO, so BPA and reviewers catch it
+foreach (var m in Model.AllMeasures.Where(m =&gt; string.IsNullOrWhiteSpace(m.Description)))
+    m.Description = &quot;TODO: describe &quot; + m.Name;
+
+// Hide every key column used in a relationship
+foreach (var c in Model.AllColumns.Where(c =&gt; c.Name.EndsWith(&quot;Key&quot;) &amp;&amp; c.UsedInRelationships.Any()))
+    c.IsHidden = true;</code></pre></div>
+<h2 id="fabric-cli">Fabric CLI</h2>
+<p>The Fabric CLI (<code>fab</code>) navigates Fabric like a file system and wraps the REST APIs:</p>
+<div class="codewrap"><span class="lang">bash</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>pip install ms-fabric-cli
+fab auth login
+fab ls                         # workspaces
+fab ls &quot;Sales.Workspace&quot;       # items in a workspace</code></pre></div>
+<h2 id="deploy-pbip">Deploy PBIP</h2>
+<p>For deployment from Git to workspaces, use <code>fabric-cicd</code> (Python) and a GitHub Actions or Azure DevOps pipeline. The full walkthrough is in <a href="../toolkit/ship-like-software.html#ci-cd">Ship Power BI like software</a>.</p>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../automation.html#api-rest">REST APIs, service principals and a tenant inventory</a> <span class="small muted">Automation and APIs</span></li><li><a href="../automation.html#api-refresh">Refresh automation, monitoring and tests through the API</a> <span class="small muted">Automation and APIs</span></li><li><a href="../automation.html#api-xmla">XMLA, TOM, TMSL and Tabular Editor scripting</a> <span class="small muted">Automation and APIs</span></li><li><a href="../governance.html#gov-monitor">Monitoring, lineage, usage and retirement</a> <span class="small muted">Governance</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s08-cfo-refresh-outage.html">INC-2071: The board pack refresh failed at 06:17</a></li><li><a href="../experience/s10-bi-architecture-review.html">ARCH-012: Architecture review: 80 reports, 19 models, no owner</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-runbook">Runbook</a></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://learn.microsoft.com/en-us/rest/api/power-bi/" rel="noopener" target="_blank" class="ext">Power BI REST API reference</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/rest/api/fabric/articles/" rel="noopener" target="_blank" class="ext">Fabric REST API reference</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/rest/api/power-bi/admin/workspace-info-post-workspace-info" rel="noopener" target="_blank" class="ext">Admin: WorkspaceInfo PostWorkspaceInfo (scanner)</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/connect-data/asynchronous-refresh" rel="noopener" target="_blank" class="ext">Enhanced refresh with the REST API</a> <span class="tier official">Official</span></li><li><a href="https://microsoft.github.io/fabric-cli/" rel="noopener" target="_blank" class="ext">Fabric CLI</a> <span class="tier official">Official</span></li><li><a href="https://microsoft.github.io/fabric-cicd/latest/" rel="noopener" target="_blank" class="ext">fabric-cicd</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/powershell/power-bi/overview" rel="noopener" target="_blank" class="ext">MicrosoftPowerBIMgmt PowerShell modules</a> <span class="tier official">Official</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20Automate%20Power%20BI">Open an issue</a> or edit <code>content/toolkit/guides/automate-power-bi.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

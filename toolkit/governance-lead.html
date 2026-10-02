@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Governance and the BI lead · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="Workspace strategy, naming, ownership, certification, stewardship, content lifecycle, retirement, self-service vs managed vs enterprise BI, the Center of Excellence and governance maturity, built on Microsoft's Fabric adoption roadmap.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/governance-lead.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="Governance and the BI lead · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="Workspace strategy, naming, ownership, certification, stewardship, content lifecycle, retirement, self-service vs managed vs enterprise BI, the Center of Excellence and governance maturity, built on Microsoft's Fabric adoption roadmap.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/governance-lead.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="governance-lead">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/patterns.html">Patterns &amp; Playbooks</a><span aria-hidden="true">/</span><span aria-current="page">Governance and the BI lead</span></nav>
+<header class="intro tkhead">
+<div class="kicker">🧩 Patterns &amp; Playbooks · Guide</div>
+<h1>Governance and the BI lead</h1>
+<p class="lead">Workspace strategy, naming, ownership, certification, stewardship, content lifecycle, retirement, self-service vs managed vs enterprise BI, the Center of Excellence and governance maturity, built on Microsoft's Fabric adoption roadmap.</p>
+<div class="tkmeta"><span class="chip">Senior BI Developer</span><span class="chip">BI Architect / Lead</span><span class="chip tool">Power BI Service</span><span class="chip tool">Microsoft Fabric</span><span class="chip tool">Power BI REST API</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><a class="btn sm" href="../toolkit/governance-lead.md" download>Download .md</a><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(11)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#what-governance-is-for">What governance is for</a><a href="#workspace-strategy">Workspace strategy</a><a href="#naming-conventions">Naming conventions</a><a href="#ownership-models">Ownership models</a><a href="#semantic-model-certification">Semantic model certification</a><a href="#data-stewardship">Data stewardship</a><a href="#content-lifecycle-and-report-retirement">Content lifecycle and report retirement</a><a href="#self-service-managed-self-service-and-enterprise-bi">Self-service, managed self-service and enterprise BI</a><a href="#center-of-excellence">Center of Excellence</a><a href="#governance-maturity">Governance maturity</a><a href="#the-bi-lead-s-first-quarter">The BI lead's first quarter</a></nav></details>
+<article class="tkbody">
+<h2 id="what-governance-is-for">What governance is for</h2>
+<p>Governance isn't a 40-page framework. It's the smallest set of roles, rules and habits that lets people trust the numbers, find the right content, and build their own reports without creating chaos. Microsoft's <a href="https://learn.microsoft.com/en-us/power-bi/guidance/fabric-adoption-roadmap" rel="noopener" target="_blank" class="ext">Fabric adoption roadmap</a> is the authoritative foundation; this page is the practical summary.</p>
+<div class="callout rule" role="note"><p><b>Rule:</b> Make the governed path the easiest path. If the certified model is harder to use than exporting to Excel, people will export to Excel.</p>
+</div>
+<h2 id="workspace-strategy">Workspace strategy</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Pattern</th><th scope="col">When</th></tr></thead><tbody><tr><td>By domain and stage: <code>Sales Analytics [Dev]</code>, <code>[Test]</code>, prod</td><td>Content managed by a BI team with deployment pipelines</td></tr><tr><td>Data workspaces separate from report workspaces</td><td>Shared semantic models consumed by many report authors</td></tr><tr><td>Personal and team sandboxes</td><td>Self-service exploration, with no expectation of support</td></tr></tbody></table></div>
+<p>Group workspaces into <b>domains</b> (Sales, Finance, Operations) so ownership and discovery follow the business.</p>
+<h2 id="naming-conventions">Naming conventions</h2>
+<p>Consistent names make inventories, lineage and scripts work. Agree patterns for workspaces, semantic models, reports, apps and security groups, and publish them. Download the <a href="../templates.html#tpl-workspace-naming-standard">workspace naming standard</a>.</p>
+<h2 id="ownership-models">Ownership models</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Model</th><th scope="col">Who builds</th><th scope="col">Who owns data definitions</th></tr></thead><tbody><tr><td><b>Business-led self-service</b></td><td>Business analysts</td><td>The business unit</td></tr><tr><td><b>Managed self-service</b></td><td>BI team builds certified models; business builds reports on them</td><td>BI team with business data owners</td></tr><tr><td><b>Enterprise BI</b></td><td>Central BI team builds models and reports</td><td>Central team with data owners</td></tr></tbody></table></div>
+<p>Most organisations mix all three. Write down who owns each certified model and each key definition (Revenue, Customer, Headcount) in an <a href="../templates.html#tpl-ownership-matrix">ownership matrix</a>.</p>
+<h2 id="semantic-model-certification">Semantic model certification</h2>
+<ul><li><b>Promoted:</b> the owner says &quot;this is ready to use&quot;. Anyone with write access can promote.</li><li><b>Certified:</b> an authorised reviewer says &quot;this meets the organisation's standards&quot;. Only people allowed by the admin can certify.</li></ul>
+<p>Write the bar for certification down and apply it every time: owner, descriptions, tests, refresh monitoring, RLS tested, documented definitions. Use the <a href="../templates.html#tpl-certification-checklist">certification checklist</a>.</p>
+<h2 id="data-stewardship">Data stewardship</h2>
+<p>A data steward for each domain answers &quot;what does this field mean?&quot; and &quot;is this number right?&quot;, approves definition changes, and is the person a developer asks before changing a KPI. Without stewards, every disagreement escalates to the BI team.</p>
+<h2 id="content-lifecycle-and-report-retirement">Content lifecycle and report retirement</h2>
+<p>Content has a lifecycle: create, publish, promote or certify, maintain, retire. Retirement is the step everyone skips:</p>
+<ol><li><b>Find candidates:</b> no views in 90 days, superseded by certified content, no owner (<a href="../toolkit/automate-power-bi.html#find-stale-content">find stale content</a>).</li><li><b>Contact owners and recent viewers;</b> many &quot;unused&quot; reports are used quarterly.</li><li><b>Announce</b> the date and the replacement.</li><li><b>Remove access or move to an archive workspace</b> for a grace period.</li><li><b>Delete</b> after the grace period, keeping a backup (PBIP in Git, or an export).</li></ol>
+<p>The <a href="../templates.html#tpl-deprecation-checklist">deprecation checklist</a> and the <a href="../experience/d05-report-retirement.html">report retirement drill</a> walk through it.</p>
+<h2 id="self-service-managed-self-service-and-enterprise-bi">Self-service, managed self-service and enterprise BI</h2>
+<p>Self-service is a feature, not a failure. The goal is to channel it: give authors certified models (Build permission), training and templates, and keep enterprise BI for the content that must be right for everyone. Monitor with usage metrics and the activity log, not with bans.</p>
+<h2 id="center-of-excellence">Center of Excellence</h2>
+<p>A COE is the small team that makes BI succeed across the organisation. Microsoft's guidance describes typical COE responsibilities including training and enablement, documentation and templates, governance, user support, architecture and platform oversight. A COE doesn't build everything; it makes everyone else better at building. Start with a <a href="../templates.html#tpl-coe-charter">COE charter</a> that names its mission, scope, people and the few metrics it will report.</p>
+<h2 id="governance-maturity">Governance maturity</h2>
+<p>Assess where you are before planning where to go. The roadmap's maturity levels run from initial (no consistent practice) through repeatable and defined to capable and efficient. Use the <a href="../templates.html#tpl-governance-assessment">governance assessment</a> and practise in the <a href="../experience/d07-governance-maturity.html">governance maturity drill</a>.</p>
+<h2 id="the-bi-lead-s-first-quarter">The BI lead's first quarter</h2>
+<ol><li><b>Inventory</b> what exists (workspaces, models, reports, owners, usage): <a href="../experience/s10-bi-architecture-review.html">Sprint 10</a> is this exercise.</li><li><b>Pick the three definitions</b> that cause the most arguments and certify one model for them.</li><li><b>Name owners</b> for every certified model and every workspace with production content.</li><li><b>Publish the few rules</b> (naming, certification bar, where to ask for help) on one page.</li><li><b>Retire</b> the obvious dead content, announced and reversible.</li><li><b>Report</b> progress with numbers: certified-model usage up, duplicate models down, incidents down.</li></ol>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../advanced.html#a-gov">Governance, enterprise architecture and the &quot;senior&quot; conversations</a> <span class="small muted">Advanced</span></li><li><a href="../governance.html#gov-workspace">Workspaces, domains, ownership and endorsement</a> <span class="small muted">Governance</span></li><li><a href="../governance.html#gov-monitor">Monitoring, lineage, usage and retirement</a> <span class="small muted">Governance</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s10-bi-architecture-review.html">ARCH-012: Architecture review: 80 reports, 19 models, no owner</a></li><li><a href="../experience/d05-report-retirement.html">GOV-044: Usage dropped 70%. Retire it?</a></li><li><a href="../experience/d07-governance-maturity.html">GOV-050: Governance maturity assessment</a></li><li><a href="../experience/s05-one-revenue-semantic-model.html">BI-1103: Three models, three Revenues</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-ownership-matrix">Ownership matrix (RACI)</a></li><li><a href="../templates.html#tpl-workspace-naming-standard">Workspace and content naming standard</a></li><li><a href="../templates.html#tpl-certification-checklist">Certification checklist</a></li><li><a href="../templates.html#tpl-governance-assessment">Governance maturity assessment</a></li><li><a href="../templates.html#tpl-coe-charter">Center of Excellence charter</a></li><li><a href="../templates.html#tpl-deprecation-checklist">Deprecation checklist</a></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/fabric-adoption-roadmap" rel="noopener" target="_blank" class="ext">Microsoft Fabric adoption roadmap</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/fabric-adoption-roadmap-center-of-excellence" rel="noopener" target="_blank" class="ext">Adoption roadmap: Center of Excellence</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/fabric-adoption-roadmap-content-ownership-and-management" rel="noopener" target="_blank" class="ext">Adoption roadmap: content ownership and management</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/powerbi-implementation-planning-introduction" rel="noopener" target="_blank" class="ext">Power BI implementation planning</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/governance/endorsement-overview" rel="noopener" target="_blank" class="ext">Endorsement overview</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/governance/domains" rel="noopener" target="_blank" class="ext">Fabric domains</a> <span class="tier official">Official</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20Governance%20and%20the%20BI%20lead">Open an issue</a> or edit <code>content/toolkit/guides/governance-lead.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

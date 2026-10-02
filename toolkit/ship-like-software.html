@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Ship Power BI like software · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="PBIX vs PBIP, the PBIP folder, TMDL, Git, branches, pull requests and code review, deployment pipelines, Dev/Test/Prod, parameters and rules, rollback, hotfixes and CI/CD with fabric-cicd, with starter files to download.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/ship-like-software.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="Ship Power BI like software · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="PBIX vs PBIP, the PBIP folder, TMDL, Git, branches, pull requests and code review, deployment pipelines, Dev/Test/Prod, parameters and rules, rollback, hotfixes and CI/CD with fabric-cicd, with starter files to download.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/ship-like-software.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="ship-like-software">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/tools.html">Tools</a><span aria-hidden="true">/</span><span aria-current="page">Ship Power BI like software</span></nav>
+<header class="intro tkhead">
+<div class="kicker">🛠 Tools · Guide</div>
+<h1>Ship Power BI like software</h1>
+<p class="lead">PBIX vs PBIP, the PBIP folder, TMDL, Git, branches, pull requests and code review, deployment pipelines, Dev/Test/Prod, parameters and rules, rollback, hotfixes and CI/CD with fabric-cicd, with starter files to download.</p>
+<div class="tkmeta"><span class="chip">Senior BI Developer</span><span class="chip">BI Engineer</span><span class="chip">BI Architect / Lead</span><span class="chip tool">Git</span><span class="chip tool">VS Code</span><span class="chip tool">Deployment pipelines</span><span class="chip tool">fabric-cicd</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(11)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#why-treat-a-report-like-software">Why treat a report like software</a><a href="#pbix-vs-pbip">PBIX vs PBIP</a><a href="#inside-a-pbip-project">Inside a PBIP project</a><a href="#git-fundamentals-for-bi-developers">Git fundamentals for BI developers</a><a href="#branches-pull-requests-and-code-review">Branches, pull requests and code review</a><a href="#dev-test-and-prod">Dev, Test and Prod</a><a href="#deployment-pipelines">Deployment pipelines</a><a href="#ci-cd">CI/CD</a><a href="#release-notes">Release notes</a><a href="#rollback">Rollback</a><a href="#hotfixes">Hotfixes</a></nav></details>
+<article class="tkbody">
+<h2 id="why-treat-a-report-like-software">Why treat a report like software</h2>
+<p>A PBIX file on a shared drive has no history, no review and no safe way for two people to work on it. When something breaks in Production, nobody can say what changed. Software teams solved this decades ago with source control, review, automated checks and repeatable deployments. Power BI now supports all of them.</p>
+<h2 id="pbix-vs-pbip">PBIX vs PBIP</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col"></th><th scope="col">PBIX</th><th scope="col">PBIP (Power BI project)</th></tr></thead><tbody><tr><td>Format</td><td>One binary file</td><td>A folder of text files</td></tr><tr><td>Diff and review</td><td>No</td><td>Yes: every measure and visual change is a readable diff</td></tr><tr><td>Two people at once</td><td>Last save wins</td><td>Merge in Git</td></tr><tr><td>Data</td><td>Stored in the file</td><td>Not committed (cache stays local)</td></tr><tr><td>Best for</td><td>Personal analysis, sharing a one-off</td><td>Anything a team maintains</td></tr></tbody></table></div>
+<p>Save as PBIP from Desktop: <b>File → Save as → Power BI project (.pbip)</b>.</p>
+<h2 id="inside-a-pbip-project">Inside a PBIP project</h2>
+<pre class="diagram" role="img" aria-label="Ship Power BI like software diagram">Sales.pbip
+Sales.SemanticModel/
+    definition.pbism
+    definition/
+        model.tmdl            model properties
+        relationships.tmdl
+        tables/
+            FactSales.tmdl    columns, measures, partitions (the M query)
+            DimDate.tmdl
+        roles/                RLS roles
+    .pbi/localSettings.json   per user: never commit
+    .pbi/cache.abf            the data: never commit
+Sales.Report/
+    definition.pbir           which semantic model the report uses
+    definition/pages/…        one folder per page, one file per visual (PBIR format)</pre>
+<p><b>TMDL</b> (Tabular Model Definition Language) is the model as readable text. A measure looks like this:</p>
+<div class="codewrap"><span class="lang">text</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>measure 'Net Sales' =
+        SUMX ( FactSales, FactSales[Quantity] * FactSales[UnitPrice] * ( 1 - FactSales[Discount] ) )
+    formatString: \$#,0.00
+    displayFolder: Sales</code></pre></div>
+<p><b>PBIR</b>, the default report format for new projects, stores each page and visual as its own JSON file, so two people editing different pages don't conflict.</p>
+<h2 id="git-fundamentals-for-bi-developers">Git fundamentals for BI developers</h2>
+<div class="codewrap"><span class="lang">bash</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>git clone https://github.com/&lt;your-org&gt;/sales-bi.git
+git switch -c feature/BI-1103-revenue-measure   # one branch per ticket
+# open Sales.pbip in Desktop, change, save, close Desktop
+git status                                      # what changed
+git diff                                        # how it changed
+git add Sales.SemanticModel
+git commit -m &quot;BI-1103: certified Revenue excludes returns and test orders&quot;
+git push -u origin feature/BI-1103-revenue-measure</code></pre></div>
+<p>Download the <a href="../toolkit/files/pbip.gitignore">.gitignore for PBIP</a> so per-user files and data caches never reach the repository, and the <a href="../toolkit/files/branching-guide.md">branching guide</a>.</p>
+<h2 id="branches-pull-requests-and-code-review">Branches, pull requests and code review</h2>
+<ul><li><b>Branches:</b> <code>main</code> = Production, <code>dev</code> = Development, a short-lived <code>feature/…</code> branch per ticket, <code>hotfix/…</code> for incidents.</li><li><b>Pull requests:</b> every change reaches <code>dev</code> and <code>main</code> through a PR with a <a href="../templates.html#tpl-pull-request">description</a>: what, why, how tested, risk, rollback.</li><li><b>Review for:</b> correct numbers (did they reconcile?), measure logic and naming, relationship and RLS changes (these are high-risk), hidden or removed fields that reports use, performance (new high-cardinality columns), and anything that touches Production data sources.</li></ul>
+<p>Practise reviewing in the <a href="../experience/d03-pull-request-review.html">pull request drill</a> and resolving conflicts in <a href="../experience/s06-pbip-merge-conflict.html">Sprint 06</a>.</p>
+<h2 id="dev-test-and-prod">Dev, Test and Prod</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Stage</th><th scope="col">Who uses it</th><th scope="col">Data</th></tr></thead><tbody><tr><td>Development</td><td>Developers</td><td>Dev or a small sample</td></tr><tr><td>Test</td><td>Testers and business UAT</td><td>Production-like (masked if sensitive)</td></tr><tr><td>Production</td><td>Everyone else</td><td>Production</td></tr></tbody></table></div>
+<p>The same content must point at different sources in each stage. Use <b>parameters</b> in Power Query for server and database names, and:</p>
+<ul><li>with <b>deployment pipelines</b>, set <b>deployment rules</b> (parameter rules and data source rules) on the target stage;</li><li>with <b>fabric-cicd</b>, list each environment's values in <a href="../toolkit/files/parameter.yml">parameter.yml</a>.</li></ul>
+<h2 id="deployment-pipelines">Deployment pipelines</h2>
+<p>Fabric deployment pipelines copy content between workspaces assigned to stages, compare stages, and apply rules. Good habits:</p>
+<ol><li>Deploy to Test, run the checks, get sign-off, then deploy to Production.</li><li>Set rules once per stage and check them after every new data source.</li><li>After deploying, open one known number in the target stage. <a href="../experience/s07-test-prod-deployment-failure.html">Sprint 07</a> is what happens when nobody does.</li><li>Use the <a href="../templates.html#tpl-deployment-checklist">deployment checklist</a>.</li></ol>
+<h2 id="ci-cd">CI/CD</h2>
+<p>With PBIP in Git, a pipeline can deploy what was merged, so Production always matches <code>main</code>. Microsoft's documented route is <b>fabric-cicd</b>, a Microsoft-backed open-source Python library:</p>
+<ol><li><code>pip install fabric-cicd</code>.</li><li>A <a href="../toolkit/files/deploy.py">deployment script</a> builds a <code>FabricWorkspace</code> for the target workspace and environment and calls <code>publish_all_items</code>.</li><li><a href="../toolkit/files/parameter.yml">parameter.yml</a> swaps environment-specific values (servers, lakehouse IDs) at deploy time.</li><li>A <a href="../toolkit/files/deploy-pbip.yml">GitHub Actions workflow</a> maps the branch to the workspace, signs in as a service principal and runs the script. Azure DevOps works the same way.</li></ol>
+<p>Prerequisites: a service principal with Contributor on the target workspaces, the tenant setting that allows service principals to call Fabric public APIs, and data source credentials configured once in the Service after the first deployment.</p>
+<p>Add checks before deploy: Best Practice Analyzer rules, a test that the model loads, and tests that query known numbers (see <a href="../testing.html#qa-ops">refresh tests and regression</a>).</p>
+<h2 id="release-notes">Release notes</h2>
+<p>Users should never discover a change by noticing a number moved. Every Production release gets <a href="../templates.html#tpl-release-notes">release notes</a>: what changed for users, any number that will differ and why, and who to ask.</p>
+<h2 id="rollback">Rollback</h2>
+<p>Rollback must be boring:</p>
+<ul><li>Tag each Production release. Rolling back = redeploy the previous tag through the same pipeline.</li><li>Changes that alter data (a new partition scheme, a dropped column) may need a refresh after rollback; say so in the PR.</li><li>If you can't roll back a change, it needs a Test run that mirrors Production and an explicit sign-off.</li></ul>
+<h2 id="hotfixes">Hotfixes</h2>
+<p>When Production is wrong now:</p>
+<ol><li><b>Mitigate first:</b> roll back, or hide the broken page and tell users.</li><li>Branch <code>hotfix/INC-…</code> from <code>main</code>, make the smallest fix, get a fast review from one other person, deploy through the pipeline.</li><li>Merge the hotfix back into <code>dev</code> so it isn't lost in the next release.</li><li>Write the <a href="../templates.html#tpl-postmortem">postmortem</a>.</li></ol>
+<p>The <a href="../experience/d04-hotfix-or-rollback.html">hotfix or rollback drill</a> practises the decision.</p>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../advanced.html#a-deploy">Deployment</a> <span class="small muted">Advanced</span></li><li><a href="../testing.html#qa-ops">Refresh tests, performance budgets and regression</a> <span class="small muted">Testing and validation</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s06-pbip-merge-conflict.html">PR-214: Two developers, one measure</a></li><li><a href="../experience/s07-test-prod-deployment-failure.html">INC-2058: Test is right, Production is wrong</a></li><li><a href="../experience/d03-pull-request-review.html">PR-231: Review Sam's pull request</a></li><li><a href="../experience/d04-hotfix-or-rollback.html">INC-2079: Hotfix, rollback or wait?</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-pull-request">Pull request description</a></li><li><a href="../templates.html#tpl-release-notes">Release notes and migration plan</a></li><li><a href="../templates.html#tpl-deployment-checklist">Deployment checklist</a></li></ul></div><div><h3>Downloads</h3><ul><li><a href="../toolkit/files/pbip.gitignore" download>.gitignore for PBIP repositories</a> <span class="small muted">pbip.gitignore</span></li><li><a href="../toolkit/files/deploy.py" download>fabric-cicd deployment script</a> <span class="small muted">deploy.py</span></li><li><a href="../toolkit/files/parameter.yml" download>fabric-cicd environment parameters</a> <span class="small muted">parameter.yml</span></li><li><a href="../toolkit/files/deploy-pbip.yml" download>GitHub Actions workflow</a> <span class="small muted">deploy-pbip.yml</span></li><li><a href="../toolkit/files/branching-guide.md" download>Branching guide</a> <span class="small muted">branching-guide.md</span></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-overview" rel="noopener" target="_blank" class="ext">Power BI Desktop projects (PBIP)</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-deploy-fabric-cicd" rel="noopener" target="_blank" class="ext">Deploy PBIP using fabric-cicd</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/cicd/git-integration/intro-to-git-integration" rel="noopener" target="_blank" class="ext">Fabric Git integration</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/cicd/deployment-pipelines/intro-to-deployment-pipelines" rel="noopener" target="_blank" class="ext">Deployment pipelines</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/analysis-services/tmdl/tmdl-overview" rel="noopener" target="_blank" class="ext">TMDL overview</a> <span class="tier official">Official</span></li><li><a href="https://microsoft.github.io/fabric-cicd/latest/" rel="noopener" target="_blank" class="ext">fabric-cicd documentation</a> <span class="tier official">Official</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20Ship%20Power%20BI%20like%20software">Open an issue</a> or edit <code>content/toolkit/guides/ship-like-software.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

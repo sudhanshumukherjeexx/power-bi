@@ -1,0 +1,18 @@
+# .gitignore for a Power BI project (PBIP) repository
+# Power BI Desktop writes these per user and per machine; they never belong in Git.
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# Local exports and scratch files
+*.pbix
+*.pbix.bak
+*.pbit.bak
+~$*
+
+# Python virtual environments and caches (deployment scripts)
+.venv/
+__pycache__/
+
+# Secrets: credentials come from the pipeline or Key Vault, never from files in the repo
+.env
+*.secret

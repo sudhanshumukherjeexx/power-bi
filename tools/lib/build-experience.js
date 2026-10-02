@@ -11,7 +11,7 @@ function page(s, stageName) {
   const kind = { incident: 'Incident', change: 'Change request', review: 'Review', decision: 'Decision', uat: 'UAT', ticket: 'Ticket' }[s.ticket.kind] || 'Ticket';
   const title = `${s.title}: ${s.type === 'drill' ? 'BI drill' : 'Power BI scenario'} (${s.ticket.id}) · Power BI Holy Grail`;
   const description = s.seo || `${kind} ${s.ticket.id} for the ${stageName} stage: ${s.summary}`;
-  const scripts = ['meta', 'experience', 'glossary', 'site', 'progress', 'xp'];
+  const scripts = ['meta', 'experience', 'glossary', 'external', 'site', 'progress', 'xp'];
   return `${P.head({ title, description, path: `experience/${s.slug}.html`, r: '../' })}
 <body data-root="../" data-scenario="${s.id}">
 <a class="skip" href="#app">Skip to content</a>

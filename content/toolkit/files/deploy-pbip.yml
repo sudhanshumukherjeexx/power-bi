@@ -1,0 +1,44 @@
+# .github/workflows/deploy-pbip.yml
+# Deploys PBIP items to Fabric when changes are pushed to dev or main.
+# Needs: a service principal with Contributor on the target workspaces, the tenant setting that lets
+# service principals call Fabric APIs, and a repository secret AZURE_CREDENTIALS
+# ({"clientId": "...", "clientSecret": "...", "tenantId": "..."}). Never commit those values.
+name: Deploy PBIP to Fabric
+
+on:
+  push:
+    branches: [dev, main]
+    paths: ["**/*.SemanticModel/**", "**/*.Report/**", "parameter.yml", "deploy.py"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+    environment: ${{ github.ref_name == 'main' && 'production' || 'development' }}   # add required reviewers to 'production'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Choose the target workspace
+        id: target
+        shell: pwsh
+        run: |
+          $map = @{ "dev" = @("Sales [Dev]", "dev"); "main" = @("Sales [Prod]", "prod") }
+          $t = $map["${{ github.ref_name }}"]
+          "workspace=$($t[0])" >> $env:GITHUB_OUTPUT
+          "environment=$($t[1])" >> $env:GITHUB_OUTPUT
+
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          allow-no-subscriptions: true
+
+      - name: Deploy
+        shell: pwsh
+        run: |
+          pip install fabric-cicd
+          python -u deploy.py --spn-auth --workspace_name "${{ steps.target.outputs.workspace }}" --environment "${{ steps.target.outputs.environment }}"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

@@ -14,5 +14,15 @@
   { "id": "incident-report", "title": "Incident report", "summary": "The facts of an incident as it happens: impact, timeline, mitigation, status updates.", "used": ["s02", "s03", "s07", "s08"] },
   { "id": "postmortem", "title": "Blameless postmortem", "summary": "Why it happened, why it wasn't caught, and the actions that stop it happening again.", "used": ["s03", "s04", "s08"] },
   { "id": "data-contract", "title": "Data contract", "summary": "What a source team promises a consuming team: schema, meaning, freshness, quality and change notice.", "used": ["s08"] },
-  { "id": "ownership-matrix", "title": "Ownership matrix (RACI)", "summary": "Who is responsible, accountable, consulted and informed for each definition, model and process.", "used": ["s05", "s10", "d07"] }
+  { "id": "ownership-matrix", "title": "Ownership matrix (RACI)", "summary": "Who is responsible, accountable, consulted and informed for each definition, model and process.", "used": ["s05", "s10", "d07"] },
+  { "id": "data-dictionary", "title": "Data dictionary", "summary": "Every table, column and measure users can see: meaning, type, examples, source and caveats.", "used": ["s05"] },
+  { "id": "source-to-target", "title": "Source-to-target mapping", "summary": "Exactly how each target column is built from the source, with the rule, type and the test that proves it.", "used": [] },
+  { "id": "model-design", "title": "Semantic model design document", "summary": "Purpose, facts and grain, dimensions, relationships, storage mode, security, measures and the performance budget.", "used": ["s05"] },
+  { "id": "code-review-checklist", "title": "Code review checklist", "summary": "What a reviewer checks in a Power BI pull request: correctness, maintainability and impact.", "used": ["d03", "s06"] },
+  { "id": "deprecation-checklist", "title": "Deprecation checklist", "summary": "Retire a report or model safely: decide, announce, retire, then delete, reversibly until the end.", "used": ["d05"] },
+  { "id": "capacity-review", "title": "Capacity review", "summary": "Monthly look at capacity usage, throttling and the top consumers, with actions and owners.", "used": [] },
+  { "id": "workspace-naming-standard", "title": "Workspace and content naming standard", "summary": "Naming patterns for workspaces, models, reports, apps and security groups.", "used": ["s10"] },
+  { "id": "certification-checklist", "title": "Certification checklist", "summary": "The bar a semantic model must meet before it is certified: ownership, definitions, quality, security, usability.", "used": ["s05"] },
+  { "id": "governance-assessment", "title": "Governance maturity assessment", "summary": "Score ten governance areas with evidence, then pick three actions for the next quarter.", "used": ["d07", "s10"] },
+  { "id": "coe-charter", "title": "Center of Excellence charter", "summary": "Mission, sponsor, responsibilities, scope and success measures for a BI Center of Excellence.", "used": [] }
 ]

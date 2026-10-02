@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>My DAX is wrong. What do I do? · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="A decision tree for wrong numbers: wrong everywhere, wrong only at the total, wrong after a slicer, wrong last year, a relationship that doesn't filter, or right but slow.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/dax-debugging.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="My DAX is wrong. What do I do? · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="A decision tree for wrong numbers: wrong everywhere, wrong only at the total, wrong after a slicer, wrong last year, a relationship that doesn't filter, or right but slow.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/dax-debugging.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="dax-debugging">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/patterns.html">Patterns &amp; Playbooks</a><span aria-hidden="true">/</span><span aria-current="page">My DAX is wrong. What do I do?</span></nav>
+<header class="intro tkhead">
+<div class="kicker">🧩 Patterns &amp; Playbooks · Troubleshooting</div>
+<h1>My DAX is wrong. What do I do?</h1>
+<p class="lead">A decision tree for wrong numbers: wrong everywhere, wrong only at the total, wrong after a slicer, wrong last year, a relationship that doesn't filter, or right but slow.</p>
+<div class="tkmeta"><span class="chip">Data Analyst</span><span class="chip">BI Developer</span><span class="chip">Senior BI Developer</span><span class="chip tool">Power BI Desktop</span><span class="chip tool">DAX query view</span><span class="chip tool">DAX Studio</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(7)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#first-three-questions">First, three questions</a><a href="#the-tree">The tree</a><a href="#inspect-the-base-measure">Inspect the base measure</a><a href="#the-total-is-wrong">The total is wrong</a><a href="#slicer-changes-it">Slicer changes it</a><a href="#relationship-not-filtering">Relationship not filtering</a><a href="#prove-the-fix">Prove the fix</a></nav></details>
+<article class="tkbody">
+<h2 id="first-three-questions">First, three questions</h2>
+<p>Before you change a formula, answer these, in writing if the number is going to an executive:</p>
+<ol><li><b>What is the right answer, and how do you know?</b> Reconcile one cell by hand from the source: a filter on the CSV, a SQL query, the ledger. Without an expected value you are guessing.</li><li><b>Where is it wrong?</b> Every cell, only the total, only for some members, only after a slicer?</li><li><b>When did it start?</b> A measure that was right yesterday points at data or model changes, not at DAX.</li></ol>
+<h2 id="the-tree">The tree</h2>
+<div class="tree"><ul><li>The result is wrong<ul><li>Wrong in every cell, including the total?<ul><li class="act">→ The base logic or the data is wrong. Check the base measure in DAX query view against your hand calculation.</li><li class="act">→ Check for duplicates: a re-exported file, a merge that multiplied rows. Count rows per key.</li><li class="act">→ Check types: text that looks like numbers, dates parsed in the wrong locale.</li></ul></li><li>Right per row, wrong at the total?<ul><li class="act">→ The total is evaluated in its own filter context, not as the sum of the rows. See &quot;The total is wrong&quot; below.</li></ul></li><li>Right until a slicer or filter is applied?<ul><li class="act">→ Something in the measure removes or replaces that filter (ALL, REMOVEFILTERS, a FILTER over a table). See &quot;Slicer changes it&quot; below.</li><li class="act">→ Or the slicer's table doesn't reach the fact table: check relationship direction.</li></ul></li><li>Previous year, YTD or growth is wrong?<ul><li class="act">→ Date table problems: not marked, gaps, doesn't cover every year, or the visual uses a date from the fact table instead of the date table.</li></ul></li><li>A dimension doesn't filter the fact at all (same value on every row)?<ul><li class="act">→ No relationship, inactive relationship, wrong direction, or the key types differ (text &quot;001&quot; vs number 1).</li></ul></li><li>Blank where you expect a number?<ul><li class="act">→ No rows in that context; DIVIDE returned blank for a zero denominator; or the key is missing in the dimension (facts land on the blank row).</li></ul></li><li>Right, but slow?<ul><li class="act">→ It's a performance problem, not a correctness problem: go to the Performance Clinic.</li></ul></li></ul></li></ul></div>
+<p>Performance problems: <a href="../toolkit/performance-clinic.html#dax-performance">Performance Clinic</a>.</p>
+<h2 id="inspect-the-base-measure">Inspect the base measure</h2>
+<p>Write the measure as a query in <b>DAX query view</b> (or DAX Studio) and look at the numbers without the visual in the way:</p>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>EVALUATE
+SUMMARIZECOLUMNS (
+    DimRegion[RegionName],
+    &quot;Net Sales&quot;, [Net Sales],
+    &quot;Rows&quot;, COUNTROWS ( FactSales ),
+    &quot;Orders&quot;, DISTINCTCOUNT ( FactSales[OrderID] )
+)</code></pre></div>
+<p>Then check the grain: <code>EVALUATE FILTER ( SUMMARIZE ( FactSales, FactSales[OrderID], FactSales[ProductKey], &quot;n&quot;, COUNTROWS ( FactSales ) ), [n] &gt; 1 )</code> lists duplicated order lines. The <a href="../experience/s02-finance-disputes-revenue.html">Finance dispute</a> scenario is built on exactly this.</p>
+<h2 id="the-total-is-wrong">The total is wrong</h2>
+<p>A total cell is evaluated with no filter on the row's column, so a measure that is right per row can be &quot;wrong&quot; at the total for good reasons:</p>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">What you see</th><th scope="col">Why</th><th scope="col">Fix</th></tr></thead><tbody><tr><td>Total isn't the sum of the rows</td><td>Non-additive logic: averages, distinct counts, ratios, <code>MAX</code></td><td>Usually correct. If the business wants the sum, iterate: <code>SUMX ( VALUES ( DimProduct[ProductName] ), [Measure] )</code></td></tr><tr><td>Total is blank</td><td><code>SELECTEDVALUE</code> or <code>HASONEVALUE</code> logic returns blank with many values</td><td>Decide what the total should mean and return it explicitly with <code>ISINSCOPE</code></td></tr><tr><td>Total is far too big</td><td>An <code>IF</code> per row is skipped at the total, so the &quot;else&quot; branch runs on everything</td><td>Iterate over the grain where the condition applies</td></tr><tr><td>Stock or balance total is a sum of weeks</td><td>Semi-additive data summed over time</td><td>Last-date logic: see the <a href="../toolkit/dax-field-manual.html#semi-additive-measures-inventory-and-balances">field manual</a></td></tr></tbody></table></div>
+<h2 id="slicer-changes-it">Slicer changes it</h2>
+<ul><li><code>ALL ( Table )</code> or <code>REMOVEFILTERS ( Table )</code> inside <code>CALCULATE</code> ignores slicers on that table by design. Did you want <code>ALLSELECTED</code>?</li><li>A filter argument on the same column <b>replaces</b> the slicer: <code>CALCULATE ( [Net Sales], DimProduct[Category] = &quot;Bikes&quot; )</code> shows Bikes even when the slicer says Helmets. Wrap it in <code>KEEPFILTERS</code> to intersect instead.</li><li><code>FILTER ( ALL ( FactSales ), … )</code> throws away every filter on the fact table.</li><li>A slicer on a table that is on the &quot;wrong&quot; side of a single-direction relationship doesn't filter the facts at all.</li></ul>
+<h2 id="relationship-not-filtering">Relationship not filtering</h2>
+<p>Open the model view and check, in this order:</p>
+<ol><li><b>Is there a relationship, and is it active?</b> Inactive ones (dashed lines) only work through <code>USERELATIONSHIP</code>.</li><li><b>Direction.</b> Filters flow from the one side to the many side. A slicer on a fact column won't filter a dimension unless the direction is Both, which you should avoid without a reason (<a href="https://learn.microsoft.com/en-us/power-bi/guidance/relationships-bidirectional-filtering" rel="noopener" target="_blank" class="ext">guidance</a>).</li><li><b>Key match.</b> Same data type, same values: trailing spaces, leading zeros and text vs number all break matches silently.</li><li><b>Grain.</b> If the &quot;one&quot; side has duplicate keys, Desktop will refuse a one-to-many relationship or offer many-to-many. Many-to-many hides the duplicate problem rather than fixing it.</li><li><b>Blank row.</b> Facts whose key isn't in the dimension attach to an invisible blank member. <code>COUNTROWS ( FILTER ( FactSales, ISBLANK ( RELATED ( DimProduct[ProductKey] ) ) ) )</code> counts them.</li></ol>
+<h2 id="prove-the-fix">Prove the fix</h2>
+<p>A fix isn't done until a test shows the right number and the same test would have caught the bug. Record the expected values and the query that checks them in a <a href="../templates.html#tpl-validation-plan">validation plan</a>, and see <a href="../testing.html#qa-model">semantic model tests</a> for how to automate the check.</p>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../beginner.html#b-dax">DAX fundamentals</a> <span class="small muted">Beginner</span></li><li><a href="../intermediate.html#i-dax">DAX</a> <span class="small muted">Intermediate</span></li><li><a href="../advanced.html#a-dax">Advanced DAX</a> <span class="small muted">Advanced</span></li><li><a href="../testing.html#qa-model">Semantic model tests</a> <span class="small muted">Testing and validation</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s02-finance-disputes-revenue.html">BI-1057: Finance disputes the dashboard</a></li><li><a href="../experience/d02-uat-region-total.html">UAT-017: &quot;The Region total doesn't match Excel&quot;</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-validation-plan">Validation and reconciliation</a></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://learn.microsoft.com/en-us/power-bi/transform-model/dax-query-view" rel="noopener" target="_blank" class="ext">DAX query view</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/transform-model/desktop-relationships-understand" rel="noopener" target="_blank" class="ext">Model relationships in Power BI Desktop</a> <span class="tier official">Official</span></li><li><a href="https://daxstudio.org/docs/intro/" rel="noopener" target="_blank" class="ext">DAX Studio documentation</a> <span class="tier specialist">Specialist</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20My%20DAX%20is%20wrong.%20What%20do%20I%20do%3F">Open an issue</a> or edit <code>content/toolkit/guides/dax-debugging.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

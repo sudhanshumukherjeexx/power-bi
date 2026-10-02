@@ -1,5 +1,47 @@
 # Changelog
 
+## 2.1.0 (2026-10-02): the BI Developer Toolkit
+
+### Added
+
+- **BI Developer Toolkit:** a new Toolkit tab. Its hub shows six doors (Reference; Tools; Patterns & Playbooks; Datasets & Labs; Templates; Career & Certification) and a "What are you trying to do?" search. The search can be filtered by skill, stage, tool, problem and certification, and it suggests a path: where to start, the lesson, the tool, a scenario to practise on, the checklist and the reference.
+- **Thirty guides.** Each guide shows the date it was checked against its sources, and labels every source as official, specialist, community or paid. The guides are:
+  - DAX, Power Query and SQL field guides;
+  - "What's broken?" troubleshooting trees and "My DAX is wrong";
+  - a performance clinic and a production runbook;
+  - an error decoder;
+  - modeling patterns, an architecture decision library and Fabric architecture;
+  - security and governance guides;
+  - report design and best-practice libraries;
+  - twelve printable checklists;
+  - a professional toolbelt, automation samples, and "Ship Power BI like software";
+  - a practice lab;
+  - career guides: the role map, your first 30 days, a senior handbook, weak and senior interview answers, a certification navigator and a bookshelf;
+  - trusted sources and a change radar.
+- **External resources catalog:** 118 curated external resources in 26 categories (from Power BI foundations to governance, Fabric CI/CD and certification).
+  - **Where to find it:** a searchable section on the Resources page, filterable by source and stage.
+  - **What each entry records:** what it's useful for, whether the source is official, specialist, community or third-party, the stage it suits, whether it's paid, and the lessons and scenarios it supports.
+  - **Where else it shows up:** the same entries appear under each topic's "Learn more", in a "Need more context?" panel on scenario pages, and in the Toolkit search.
+  - **Checks:** the build rejects unknown lessons or scenarios, duplicate URLs and tracking parameters. Microsoft documentation makes up most of the list.
+- **Ten new templates:**
+  - data dictionary;
+  - source-to-target mapping;
+  - model design document;
+  - code review checklist;
+  - deprecation checklist;
+  - capacity review;
+  - workspace naming standard;
+  - certification checklist;
+  - governance assessment;
+  - COE charter.
+- **Downloads:** a PBIP `.gitignore`, a `fabric-cicd` deployment script with `parameter.yml`, a GitHub Actions workflow and a branching guide.
+- **Tests:** a toolkit test suite (metadata, references, generated pages, search coverage). The guides are included in the stale-content check, and `toolkit/` is included in HTML validation.
+
+### Fixed
+
+- Two Experience Mode references pointed at Microsoft Learn pages that had moved.
+- Tables in long guides and the certification navigator no longer need horizontal scrolling on desktop.
+
 ## 2.0.0 (2026-10-01): the apprenticeship release
 
 ### Added

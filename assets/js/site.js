@@ -227,7 +227,7 @@ function loadIndex(){
   }).then(()=>{index=SEARCH_INDEX.map(([type,title,sub,text,href,facet])=>({type,title,sub,text,href:PBI.ROOT+href,facet:facet||'',lt:title.toLowerCase(),lx:(title+' '+sub+' '+text).toLowerCase()}));return index});
   return loading;
 }
-const TYPES=[['All','All'],['Topic','Topics'],['Assignment','Assignments'],['Scenario','Scenarios'],['Interview','Interview'],['Flashcard','Flashcards'],['Glossary','Glossary'],['Template','Templates'],['Certification','Certification'],['Dataset','Datasets']];
+const TYPES=[['All','All'],['Topic','Topics'],['Assignment','Assignments'],['Scenario','Scenarios'],['Interview','Interview'],['Flashcard','Flashcards'],['Glossary','Glossary'],['Toolkit','Toolkit'],['Template','Templates'],['Certification','Certification'],['Dataset','Datasets']];
 const GROUP={Page:'Topic',Assessment:'Interview',Drill:'Scenario',Track:'Topic',Level:'Topic'};
 function runSearch(q,type,facet){
   const toks=q.toLowerCase().split(/\s+/).filter(Boolean);if(!toks.length&&!facet)return [];
@@ -240,7 +240,7 @@ function runSearch(q,type,facet){
     if(!okAll)continue;
     if(toks.length&&it.lt===toks.join(' '))s+=60;
     if(toks.length&&it.lt.startsWith(toks[0]))s+=15;
-    if(['Topic','Page','Glossary','Scenario','Level','Track'].includes(it.type))s+=4;
+    if(['Topic','Page','Glossary','Scenario','Level','Track','Toolkit'].includes(it.type))s+=4;
     res.push([s,it]);
   }
   return res.sort((a,b)=>b[0]-a[0]).slice(0,60).map(r=>r[1]);

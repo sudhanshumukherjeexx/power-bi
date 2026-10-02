@@ -13,6 +13,7 @@ const PAGES = [
   ['Find my starting point', 'Diagnostic: sixteen questions, a recommended start', 'diagnostic.html'],
   ['Professional templates', 'Requirements, ADR, incident report, postmortem, PR, runbook and more', 'templates.html'],
   ['Resources', 'Study tools, starter project, datasets', 'resources.html'],
+  ['BI Developer Toolkit', 'References, tools, troubleshooting, playbooks, checklists, templates and career guides', 'toolkit.html'],
   ['Interview flashcards', 'Spaced repetition, all decks', 'flashcards.html'],
   ['Mock interview', 'Timed questions, out loud', 'flashcards.html#mock'],
   ['Glossary', 'Plain-English definitions', 'glossary.html'],
@@ -41,6 +42,10 @@ module.exports = (all, { BANNER, J }) => {
     add(s.type === 'drill' ? 'Drill' : 'Scenario', s.title, `${s.ticket ? s.ticket.id + ' · ' : ''}${(all.stages.find(x => x.id === s.stage) || {}).name || ''}`, s.summary + ' ' + (s.skills || []).join(' ') + ' ' + (s.deliverables || []).map(d => d.t).join(' '), `experience/${s.slug}.html`, s.stage);
   }
   for (const t of all.templates || []) add('Template', t.title, 'Professional template', t.summary + ' ' + (t.used || []).join(' '), `templates.html#tpl-${t.id}`);
+  if (all.toolkit) for (const g of all.toolkit.guides) {
+    add('Toolkit', g.title, 'BI Developer Toolkit', g.summary + ' ' + (g.keywords || []).join(' '), `toolkit/${g.id}.html`, (g.stages || []).join(' '));
+    for (const m of g._body.matchAll(/^## (.+)$/gm)) add('Toolkit', m[1].replace(/[*`]/g, ''), g.title, g.summary, `toolkit/${g.id}.html#${slug(m[1].replace(/[*`]/g, ''))}`, (g.stages || []).join(' '));
+  }
   all.datasets.forEach(d => add('Dataset', d.name, `${d.rows.length} rows · ${d.cols.length} cols`, d.desc + ' ' + d.cols.join(' '), 'resources.html#ds-' + d.key));
   all.concepts.forEach(c => add('Flashcard', c.q, c.c, c.a + ' ' + (c.x || ''), 'flashcards.html#card=c' + hash(c.q)));
   all.glossary.forEach(g => add('Glossary', g.t, g.c, (g.k || []).join(' ') + ' ' + g.d, 'glossary.html#' + slug(g.t)));

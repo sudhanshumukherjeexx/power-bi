@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>The senior developer handbook · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="Things worth knowing before you become senior: what to do before touching a model, changing a KPI, optimising, publishing, deploying or deleting, and how to behave during incidents, disagreements, code reviews and architecture decisions.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/senior-handbook.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="The senior developer handbook · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="Things worth knowing before you become senior: what to do before touching a model, changing a KPI, optimising, publishing, deploying or deleting, and how to behave during incidents, disagreements, code reviews and architecture decisions.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/senior-handbook.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="senior-handbook">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/career.html">Career &amp; Certification</a><span aria-hidden="true">/</span><span aria-current="page">The senior developer handbook</span></nav>
+<header class="intro tkhead">
+<div class="kicker">🎯 Career &amp; Certification · Career</div>
+<h1>The senior developer handbook</h1>
+<p class="lead">Things worth knowing before you become senior: what to do before touching a model, changing a KPI, optimising, publishing, deploying or deleting, and how to behave during incidents, disagreements, code reviews and architecture decisions.</p>
+<div class="tkmeta"><span class="chip">Senior BI Developer</span><span class="chip">BI Engineer</span><span class="chip">BI Architect / Lead</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><a class="btn sm" href="../toolkit/senior-handbook.md" download>Download .md</a><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(12)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#what-senior-means">What senior means</a><a href="#before-touching-a-model">Before touching a model</a><a href="#before-changing-a-kpi">Before changing a KPI</a><a href="#before-optimising">Before optimising</a><a href="#before-publishing">Before publishing</a><a href="#before-deploying">Before deploying</a><a href="#before-deleting">Before deleting</a><a href="#during-an-incident">During an incident</a><a href="#during-stakeholder-disagreement">During stakeholder disagreement</a><a href="#during-code-review">During code review</a><a href="#during-architecture-decisions">During architecture decisions</a><a href="#the-habits-that-compound">The habits that compound</a></nav></details>
+<article class="tkbody">
+<h2 id="what-senior-means">What senior means</h2>
+<p>Seniority isn't years or DAX tricks. It's judgement: knowing which questions to ask before acting, which risks matter, and when to say no. Every habit below exists because someone learned it the hard way.</p>
+<h2 id="before-touching-a-model">Before touching a model</h2>
+<ul><li>Who uses it? Check lineage and usage before you change anything others depend on.</li><li>What's the grain of each fact? Write it down if nobody has.</li><li>Is it in Git? If not, take a copy before your first change.</li><li>Which numbers will move? If you can't say, you don't understand the change yet.</li></ul>
+<h2 id="before-changing-a-kpi">Before changing a KPI</h2>
+<ul><li>Who owns the definition? Get their agreement in writing.</li><li>Who will see a different number tomorrow? Tell them before, not after.</li><li>Keep the old and new numbers side by side for at least one period, and explain the difference in one sentence.</li><li>Update the <a href="../templates.html#tpl-kpi-dictionary">KPI dictionary</a>.</li></ul>
+<h2 id="before-optimising">Before optimising</h2>
+<ul><li>Measure first. Know where the time goes.</li><li>Ask whether it matters: a 50 ms measure on a page that takes 8 s isn't the problem.</li><li>Change one thing at a time, and keep the before and after.</li></ul>
+<h2 id="before-publishing">Before publishing</h2>
+<ul><li>Reconcile at least one number with the source, and say how in the release notes.</li><li>Look at it as the least technical person who will use it.</li><li>Check what happens with no data, one value, and all values selected.</li></ul>
+<h2 id="before-deploying">Before deploying</h2>
+<ul><li>Has someone else reviewed it?</li><li>Do you know how to roll back, and have you tried?</li><li>Is anyone presenting from this report today? Don't deploy an hour before the board meeting.</li></ul>
+<h2 id="before-deleting">Before deleting</h2>
+<ul><li>Check lineage, usage and subscriptions; announce; archive; then delete.</li><li>&quot;Nobody uses it&quot; is a hypothesis. Quarter-end reports look unused for 11 weeks.</li></ul>
+<h2 id="during-an-incident">During an incident</h2>
+<ul><li>Mitigate first, diagnose second.</li><li>One person leads; everyone else feeds them information.</li><li>Communicate early and on a schedule, even when the update is &quot;still investigating&quot;.</li><li>Never guess the cause in public. &quot;We're investigating&quot; beats a wrong answer you have to retract.</li><li>Afterwards: a blameless <a href="../templates.html#tpl-postmortem">postmortem</a> that asks why it wasn't caught, not who did it.</li></ul>
+<h2 id="during-stakeholder-disagreement">During stakeholder disagreement</h2>
+<ul><li>Get the disagreement into numbers: &quot;Finance's figure is $1.2M, ours is $1.35M, the difference is returns and test orders.&quot;</li><li>Separate the definition (a business decision) from the calculation (your job).</li><li>Escalate to the definition owner, with options, not complaints.</li><li>Write the decision down. Practise in <a href="../experience/s02-finance-disputes-revenue.html">Finance disputes the dashboard</a>.</li></ul>
+<h2 id="during-code-review">During code review</h2>
+<ul><li>Review the change, not the person. Ask questions rather than give orders: &quot;What happens at the total here?&quot;</li><li>Block on correctness, security and production risk; suggest on style.</li><li>Approve quickly when it's good. Slow reviews teach people to make big, risky PRs.</li><li>When you're reviewed, thank people for findings. Every bug they catch is one users don't see.</li></ul>
+<h2 id="during-architecture-decisions">During architecture decisions</h2>
+<ul><li>Write the options down, including &quot;do nothing&quot;.</li><li>Weigh them against the constraints you actually have (skills, budget, timeline), not the ones you'd like.</li><li>Decide, record it in an <a href="../templates.html#tpl-adr">ADR</a> with the trigger to revisit, and move on. A good decision on time beats a perfect one too late.</li><li>Be explicit about what you're trading away.</li></ul>
+<h2 id="the-habits-that-compound">The habits that compound</h2>
+<ul><li>Leave every model a little better documented than you found it.</li><li>Automate the second time you do something manually, not the tenth.</li><li>Teach: the fastest way to become senior is to make others better.</li></ul>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Practise it</h3><ul><li><a href="../experience/s02-finance-disputes-revenue.html">BI-1057: Finance disputes the dashboard</a></li><li><a href="../experience/s05-one-revenue-semantic-model.html">BI-1103: Three models, three Revenues</a></li><li><a href="../experience/s08-cfo-refresh-outage.html">INC-2071: The board pack refresh failed at 06:17</a></li><li><a href="../experience/d03-pull-request-review.html">PR-231: Review Sam's pull request</a></li><li><a href="../experience/d06-change-requests.html">CR-118: Four change requests to a working model</a></li><li><a href="../experience/s09-fabric-migration-decision.html">ARCH-009: Should Northwind move to Fabric, and how?</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-kpi-dictionary">KPI dictionary</a></li><li><a href="../templates.html#tpl-adr">Architecture decision record (ADR)</a></li><li><a href="../templates.html#tpl-postmortem">Blameless postmortem</a></li><li><a href="../templates.html#tpl-pull-request">Pull request description</a></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20The%20senior%20developer%20handbook">Open an issue</a> or edit <code>content/toolkit/guides/senior-handbook.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

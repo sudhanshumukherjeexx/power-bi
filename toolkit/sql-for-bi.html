@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SQL you need to survive as a BI developer · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="Not SQL from scratch: the queries a BI developer reads and writes every week, why each matters for Power BI, and a decision guide for where each transformation should happen.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/sql-for-bi.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="SQL you need to survive as a BI developer · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="Not SQL from scratch: the queries a BI developer reads and writes every week, why each matters for Power BI, and a decision guide for where each transformation should happen.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/sql-for-bi.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="sql-for-bi">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/reference.html">Reference</a><span aria-hidden="true">/</span><span aria-current="page">SQL you need to survive as a BI developer</span></nav>
+<header class="intro tkhead">
+<div class="kicker">📖 Reference · Reference</div>
+<h1>SQL you need to survive as a BI developer</h1>
+<p class="lead">Not SQL from scratch: the queries a BI developer reads and writes every week, why each matters for Power BI, and a decision guide for where each transformation should happen.</p>
+<div class="tkmeta"><span class="chip">BI Developer</span><span class="chip">Senior BI Developer</span><span class="chip">BI Engineer</span><span class="chip tool">SQL engine</span><span class="chip tool">SSMS</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><a class="btn sm" href="../toolkit/sql-for-bi.md" download>Download .md</a><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(5)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#the-sql-that-matters-and-why">The SQL that matters, and why</a><a href="#patterns-you-ll-use-weekly">Patterns you'll use weekly</a><a href="#reading-an-execution-plan">Reading an execution plan</a><a href="#where-should-this-transformation-happen">Where should this transformation happen?</a><a href="#dialects">Dialects</a></nav></details>
+<article class="tkbody">
+<h2 id="the-sql-that-matters-and-why">The SQL that matters, and why</h2>
+<p>Examples use the course's company pack (<code>orders</code>, <code>order_lines</code>, <code>customers</code>, <code>products</code>, <code>regions</code>; amounts are in each order's currency). The <a href="../sql.html">SQL track</a> has assignments with answers that are executed in CI.</p>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Topic</th><th scope="col">What it's for in BI</th><th scope="col">Learn it</th></tr></thead><tbody><tr><td><code>SELECT</code>, <code>WHERE</code></td><td>Extract only the rows and columns the model needs</td><td><a href="../sql.html#sql-query">Querying for BI</a></td></tr><tr><td><code>JOIN</code></td><td>Assemble facts with their keys; find orphans with <code>LEFT JOIN … WHERE x IS NULL</code></td><td><a href="../sql.html#sql-query">Querying for BI</a></td></tr><tr><td><code>GROUP BY</code></td><td>Pre-aggregate before import; reconcile totals with the source</td><td><a href="../sql.html#sql-query">Querying for BI</a></td></tr><tr><td>CTEs</td><td>Readable, testable transformation steps</td><td><a href="../sql.html#sql-window">CTEs and windows</a></td></tr><tr><td>Window functions</td><td>Deduplicate, rank, running totals, &quot;latest row per key&quot;</td><td><a href="../sql.html#sql-window">CTEs and windows</a></td></tr><tr><td><code>CASE</code></td><td>Classify and clean in one pass</td><td><a href="../sql.html#sql-query">Querying for BI</a></td></tr><tr><td>Views</td><td>A stable, documented interface between source and model</td><td><a href="../sql.html#sql-load">Views and loads</a></td></tr><tr><td>Stored procedures</td><td>Controlled, parameterised extracts and loads</td><td><a href="../sql.html#sql-load">Views and loads</a></td></tr><tr><td>Indexes</td><td>Make DirectQuery and incremental-refresh queries fast</td><td><a href="../sql.html#sql-tune">Slow source queries</a></td></tr><tr><td>Execution plans</td><td>See <i>why</i> a query is slow before guessing</td><td><a href="../sql.html#sql-tune">Slow source queries</a></td></tr><tr><td>Temp tables</td><td>Stage multi-step transformations</td><td><a href="../sql.html#sql-load">Views and loads</a></td></tr><tr><td>SCD patterns</td><td>Keep dimension history correct</td><td><a href="../warehousing.html#dw-keys">Keys and SCDs</a></td></tr><tr><td>Incremental predicates</td><td>Load only what changed</td><td><a href="../sql.html#sql-load">Views and loads</a></td></tr><tr><td>Date functions</td><td>Calendars, fiscal periods, time zones</td><td><a href="../warehousing.html#dw-time">Calendars and time zones</a></td></tr></tbody></table></div>
+<h2 id="patterns-you-ll-use-weekly">Patterns you'll use weekly</h2>
+<h3 id="one-row-per-key-deduplicate">One row per key (deduplicate)</h3>
+<div class="codewrap"><span class="lang">sql</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>-- order_lines contains a re-exported batch: the same (OrderID, LineNo) appears twice
+WITH ranked AS (
+  SELECT ol.*,
+         ROW_NUMBER() OVER (PARTITION BY OrderID, LineNo ORDER BY ProductKey) AS rn
+  FROM order_lines AS ol
+)
+SELECT * FROM ranked WHERE rn = 1;</code></pre></div>
+<p>When the source has a load timestamp or version column, order by it descending so you keep the latest copy rather than an arbitrary one.</p>
+<h3 id="orphans-facts-with-no-dimension-row">Orphans: facts with no dimension row</h3>
+<div class="codewrap"><span class="lang">sql</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>SELECT ol.ProductKey, COUNT(*) AS lines
+FROM order_lines AS ol
+LEFT JOIN products AS p ON p.ProductKey = ol.ProductKey
+WHERE p.ProductKey IS NULL
+GROUP BY ol.ProductKey;</code></pre></div>
+<h3 id="reconcile-the-report-with-the-source">Reconcile the report with the source</h3>
+<div class="codewrap"><span class="lang">sql</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>SELECT strftime('%Y-%m', o.OrderDate) AS month,          -- FORMAT(o.OrderDate, 'yyyy-MM') in T-SQL
+       ROUND(SUM(ol.Qty * ol.UnitPrice * (1 - ol.DiscountPct / 100.0)), 2) AS net_sales,
+       COUNT(DISTINCT o.OrderID) AS orders
+FROM orders AS o
+JOIN order_lines AS ol ON ol.OrderID = o.OrderID
+GROUP BY 1
+ORDER BY 1;</code></pre></div>
+<p>Put the result next to the same breakdown from your model. If they differ, the model is wrong until proven otherwise.</p>
+<h3 id="running-total">Running total</h3>
+<div class="codewrap"><span class="lang">sql</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>SELECT month, net_sales,
+       SUM(net_sales) OVER (ORDER BY month ROWS UNBOUNDED PRECEDING) AS running
+FROM monthly_sales;</code></pre></div>
+<h3 id="incremental-extract">Incremental extract</h3>
+<div class="codewrap"><span class="lang">sql</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>-- the predicate Power BI's incremental refresh folds into each partition query
+SELECT * FROM orders
+WHERE OrderDate &gt;= @RangeStart AND OrderDate &lt; @RangeEnd;</code></pre></div>
+<p>Note the <code>&gt;=</code> and <code>&lt;</code>: with <code>&lt;=</code> on both ends a row exactly on the boundary loads into two partitions.</p>
+<h2 id="reading-an-execution-plan">Reading an execution plan</h2>
+<p>When a DirectQuery visual or a refresh is slow, capture the SQL Power BI sends (Performance Analyzer → Copy query, or a trace in DAX Studio), run it in SSMS with <b>Include Actual Execution Plan</b>, and look for:</p>
+<ul><li><b>Scans on big tables</b> where you expected seeks: a missing or unusable index (functions on the column, such as <code>YEAR(OrderDate) = 2026</code>, prevent seeks; write <code>OrderDate &gt;= '2026-01-01' AND OrderDate &lt; '2027-01-01'</code>).</li><li><b>Huge estimated vs actual row differences</b>: stale statistics.</li><li><b>Key lookups repeated millions of times</b>: add included columns to the index.</li><li><b>Sorts and hash matches spilling to tempdb</b>: memory grants too small for the data volume.</li></ul>
+<p>Then fix the source (index, view, pre-aggregated table) before you fix the model.</p>
+<h2 id="where-should-this-transformation-happen">Where should this transformation happen?</h2>
+<p>Do work as far upstream as is practical, and as far downstream as is necessary. Roche's maxim, in practice:</p>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Operation</th><th scope="col">Usually prefer</th><th scope="col">Why</th></tr></thead><tbody><tr><td>Rename columns for business users</td><td>Power Query or the model</td><td>Presentation concern; cheap anywhere</td></tr><tr><td>Aggregate 300 million rows</td><td>SQL or the warehouse</td><td>The engine built for it, close to the data</td></tr><tr><td>A business metric (Revenue, Margin %)</td><td>DAX measure in a shared semantic model</td><td>Must respond to filters; one definition for every report</td></tr><tr><td>Slowly changing dimension type 2</td><td>Warehouse</td><td>Needs history the model can't reconstruct</td></tr><tr><td>A display label (&quot;Q1 2026&quot;)</td><td>Date table column</td><td>Computed once, sortable</td></tr><tr><td>Fix bad source data</td><td>At the source, or the first upstream layer</td><td>Every consumer benefits; the model only hides it</td></tr><tr><td>A KPI shared across reports</td><td>Measure in a certified model</td><td>Prevents three different &quot;Revenue&quot; numbers (<a href="../experience/s05-one-revenue-semantic-model.html">Sprint 05</a>)</td></tr><tr><td>One-off clean-up for an ad-hoc analysis</td><td>Power Query</td><td>Fast to change, nobody else depends on it</td></tr><tr><td>Joins that create the star schema</td><td>Warehouse views, or Power Query when there's no warehouse</td><td>Folds to the source; keeps the model simple</td></tr><tr><td>Currency conversion</td><td>Upstream, stored as converted amounts</td><td>Per-row lookups in DAX are slow</td></tr></tbody></table></div>
+<h2 id="dialects">Dialects</h2>
+<p>The course uses portable SQL, and CI runs it on SQLite. At work you'll mostly meet T-SQL (SQL Server, Azure SQL, Fabric Warehouse and SQL analytics endpoints). The differences you'll hit first: date formatting (<code>FORMAT</code> vs <code>strftime</code>), <code>TOP n</code> vs <code>LIMIT n</code>, string concatenation (<code>+</code> or <code>CONCAT</code> vs <code>||</code>), and <code>ISNULL</code> vs <code>COALESCE</code> (use <code>COALESCE</code>: it's standard).</p>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../sql.html#sql-query">Querying for BI</a> <span class="small muted">SQL for BI</span></li><li><a href="../sql.html#sql-window">CTEs, window functions and deduplication</a> <span class="small muted">SQL for BI</span></li><li><a href="../sql.html#sql-load">Views, incremental extraction and idempotent loads</a> <span class="small muted">SQL for BI</span></li><li><a href="../sql.html#sql-tune">Making slow source queries fast</a> <span class="small muted">SQL for BI</span></li><li><a href="../warehousing.html#dw-keys">Keys and slowly changing dimensions</a> <span class="small muted">Data warehousing patterns</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s04-monday-performance-incident.html">INC-2044: The executive dashboard takes 18 seconds</a></li><li><a href="../experience/s08-cfo-refresh-outage.html">INC-2071: The board pack refresh failed at 06:17</a></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://learn.microsoft.com/en-us/sql/t-sql/language-reference" rel="noopener" target="_blank" class="ext">Transact-SQL reference</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/sql/relational-databases/performance/execution-plans" rel="noopener" target="_blank" class="ext">Execution plans</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/directquery-model-guidance" rel="noopener" target="_blank" class="ext">DirectQuery model guidance</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/connect-data/incremental-refresh-overview" rel="noopener" target="_blank" class="ext">Incremental refresh overview</a> <span class="tier official">Official</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20SQL%20you%20need%20to%20survive%20as%20a%20BI%20developer">Open an issue</a> or edit <code>content/toolkit/guides/sql-for-bi.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

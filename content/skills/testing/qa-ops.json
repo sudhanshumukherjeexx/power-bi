@@ -14,7 +14,7 @@
   "refs": [
     { "title": "Troubleshoot refresh scenarios", "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-troubleshooting-refresh-scenarios" },
     { "title": "Incremental refresh overview", "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/incremental-refresh-overview" },
-    { "title": "Performance Analyzer", "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-performance-analyzer" }
+    { "title": "Performance Analyzer", "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/performance-analyzer" }
   ],
   "asg": [
     {

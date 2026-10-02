@@ -81,7 +81,7 @@
     "What is the first thing you'd do on Monday after the offsite?"
   ],
   "refs": [
-    { "title": "Power BI implementation planning: governance", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/powerbi-implementation-planning-governance" },
+    { "title": "Power BI implementation planning: governance", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/fabric-adoption-roadmap-governance" },
     { "title": "Fabric domains", "url": "https://learn.microsoft.com/en-us/fabric/governance/domains" },
     { "title": "Endorsement overview", "url": "https://learn.microsoft.com/en-us/fabric/governance/endorsement-overview" },
     { "title": "Lineage in Fabric", "url": "https://learn.microsoft.com/en-us/fabric/governance/lineage" }

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>BI security field guide · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="Workspace roles, Build and app permissions, sharing, static and dynamic RLS, OLS, sensitivity labels, tenant settings, export controls, service principals, guest users and least privilege, with an RLS testing checklist and a 'why can this user see this row?' guide.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/security-field-guide.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="BI security field guide · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="Workspace roles, Build and app permissions, sharing, static and dynamic RLS, OLS, sensitivity labels, tenant settings, export controls, service principals, guest users and least privilege, with an RLS testing checklist and a 'why can this user see this row?' guide.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/security-field-guide.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="security-field-guide">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/patterns.html">Patterns &amp; Playbooks</a><span aria-hidden="true">/</span><span aria-current="page">BI security field guide</span></nav>
+<header class="intro tkhead">
+<div class="kicker">🧩 Patterns &amp; Playbooks · Guide</div>
+<h1>BI security field guide</h1>
+<p class="lead">Workspace roles, Build and app permissions, sharing, static and dynamic RLS, OLS, sensitivity labels, tenant settings, export controls, service principals, guest users and least privilege, with an RLS testing checklist and a 'why can this user see this row?' guide.</p>
+<div class="tkmeta"><span class="chip">BI Developer</span><span class="chip">Senior BI Developer</span><span class="chip">BI Engineer</span><span class="chip">BI Architect / Lead</span><span class="chip tool">Power BI Service</span><span class="chip tool">Power BI Desktop</span><span class="chip tool">Tabular Editor</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><a class="btn sm" href="../toolkit/security-field-guide.md" download>Download .md</a><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(12)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#the-warning-everyone-learns-the-hard-way">The warning everyone learns the hard way</a><a href="#the-layers-of-access">The layers of access</a><a href="#static-and-dynamic-rls">Static and dynamic RLS</a><a href="#object-level-security">Object-level security</a><a href="#sensitivity-labels-tenant-settings-and-exports">Sensitivity labels, tenant settings and exports</a><a href="#service-principals-and-guest-users">Service principals and guest users</a><a href="#least-privilege">Least privilege</a><a href="#why-can-this-user-see-this-row">Why can this user see this row?</a><a href="#rls-testing-checklist">RLS testing checklist</a><a href="#security-matrix-template">Security matrix template</a><a href="#security-architecture-patterns">Security architecture patterns</a><a href="#incident-scenarios">Incident scenarios</a></nav></details>
+<article class="tkbody">
+<h2 id="the-warning-everyone-learns-the-hard-way">The warning everyone learns the hard way</h2>
+<div class="callout warning" role="note"><p><b>Warning:</b> RLS restricts data only for users with <b>Viewer</b> access to the workspace, or who get the content through an app or sharing. Workspace <b>Admins, Members and Contributors</b> can edit the semantic model, so RLS doesn't restrict them. Never test RLS from a developer's account, and never give people who must be restricted a Contributor role &quot;so they can see the report&quot;.</p>
+</div>
+<h2 id="the-layers-of-access">The layers of access</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Layer</th><th scope="col">Controls</th><th scope="col">Typical use</th></tr></thead><tbody><tr><td>Tenant settings</td><td>What anyone in the organisation can do: export, publish to web, share externally, service principals, Copilot</td><td>Set by Fabric admins; least privilege by default</td></tr><tr><td>Workspace roles</td><td>Admin, Member, Contributor, Viewer on everything in a workspace</td><td>Developers get Contributor/Member; consumers ideally get nothing here and use an app</td></tr><tr><td>App permissions</td><td>Who sees which content in an app (audiences)</td><td>The normal way to distribute to consumers</td></tr><tr><td>Item sharing</td><td>Direct access to one report or model</td><td>Exceptions, not the norm</td></tr><tr><td>Build permission</td><td>Create new reports on a semantic model, analyse in Excel</td><td>Self-service authors on a certified model</td></tr><tr><td>RLS</td><td>Which rows a user sees</td><td>Region managers see their region</td></tr><tr><td>OLS</td><td>Which tables and columns a user sees at all</td><td>Hide salary columns from most roles</td></tr><tr><td>Sensitivity labels</td><td>Classification that travels with the content and exports</td><td>Confidential data stays labelled in Excel and PDF</td></tr><tr><td>Export controls</td><td>Whether data can leave Power BI (Excel, CSV, PDF, PowerPoint)</td><td>Restrict for sensitive models</td></tr></tbody></table></div>
+<h2 id="static-and-dynamic-rls">Static and dynamic RLS</h2>
+<p><b>Static:</b> one role per audience with a fixed filter, such as <code>[RegionName] = &quot;West&quot;</code>. Simple, but a new region means a new role.</p>
+<p><b>Dynamic:</b> one role whose filter looks up the signed-in user in a mapping table:</p>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>-- role filter on UserRegionMapping (related to DimRegion, which filters the facts)
+[UserEmail] = USERPRINCIPALNAME ()</code></pre></div>
+<p>With a mapping table like the course's <code>UserRegionMapping</code>, a user with two rows sees two regions, and a user with an &quot;ALL&quot; access level needs a rule that returns true for every region. Build and test this in <a href="../intermediate.html#i-rls">Row-level security</a>.</p>
+<p>Things to know:</p>
+<ul><li><code>USERPRINCIPALNAME()</code> returns the UPN, which is not always the email address (guests and some organisations differ). Map what it actually returns.</li><li>Roles are additive: a user in two roles sees the union.</li><li>Filters propagate through relationships from the security table; check the direction reaches the facts.</li><li>Members are assigned to roles in the Service (per semantic model), ideally as security groups, not individuals.</li></ul>
+<h2 id="object-level-security">Object-level security</h2>
+<p>OLS hides tables or columns from a role entirely: they don't appear in the field list and queries that reference them fail. Define it in Tabular Editor (or TMDL) on roles. Use it for columns like salary or national ID that most people must not know exist, and combine with RLS for rows.</p>
+<h2 id="sensitivity-labels-tenant-settings-and-exports">Sensitivity labels, tenant settings and exports</h2>
+<ul><li><b>Labels</b> (from Microsoft Purview) classify content as, for example, Confidential; labels can be inherited downstream and travel with exports to Office files and PDF.</li><li><b>Tenant settings</b> decide whether export, publish to web, external sharing, service principals and other features are allowed, and for which security groups. Changes affect everyone: treat them like production changes.</li><li><b>Export controls:</b> decide per model whether summarised or underlying data can be exported; underlying-data export from a model with RLS still respects RLS, but data in Excel can then go anywhere.</li></ul>
+<p>Practise: <a href="../governance.html#gov-protect">Sensitivity labels, OLS, export controls and tenant settings</a>.</p>
+<h2 id="service-principals-and-guest-users">Service principals and guest users</h2>
+<ul><li><b>Service principals</b> (app identities) are for automation. Allow only a security group of them in tenant settings, give each one workspace access only where it deploys or refreshes, store secrets in a vault and rotate them.</li><li><b>Guest users</b> (Microsoft Entra B2B) can be given access to content; check that tenant settings allow it, that RLS works with their UPN, and that labels and export settings suit external viewers.</li></ul>
+<h2 id="least-privilege">Least privilege</h2>
+<p>Default to the smallest access that lets someone do their job: Viewer through an app rather than a workspace role, Build only for authors, Contributor only for developers, Admin for two people per workspace. Review access quarterly; remove leavers through group membership, not by hunting individual shares.</p>
+<h2 id="why-can-this-user-see-this-row">Why can this user see this row?</h2>
+<p>Work through these in order, for the specific user:</p>
+<ol><li><b>Which access path?</b> App, workspace role, direct share or Build permission. If they have Admin, Member or Contributor on the workspace, RLS doesn't apply: that's your answer.</li><li><b>Which roles are they in?</b> Including through groups. Two roles = union of both.</li><li><b>What does <code>USERPRINCIPALNAME()</code> return for them?</b> Show it in a card under <b>View as</b>.</li><li><b>What does the mapping table say for that value?</b> Duplicates, an &quot;ALL&quot; row, a stale entry after they moved team?</li><li><b>Does the role's filter reach the table being shown?</b> Relationship direction, inactive relationships, or a table unrelated to the security table (which RLS therefore doesn't filter).</li><li><b>Is the visual using a different model?</b> A report built on a copy of the model without the roles.</li></ol>
+<h2 id="rls-testing-checklist">RLS testing checklist</h2>
+<ul class="checklist"><li><label><input type="checkbox" data-ck="security-field-guide:0"> <span>Every role tested with <b>View as</b> for at least one representative user</span></label></li><li><label><input type="checkbox" data-ck="security-field-guide:1"> <span>Tested as a real Viewer account in the Service, not as a workspace member</span></label></li><li><label><input type="checkbox" data-ck="security-field-guide:2"> <span>A user in two roles sees exactly the union</span></label></li><li><label><input type="checkbox" data-ck="security-field-guide:3"> <span>A user in no role sees nothing (or is denied)</span></label></li><li><label><input type="checkbox" data-ck="security-field-guide:4"> <span>&quot;ALL&quot; access users see everything they should and nothing beyond it</span></label></li><li><label><input type="checkbox" data-ck="security-field-guide:5"> <span>Totals and grand totals are correct for restricted users (no leakage through unrestricted tables)</span></label></li><li><label><input type="checkbox" data-ck="security-field-guide:6"> <span>Tables not related to the security table are checked: do they leak?</span></label></li><li><label><input type="checkbox" data-ck="security-field-guide:7"> <span>OLS-hidden columns can't be queried through Analyze in Excel or a new report</span></label></li><li><label><input type="checkbox" data-ck="security-field-guide:8"> <span>Results recorded in the <a href="../templates.html#tpl-rls-test-matrix">RLS test matrix</a> and repeated every release</span></label></li></ul>
+<h2 id="security-matrix-template">Security matrix template</h2>
+<p>Keep one row per role and representative user: what they must see, what they must not see, the access path, and the last test result. That's the <a href="../templates.html#tpl-rls-test-matrix">RLS / OLS test matrix</a>.</p>
+<h2 id="security-architecture-patterns">Security architecture patterns</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Pattern</th><th scope="col">When</th></tr></thead><tbody><tr><td>One certified model with dynamic RLS, consumed through apps</td><td>Most organisations; one model, many audiences</td></tr><tr><td>RLS + OLS on one model</td><td>Most users see some rows; few see sensitive columns</td></tr><tr><td>Separate models per legal entity or data residency</td><td>Legal or contractual separation that RLS can't prove</td></tr><tr><td>Aggregated public model + detailed restricted model</td><td>Broad audiences see summaries; a few see detail</td></tr></tbody></table></div>
+<h2 id="incident-scenarios">Incident scenarios</h2>
+<p>A manager sees other regions' payroll: what do you do in the first hour? <a href="../experience/s03-payroll-security-incident.html">Sprint 03</a> is that incident, end to end. The short version: contain access first, confirm the scope from audit logs, fix and test, then write the <a href="../templates.html#tpl-incident-report">incident report</a> and tell the data owner.</p>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../intermediate.html#i-rls">Row-level security</a> <span class="small muted">Intermediate</span></li><li><a href="../governance.html#gov-protect">Sensitivity labels, OLS, export controls and tenant settings</a> <span class="small muted">Governance</span></li><li><a href="../testing.html#qa-security">Security tests</a> <span class="small muted">Testing and validation</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s03-payroll-security-incident.html">INC-2031: A regional manager can see other regions' payroll</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-rls-test-matrix">RLS / OLS test matrix</a></li><li><a href="../templates.html#tpl-incident-report">Incident report</a></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://learn.microsoft.com/en-us/fabric/security/service-admin-row-level-security" rel="noopener" target="_blank" class="ext">Row-level security (RLS) with Power BI</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/rls-guidance" rel="noopener" target="_blank" class="ext">Row-level security guidance</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/security/service-admin-object-level-security" rel="noopener" target="_blank" class="ext">Object-level security</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/fundamentals/roles-workspaces" rel="noopener" target="_blank" class="ext">Roles in workspaces</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/governance/information-protection" rel="noopener" target="_blank" class="ext">Sensitivity labels in Power BI</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/whitepaper-powerbi-security" rel="noopener" target="_blank" class="ext">Power BI security white paper</a> <span class="tier official">Official</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20BI%20security%20field%20guide">Open an issue</a> or edit <code>content/toolkit/guides/security-field-guide.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

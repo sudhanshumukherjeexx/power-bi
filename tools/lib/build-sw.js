@@ -14,6 +14,11 @@ module.exports = (all, ctx, outSoFar) => {
     for (const f of fs.readdirSync(dir)) if (/\.(css|js|svg|png)$/.test(f)) add(`${d}/${f}`);
   }
   for (const m of all.modules) add(`${m.id}.html`);
+  if (all.toolkit) {
+    add('toolkit.html'); add('assets/js/toolkit.js');
+    for (const d of all.toolkit.doors) add(`toolkit/${d.id}.html`);
+    for (const g of all.toolkit.guides) add(`toolkit/${g.id}.html`);
+  }
   add('assets/js/meta.js'); add('assets/js/experience.js'); add('assets/js/templates.js'); add('assets/js/search-index.js');
   for (const d of all.datasets) add(`data/${d.key}.csv`);
   const files = [...list].sort((a, b) => a === './' ? -1 : b === './' ? 1 : a < b ? -1 : 1);

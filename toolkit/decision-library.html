@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Architecture decision library · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="Quick, honest comparisons for the questions developers keep searching: Import vs DirectQuery vs Direct Lake, measure vs column, Power Query vs SQL, Lakehouse vs Warehouse, one model vs many, RLS vs separate models, PBIX vs PBIP and more.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/decision-library.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="Architecture decision library · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="Quick, honest comparisons for the questions developers keep searching: Import vs DirectQuery vs Direct Lake, measure vs column, Power Query vs SQL, Lakehouse vs Warehouse, one model vs many, RLS vs separate models, PBIX vs PBIP and more.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/decision-library.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="decision-library">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/patterns.html">Patterns &amp; Playbooks</a><span aria-hidden="true">/</span><span aria-current="page">Architecture decision library</span></nav>
+<header class="intro tkhead">
+<div class="kicker">🧩 Patterns &amp; Playbooks · Decisions</div>
+<h1>Architecture decision library</h1>
+<p class="lead">Quick, honest comparisons for the questions developers keep searching: Import vs DirectQuery vs Direct Lake, measure vs column, Power Query vs SQL, Lakehouse vs Warehouse, one model vs many, RLS vs separate models, PBIX vs PBIP and more.</p>
+<div class="tkmeta"><span class="chip">BI Developer</span><span class="chip">Senior BI Developer</span><span class="chip">BI Engineer</span><span class="chip">BI Architect / Lead</span><span class="chip tool">Power BI Desktop</span><span class="chip tool">Microsoft Fabric</span><span class="chip tool">SQL engine</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><a class="btn sm" href="../toolkit/decision-library.md" download>Download .md</a><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(12)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#how-to-use-these">How to use these</a><a href="#import-vs-directquery-vs-direct-lake">Import vs DirectQuery vs Direct Lake</a><a href="#measure-vs-calculated-column">Measure vs calculated column</a><a href="#power-query-vs-sql">Power Query vs SQL</a><a href="#lakehouse-vs-warehouse">Lakehouse vs Warehouse</a><a href="#dataflow-vs-pipeline">Dataflow vs pipeline</a><a href="#one-model-vs-multiple-models">One model vs multiple models</a><a href="#rls-vs-separate-semantic-models">RLS vs separate semantic models</a><a href="#pbix-vs-pbip">PBIX vs PBIP</a><a href="#calculation-group-vs-separate-measures">Calculation group vs separate measures</a><a href="#shared-semantic-model-vs-a-model-inside-each-report">Shared semantic model vs a model inside each report</a><a href="#star-vs-snowflake">Star vs snowflake</a></nav></details>
+<article class="tkbody">
+<h2 id="how-to-use-these">How to use these</h2>
+<p>None of these has an answer that is always right; each depends on data volume, freshness, skills, licensing and who maintains it. Each comparison gives the conditions for each option, the trade-offs, how it fails, and a sensible default. When the decision matters, write it down as an <a href="../templates.html#tpl-adr">ADR</a>, including what would make you change your mind.</p>
+<h2 id="import-vs-directquery-vs-direct-lake">Import vs DirectQuery vs Direct Lake</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col"></th><th scope="col">Import</th><th scope="col">DirectQuery</th><th scope="col">Direct Lake</th></tr></thead><tbody><tr><td>Use when</td><td>Data fits in memory and minutes-to-hours latency is fine</td><td>Data must be current to the second, or is too big to import, and the source is fast</td><td>Data already lives in Fabric as Delta tables</td></tr><tr><td>Query speed</td><td>Fastest</td><td>Depends on the source</td><td>Close to Import</td></tr><tr><td>Freshness</td><td>As of last refresh</td><td>Live</td><td>As of the last Delta commit the model picked up</td></tr><tr><td>Fails when</td><td>The model outgrows capacity memory or refresh windows</td><td>The source is slow or busy; visuals exceed query limits</td><td>Tables exceed capacity guardrails (on OneLake: errors; on SQL endpoint: may fall back to DirectQuery)</td></tr><tr><td>DAX and modeling</td><td>Everything</td><td>Some limits, every measure becomes SQL</td><td>Most features; calculated columns and tables have limits</td></tr></tbody></table></div>
+<p><b>Default:</b> Import, until a requirement rules it out. Then Direct Lake if the data is in Fabric, DirectQuery (with aggregations) if it isn't. Practise: <a href="../advanced.html#a-composite">Composite models and DirectQuery</a>, <a href="../fabric.html#fab-directlake">Direct Lake in depth</a>.</p>
+<h2 id="measure-vs-calculated-column">Measure vs calculated column</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Use a measure when</th><th scope="col">Use a calculated column when</th></tr></thead><tbody><tr><td>The number is aggregated on a visual and must respond to filters</td><td>You need to slice, group or filter <b>by</b> the value, or use it as a relationship key</td></tr><tr><td>It's a ratio, a time comparison, a ranking</td><td>The value is a fixed property of the row (a band, a flag)</td></tr></tbody></table></div>
+<ul><li><b>Trade-off:</b> columns cost memory and refresh time; measures cost query time.</li><li><b>Failure mode:</b> calculated columns that use <code>CALCULATE</code> over the fact table (slow refresh, confusing context transition); measures that try to be columns (<code>SUMX</code> everywhere to fake row logic).</li><li><b>Default:</b> measure. If it must be a column, build it in Power Query or SQL instead of DAX.</li></ul>
+<h2 id="power-query-vs-sql">Power Query vs SQL</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Prefer Power Query when</th><th scope="col">Prefer SQL (or the warehouse) when</th></tr></thead><tbody><tr><td>No warehouse exists, or the logic is specific to one model</td><td>The logic is shared by several models or tools</td></tr><tr><td>Sources are files, SharePoint or APIs</td><td>The data is big and lives in a database</td></tr><tr><td>The team is analysts without database access</td><td>Data engineers own the pipeline</td></tr></tbody></table></div>
+<ul><li><b>Failure mode:</b> heavy joins and aggregations in Power Query that don't fold, so refresh drags all rows across the network.</li><li><b>Default:</b> as far upstream as is practical. See the full <a href="../toolkit/sql-for-bi.html#where-should-this-transformation-happen">where-should-it-happen table</a>.</li></ul>
+<h2 id="lakehouse-vs-warehouse">Lakehouse vs Warehouse</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Lakehouse</th><th scope="col">Warehouse</th></tr></thead><tbody><tr><td>Spark, Python and notebooks; files plus Delta tables; semi-structured data</td><td>T-SQL end to end; multi-table transactions; stored procedures</td></tr><tr><td>Read via the SQL analytics endpoint (read-only T-SQL)</td><td>Full read/write T-SQL</td></tr><tr><td>Data engineers</td><td>SQL developers and BI engineers with a SQL background</td></tr></tbody></table></div>
+<ul><li><b>Trade-off:</b> both store Delta in OneLake and both serve Direct Lake; the difference is how you write and who writes.</li><li><b>Failure mode:</b> choosing by fashion rather than by team skills; building the gold layer in a tool nobody on the team can maintain.</li><li><b>Default:</b> follow the team's language. Many designs use a Lakehouse for bronze and silver and a Warehouse for gold. See <a href="../toolkit/fabric-architecture.html">Fabric architecture</a>.</li></ul>
+<h2 id="dataflow-vs-pipeline">Dataflow vs pipeline</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Dataflow Gen2</th><th scope="col">Pipeline</th></tr></thead><tbody><tr><td>Transform data with Power Query, low code</td><td>Orchestrate: copy data, run activities in order, schedule, branch, retry</td></tr><tr><td>Analysts and BI developers</td><td>Data engineers and BI engineers</td></tr></tbody></table></div>
+<ul><li><b>They aren't rivals:</b> a pipeline often runs a dataflow, a notebook and a stored procedure in sequence.</li><li><b>Failure mode:</b> a chain of dataflows calling dataflows with no orchestration, monitoring or retry.</li><li><b>Default:</b> pipeline for movement and orchestration, dataflow (or notebook, or SQL) for the transformation.</li></ul>
+<h2 id="one-model-vs-multiple-models">One model vs multiple models</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">One shared model</th><th scope="col">Several models</th></tr></thead><tbody><tr><td>Many reports need the same definitions (Revenue, Customer)</td><td>Domains are unrelated, owned by different teams, or have very different security and refresh needs</td></tr><tr><td>You want one place to fix a definition</td><td>One model would be too big to refresh or understand</td></tr></tbody></table></div>
+<ul><li><b>Failure mode (too many):</b> three &quot;Revenue&quot; measures with three answers (<a href="../experience/s05-one-revenue-semantic-model.html">Sprint 05</a>). <b>Too few:</b> a 200-table model nobody can change safely.</li><li><b>Default:</b> one certified model per business domain; reports connect to it with live connections.</li></ul>
+<h2 id="rls-vs-separate-semantic-models">RLS vs separate semantic models</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">RLS in one model</th><th scope="col">Separate models per audience</th></tr></thead><tbody><tr><td>Same structure, different rows per user</td><td>Different tables, columns or logic per audience, or a hard legal separation</td></tr><tr><td>Easier maintenance: one model</td><td>Simpler security reasoning; more copies to maintain</td></tr></tbody></table></div>
+<ul><li><b>Failure mode:</b> separate copies drift apart; RLS that nobody tests lets the wrong person see payroll (<a href="../experience/s03-payroll-security-incident.html">Sprint 03</a>).</li><li><b>Default:</b> RLS (and OLS for columns), with a test matrix run every release. Separate models only when the audience must not even see the model's structure or when the data is legally segregated.</li></ul>
+<h2 id="pbix-vs-pbip">PBIX vs PBIP</h2>
+<ul><li><b>PBIX:</b> personal analysis, one author, nothing to review.</li><li><b>PBIP:</b> anything a team maintains, anything in Git, anything deployed by a pipeline.</li><li><b>Default:</b> PBIP for shared content. See <a href="../toolkit/ship-like-software.html#pbix-vs-pbip">Ship Power BI like software</a>.</li></ul>
+<h2 id="calculation-group-vs-separate-measures">Calculation group vs separate measures</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Calculation group</th><th scope="col">Separate measures</th></tr></thead><tbody><tr><td>The same transformation (YTD, PY, YoY %) applies to many base measures</td><td>Few measures, or each needs bespoke logic</td></tr><tr><td>Fewer objects to maintain</td><td>Simpler for report authors and Q&amp;A-style tools to understand</td></tr></tbody></table></div>
+<ul><li><b>Failure mode:</b> calculation groups with complex precedence that nobody can debug; format strings forgotten so &quot;YoY %&quot; shows as currency.</li><li><b>Default:</b> calculation groups once you'd otherwise write the same time logic for more than a handful of measures.</li></ul>
+<h2 id="shared-semantic-model-vs-a-model-inside-each-report">Shared semantic model vs a model inside each report</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Shared model, thin reports</th><th scope="col">Model inside the report file</th></tr></thead><tbody><tr><td>Several reports, one definition, separate release cycles for model and reports</td><td>A one-off report or a prototype</td></tr><tr><td>Certified and endorsed content</td><td>Speed of building something once</td></tr></tbody></table></div>
+<ul><li><b>Failure mode:</b> every report file carries its own copy of the model, refreshes its own copy of the data, and drifts.</li><li><b>Default:</b> shared model with live-connected thin reports for anything that lasts.</li></ul>
+<h2 id="star-vs-snowflake">Star vs snowflake</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Star</th><th scope="col">Snowflake</th></tr></thead><tbody><tr><td>Flattened dimensions: Category and SubCategory on <code>DimProduct</code></td><td>Normalised dimension tables chained together</td></tr><tr><td>Simpler DAX, faster filters, fewer relationships</td><td>Matches some source systems; less duplication in the source</td></tr></tbody></table></div>
+<ul><li><b>Failure mode:</b> snowflakes with bidirectional relationships to make filters flow up the chain.</li><li><b>Default:</b> star in the semantic model. Normalise in the warehouse if you like; flatten before Power BI.</li></ul>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../advanced.html#a-composite">Composite models, DirectQuery and hybrid tables</a> <span class="small muted">Advanced</span></li><li><a href="../fabric.html#fab-onelake">OneLake, Lakehouse, Warehouse and the SQL analytics endpoint</a> <span class="small muted">Microsoft Fabric for BI developers</span></li><li><a href="../fabric.html#fab-directlake">Direct Lake in depth</a> <span class="small muted">Microsoft Fabric for BI developers</span></li><li><a href="../advanced.html#a-gov">Governance, enterprise architecture and the &quot;senior&quot; conversations</a> <span class="small muted">Advanced</span></li><li><a href="../warehousing.html#dw-dims">Dimension patterns</a> <span class="small muted">Data warehousing patterns</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s05-one-revenue-semantic-model.html">BI-1103: Three models, three Revenues</a></li><li><a href="../experience/s09-fabric-migration-decision.html">ARCH-009: Should Northwind move to Fabric, and how?</a></li><li><a href="../experience/s10-bi-architecture-review.html">ARCH-012: Architecture review: 80 reports, 19 models, no owner</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-adr">Architecture decision record (ADR)</a></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://learn.microsoft.com/en-us/power-bi/connect-data/service-dataset-modes-understand" rel="noopener" target="_blank" class="ext">Semantic model modes in the Power BI service</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/fundamentals/direct-lake-overview" rel="noopener" target="_blank" class="ext">Direct Lake overview</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/fundamentals/decision-guide-data-store" rel="noopener" target="_blank" class="ext">Fabric decision guide: choose a data store</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/fundamentals/decision-guide-pipeline-dataflow-spark" rel="noopener" target="_blank" class="ext">Fabric decision guide: copy activity, Dataflow or Spark</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/star-schema" rel="noopener" target="_blank" class="ext">Star schema guidance</a> <span class="tier official">Official</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20Architecture%20decision%20library">Open an issue</a> or edit <code>content/toolkit/guides/decision-library.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

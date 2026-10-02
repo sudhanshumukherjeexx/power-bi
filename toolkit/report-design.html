@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Report design library · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="How to design executive, operational, analytical, detail, mobile, KPI scorecard, finance and sales reports, and the principles behind them: hierarchy, spacing, alignment, contrast, density, chart choice, accessibility, colour, titles, navigation and tooltips.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/report-design.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="Report design library · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="How to design executive, operational, analytical, detail, mobile, KPI scorecard, finance and sales reports, and the principles behind them: hierarchy, spacing, alignment, contrast, density, chart choice, accessibility, colour, titles, navigation and tooltips.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/report-design.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="report-design">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/patterns.html">Patterns &amp; Playbooks</a><span aria-hidden="true">/</span><span aria-current="page">Report design library</span></nav>
+<header class="intro tkhead">
+<div class="kicker">🧩 Patterns &amp; Playbooks · Patterns</div>
+<h1>Report design library</h1>
+<p class="lead">How to design executive, operational, analytical, detail, mobile, KPI scorecard, finance and sales reports, and the principles behind them: hierarchy, spacing, alignment, contrast, density, chart choice, accessibility, colour, titles, navigation and tooltips.</p>
+<div class="tkmeta"><span class="chip">Data Analyst</span><span class="chip">BI Developer</span><span class="chip">Senior BI Developer</span><span class="chip tool">Power BI Desktop</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><a class="btn sm" href="../toolkit/report-design.md" download>Download .md</a><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(4)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#start-from-the-question-not-the-canvas">Start from the question, not the canvas</a><a href="#report-types">Report types</a><a href="#principles">Principles</a><a href="#before-you-publish">Before you publish</a></nav></details>
+<article class="tkbody">
+<h2 id="start-from-the-question-not-the-canvas">Start from the question, not the canvas</h2>
+<p>Before you place a visual, write down who reads the report, which decision it supports, and the three questions it must answer in the first ten seconds. That's what the <a href="../templates.html#tpl-requirements">requirements template</a> is for. A beautiful report that answers the wrong question is still the wrong report; <a href="../experience/s01-executive-sales-dashboard.html">Sprint 01</a> starts exactly here.</p>
+<h2 id="report-types">Report types</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Type</th><th scope="col">Reader and question</th><th scope="col">Layout that works</th><th scope="col">Avoid</th></tr></thead><tbody><tr><td><b>Executive dashboard</b></td><td>A leader: &quot;Are we on track, and where should I look?&quot;</td><td>3–5 KPIs with target and trend across the top, one or two &quot;why&quot; visuals, no detail</td><td>Tables, more than one page of scrolling, unexplained abbreviations</td></tr><tr><td><b>Operational dashboard</b></td><td>A team: &quot;What needs action today?&quot;</td><td>Exceptions first (late orders, low stock), status colours, short refresh intervals</td><td>Year-to-date trends nobody acts on daily</td></tr><tr><td><b>Analytical report</b></td><td>An analyst: &quot;Why did this happen?&quot;</td><td>Slicers, drill-through, decomposition, a few linked visuals</td><td>Locking everything down; too many slicers on one page</td></tr><tr><td><b>Detail report</b></td><td>Anyone who must check rows: &quot;Which exact orders?&quot;</td><td>A table or paginated report with filters, export enabled</td><td>Charts; pretending a 10,000-row table is a dashboard</td></tr><tr><td><b>Mobile report</b></td><td>On the go: &quot;One number, now&quot;</td><td>The mobile layout: KPIs stacked vertically, one visual per screen</td><td>Shrinking the desktop page</td></tr><tr><td><b>KPI scorecard</b></td><td>Management: &quot;Which goals are on or off track?&quot;</td><td>KPI, target, status, owner, trend per row (or Metrics/goals)</td><td>Status colours without the rule that sets them</td></tr><tr><td><b>Finance report</b></td><td>Finance: &quot;Does it tie to the ledger?&quot;</td><td>Matrix with account hierarchy, period columns, variance, totals that reconcile</td><td>Rounded numbers that don't sum; missing currency labels</td></tr><tr><td><b>Sales report</b></td><td>Sales leaders and reps: &quot;Who, what, where is growing?&quot;</td><td>Trend vs target, top and bottom performers, region and product breakdowns, drill to customer</td><td>Rankings without context (size, prior period)</td></tr></tbody></table></div>
+<h2 id="principles">Principles</h2>
+<h3 id="visual-hierarchy">Visual hierarchy</h3>
+<p>The most important number goes top-left (where readers start) and largest. Supporting visuals get smaller as they get more detailed. If everything is bold, nothing is.</p>
+<h3 id="spacing-and-alignment">Spacing and alignment</h3>
+<p>Use a grid (for example 8 or 16 px units), equal gaps between visuals, and align edges. Misaligned visuals look like mistakes and make readers distrust the numbers.</p>
+<h3 id="contrast-and-colour">Contrast and colour</h3>
+<ul><li>One accent colour for &quot;look here&quot;; greys for everything else.</li><li>Red and green only for bad and good, never as decoration, and never as the only signal (about 1 in 12 men have some colour-vision deficiency): add icons, labels or position.</li><li>Text contrast of at least 4.5:1 against the background. Set the palette once in a <a href="https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-report-themes" rel="noopener" target="_blank" class="ext">report theme</a>.</li></ul>
+<h3 id="information-density">Information density</h3>
+<p>Enough to answer the question, no more. If a visual doesn't change a decision, remove it. If readers need detail, give them drill-through, not a denser page.</p>
+<h3 id="chart-selection">Chart selection</h3>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">To show</th><th scope="col">Use</th><th scope="col">Avoid</th></tr></thead><tbody><tr><td>Change over time</td><td>Line chart (column chart for few periods)</td><td>Pie charts over time</td></tr><tr><td>Comparison across categories</td><td>Bar chart, sorted</td><td>3D, unsorted bars</td></tr><tr><td>Part of a whole</td><td>Stacked bar, or a pie with 2–3 slices</td><td>Pies with many slices; donuts as decoration</td></tr><tr><td>Actual vs target</td><td>Bullet-style bar, KPI visual, variance column</td><td>Two unrelated gauges</td></tr><tr><td>Distribution</td><td>Histogram, box plot</td><td>Averages alone</td></tr><tr><td>Relationship between two measures</td><td>Scatter</td><td>Dual axes with unrelated scales</td></tr><tr><td>Exact values</td><td>Table or matrix</td><td>Charts with data labels on every point</td></tr></tbody></table></div>
+<h3 id="accessibility">Accessibility</h3>
+<p>Set <b>alt text</b> on visuals, a logical <b>tab order</b>, titles on every visual, sufficient contrast, and avoid conveying meaning by colour alone. Test with the keyboard and a screen reader (<a href="https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-accessibility-creating-reports" rel="noopener" target="_blank" class="ext">Microsoft's accessibility guidance</a>; practise in <a href="../modern.html#mod-report">mobile layouts and accessibility</a>).</p>
+<h3 id="titles">Titles</h3>
+<p>A title should say what the reader should conclude, or at least exactly what is shown: &quot;Net sales vs target, Q1 2026, by region&quot; beats &quot;Sales&quot;. Dynamic titles (a measure using <code>SELECTEDVALUE</code>) keep the title true when slicers change.</p>
+<h3 id="navigation">Navigation</h3>
+<p>Few pages, each with one purpose. Use page navigator buttons or a consistent left menu; put the page's filters in the same place on every page; use drill-through for &quot;show me the detail of this&quot;.</p>
+<h3 id="tooltips">Tooltips</h3>
+<p>Use report-page tooltips to answer the first follow-up question (trend for this region, top products for this month) instead of adding another visual to the page.</p>
+<h2 id="before-you-publish">Before you publish</h2>
+<p>Run the <a href="../toolkit/checklists.html#before-publishing-a-report">before publishing a report</a> checklist. For inspiration, third-party galleries such as <a href="https://tools.powerbi.tips/themes/gallery" rel="noopener" target="_blank" class="ext">PowerBI.tips</a> have themes and layouts; treat them as starting points, not standards.</p>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../beginner.html#b-viz">Visualisation and report design</a> <span class="small muted">Beginner</span></li><li><a href="../intermediate.html#i-viz">Interactive reports</a> <span class="small muted">Intermediate</span></li><li><a href="../modern.html#mod-report">Paginated reports, mobile layouts, accessibility and personalization</a> <span class="small muted">Modern Power BI features</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s01-executive-sales-dashboard.html">BI-1042: Executive sales dashboard</a></li><li><a href="../experience/d08-explain-it-twice.html">COMM-12: Explain it twice</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-requirements">Requirements and open questions</a></li><li><a href="../templates.html#tpl-kpi-dictionary">KPI dictionary</a></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://learn.microsoft.com/en-us/power-bi/create-reports/service-dashboards-design-tips" rel="noopener" target="_blank" class="ext">Tips for designing a great Power BI dashboard</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-accessibility-creating-reports" rel="noopener" target="_blank" class="ext">Design Power BI reports for accessibility</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/visuals/power-bi-visualization-types-for-reports-and-q-and-a" rel="noopener" target="_blank" class="ext">Visualization types in Power BI</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-report-themes" rel="noopener" target="_blank" class="ext">Report themes</a> <span class="tier official">Official</span></li><li><a href="https://tools.powerbi.tips/themes/gallery" rel="noopener" target="_blank" class="ext">PowerBI.tips theme and layout tools</a> <span class="tier third-party">Third party</span> <span class="small muted">Third-party starting points for themes and layouts, not Microsoft guidance.</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20Report%20design%20library">Open an issue</a> or edit <code>content/toolkit/guides/report-design.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

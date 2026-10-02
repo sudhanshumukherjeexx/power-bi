@@ -21,7 +21,7 @@ module.exports = t => {
   a.glossary.forEach(g => dynamic.add(slug(g.t)));
   (a.dynamicIds || []).forEach(x => dynamic.add(x));
   /* section ids that page scripts render (levelpage.js, progresspage.js, experience.js, templates.js) */
-  ['stages', 'competency', 'experience', 'portfolio', 'decisions', 'skill', 'certs', 'cards', 'starter', 'datasets', 'tools', 'trackdata', 'enterprise', 'drills', 'personas', 'lifecycle', 'decision']
+  ['stages', 'competency', 'experience', 'portfolio', 'decisions', 'skill', 'certs', 'cards', 'starter', 'datasets', 'tools', 'trackdata', 'enterprise', 'external', 'drills', 'personas', 'lifecycle', 'decision']
     .forEach(x => dynamic.add(x));
   a.stages.forEach(s => dynamic.add('stage-' + s.id));
   const dynamicPrefixes = ['card=', 'deck=', 'mock', 'cat=', 'q=', 'scenario=', 'tab=', 'ev-', 'cr-', 'tpl-'];

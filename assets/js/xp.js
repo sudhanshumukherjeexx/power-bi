@@ -115,7 +115,16 @@ function assessmentResult(ans){
 }
 function hints(){
   const r=rec(),n=r?r.hints||0:0;
-  return `<p class="muted small">Hints narrow where to look; they never give the answer. Using one is not a failure, it just takes 5% off this scenario's score (at most 20%).</p><ol class="hints">${S.hints.map((h,i)=>i<n?`<li class="shown"><b>Hint ${i+1}</b> ${fmt(h)}</li>`:'').join('')}</ol>${n<S.hints.length?`<button class="btn" type="button" id="hintBtn">Show hint ${n+1} of ${S.hints.length}</button>`:'<p class="small muted">No more hints. Try the evidence again, then the model answer in the Finish tab.</p>'}`;
+  return `<p class="muted small">Hints narrow where to look; they never give the answer. Using one is not a failure, it just takes 5% off this scenario's score (at most 20%).</p><ol class="hints">${S.hints.map((h,i)=>i<n?`<li class="shown"><b>Hint ${i+1}</b> ${fmt(h)}</li>`:'').join('')}</ol>${n<S.hints.length?`<button class="btn" type="button" id="hintBtn">Show hint ${n+1} of ${S.hints.length}</button>`:'<p class="small muted">No more hints. Try the evidence again, then the model answer in the Finish tab.</p>'}${contextHtml()}`;
+}
+/* "Need more context?": external reading linked to this scenario in the catalog (Resources). Reading costs nothing. */
+function contextHtml(){
+  if(typeof EXTERNAL==='undefined')return '';
+  const list=EXTERNAL.items.filter(x=>x.s.some(s=>s[0]===S.id));
+  if(!list.length)return '';
+  const cat=Object.fromEntries(EXTERNAL.cats);
+  const tier=s=>s==='third-party'?'Third party':s[0].toUpperCase()+s.slice(1);
+  return `<section class="xpctx"><h3>Need more context?</h3><p class="small muted">Background reading for this ticket. Reading doesn't affect your score.</p><ul>${list.map(x=>`<li><span class="k">${esc(cat[x.c])}</span><a href="${esc(x.u)}" rel="noopener" target="_blank" class="ext">${esc(x.t)}</a> <span class="tier ${esc(x.src)}">${tier(x.src)}</span><span class="d">${esc(x.d)}</span></li>`).join('')}</ul></section>`;
 }
 function review(){
   const r=rec()||{rub:{}};

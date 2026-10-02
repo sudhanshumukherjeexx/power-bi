@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Semantic modeling pattern library · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="Fact and dimension patterns with when to use each: transaction, snapshot, accumulating and factless facts, mixed grains, conformed, role-playing, SCD 1 and 2, junk, degenerate, parent-child and bridge dimensions, plus bad vs good model diagrams.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/modeling-patterns.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="Semantic modeling pattern library · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="Fact and dimension patterns with when to use each: transaction, snapshot, accumulating and factless facts, mixed grains, conformed, role-playing, SCD 1 and 2, junk, degenerate, parent-child and bridge dimensions, plus bad vs good model diagrams.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/modeling-patterns.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="modeling-patterns">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/patterns.html">Patterns &amp; Playbooks</a><span aria-hidden="true">/</span><span aria-current="page">Semantic modeling pattern library</span></nav>
+<header class="intro tkhead">
+<div class="kicker">🧩 Patterns &amp; Playbooks · Patterns</div>
+<h1>Semantic modeling pattern library</h1>
+<p class="lead">Fact and dimension patterns with when to use each: transaction, snapshot, accumulating and factless facts, mixed grains, conformed, role-playing, SCD 1 and 2, junk, degenerate, parent-child and bridge dimensions, plus bad vs good model diagrams.</p>
+<div class="tkmeta"><span class="chip">BI Developer</span><span class="chip">Senior BI Developer</span><span class="chip">BI Engineer</span><span class="chip">BI Architect / Lead</span><span class="chip tool">Power BI Desktop</span><span class="chip tool">Tabular Editor</span><span class="chip tool">SQL engine</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><a class="btn sm" href="../toolkit/modeling-patterns.md" download>Download .md</a><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(6)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#the-one-rule-decide-the-grain-first">The one rule: decide the grain first</a><a href="#bad-vs-good">Bad vs good</a><a href="#fact-patterns">Fact patterns</a><a href="#dimension-patterns">Dimension patterns</a><a href="#scd-type-2-in-practice">SCD type 2 in practice</a><a href="#model-checklist">Model checklist</a></nav></details>
+<article class="tkbody">
+<h2 id="the-one-rule-decide-the-grain-first">The one rule: decide the grain first</h2>
+<p>Every fact table has a <b>grain</b>: what one row means (&quot;one order line&quot;, &quot;one product per warehouse per week&quot;). Write it down before you add a column. Most modeling bugs (double counting, totals that don't add up, budgets that can't be compared with sales) are grain bugs.</p>
+<h2 id="bad-vs-good">Bad vs good</h2>
+<h3 id="the-flat-table">The flat table</h3>
+<pre class="diagram" role="img" aria-label="Semantic modeling pattern library diagram"> BAD: one wide table                               GOOD: a star
+ ┌─────────────────────────────────────┐          DimDate ─┐
+ │ OrderID, OrderDate, CustomerName,   │          DimCustomer ─┤
+ │ CustomerCity, Segment, ProductName, │                       ├──► FactSales (one row per order line)
+ │ Category, Brand, Region, Manager,   │          DimProduct ──┤      keys + Quantity, UnitPrice, Discount
+ │ Quantity, UnitPrice, Discount, …    │          DimRegion ───┘
+ └─────────────────────────────────────┘
+ Repeats every customer and product attribute on every row, can't hold a budget or a second fact,
+ and makes time intelligence and RLS awkward.</pre>
+<h3 id="facts-related-to-facts">Facts related to facts</h3>
+<pre class="diagram" role="img" aria-label="Semantic modeling pattern library diagram"> BAD: FactSales ◄──── many-to-many ────► FactBudget          GOOD: both facts filtered by shared dimensions
+                                                               DimDate (month) ──► FactSales
+ Totals repeat or vanish depending on                          DimDate (month) ──► FactBudget
+ the visual; nobody can explain the numbers.                   DimRegion       ──► FactSales, FactBudget
+                                                               Category        ──► FactSales (via DimProduct), FactBudget</pre>
+<h3 id="snowflake-and-bidirectional-chains">Snowflake and bidirectional chains</h3>
+<pre class="diagram" role="img" aria-label="Semantic modeling pattern library diagram"> BAD: FactSales ◄── DimProduct ◄─both─► DimSubCategory ◄─both─► DimCategory
+ GOOD: flatten SubCategory and Category into DimProduct; single-direction relationships</pre>
+<h2 id="fact-patterns">Fact patterns</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Pattern</th><th scope="col">Grain</th><th scope="col">Example</th><th scope="col">Watch out for</th></tr></thead><tbody><tr><td><b>Transaction fact</b></td><td>One row per event</td><td><code>FactSales</code>: one order line</td><td>Duplicates from re-exports; returns as negative rows or a separate fact</td></tr><tr><td><b>Periodic snapshot</b></td><td>One row per entity per period</td><td><code>FactInventory</code>: stock per product per week</td><td>Semi-additive: never sum over time (<a href="../toolkit/dax-field-manual.html#semi-additive-measures-inventory-and-balances">pattern</a>)</td></tr><tr><td><b>Accumulating snapshot</b></td><td>One row per process instance, updated as it moves</td><td>Order lifecycle: ordered, packed, shipped, delivered dates on one row</td><td>Several date roles; rows change after load</td></tr><tr><td><b>Factless fact</b></td><td>One row per occurrence or eligibility, no measure</td><td>Attendance, &quot;customer eligible for promotion&quot;</td><td>Count rows; the absence of a row is information</td></tr><tr><td><b>Multiple fact tables</b></td><td>Each its own grain</td><td>Sales and Budget</td><td>Relate each to shared (conformed) dimensions, never to each other</td></tr><tr><td><b>Different grains</b></td><td>Daily sales, monthly targets</td><td><code>FactSales</code> vs <code>FactBudget</code></td><td>Relate the coarser fact to a coarser attribute (month, category); blank below its grain</td></tr></tbody></table></div>
+<h2 id="dimension-patterns">Dimension patterns</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Pattern</th><th scope="col">What it is</th><th scope="col">Example</th><th scope="col">Teach yourself with</th></tr></thead><tbody><tr><td><b>Conformed dimension</b></td><td>One dimension shared by several facts, with the same keys and meaning</td><td>One <code>DimCustomer</code> for Sales, Returns and Support</td><td><a href="../experience/s05-one-revenue-semantic-model.html">Sprint 05</a></td></tr><tr><td><b>Role-playing dimension</b></td><td>One dimension used in several roles</td><td><code>DimDate</code> as Order Date and Ship Date</td><td><code>USERELATIONSHIP</code>, or a second date table if both roles are needed on one visual</td></tr><tr><td><b>SCD type 1</b></td><td>Overwrite the attribute; no history</td><td>Correcting a misspelt city</td><td><a href="../warehousing.html#dw-keys">Keys and SCDs</a></td></tr><tr><td><b>SCD type 2</b></td><td>New row per change with valid-from/to and a surrogate key; facts point at the version current when they happened</td><td>Customer moves region: old sales stay in the old region</td><td><a href="../warehousing.html#dw-keys">Keys and SCDs</a></td></tr><tr><td><b>Junk dimension</b></td><td>Several low-cardinality flags combined into one small dimension</td><td>IsPromo × IsOnline × PaymentType</td><td><a href="../warehousing.html#dw-dims">Dimension patterns</a></td></tr><tr><td><b>Degenerate dimension</b></td><td>A dimension attribute with no table, kept on the fact</td><td><code>OrderID</code> on <code>FactSales</code></td><td>Use it for counts and drill-through; don't build a dimension for it</td></tr><tr><td><b>Parent-child</b></td><td>A self-referencing hierarchy</td><td><code>DimEmployee[ManagerKey]</code> → <code>EmployeeKey</code></td><td><code>PATH</code>, <code>PATHITEM</code> to flatten into levels</td></tr><tr><td><b>Bridge</b></td><td>Resolves many-to-many between a dimension and a fact or two dimensions</td><td>Accounts with several owners; products in several promotions</td><td>Bridge table plus a bidirectional or <code>CROSSFILTER</code> relationship, used deliberately (<a href="https://learn.microsoft.com/en-us/power-bi/guidance/relationships-many-to-many" rel="noopener" target="_blank" class="ext">guidance</a>)</td></tr></tbody></table></div>
+<h2 id="scd-type-2-in-practice">SCD type 2 in practice</h2>
+<div class="codewrap"><span class="lang">sql</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>-- the dimension keeps every version
+-- CustomerSK (surrogate key), CustomerID (business key), Region, ValidFrom, ValidTo, IsCurrent
+-- facts store CustomerSK of the version valid on the transaction date
+SELECT f.*, d.CustomerSK
+FROM staging_sales AS f
+JOIN dim_customer AS d
+  ON d.CustomerID = f.CustomerID
+ AND f.OrderDate &gt;= d.ValidFrom AND f.OrderDate &lt; d.ValidTo;</code></pre></div>
+<p>Decide which attributes are type 2 (tracked) and which are type 1 (overwritten), and record the decision in the <a href="../templates.html#tpl-model-design">model design document</a>. Microsoft documents SCD type 2 loading with Fabric Data Factory; see the references.</p>
+<h2 id="model-checklist">Model checklist</h2>
+<ul class="checklist"><li><label><input type="checkbox" data-ck="modeling-patterns:0"> <span>Every fact's grain is written down</span></label></li><li><label><input type="checkbox" data-ck="modeling-patterns:1"> <span>Dimensions have unique keys and no blanks; facts' keys all exist in the dimensions</span></label></li><li><label><input type="checkbox" data-ck="modeling-patterns:2"> <span>Relationships are one-to-many, single direction, on integer keys where possible</span></label></li><li><label><input type="checkbox" data-ck="modeling-patterns:3"> <span>No fact is related directly to another fact</span></label></li><li><label><input type="checkbox" data-ck="modeling-patterns:4"> <span>One marked date table covers every date in every fact</span></label></li><li><label><input type="checkbox" data-ck="modeling-patterns:5"> <span>Measures for every number; keys and technical columns hidden</span></label></li><li><label><input type="checkbox" data-ck="modeling-patterns:6"> <span>Bidirectional and many-to-many relationships each have a written reason</span></label></li></ul>
+<p>The full version is the <a href="../toolkit/checklists.html#model-review-checklist">model review checklist</a>.</p>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../beginner.html#b-model">Data modeling</a> <span class="small muted">Beginner</span></li><li><a href="../intermediate.html#i-model">Modeling</a> <span class="small muted">Intermediate</span></li><li><a href="../warehousing.html#dw-keys">Keys and slowly changing dimensions</a> <span class="small muted">Data warehousing patterns</span></li><li><a href="../warehousing.html#dw-facts">Fact table types</a> <span class="small muted">Data warehousing patterns</span></li><li><a href="../warehousing.html#dw-dims">Dimension patterns</a> <span class="small muted">Data warehousing patterns</span></li><li><a href="../warehousing.html#dw-time">Calendars, time zones and currencies</a> <span class="small muted">Data warehousing patterns</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s05-one-revenue-semantic-model.html">BI-1103: Three models, three Revenues</a></li><li><a href="../experience/s01-executive-sales-dashboard.html">BI-1042: Executive sales dashboard</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-model-design">Semantic model design document</a></li><li><a href="../templates.html#tpl-data-dictionary">Data dictionary</a></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/star-schema" rel="noopener" target="_blank" class="ext">Understand star schema and the importance for Power BI</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/transform-model/desktop-relationships-understand" rel="noopener" target="_blank" class="ext">Model relationships in Power BI Desktop</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/relationships-many-to-many" rel="noopener" target="_blank" class="ext">Many-to-many relationship guidance</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/fabric/data-factory/slowly-changing-dimension-type-two" rel="noopener" target="_blank" class="ext">Slowly changing dimension type 2 in Fabric Data Factory</a> <span class="tier official">Official</span></li><li><a href="https://www.kimballgroup.com/" rel="noopener" target="_blank" class="ext">The Data Warehouse Toolkit (Kimball and Ross)</a> <span class="tier book">Book</span> <span class="tier paid">Paid</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20Semantic%20modeling%20pattern%20library">Open an issue</a> or edit <code>content/toolkit/guides/modeling-patterns.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

@@ -43,10 +43,12 @@ Stages are about responsibility, not years. Your progress page shows your stage,
 
 ## What else is inside
 
+- **BI Developer Toolkit:** for when you're on the job. Troubleshooting trees ("What's broken?"), DAX, Power Query and SQL field guides, a performance clinic, a production runbook, an error decoder, architecture decisions, security and governance guides, checklists, automation samples, and career and certification guides. It has one search: "What are you trying to do?"
 - **Interview flashcards** with spaced repetition and a timed mock interview. No Power BI needed, so they work on a phone.
 - **Glossary** of plain-English definitions, linked from every lesson.
+- **External resources:** a curated catalog of 118 official, specialist and community resources. Lessons and scenarios link to the ones relevant to them.
 - **Cheat sheets**, printable, one per level.
-- **Professional templates:** requirements, KPI dictionary, validation, UAT, RLS test matrix, ADR, pull request, release notes, runbook, incident report, postmortem, data contract and ownership matrix.
+- **Professional templates:** 26 documents BI teams actually write, from requirements and KPI definitions to ADRs, RLS matrices, runbooks, postmortems and a COE charter.
 - **Datasets and a starter Power BI project (PBIP)**, plus a generator for 100 thousand to 50 million realistic rows.
 - **Diagnostic** to find your starting point.
 

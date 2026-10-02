@@ -14,7 +14,7 @@ function modulePage(m, kind) {
   const description = m.seo || (m.id === 'resources' ? 'Every study tool in one place: flashcards, mock interview, glossary, cheat sheets, professional templates, the starter Power BI project (PBIP) and the Northwind Outdoors practice datasets.'
     : `${m.name}: ${m.tagline || 'hands-on assignments'} Each assignment has a checkable expected result and a worked solution.`);
   const isRes = m.id === 'resources', sec = isRes ? 'resources' : 'learn';
-  const scripts = ['content', 'tracks', ...(isTrack ? ['solutions-tracks'] : []), 'solutions', 'glossary', ...(isRes ? ['templates'] : []), 'meta', 'site', 'progress', 'course', 'levelpage'];
+  const scripts = ['content', 'tracks', ...(isTrack ? ['solutions-tracks'] : []), 'solutions', 'glossary', ...(isRes ? ['templates'] : []), 'external', 'meta', 'site', 'progress', 'course', 'levelpage'];
   return `${P.head({ title, description, path: m.id + '.html' })}
 <body data-page="${m.id}">
 <a class="skip" href="#app">Skip to content</a>

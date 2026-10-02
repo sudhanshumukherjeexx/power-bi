@@ -42,5 +42,5 @@
     { "id": "comm", "n": "Communication", "w": 20, "good": "Can be presented in two minutes." }
   ],
   "retro": ["Which dimension surprised you most?"],
-  "refs": [{ "title": "Power BI implementation planning: governance", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/powerbi-implementation-planning-governance" }]
+  "refs": [{ "title": "Power BI implementation planning: governance", "url": "https://learn.microsoft.com/en-us/power-bi/guidance/fabric-adoption-roadmap-governance" }]
 }

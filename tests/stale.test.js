@@ -17,6 +17,8 @@ module.exports = t => {
   };
   a.modules.forEach(m => m.topicsData.forEach(T => due(T.verified, T.id)));
   a.certs.forEach(c => due(c.verified, c.code));
+  if (a.toolkit) a.toolkit.guides.forEach(g => due(g.verified, 'toolkit ' + g.id));
+  if (a.external) due(a.external.verified, 'external resource catalog');
   const xp = path.join(load.root, 'content/experience');
   if (fs.existsSync(xp)) for (const d of fs.readdirSync(xp)) {
     const f = path.join(xp, d, 'scenario.json');

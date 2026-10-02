@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Datasets and practice lab · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="Three tiers of practice data (small learning datasets, messy scenario files and a 100k–50M row enterprise generator) with each dataset's type, grain, scale, intended use and planted problems.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/practice-lab.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="Datasets and practice lab · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="Three tiers of practice data (small learning datasets, messy scenario files and a 100k–50M row enterprise generator) with each dataset's type, grain, scale, intended use and planted problems.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/practice-lab.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="practice-lab">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/practice.html">Datasets &amp; Labs</a><span aria-hidden="true">/</span><span aria-current="page">Datasets and practice lab</span></nav>
+<header class="intro tkhead">
+<div class="kicker">📦 Datasets &amp; Labs · Library</div>
+<h1>Datasets and practice lab</h1>
+<p class="lead">Three tiers of practice data (small learning datasets, messy scenario files and a 100k–50M row enterprise generator) with each dataset's type, grain, scale, intended use and planted problems.</p>
+<div class="tkmeta"><span class="chip">Data Analyst</span><span class="chip">BI Developer</span><span class="chip">Senior BI Developer</span><span class="chip">BI Engineer</span><span class="chip tool">Power BI Desktop</span><span class="chip tool">SQL engine</span><span class="chip tool">Python</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(6)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#three-tiers">Three tiers</a><a href="#learning-datasets">Learning datasets</a><a href="#scenario-files">Scenario files</a><a href="#enterprise-scale">Enterprise scale</a><a href="#labs-break-it-then-fix-it">Labs: break it, then fix it</a><a href="#scenarios-by-stage">Scenarios by stage</a></nav></details>
+<article class="tkbody">
+<h2 id="three-tiers">Three tiers</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Tier</th><th scope="col">Size</th><th scope="col">Purpose</th><th scope="col">Where</th></tr></thead><tbody><tr><td><b>Learning</b></td><td>4–100 rows per table</td><td>See every row, check every answer by eye, learn the concept without noise</td><td>The 14 Northwind datasets below</td></tr><tr><td><b>Scenario</b></td><td>Thousands of rows, realistic mess</td><td>Real problems: duplicates, late data, currencies, schema changes, conflicting definitions</td><td>Company pack and scenario files used by Experience Mode and the tracks</td></tr><tr><td><b>Enterprise</b></td><td>100 thousand to 50 million rows</td><td>Design and performance: cardinality, partitions, incremental refresh, aggregations</td><td>Generated on your machine</td></tr></tbody></table></div>
+<p>Every dataset is generated from a fixed seed, so every learner gets identical numbers and every expected result on this site can be checked automatically.</p>
+<h2 id="learning-datasets">Learning datasets</h2>
+<p>All 14 tables describe one fictional company, Northwind Outdoors, and join to each other, so any exercise can grow into a full model. &quot;Planted problems&quot; are there to teach you something; the lessons that use them tell you what to look for.</p>
+<div class="dscards"><div class="dscard"><h4 id="lab-DimDate">DimDate</h4><dl>
+          <dt>Type</dt><dd>Date dimension</dd><dt>Grain</dt><dd>One day</dd>
+          <dt>Scale</dt><dd>90 rows · 12 columns</dd><dt>Used for</dt><dd>Time intelligence; replacing it with a full DAX date table</dd>
+          <dt>Planted problems</dt><dd>Deliberately too short: only 90 days</dd></dl>
+          <p class="small"><a href="../resources.html#ds-DimDate">Preview and download</a></p></div><div class="dscard"><h4 id="lab-DimProduct">DimProduct</h4><dl>
+          <dt>Type</dt><dd>Dimension</dd><dt>Grain</dt><dd>One product</dd>
+          <dt>Scale</dt><dd>24 rows · 9 columns</dd><dt>Used for</dt><dd>Margin, category slicing, discontinued products</dd>
+          <dt>Planted problems</dt><dd>None: a clean table</dd></dl>
+          <p class="small"><a href="../resources.html#ds-DimProduct">Preview and download</a></p></div><div class="dscard"><h4 id="lab-DimCustomer">DimCustomer</h4><dl>
+          <dt>Type</dt><dd>Dimension</dd><dt>Grain</dt><dd>One customer</dd>
+          <dt>Scale</dt><dd>30 rows · 9 columns</dd><dt>Used for</dt><dd>Segments, cohorts by join date, loyalty tiers</dd>
+          <dt>Planted problems</dt><dd>None: a clean table</dd></dl>
+          <p class="small"><a href="../resources.html#ds-DimCustomer">Preview and download</a></p></div><div class="dscard"><h4 id="lab-DimRegion">DimRegion</h4><dl>
+          <dt>Type</dt><dd>Dimension</dd><dt>Grain</dt><dd>One sales region</dd>
+          <dt>Scale</dt><dd>4 rows · 6 columns</dd><dt>Used for</dt><dd>Region filters, targets, RLS</dd>
+          <dt>Planted problems</dt><dd>None: a clean table</dd></dl>
+          <p class="small"><a href="../resources.html#ds-DimRegion">Preview and download</a></p></div><div class="dscard"><h4 id="lab-DimEmployee">DimEmployee</h4><dl>
+          <dt>Type</dt><dd>Parent-child dimension</dd><dt>Grain</dt><dd>One employee</dd>
+          <dt>Scale</dt><dd>18 rows · 8 columns</dd><dt>Used for</dt><dd>PATH hierarchies, RLS by org position</dd>
+          <dt>Planted problems</dt><dd>None: a clean table</dd></dl>
+          <p class="small"><a href="../resources.html#ds-DimEmployee">Preview and download</a></p></div><div class="dscard"><h4 id="lab-FactSales">FactSales</h4><dl>
+          <dt>Type</dt><dd>Transaction fact</dd><dt>Grain</dt><dd>One order line</dd>
+          <dt>Scale</dt><dd>100 rows · 12 columns</dd><dt>Used for</dt><dd>Modeling, DAX, RLS, role-playing dates</dd>
+          <dt>Planted problems</dt><dd>Returns as negative quantities; OrderDate ≠ ShipDate</dd></dl>
+          <p class="small"><a href="../resources.html#ds-FactSales">Preview and download</a></p></div><div class="dscard"><h4 id="lab-FactBudget">FactBudget</h4><dl>
+          <dt>Type</dt><dd>Periodic fact (plan)</dd><dt>Grain</dt><dd>Month × region × category</dd>
+          <dt>Scale</dt><dd>48 rows · 6 columns</dd><dt>Used for</dt><dd>Budget vs actual at a different grain</dd>
+          <dt>Planted problems</dt><dd>None: a clean table</dd></dl>
+          <p class="small"><a href="../resources.html#ds-FactBudget">Preview and download</a></p></div><div class="dscard"><h4 id="lab-FactInventory">FactInventory</h4><dl>
+          <dt>Type</dt><dd>Periodic snapshot fact</dd><dt>Grain</dt><dd>Product × week (each product held in one warehouse)</dd>
+          <dt>Scale</dt><dd>80 rows · 5 columns</dd><dt>Used for</dt><dd>Semi-additive measures</dd>
+          <dt>Planted problems</dt><dd>Summing across weeks gives a wrong answer by design</dd></dl>
+          <p class="small"><a href="../resources.html#ds-FactInventory">Preview and download</a></p></div><div class="dscard"><h4 id="lab-RawOrdersExport">RawOrdersExport (messy)</h4><dl>
+          <dt>Type</dt><dd>Raw export</dd><dt>Grain</dt><dd>One order line, as exported</dd>
+          <dt>Scale</dt><dd>30 rows · 9 columns</dd><dt>Used for</dt><dd>Power Query cleaning</dd>
+          <dt>Planted problems</dt><dd>Header junk, mixed date formats, currency symbols, trailing spaces, inconsistent casing, a total row</dd></dl>
+          <p class="small"><a href="../resources.html#ds-RawOrdersExport">Preview and download</a></p></div><div class="dscard"><h4 id="lab-SurveyWide">SurveyWide (unpivot)</h4><dl>
+          <dt>Type</dt><dd>Wide (pivoted) table</dd><dt>Grain</dt><dd>One row per store, one column per month</dd>
+          <dt>Scale</dt><dd>12 rows · 7 columns</dd><dt>Used for</dt><dd>Unpivot</dd>
+          <dt>Planted problems</dt><dd>The wrong shape for analysis, on purpose</dd></dl>
+          <p class="small"><a href="../resources.html#ds-SurveyWide">Preview and download</a></p></div><div class="dscard"><h4 id="lab-UserRegionMapping">UserRegionMapping (RLS)</h4><dl>
+          <dt>Type</dt><dd>Security mapping</dd><dt>Grain</dt><dd>User × region</dd>
+          <dt>Scale</dt><dd>12 rows · 3 columns</dd><dt>Used for</dt><dd>Dynamic RLS</dd>
+          <dt>Planted problems</dt><dd>Multi-region users and one ALL user</dd></dl>
+          <p class="small"><a href="../resources.html#ds-UserRegionMapping">Preview and download</a></p></div><div class="dscard"><h4 id="lab-ExchangeRates">ExchangeRates</h4><dl>
+          <dt>Type</dt><dd>Rate table</dd><dt>Grain</dt><dd>Currency × week (Mondays)</dd>
+          <dt>Scale</dt><dd>39 rows · 3 columns</dd><dt>Used for</dt><dd>Last-known-rate currency conversion</dd>
+          <dt>Planted problems</dt><dd>None: a clean table</dd></dl>
+          <p class="small"><a href="../resources.html#ds-ExchangeRates">Preview and download</a></p></div><div class="dscard"><h4 id="lab-CustomerTargets">CustomerTargets (many-to-many)</h4><dl>
+          <dt>Type</dt><dd>Target table</dd><dt>Grain</dt><dd>Quarter × segment × loyalty tier</dd>
+          <dt>Scale</dt><dd>20 rows · 4 columns</dd><dt>Used for</dt><dd>Relating facts at a non-unique grain</dd>
+          <dt>Planted problems</dt><dd>None: a clean table</dd></dl>
+          <p class="small"><a href="../resources.html#ds-CustomerTargets">Preview and download</a></p></div><div class="dscard"><h4 id="lab-WebEvents">WebEvents (sessions)</h4><dl>
+          <dt>Type</dt><dd>Event fact</dd><dt>Grain</dt><dd>One click event</dd>
+          <dt>Scale</dt><dd>100 rows · 7 columns</dd><dt>Used for</dt><dd>Funnels, sessions, window functions</dd>
+          <dt>Planted problems</dt><dd>None: a clean table</dd></dl>
+          <p class="small"><a href="../resources.html#ds-WebEvents">Preview and download</a></p></div></div>
+<h2 id="scenario-files">Scenario files</h2>
+<p>Larger files used by the SQL, warehousing, testing and automation tracks and by the Experience Mode scenarios. The company pack is a realistic order system (orders, lines, returns, customers, products, regions and exchange rates) with real-world defects such as a re-exported batch of duplicate lines.</p>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">File</th><th scope="col">Rows</th><th scope="col">What it is</th></tr></thead><tbody><tr><td><a href="../data/experience/company/orders.csv" download>orders.csv</a></td><td>3715</td><td>Company pack: one row per order header (Jan 2025 to Mar 2026).</td></tr><tr><td><a href="../data/experience/company/order_lines.csv" download>order_lines.csv</a></td><td>7252</td><td>Company pack: order lines in the order currency. Contains the March re-export defect.</td></tr><tr><td><a href="../data/experience/company/returns.csv" download>returns.csv</a></td><td>343</td><td>Company pack: returns linked to order lines, to 10 Apr 2026.</td></tr><tr><td><a href="../data/experience/company/customers.csv" download>customers.csv</a></td><td>421</td><td>Company pack: customers with segment and home region.</td></tr><tr><td><a href="../data/experience/company/products.csv" download>products.csv</a></td><td>24</td><td>Company pack: the 24 products with cost and list price.</td></tr><tr><td><a href="../data/experience/company/regions.csv" download>regions.csv</a></td><td>5</td><td>Company pack: five sales regions and their currency.</td></tr><tr><td><a href="../data/experience/company/fx_rates.csv" download>fx_rates.csv</a></td><td>16</td><td>Company pack: monthly average USD per EUR.</td></tr><tr><td><a href="../data/tracks/warehousing/customer_changes.csv" download>customer_changes.csv</a></td><td>200</td><td>CRM change feed for 120 customers: one row per effective change. Build SCD type 2 from it.</td></tr><tr><td><a href="../data/tracks/warehousing/early_orders.csv" download>early_orders.csv</a></td><td>4</td><td>Orders that arrive before their customer exists in the dimension.</td></tr><tr><td><a href="../data/tracks/warehousing/order_events.csv" download>order_events.csv</a></td><td>907</td><td>Order lifecycle events (Placed, Picked, Shipped, Delivered) for March 2026, in UTC.</td></tr><tr><td><a href="../data/tracks/warehousing/web_sessions_local.csv" download>web_sessions_local.csv</a></td><td>240</td><td>Web sessions logged in local time with their UTC offset.</td></tr><tr><td><a href="../data/tracks/testing/mini_sales.csv" download>mini_sales.csv</a></td><td>8</td><td>Eight hand-checkable sales lines for known-input, known-output model tests.</td></tr><tr><td><a href="../data/tracks/sql/slow_query.sql" download>slow_query.sql</a></td><td></td><td>The 22-minute source query behind FactSales, with its execution plan summary.</td></tr><tr><td><a href="../data/tracks/automation/groups.json" download>groups.json</a></td><td></td><td>Mock GET /groups response: workspaces.</td></tr><tr><td><a href="../data/tracks/automation/datasets.json" download>datasets.json</a></td><td></td><td>Mock datasets (semantic models) across all workspaces.</td></tr><tr><td><a href="../data/tracks/automation/reports.json" download>reports.json</a></td><td></td><td>Mock reports across all workspaces.</td></tr><tr><td><a href="../data/tracks/automation/refreshes.json" download>refreshes.json</a></td><td></td><td>Mock refresh history, one week per dataset.</td></tr><tr><td><a href="../data/tracks/automation/activity_views.json" download>activity_views.json</a></td><td></td><td>Mock activity events (ViewReport) for 90 days.</td></tr></tbody></table></div>
+<h2 id="enterprise-scale">Enterprise scale</h2>
+<p>Small data teaches the logic; big data teaches the design. Generate realistic sales data with skewed customers, late-arriving rows, duplicates, several currencies and slowly changing customers, on your own machine with Node.js:</p>
+<div class="codewrap"><span class="lang">bash</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>node tools/generate-enterprise-data.js --rows 1000000</code></pre></div>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Rows</th><th scope="col">What it teaches</th></tr></thead><tbody><tr><td>100 thousand</td><td>Everything still works; habits matter more than speed</td></tr><tr><td>1 million</td><td>Column cardinality and model size become visible in VertiPaq Analyzer</td></tr><tr><td>10 million</td><td>Incremental refresh and query folding stop being optional</td></tr><tr><td>50 million</td><td>Aggregations, partitions and capacity limits</td></tr></tbody></table></div>
+<p>The generator's defects are configurable and counted exactly, so you can check whether your cleaning caught all of them. See <a href="https://github.com/sudhanshumukherjeexx/power-bi/blob/main/docs/enterprise-data.md" rel="noopener" target="_blank" class="ext">the generator guide</a>.</p>
+<h2 id="labs-break-it-then-fix-it">Labs: break it, then fix it</h2>
+<p>The best way to understand a failure is to cause it on purpose:</p>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Lab</th><th scope="col">Break</th><th scope="col">Then</th></tr></thead><tbody><tr><td>Double counting</td><td>Append the March file twice</td><td>Find it with a row count per key; fix with a distinct key</td></tr><tr><td>Orphan facts</td><td>Delete two products from DimProduct</td><td>Find the blank row; count orphans with an anti join</td></tr><tr><td>Bidirectional chaos</td><td>Set every relationship to Both</td><td>Watch a total change; explain why</td></tr><tr><td>Folding</td><td>Add an index column before the date filter</td><td>See View Native Query disappear; move the step</td></tr><tr><td>RLS leak</td><td>Add a table not related to the security table</td><td>Show that a restricted user sees all of it</td></tr><tr><td>Memory</td><td>Add a timestamp column with seconds to the 10M-row table</td><td>Measure the size in VertiPaq Analyzer; split date and time</td></tr></tbody></table></div>
+<p>The testing track's <a href="../testing.html#qa-break">Build it, break it</a> topic turns these into graded assignments.</p>
+<h2 id="scenarios-by-stage">Scenarios by stage</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Ticket</th><th scope="col">Scenario</th><th scope="col">Stage</th><th scope="col">Skills</th></tr></thead><tbody><tr><td>BI-1042</td><td><a href="../experience/s01-executive-sales-dashboard.html">Executive sales dashboard</a></td><td>Data Analyst</td><td>power-query, modeling, dax, visuals, testing, communication</td></tr><tr><td>BI-1057</td><td><a href="../experience/s02-finance-disputes-revenue.html">Finance disputes the dashboard</a></td><td>Data Analyst</td><td>dax, modeling, testing, communication, power-query</td></tr><tr><td>REQ-301</td><td><a href="../experience/d01-requirements-interview.html">Four requests, zero requirements</a></td><td>Data Analyst</td><td>communication, modeling, governance</td></tr><tr><td>UAT-017</td><td><a href="../experience/d02-uat-region-total.html">&quot;The Region total doesn't match Excel&quot;</a></td><td>Data Analyst</td><td>testing, modeling, communication</td></tr><tr><td>INC-2031</td><td><a href="../experience/s03-payroll-security-incident.html">A regional manager can see other regions' payroll</a></td><td>BI Developer</td><td>security, modeling, testing, governance, communication</td></tr><tr><td>BI-1103</td><td><a href="../experience/s05-one-revenue-semantic-model.html">Three models, three Revenues</a></td><td>BI Developer</td><td>modeling, governance, dax, service, communication, architecture</td></tr><tr><td>GOV-044</td><td><a href="../experience/d05-report-retirement.html">Usage dropped 70%. Retire it?</a></td><td>BI Developer</td><td>governance, service, communication</td></tr><tr><td>CR-118</td><td><a href="../experience/d06-change-requests.html">Four change requests to a working model</a></td><td>BI Developer</td><td>modeling, dax, security, testing, communication</td></tr><tr><td>INC-2044</td><td><a href="../experience/s04-monday-performance-incident.html">The executive dashboard takes 18 seconds</a></td><td>Senior BI Developer</td><td>performance, dax, modeling, testing, communication</td></tr><tr><td>INC-2071</td><td><a href="../experience/s08-cfo-refresh-outage.html">The board pack refresh failed at 06:17</a></td><td>Senior BI Developer</td><td>service, power-query, communication, governance, testing</td></tr><tr><td>INC-2079</td><td><a href="../experience/d04-hotfix-or-rollback.html">Hotfix, rollback or wait?</a></td><td>Senior BI Developer</td><td>deployment, testing, communication, architecture</td></tr><tr><td>COMM-12</td><td><a href="../experience/d08-explain-it-twice.html">Explain it twice</a></td><td>Senior BI Developer</td><td>communication, performance</td></tr><tr><td>PR-214</td><td><a href="../experience/s06-pbip-merge-conflict.html">Two developers, one measure</a></td><td>BI Engineer</td><td>deployment, testing, dax, communication</td></tr><tr><td>INC-2058</td><td><a href="../experience/s07-test-prod-deployment-failure.html">Test is right, Production is wrong</a></td><td>BI Engineer</td><td>deployment, service, testing, automation</td></tr><tr><td>PR-231</td><td><a href="../experience/d03-pull-request-review.html">Review Sam's pull request</a></td><td>BI Engineer</td><td>deployment, modeling, dax, performance, communication</td></tr><tr><td>ARCH-009</td><td><a href="../experience/s09-fabric-migration-decision.html">Should Northwind move to Fabric, and how?</a></td><td>BI Architect / Lead</td><td>architecture, fabric, performance, governance, communication</td></tr><tr><td>ARCH-012</td><td><a href="../experience/s10-bi-architecture-review.html">Architecture review: 80 reports, 19 models, no owner</a></td><td>BI Architect / Lead</td><td>architecture, governance, security, communication, service</td></tr><tr><td>GOV-050</td><td><a href="../experience/d07-governance-maturity.html">Governance maturity assessment</a></td><td>BI Architect / Lead</td><td>governance, architecture, security</td></tr></tbody></table></div>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../beginner.html#b-pq">Getting data and cleaning it in Power Query</a> <span class="small muted">Beginner</span></li><li><a href="../beginner.html#b-model">Data modeling</a> <span class="small muted">Beginner</span></li><li><a href="../advanced.html#a-perf">Performance</a> <span class="small muted">Advanced</span></li><li><a href="../testing.html#qa-break">Build it, break it</a> <span class="small muted">Testing and validation</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s01-executive-sales-dashboard.html">BI-1042: Executive sales dashboard</a></li><li><a href="../experience/s04-monday-performance-incident.html">INC-2044: The executive dashboard takes 18 seconds</a></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/star-schema" rel="noopener" target="_blank" class="ext">Star schema guidance</a> <span class="tier official">Official</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20Datasets%20and%20practice%20lab">Open an issue</a> or edit <code>content/toolkit/guides/practice-lab.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

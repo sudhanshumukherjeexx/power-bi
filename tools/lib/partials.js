@@ -6,7 +6,7 @@ const root = path.join(__dirname, '..', '..');
 const site = JSON.parse(fs.readFileSync(path.join(root, 'content', 'site.json'), 'utf8'));
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-const SECTIONS = [['learn', 'Learn', 'learn.html'], ['practice', 'Practice', 'experience.html'], ['interview', 'Interview', 'flashcards.html'], ['progress', 'Progress', 'progress.html'], ['resources', 'Resources', 'resources.html']];
+const SECTIONS = [['learn', 'Learn', 'learn.html'], ['practice', 'Practice', 'experience.html'], ['interview', 'Interview', 'flashcards.html'], ['toolkit', 'Toolkit', 'toolkit.html'], ['progress', 'Progress', 'progress.html'], ['resources', 'Resources', 'resources.html']];
 
 function nav(active, r = '') {
   return `<header class="top gnav"><div class="in">
@@ -53,7 +53,7 @@ ${css.map(c => `<link rel="stylesheet" href="${r}assets/css/${c}.css">`).join('\
 function footer(r = '', note = '') {
   return `<footer class="wrap foot">
   ${note ? `<p>${note}</p>` : ''}
-  <p>Your progress is saved in this browser only. <a href="${r}progress.html">See your progress</a> · <a href="${r}resources.html">Resources</a> · <a href="${r}glossary.html">Glossary</a> · <a href="${r}templates.html">Templates</a> · <a href="${site.repo}">Source on GitHub</a></p>
+  <p>Your progress is saved in this browser only. <a href="${r}progress.html">See your progress</a> · <a href="${r}toolkit.html">Toolkit</a> · <a href="${r}resources.html">Resources</a> · <a href="${r}glossary.html">Glossary</a> · <a href="${r}templates.html">Templates</a> · <a href="${site.repo}">Source on GitHub</a></p>
   <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
   <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
 </footer>

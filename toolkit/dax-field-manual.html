@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>DAX field manual · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="DAX organised by the problem you are solving, not alphabetically: contexts, filters, relationships, time, business patterns and senior patterns, each with working code on the Northwind model.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/dax-field-manual.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="DAX field manual · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="DAX organised by the problem you are solving, not alphabetically: contexts, filters, relationships, time, business patterns and senior patterns, each with working code on the Northwind model.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/dax-field-manual.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="dax-field-manual">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/reference.html">Reference</a><span aria-hidden="true">/</span><span aria-current="page">DAX field manual</span></nav>
+<header class="intro tkhead">
+<div class="kicker">📖 Reference · Reference</div>
+<h1>DAX field manual</h1>
+<p class="lead">DAX organised by the problem you are solving, not alphabetically: contexts, filters, relationships, time, business patterns and senior patterns, each with working code on the Northwind model.</p>
+<div class="tkmeta"><span class="chip">Data Analyst</span><span class="chip">BI Developer</span><span class="chip">Senior BI Developer</span><span class="chip tool">Power BI Desktop</span><span class="chip tool">DAX query view</span><span class="chip tool">DAX Studio</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><a class="btn sm" href="../toolkit/dax-field-manual.md" download>Download .md</a><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(8)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#how-to-read-this-manual">How to read this manual</a><a href="#fundamentals">Fundamentals</a><a href="#filters">Filters</a><a href="#relationships">Relationships</a><a href="#time-intelligence">Time intelligence</a><a href="#business-patterns">Business patterns</a><a href="#senior-patterns">Senior patterns</a><a href="#formatting-and-naming">Formatting and naming</a></nav></details>
+<article class="tkbody">
+<h2 id="how-to-read-this-manual">How to read this manual</h2>
+<p>Every example uses the course's Northwind model: <code>FactSales</code> (one row per order line), <code>DimDate</code>, <code>DimProduct</code>, <code>DimCustomer</code>, <code>DimRegion</code>, <code>FactBudget</code> and <code>FactInventory</code>. The base measure is:</p>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>Net Sales =
+SUMX ( FactSales, FactSales[Quantity] * FactSales[UnitPrice] * ( 1 - FactSales[Discount] ) )</code></pre></div>
+<p>Something wrong with a number rather than a gap in your knowledge? Go to <a href="../toolkit/dax-debugging.html">My DAX is wrong</a> instead.</p>
+<h2 id="fundamentals">Fundamentals</h2>
+<h3 id="measures-vs-calculated-columns">Measures vs calculated columns</h3>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col"></th><th scope="col">Calculated column</th><th scope="col">Measure</th></tr></thead><tbody><tr><td>Computed</td><td>At refresh, once per row</td><td>At query time, for each cell of a visual</td></tr><tr><td>Sees</td><td>The current row (row context)</td><td>The filters on the visual (filter context)</td></tr><tr><td>Stored</td><td>Yes: costs memory</td><td>No</td></tr><tr><td>Use for</td><td>Slicing, grouping, relationship keys, values you filter <b>by</b></td><td>Every number you aggregate <b>into</b> a visual</td></tr></tbody></table></div>
+<div class="callout rule" role="note"><p><b>Rule:</b> If it is a number someone reads off a visual, it is a measure. If you need to put it on an axis or slicer, it is a column, ideally built upstream in Power Query or SQL.</p>
+</div>
+<h3 id="row-context-and-filter-context">Row context and filter context</h3>
+<ul><li><b>Row context</b> exists in calculated columns and inside iterators (<code>SUMX</code>, <code>FILTER</code>, <code>ADDCOLUMNS</code>): &quot;the current row&quot;. It does <b>not</b> filter anything by itself.</li><li><b>Filter context</b> is the set of filters from slicers, rows, columns and <code>CALCULATE</code>: &quot;which rows are visible&quot;.</li></ul>
+<h3 id="context-transition">Context transition</h3>
+<p><code>CALCULATE</code> turns the current row context into an equivalent filter context. That is why a measure referenced inside an iterator is evaluated per row:</p>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>Customers with 2+ Orders =
+COUNTROWS (
+    FILTER ( DimCustomer, CALCULATE ( DISTINCTCOUNT ( FactSales[OrderID] ) ) &gt;= 2 )
+)</code></pre></div>
+<p>Every measure reference has an implicit <code>CALCULATE</code> around it, so <code>[Net Sales]</code> inside <code>FILTER ( DimCustomer, … )</code> is the net sales of each customer. Context transition on a large table without a unique key is slow and can double-count; iterate over a dimension or <code>VALUES</code> of a key, not over a fact table, when you can.</p>
+<h3 id="calculate">CALCULATE</h3>
+<p><code>CALCULATE ( expression, filter1, filter2, … )</code> evaluates <code>expression</code> in a modified filter context. Filters on the same column replace the existing filter; filters on different columns are combined with AND.</p>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>West Sales = CALCULATE ( [Net Sales], DimRegion[RegionName] = &quot;West&quot; )   -- replaces any region filter
+Online Share = DIVIDE ( CALCULATE ( [Net Sales], FactSales[Channel] = &quot;Online&quot; ), [Net Sales] )</code></pre></div>
+<h3 id="variables">Variables</h3>
+<p>Variables are evaluated once, where they are defined, in the filter context at that point. They make code readable, avoid repeated work and are the easiest debugging tool you have (return a variable to see it).</p>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>Margin % =
+VAR Sales = [Net Sales]
+VAR Cost  = SUMX ( FactSales, FactSales[Quantity] * RELATED ( DimProduct[UnitCost] ) )
+RETURN DIVIDE ( Sales - Cost, Sales )</code></pre></div>
+<h3 id="iterators-and-table-expressions">Iterators and table expressions</h3>
+<p><code>SUMX</code>, <code>AVERAGEX</code>, <code>MAXX</code>, <code>COUNTX</code> and <code>RANKX</code> loop over a table and evaluate an expression per row. Table functions (<code>FILTER</code>, <code>VALUES</code>, <code>ALL</code>, <code>SUMMARIZE</code>, <code>ADDCOLUMNS</code>, <code>TOPN</code>) return tables you can iterate or pass to <code>CALCULATE</code>. Test table expressions directly in <a href="https://learn.microsoft.com/en-us/power-bi/transform-model/dax-query-view" rel="noopener" target="_blank" class="ext">DAX query view</a> with <code>EVALUATE</code>.</p>
+<h2 id="filters">Filters</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Function</th><th scope="col">What it does</th><th scope="col">Typical use</th></tr></thead><tbody><tr><td><code>FILTER ( table, condition )</code></td><td>Iterates a table, keeps rows where the condition is true</td><td>Conditions on measures, or on several columns at once</td></tr><tr><td><code>ALL ( table or column )</code></td><td>Removes filters (and as a table function, returns all rows)</td><td>Denominator of &quot;% of total&quot;</td></tr><tr><td><code>REMOVEFILTERS ( … )</code></td><td>Removes filters; only valid as a <code>CALCULATE</code> modifier</td><td>Same as <code>ALL</code> but says what it means</td></tr><tr><td><code>ALLSELECTED ( … )</code></td><td>Removes filters from inside the visual, keeps slicers and page filters</td><td>&quot;% of what's selected&quot;</td></tr><tr><td><code>KEEPFILTERS ( … )</code></td><td>Intersects with the existing filter instead of replacing it</td><td>Measures that must respect a slicer on the same column</td></tr><tr><td><code>VALUES ( column )</code></td><td>Distinct visible values, plus the blank row if relationships are broken</td><td>Iterating visible members</td></tr><tr><td><code>SELECTEDVALUE ( column, alt )</code></td><td>The single visible value, or <code>alt</code></td><td>Titles, what-if parameters</td></tr></tbody></table></div>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>% of All Regions = DIVIDE ( [Net Sales], CALCULATE ( [Net Sales], REMOVEFILTERS ( DimRegion ) ) )
+% of Selection   = DIVIDE ( [Net Sales], CALCULATE ( [Net Sales], ALLSELECTED ( DimRegion ) ) )
+Bike Sales (respects slicer) = CALCULATE ( [Net Sales], KEEPFILTERS ( DimProduct[Category] = &quot;Bikes&quot; ) )</code></pre></div>
+<div class="callout warning" role="note"><p><b>Warning:</b> <code>FILTER ( FactSales, … )</code> as a <code>CALCULATE</code> argument iterates the whole fact table and keeps every column's filter. Filter columns, not tables: <code>CALCULATE ( [Net Sales], FactSales[Quantity] &gt; 5 )</code> or <code>FILTER ( ALL ( FactSales[Quantity] ), … )</code>.</p>
+</div>
+<h2 id="relationships">Relationships</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Function</th><th scope="col">Use it when</th></tr></thead><tbody><tr><td><code>RELATED ( DimProduct[Category] )</code></td><td>In a row context on the many side, fetch a value from the one side</td></tr><tr><td><code>RELATEDTABLE ( FactSales )</code></td><td>On the one side, get the related many-side rows</td></tr><tr><td><code>USERELATIONSHIP ( FactSales[ShipDate], DimDate[Date] )</code></td><td>Activate an inactive relationship for one calculation</td></tr><tr><td><code>CROSSFILTER ( a, b, Both )</code></td><td>Change filter direction for one calculation instead of the whole model</td></tr><tr><td><code>TREATAS ( VALUES ( … ), … )</code></td><td>Apply a filter through a &quot;virtual relationship&quot; where none exists</td></tr></tbody></table></div>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>Sales by Ship Date = CALCULATE ( [Net Sales], USERELATIONSHIP ( FactSales[ShipDate], DimDate[Date] ) )
+
+-- budget is by month and category, not by day and product: filter it through the shared columns
+Budget = SUM ( FactBudget[BudgetAmount] )
+Budget (via product category) =
+CALCULATE ( [Budget], TREATAS ( VALUES ( DimProduct[Category] ), FactBudget[Category] ) )</code></pre></div>
+<h2 id="time-intelligence">Time intelligence</h2>
+<p>Time-intelligence functions need a proper date table: one row per day, no gaps, covering every year in the facts, marked as a date table. The course's <code>DimDate</code> is deliberately too short; replacing it is your first <a href="../intermediate.html#i-model">intermediate modeling</a> job.</p>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>Sales YTD      = TOTALYTD ( [Net Sales], DimDate[Date] )
+Sales PY       = CALCULATE ( [Net Sales], SAMEPERIODLASTYEAR ( DimDate[Date] ) )
+Sales vs PY %  = DIVIDE ( [Net Sales] - [Sales PY], [Sales PY] )
+Sales Last 3M  = CALCULATE ( [Net Sales], DATESINPERIOD ( DimDate[Date], MAX ( DimDate[Date] ), -3, MONTH ) )
+Sales FYTD     = TOTALYTD ( [Net Sales], DimDate[Date], &quot;06-30&quot; )   -- fiscal year ending 30 June
+Sales Prev Mth = CALCULATE ( [Net Sales], DATEADD ( DimDate[Date], -1, MONTH ) )</code></pre></div>
+<p>Fiscal calendars that aren't &quot;a year ending on a date&quot; (4-4-5, 52/53-week retail years) need columns in the date table and filter logic on them; the classic time-intelligence functions assume a Gregorian calendar. See the week-based patterns on <a href="https://www.daxpatterns.com/" rel="noopener" target="_blank" class="ext">DAX Patterns</a>.</p>
+<h2 id="business-patterns">Business patterns</h2>
+<h3 id="running-total">Running total</h3>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>Running Sales =
+CALCULATE ( [Net Sales], DimDate[Date] &lt;= MAX ( DimDate[Date] ), REMOVEFILTERS ( DimDate ) )</code></pre></div>
+<p>On a visual, <a href="../modern.html#mod-viscalc">visual calculations</a> do the same with <code>RUNNINGSUM([Net Sales])</code> and no model change.</p>
+<h3 id="ranking">Ranking</h3>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>Product Rank = RANKX ( ALLSELECTED ( DimProduct[ProductName] ), [Net Sales], , DESC, DENSE )</code></pre></div>
+<p><code>RANKX</code> over <code>ALL</code> ranks against every product; over <code>ALLSELECTED</code> it ranks within the slicer selection. Ties: <code>DENSE</code> gives 1, 2, 2, 3; <code>SKIP</code> gives 1, 2, 2, 4.</p>
+<h3 id="abc-classification">ABC classification</h3>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>ABC Class =
+VAR ThisSales = [Net Sales]
+VAR Total     = CALCULATE ( [Net Sales], ALLSELECTED ( DimProduct ) )
+VAR Cumulative =
+    SUMX ( FILTER ( ALLSELECTED ( DimProduct[ProductName] ), [Net Sales] &gt;= ThisSales ), [Net Sales] )
+VAR Share = DIVIDE ( Cumulative, Total )
+RETURN SWITCH ( TRUE (), Share &lt;= 0.7, &quot;A&quot;, Share &lt;= 0.9, &quot;B&quot;, &quot;C&quot; )</code></pre></div>
+<h3 id="new-vs-returning-customers">New vs returning customers</h3>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>New Customers =
+VAR FirstDates =
+    ADDCOLUMNS ( VALUES ( FactSales[CustomerKey] ),
+        &quot;@First&quot;, CALCULATE ( MIN ( FactSales[OrderDate] ), REMOVEFILTERS ( DimDate ) ) )
+RETURN COUNTROWS ( FILTER ( FirstDates, [@First] &gt;= MIN ( DimDate[Date] ) &amp;&amp; [@First] &lt;= MAX ( DimDate[Date] ) ) )
+
+Returning Customers = DISTINCTCOUNT ( FactSales[CustomerKey] ) - [New Customers]</code></pre></div>
+<h3 id="budget-vs-actual-at-different-grains">Budget vs actual at different grains</h3>
+<p>Budget is by month × region × category; sales are by day × product. Relate the budget to dimensions at its grain (a month column, <code>DimRegion</code>, a category) and report at that grain or above. Below it, show blank rather than an invented split:</p>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>Budget (safe) = IF ( ISINSCOPE ( DimProduct[ProductName] ) || ISINSCOPE ( DimDate[Date] ), BLANK (), [Budget] )</code></pre></div>
+<h3 id="currency-conversion">Currency conversion</h3>
+<p>Rates in <code>ExchangeRates</code> exist only on Mondays, so each sale needs the last known rate on or before its date:</p>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>Sales USD =
+SUMX ( FactSales,
+    VAR d   = FactSales[OrderDate]
+    VAR cur = &quot;EUR&quot;   -- replace with the row's currency column in a multi-currency model
+    VAR RateDate = CALCULATE ( MAX ( ExchangeRates[RateDate] ), ExchangeRates[Currency] = cur, ExchangeRates[RateDate] &lt;= d, REMOVEFILTERS ( ExchangeRates ) )
+    VAR Rate = CALCULATE ( MAX ( ExchangeRates[RateToUSD] ), ExchangeRates[Currency] = cur, ExchangeRates[RateDate] = RateDate, REMOVEFILTERS ( ExchangeRates ) )
+    RETURN FactSales[Quantity] * FactSales[UnitPrice] * Rate )</code></pre></div>
+<p>At scale, do this lookup upstream (SQL or Power Query) and store the converted amount: per-row lookups in a measure are slow.</p>
+<h3 id="semi-additive-measures-inventory-and-balances">Semi-additive measures: inventory and balances</h3>
+<p><code>FactInventory</code> is a weekly snapshot. Summing <code>QuantityOnHand</code> across weeks is wrong; you want the balance at the last date in the period:</p>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>Stock on Hand =
+CALCULATE ( SUM ( FactInventory[QuantityOnHand] ), LASTNONBLANK ( DimDate[Date], CALCULATE ( COUNTROWS ( FactInventory ) ) ) )</code></pre></div>
+<p><code>LASTNONBLANK</code> finds the last date that actually has a snapshot, which matters when the period ends between snapshots.</p>
+<h3 id="cohorts">Cohorts</h3>
+<p>Assign each customer a cohort (the month of their first order) as a <b>calculated column</b> on <code>DimCustomer</code> or upstream, then count active customers per cohort with a measure. Cohort membership is a property of the customer, so it belongs in the dimension, not recomputed per cell.</p>
+<h2 id="senior-patterns">Senior patterns</h2>
+<h3 id="calculation-groups">Calculation groups</h3>
+<p>One calculation item (YTD, PY, YoY %) applies to every measure, instead of writing <code>Sales YTD</code>, <code>Margin YTD</code>, <code>Units YTD</code>…</p>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>-- calculation item &quot;YTD&quot; in a calculation group &quot;Time Calc&quot;
+CALCULATE ( SELECTEDMEASURE (), DATESYTD ( DimDate[Date] ) )</code></pre></div>
+<p>Create them in Desktop's model view or in Tabular Editor. Set a format string expression for items like &quot;YoY %&quot; that change the format.</p>
+<h3 id="window-functions">Window functions</h3>
+<p><code>OFFSET</code>, <code>INDEX</code> and <code>WINDOW</code> work over a sorted, partitioned table, so &quot;previous month&quot; or &quot;rank within category&quot; no longer need date tricks:</p>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>Sales Prev Month (window) =
+CALCULATE ( [Net Sales], OFFSET ( -1, ALLSELECTED ( DimDate[Year], DimDate[MonthNumber] ), ORDERBY ( DimDate[Year], ASC, DimDate[MonthNumber], ASC ) ) )</code></pre></div>
+<h3 id="dynamic-segmentation-with-a-disconnected-table">Dynamic segmentation with a disconnected table</h3>
+<p>A table of bands (<code>Segment</code>, <code>Min</code>, <code>Max</code>) with <b>no</b> relationship, used to group customers by a measure:</p>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>Customers in Band =
+COUNTROWS ( FILTER ( VALUES ( DimCustomer[CustomerKey] ),
+    VAR s = [Net Sales]
+    RETURN s &gt;= MIN ( Bands[Min] ) &amp;&amp; s &lt; MAX ( Bands[Max] ) ) )</code></pre></div>
+<h3 id="field-parameters-and-custom-totals">Field parameters and custom totals</h3>
+<p><b>Field parameters</b> let users swap the measure or column on a visual with a slicer. <b>Custom totals</b> (when the total must not be the sum of the rows, such as an average of monthly balances) use <code>ISINSCOPE</code> to return different logic at the total:</p>
+<div class="codewrap"><span class="lang">dax</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>Avg Monthly Stock =
+IF ( ISINSCOPE ( DimDate[MonthName] ), [Stock on Hand], AVERAGEX ( VALUES ( DimDate[MonthName] ), [Stock on Hand] ) )</code></pre></div>
+<h2 id="formatting-and-naming">Formatting and naming</h2>
+<p>Format code so a reviewer can read it: one function per line for anything non-trivial, variables named for what they hold, and measure names a business user would recognise. Use <a href="https://www.daxformatter.com/" rel="noopener" target="_blank" class="ext">DAX Formatter</a> or the formatter built into Tabular Editor, and agree names in the <a href="../toolkit/best-practices.html#measure-naming">best-practice library</a>.</p>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../beginner.html#b-dax">DAX fundamentals</a> <span class="small muted">Beginner</span></li><li><a href="../intermediate.html#i-dax">DAX</a> <span class="small muted">Intermediate</span></li><li><a href="../advanced.html#a-dax">Advanced DAX</a> <span class="small muted">Advanced</span></li><li><a href="../modern.html#mod-viscalc">Visual calculations</a> <span class="small muted">Modern Power BI features</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s02-finance-disputes-revenue.html">BI-1057: Finance disputes the dashboard</a></li><li><a href="../experience/s05-one-revenue-semantic-model.html">BI-1103: Three models, three Revenues</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-kpi-dictionary">KPI dictionary</a></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://learn.microsoft.com/en-us/dax/" rel="noopener" target="_blank" class="ext">DAX reference</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/dax/dax-function-reference" rel="noopener" target="_blank" class="ext">DAX function reference</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/dax/best-practices/dax-variables" rel="noopener" target="_blank" class="ext">Use variables to improve your DAX formulas</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/transform-model/calculation-groups" rel="noopener" target="_blank" class="ext">Calculation groups</a> <span class="tier official">Official</span></li><li><a href="https://www.daxpatterns.com/" rel="noopener" target="_blank" class="ext">DAX Patterns</a> <span class="tier specialist">Specialist</span> <span class="small muted">Reusable business patterns by SQLBI; the patterns are free to read online.</span></li><li><a href="https://dax.guide/" rel="noopener" target="_blank" class="ext">SQLBI DAX guide</a> <span class="tier specialist">Specialist</span> <span class="small muted">Function-by-function reference with examples and compatibility notes.</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20DAX%20field%20manual">Open an issue</a> or edit <code>content/toolkit/guides/dax-field-manual.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

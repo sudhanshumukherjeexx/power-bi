@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Patterns &amp; Playbooks · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="What's the professional way to solve this? Troubleshooting trees, the performance clinic, a production runbook, modeling patterns, decisions, security, governance and checklists.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/patterns.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="Patterns &amp; Playbooks · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="What's the professional way to solve this? Troubleshooting trees, the performance clinic, a production runbook, modeling patterns, decisions, security, governance and checklists.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/patterns.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-door="patterns">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><span aria-current="page">Patterns &amp; Playbooks</span></nav>
+<header class="intro tkhead"><div class="kicker">🧩 BI Developer Toolkit</div><h1>Patterns &amp; Playbooks</h1><p class="lead">“What's the professional way to solve this?” Troubleshooting trees, the performance clinic, a production runbook, modeling patterns, decisions, security, governance and checklists.</p></header>
+<h2 class="tkgroup">Troubleshooting</h2><div class="cards"><a class="mcard tkcard" href="../toolkit/whats-broken.html"><span class="tkk">Troubleshooting</span><h3>What's broken?</h3><p>Twelve decision trees for the problems BI developers search for most: wrong numbers and totals, failed refresh, slow reports, relationships, RLS, gateways, DirectQuery, deployments, Fabric connections, folding and memory.</p><span class="small muted">Data Analyst · BI Developer · Senior BI Developer · BI Engineer</span></a><a class="mcard tkcard" href="../toolkit/dax-debugging.html"><span class="tkk">Troubleshooting</span><h3>My DAX is wrong. What do I do?</h3><p>A decision tree for wrong numbers: wrong everywhere, wrong only at the total, wrong after a slicer, wrong last year, a relationship that doesn't filter, or right but slow.</p><span class="small muted">Data Analyst · BI Developer · Senior BI Developer</span></a><a class="mcard tkcard" href="../toolkit/performance-clinic.html"><span class="tkk">Troubleshooting</span><h3>Power BI Performance Clinic</h3><p>Find what is slow first (rendering, DAX, model, Power Query, source SQL, gateway or capacity), then the fixes for each layer, with the tools that prove it.</p><span class="small muted">BI Developer · Senior BI Developer · BI Engineer</span></a></div><h2 class="tkgroup">Operations</h2><div class="cards"><a class="mcard tkcard" href="../toolkit/production-runbook.html"><span class="tkk">Runbook</span><h3>Power BI production runbook</h3><p>What to do, in order, when production breaks: refresh failures, offline gateways, expired credentials, slow models, stale apps, access problems, wrong RLS, changed sources, overloaded capacity and rollbacks.</p><span class="small muted">BI Developer · Senior BI Developer · BI Engineer · BI Architect / Lead</span></a></div><h2 class="tkgroup">Design</h2><div class="cards"><a class="mcard tkcard" href="../toolkit/modeling-patterns.html"><span class="tkk">Patterns</span><h3>Semantic modeling pattern library</h3><p>Fact and dimension patterns with when to use each: transaction, snapshot, accumulating and factless facts, mixed grains, conformed, role-playing, SCD 1 and 2, junk, degenerate, parent-child and bridge dimensions, plus bad vs good model diagrams.</p><span class="small muted">BI Developer · Senior BI Developer · BI Engineer · BI Architect / Lead</span></a><a class="mcard tkcard" href="../toolkit/decision-library.html"><span class="tkk">Decisions</span><h3>Architecture decision library</h3><p>Quick, honest comparisons for the questions developers keep searching: Import vs DirectQuery vs Direct Lake, measure vs column, Power Query vs SQL, Lakehouse vs Warehouse, one model vs many, RLS vs separate models, PBIX vs PBIP and more.</p><span class="small muted">BI Developer · Senior BI Developer · BI Engineer · BI Architect / Lead</span></a><a class="mcard tkcard" href="../toolkit/report-design.html"><span class="tkk">Patterns</span><h3>Report design library</h3><p>How to design executive, operational, analytical, detail, mobile, KPI scorecard, finance and sales reports, and the principles behind them: hierarchy, spacing, alignment, contrast, density, chart choice, accessibility, colour, titles, navigation and tooltips.</p><span class="small muted">Data Analyst · BI Developer · Senior BI Developer</span></a></div><h2 class="tkgroup">Standards</h2><div class="cards"><a class="mcard tkcard" href="../toolkit/best-practices.html"><span class="tkk">Patterns</span><h3>Best-practice library</h3><p>Opinionated, checkable standards for measure and table naming, display folders, descriptions, hidden keys, explicit measures, relationships, date tables, documentation, DAX formatting, workspaces and Git, and how to automate them with Best Practice Analyzer.</p><span class="small muted">BI Developer · Senior BI Developer · BI Engineer</span></a></div><h2 class="tkgroup">Security and governance</h2><div class="cards"><a class="mcard tkcard" href="../toolkit/security-field-guide.html"><span class="tkk">Guide</span><h3>BI security field guide</h3><p>Workspace roles, Build and app permissions, sharing, static and dynamic RLS, OLS, sensitivity labels, tenant settings, export controls, service principals, guest users and least privilege, with an RLS testing checklist and a 'why can this user see this row?' guide.</p><span class="small muted">BI Developer · Senior BI Developer · BI Engineer · BI Architect / Lead</span></a><a class="mcard tkcard" href="../toolkit/governance-lead.html"><span class="tkk">Guide</span><h3>Governance and the BI lead</h3><p>Workspace strategy, naming, ownership, certification, stewardship, content lifecycle, retirement, self-service vs managed vs enterprise BI, the Center of Excellence and governance maturity, built on Microsoft's Fabric adoption roadmap.</p><span class="small muted">Senior BI Developer · BI Architect / Lead</span></a></div><h2 class="tkgroup">Checklists</h2><div class="cards"><a class="mcard tkcard" href="../toolkit/checklists.html"><span class="tkk">Checklists</span><h3>Checklists for real work</h3><p>Twelve printable checklists you keep using at work: before publishing, before deploying, before creating a measure, model, performance and RLS reviews, gateway, refresh, Fabric architecture, code review, production readiness and incident response.</p><span class="small muted">Data Analyst · BI Developer · Senior BI Developer · BI Engineer · BI Architect / Lead</span></a></div>
+<h2 class="tkgroup">Elsewhere on the site</h2><p><a class="btn sm" href="../experience.html">Practise them in Experience Mode</a></p>
+<p><a href="../toolkit.html">← All of the Toolkit</a></p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

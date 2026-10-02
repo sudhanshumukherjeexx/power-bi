@@ -62,8 +62,11 @@ function whyHtml(T){
   return `<details class="why"><summary>Why this matters</summary><dl>${w.matters?`<dt>Why it matters</dt><dd>${esc(w.matters)}</dd>`:''}${w.failure?`<dt>Typical production failure</dt><dd>${esc(w.failure)}</dd>`:''}${w.use?`<dt>When to use it</dt><dd>${esc(w.use)}</dd>`:''}${w.avoid?`<dt>When not to</dt><dd>${esc(w.avoid)}</dd>`:''}</dl></details>`;
 }
 function refsHtml(T){
-  if(!T.refs||!T.refs.length)return '';
-  return `<details class="refs"><summary>Official documentation (optional deep dives)</summary><ul>${T.refs.map(r=>`<li><a href="${esc(r.url)}" rel="noopener" target="_blank">${esc(r.title)}</a></li>`).join('')}</ul></details>`;
+  /* the topic's own references, plus entries from the external catalog (Resources) linked to this topic */
+  const own=T.refs||[],seen=new Set(own.map(r=>r.url));
+  const ext=typeof EXTERNAL!=='undefined'?EXTERNAL.items.filter(x=>x.l.some(l=>l[0]===T.id)&&!seen.has(x.u)):[];
+  if(!own.length&&!ext.length)return '';
+  return `<details class="refs"><summary>Learn more (optional deep dives)</summary><ul>${own.map(r=>`<li><a href="${esc(r.url)}" rel="noopener" target="_blank">${esc(r.title)}</a> <span class="tier official">Official</span></li>`).join('')}${ext.map(x=>`<li><a href="${esc(x.u)}" rel="noopener" target="_blank">${esc(x.t)}</a> <span class="tier ${esc(x.src)}">${esc(x.src==='third-party'?'Third party':x.src[0].toUpperCase()+x.src.slice(1))}</span>${x.cost==='paid'?' <span class="tier paid">Paid</span>':''} <span class="small muted">${esc(x.d)}</span></li>`).join('')}</ul><p class="small"><a href="${PBI.ROOT}resources.html#external">All external resources</a></p></details>`;
 }
 function verifiedHtml(T){
   if(!T.verified)return '';const v=T.verified;

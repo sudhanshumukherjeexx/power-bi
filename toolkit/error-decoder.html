@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Power BI error decoder · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="Common Power BI, Power Query, DAX, gateway, refresh, deployment, Fabric, REST API and capacity errors: what each means, the usual causes, how to diagnose and how to fix.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/error-decoder.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="Power BI error decoder · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="Common Power BI, Power Query, DAX, gateway, refresh, deployment, Fabric, REST API and capacity errors: what each means, the usual causes, how to diagnose and how to fix.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/error-decoder.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="error-decoder">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/reference.html">Reference</a><span aria-hidden="true">/</span><span aria-current="page">Power BI error decoder</span></nav>
+<header class="intro tkhead">
+<div class="kicker">📖 Reference · Error decoder</div>
+<h1>Power BI error decoder</h1>
+<p class="lead">Common Power BI, Power Query, DAX, gateway, refresh, deployment, Fabric, REST API and capacity errors: what each means, the usual causes, how to diagnose and how to fix.</p>
+<div class="tkmeta"><span class="chip">Data Analyst</span><span class="chip">BI Developer</span><span class="chip">Senior BI Developer</span><span class="chip">BI Engineer</span><span class="chip tool">Power BI Desktop</span><span class="chip tool">Power BI Service</span><span class="chip tool">On-premises data gateway</span><span class="chip tool">Power BI REST API</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><a class="btn sm" href="../toolkit/error-decoder.md" download>Download .md</a><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(8)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#how-to-use-the-decoder">How to use the decoder</a><a href="#power-query">Power Query</a><a href="#dax-and-modeling">DAX and modeling</a><a href="#refresh">Refresh</a><a href="#gateway-and-credentials">Gateway and credentials</a><a href="#security-and-access">Security and access</a><a href="#deployment">Deployment</a><a href="#fabric-and-rest-api">Fabric and REST API</a></nav></details>
+<article class="tkbody">
+<h2 id="how-to-use-the-decoder">How to use the decoder</h2>
+<p>Error text varies a little between Desktop, the Service and versions, so each entry gives the <b>key phrase</b> to search for rather than a claim about the exact wording. Every entry follows the same shape: what it means, common causes, how to diagnose, how to fix, and where to practise.</p>
+<div class="callout tip" role="note"><p><b>Tip:</b> Copy the full error, including the activity ID and request ID from the Service's error details. Support and your platform team need them; screenshots of half a message don't help anyone.</p>
+</div>
+<h2 id="power-query">Power Query</h2>
+<h3 id="the-column-x-of-the-table-wasn-t-found">&quot;The column 'X' of the table wasn't found&quot;</h3>
+<ul><li><b>Means:</b> a step refers to a column the previous step no longer has.</li><li><b>Common causes:</b> the source renamed or dropped a column; a header row changed; promoted headers picked up a different row.</li><li><b>Diagnose:</b> click through the Applied Steps until the error appears; compare <code>Table.ColumnNames</code> of the source with what the step expects.</li><li><b>Fix:</b> select and rename columns with <code>MissingField.UseNull</code> or <code>MissingField.Ignore</code>; agree the schema with the source owner. See <a href="../toolkit/power-query-field-guide.html#schema-drift">schema drift</a>.</li><li><b>Practise:</b> <a href="../experience/s08-cfo-refresh-outage.html">Sprint 08 refresh outage</a>.</li></ul>
+<h3 id="dataformat-error-we-couldn-t-convert-to-number-or-date">&quot;DataFormat.Error: We couldn't convert to Number&quot; (or Date)</h3>
+<ul><li><b>Means:</b> a type change hit a value that isn't a number or date in the expected format.</li><li><b>Common causes:</b> currency symbols, thousands separators, &quot;N/A&quot;, dates in another locale, a total row at the bottom of an export.</li><li><b>Diagnose:</b> View → Column quality and Column distribution; <code>Table.SelectRowsWithErrors</code>.</li><li><b>Fix:</b> clean before typing (remove symbols, replace &quot;N/A&quot; with null), set the culture on the type change, remove junk rows on purpose. See <a href="../toolkit/power-query-field-guide.html#errors">errors</a>.</li><li><b>Practise:</b> <a href="../beginner.html#b-pq">Beginner Power Query</a> with <code>RawOrdersExport</code>.</li></ul>
+<h3 id="expression-error-the-key-didn-t-match-any-rows-in-the-table">&quot;Expression.Error: The key didn't match any rows in the table&quot;</h3>
+<ul><li><b>Means:</b> a navigation step (<code>Source{[Name=&quot;Sheet1&quot;]}[Data]</code>, a database table by name) found nothing.</li><li><b>Common causes:</b> a renamed sheet, table or database object; a different file with a different structure.</li><li><b>Fix:</b> navigate by a stable property, add a check that fails with a clear message, or agree naming with the file's owner.</li></ul>
+<h3 id="formula-firewall-query-references-other-queries-or-steps-so-it-may-not-directly-access-a-data-source">&quot;Formula.Firewall: Query … references other queries or steps, so it may not directly access a data source&quot;</h3>
+<ul><li><b>Means:</b> the privacy firewall stopped data from one source being combined with another in a way that could leak it.</li><li><b>Common causes:</b> using a value from one source (a parameter table in Excel) to build a query against another (a SQL server); privacy levels not set.</li><li><b>Fix:</b> set privacy levels for each source; restructure so each query reads one source and a separate query combines them. See <a href="../toolkit/power-query-field-guide.html#combining-sources-safely">combining sources safely</a>.</li></ul>
+<h3 id="this-dataset-includes-a-dynamic-data-source-the-service-won-t-refresh">&quot;This dataset includes a dynamic data source&quot; (the Service won't refresh)</h3>
+<ul><li><b>Means:</b> the Service can't determine the data source before running the query, so it can't check credentials and won't schedule refresh.</li><li><b>Common causes:</b> a URL or connection string built by concatenating values from data.</li><li><b>Fix:</b> keep the base URL static in <code>Web.Contents</code> and pass the variable parts through <code>RelativePath</code> and <code>Query</code>. See <a href="../toolkit/power-query-field-guide.html#apis-and-web-contents">APIs and Web.Contents</a>.</li></ul>
+<h3 id="datasource-error-web-contents-failed-to-get-contents-from-4xx-5xx">&quot;DataSource.Error: Web.Contents failed to get contents from … (4xx/5xx)&quot;</h3>
+<ul><li><b>Means:</b> the HTTP call failed. The status code says why: 401/403 credentials or permissions, 404 wrong path, 429 rate limited, 5xx the API is unhealthy.</li><li><b>Fix:</b> check the credential type on the data source, the path, and the API's paging and rate limits; add a retry policy upstream if the API is flaky. See <a href="../toolkit/power-query-field-guide.html#pagination">pagination</a>.</li></ul>
+<h2 id="dax-and-modeling">DAX and modeling</h2>
+<h3 id="a-table-of-multiple-values-was-supplied-where-a-single-value-was-expected">&quot;A table of multiple values was supplied where a single value was expected&quot;</h3>
+<ul><li><b>Means:</b> an expression that needs one value got a column with several (for example <code>VALUES</code> or a column reference in a measure).</li><li><b>Fix:</b> use <code>SELECTEDVALUE ( column, fallback )</code>, an aggregation (<code>MAX</code>, <code>SUM</code>), or iterate with <code>SUMX</code>/<code>MAXX</code>. Decide what the result should be when several values are visible.</li></ul>
+<h3 id="a-circular-dependency-was-detected">&quot;A circular dependency was detected&quot;</h3>
+<ul><li><b>Means:</b> two objects depend on each other: a calculated column that refers to a measure that uses that column, or calculated columns on both sides of a relationship that reference each other.</li><li><b>Fix:</b> move the logic upstream, or rewrite so one of the two doesn't depend on the other (<code>ALLEXCEPT</code> and <code>RELATED</code> in calculated columns are frequent culprits).</li></ul>
+<h3 id="the-value-for-column-cannot-be-determined-no-current-row">&quot;The value for 'Column' cannot be determined… no current row&quot;</h3>
+<ul><li><b>Means:</b> a measure referenced a column directly, as if there were a current row. Measures have no row context.</li><li><b>Fix:</b> aggregate it (<code>SUM ( FactSales[Quantity] )</code>) or iterate (<code>SUMX ( FactSales, … )</code>). See <a href="../toolkit/dax-field-manual.html#measures-vs-calculated-columns">measures vs calculated columns</a>.</li></ul>
+<h3 id="you-can-t-create-a-relationship-between-these-two-columns-because-one-of-the-columns-must-have-unique-values">&quot;You can't create a relationship between these two columns because one of the columns must have unique values&quot;</h3>
+<ul><li><b>Means:</b> neither side is unique, so a one-to-many relationship isn't possible.</li><li><b>Common causes:</b> duplicate keys in the dimension, blank keys, or two facts at different grains being related directly.</li><li><b>Fix:</b> fix the dimension's duplicates; relate facts through a shared dimension; resist many-to-many as a way to make the error go away. See <a href="../toolkit/dax-debugging.html#relationship-not-filtering">relationship not filtering</a>.</li></ul>
+<h3 id="function-calculate-has-been-used-in-a-true-false-expression-that-is-used-as-a-table-filter-expression">&quot;Function 'CALCULATE' has been used in a True/False expression that is used as a table filter expression&quot;</h3>
+<ul><li><b>Means:</b> a boolean filter argument contains a measure or <code>CALCULATE</code>, which simple filter predicates don't allow.</li><li><b>Fix:</b> compute the value in a variable first, or use <code>FILTER ( ALL ( column ), condition )</code>.</li></ul>
+<h3 id="visual-has-exceeded-the-available-resources">&quot;Visual has exceeded the available resources&quot;</h3>
+<ul><li><b>Means:</b> the query for one visual used more memory or time than the capacity allows.</li><li><b>Common causes:</b> a table visual with high-cardinality columns and no filter; a measure that materialises huge intermediate tables; many-to-many or bi-directional filters exploding row counts.</li><li><b>Fix:</b> filter the visual, reduce columns, rewrite the measure (DAX Studio's Server Timings will show the materialisation). See <a href="../toolkit/performance-clinic.html#dax-performance">Performance Clinic</a>.</li></ul>
+<h3 id="the-resultset-of-a-query-to-external-data-source-has-exceeded-the-maximum-allowed-size-of-1000000-rows">&quot;The resultset of a query to external data source has exceeded the maximum allowed size of '1000000' rows&quot;</h3>
+<ul><li><b>Means:</b> a DirectQuery visual asked the source for more than a million rows of intermediate results.</li><li><b>Fix:</b> aggregate at the source, add filters, use aggregation tables, or switch the table to Import. See the <a href="../toolkit/performance-clinic.html#directquery">DirectQuery</a> section of the clinic.</li></ul>
+<h2 id="refresh">Refresh</h2>
+<h3 id="scheduled-refresh-has-been-disabled">&quot;Scheduled refresh has been disabled&quot;</h3>
+<ul><li><b>Means:</b> the Service turned off the schedule. It does this after repeated consecutive failures, and pauses schedules on models nobody has visited for a long time.</li><li><b>Fix:</b> fix the underlying failure first (refresh history has the error), then re-enable the schedule; set up failure notifications to a group, not one person.</li><li><b>Practise:</b> <a href="../experience/s08-cfo-refresh-outage.html">Sprint 08</a>.</li></ul>
+<h3 id="resource-governing-this-operation-was-canceled-because-there-wasn-t-enough-memory">&quot;Resource Governing: This operation was canceled because there wasn't enough memory&quot;</h3>
+<ul><li><b>Means:</b> the refresh needed more memory than the capacity allows. Refresh can need roughly double the model's size while the new copy is built.</li><li><b>Fix:</b> remove unused columns and high-cardinality text, use incremental refresh, refresh tables or partitions separately (XMLA), or move to a larger capacity. See <a href="../toolkit/performance-clinic.html#model-performance">model performance</a>.</li></ul>
+<h3 id="refresh-timed-out">Refresh timed out</h3>
+<ul><li><b>Means:</b> the refresh ran longer than the limit (shorter on shared capacity than on Premium or Fabric capacity).</li><li><b>Fix:</b> make queries fold, filter early, use incremental refresh, push heavy transformation upstream.</li></ul>
+<h2 id="gateway-and-credentials">Gateway and credentials</h2>
+<h3 id="the-credentials-provided-for-the-source-are-invalid">&quot;The credentials provided for the … source are invalid&quot;</h3>
+<ul><li><b>Means:</b> the stored credential no longer works: a password changed, an account was disabled, an OAuth token expired.</li><li><b>Fix:</b> update the credential on the semantic model's settings or the gateway connection; switch to a service account or service principal with a documented owner. See the <a href="../toolkit/production-runbook.html#credentials-expired">production runbook</a>.</li></ul>
+<h3 id="gateway-offline-or-unreachable">Gateway offline or unreachable</h3>
+<ul><li><b>Means:</b> the Service can't reach the on-premises data gateway.</li><li><b>Common causes:</b> the gateway machine is off, asleep or patched and not restarted; the service account's password changed; outbound network rules changed; the gateway version is too old.</li><li><b>Fix:</b> check the gateway's status in <b>Manage connections and gateways</b>, restart the gateway service, check outbound connectivity, keep gateways in a cluster of at least two members. See <a href="../toolkit/production-runbook.html#gateway-offline">gateway offline</a>.</li></ul>
+<h3 id="a-network-related-or-instance-specific-error-occurred-while-establishing-a-connection-to-sql-server">&quot;A network-related or instance-specific error occurred while establishing a connection to SQL Server&quot;</h3>
+<ul><li><b>Means:</b> the gateway (or Desktop) can't reach the database server.</li><li><b>Fix:</b> test from the gateway machine itself (not your laptop): server name, port, firewall, DNS, and whether the gateway service account can authenticate.</li></ul>
+<h2 id="security-and-access">Security and access</h2>
+<h3 id="a-user-gets-you-don-t-have-access-or-sees-an-empty-report">A user gets &quot;You don't have access&quot; or sees an empty report</h3>
+<ul><li><b>Means:</b> missing permission on the workspace, app, report or underlying semantic model (Build permission for a report in another workspace), or RLS returns no rows for them.</li><li><b>Diagnose:</b> check access in this order: app audience → workspace role → item sharing → semantic model permissions → RLS role membership. <b>Test as role</b> shows what RLS lets them see.</li><li><b>Fix:</b> see the <a href="../toolkit/security-field-guide.html#why-can-this-user-see-this-row">security field guide</a>.</li></ul>
+<h3 id="rls-seems-to-do-nothing">RLS seems to do nothing</h3>
+<ul><li><b>Means:</b> usually not an error at all: RLS doesn't restrict workspace Admins, Members or Contributors, only users with Viewer access (or app and share access).</li><li><b>Fix:</b> test with a Viewer account or <b>View as</b>; never judge RLS from a developer's account. See <a href="../toolkit/security-field-guide.html#rls-testing-checklist">RLS testing checklist</a>.</li></ul>
+<h2 id="deployment">Deployment</h2>
+<h3 id="report-in-production-shows-test-data-or-the-wrong-numbers-after-deployment">Report in Production shows Test data, or the wrong numbers after deployment</h3>
+<ul><li><b>Means:</b> parameters or data source rules weren't applied to the target stage, or a report still points at the Test semantic model.</li><li><b>Fix:</b> set deployment rules (parameter and data source rules) for each stage, and add a post-deployment check that queries one known number. <a href="../experience/s07-test-prod-deployment-failure.html">Sprint 07</a> is this incident.</li></ul>
+<h3 id="pbip-or-git-merge-conflicts-in-tmdl-or-report-json">PBIP or Git merge conflicts in TMDL or report JSON</h3>
+<ul><li><b>Means:</b> two people changed the same object.</li><li><b>Fix:</b> resolve in the text files (TMDL is designed for it), reopen in Desktop to validate, and agree smaller, more frequent merges. <a href="../experience/s06-pbip-merge-conflict.html">Sprint 06</a> walks through one.</li></ul>
+<h2 id="fabric-and-rest-api">Fabric and REST API</h2>
+<h3 id="401-unauthorized-403-forbidden-from-the-power-bi-or-fabric-rest-api">401 Unauthorized / 403 Forbidden from the Power BI or Fabric REST API</h3>
+<ul><li><b>Means:</b> the token is invalid or for the wrong resource (401), or the identity isn't allowed (403).</li><li><b>Common causes:</b> wrong scope (<code>https://analysis.windows.net/powerbi/api/.default</code> for Power BI APIs); the tenant setting that lets service principals call the APIs is off or doesn't include the principal's security group; the service principal isn't a member of the workspace.</li><li><b>Fix:</b> check the tenant settings under the admin portal's developer settings and the workspace access list. See <a href="../toolkit/automate-power-bi.html#authentication">automate Power BI</a>.</li></ul>
+<h3 id="429-too-many-requests">429 Too Many Requests</h3>
+<ul><li><b>Means:</b> you hit an API rate limit.</li><li><b>Fix:</b> honour the <code>Retry-After</code> header, back off exponentially, batch requests, and use the admin scanner APIs for tenant-wide inventory instead of calling per item.</li></ul>
+<h3 id="capacity-throttling-interactive-requests-delayed-or-rejected">Capacity throttling: interactive requests delayed or rejected</h3>
+<ul><li><b>Means:</b> the capacity used more compute than it has over the smoothing window, so Fabric delays and then rejects work.</li><li><b>Diagnose:</b> the <a href="https://learn.microsoft.com/en-us/fabric/enterprise/metrics-app" rel="noopener" target="_blank" class="ext">Fabric Capacity Metrics app</a>: find the items and operations using the most CU, and when.</li><li><b>Fix:</b> see <a href="../toolkit/production-runbook.html#capacity-overloaded">capacity overloaded</a>.</li></ul>
+<h3 id="direct-lake-model-errors-instead-of-falling-back">Direct Lake model errors instead of falling back</h3>
+<ul><li><b>Means:</b> a Direct Lake on OneLake model can't answer a query in Direct Lake (for example a guardrail is exceeded) and, by design, doesn't fall back to DirectQuery.</li><li><b>Fix:</b> check the table sizes against the capacity's guardrails, reduce row groups and columns, or reconsider the mode. See <a href="../toolkit/fabric-architecture.html#semantic-layer">Fabric architecture</a>.</li></ul>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../beginner.html#b-pq">Getting data and cleaning it in Power Query</a> <span class="small muted">Beginner</span></li><li><a href="../intermediate.html#i-pq">Advanced Power Query and M</a> <span class="small muted">Intermediate</span></li><li><a href="../intermediate.html#i-service">Service</a> <span class="small muted">Intermediate</span></li><li><a href="../advanced.html#a-perf">Performance</a> <span class="small muted">Advanced</span></li><li><a href="../automation.html#api-rest">REST APIs, service principals and a tenant inventory</a> <span class="small muted">Automation and APIs</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s08-cfo-refresh-outage.html">INC-2071: The board pack refresh failed at 06:17</a></li><li><a href="../experience/s07-test-prod-deployment-failure.html">INC-2058: Test is right, Production is wrong</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-runbook">Runbook</a></li><li><a href="../templates.html#tpl-incident-report">Incident report</a></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-troubleshooting-refresh-scenarios" rel="noopener" target="_blank" class="ext">Troubleshoot refresh scenarios</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/data-integration/gateway/service-gateway-tshoot" rel="noopener" target="_blank" class="ext">Troubleshoot the on-premises data gateway</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-query/data-privacy-firewall" rel="noopener" target="_blank" class="ext">Data privacy firewall</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-data" rel="noopener" target="_blank" class="ext">Data refresh in Power BI</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/rest/api/power-bi/" rel="noopener" target="_blank" class="ext">Power BI REST API: troubleshooting and limits</a> <span class="tier official">Official</span></li><li><a href="https://community.fabric.microsoft.com/" rel="noopener" target="_blank" class="ext">Fabric community forums</a> <span class="tier community">Community</span> <span class="small muted">Search the exact message; most errors have been met before.</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20Power%20BI%20error%20decoder">Open an issue</a> or edit <code>content/toolkit/guides/error-decoder.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

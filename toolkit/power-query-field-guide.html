@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Power Query field guide · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="The M you actually write at work, organised by job: tables, lists, joins, errors, functions, dates, folders, APIs, folding and performance, plus a troubleshooting matrix.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/power-query-field-guide.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="Power Query field guide · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="The M you actually write at work, organised by job: tables, lists, joins, errors, functions, dates, folders, APIs, folding and performance, plus a troubleshooting matrix.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/power-query-field-guide.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="power-query-field-guide">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/reference.html">Reference</a><span aria-hidden="true">/</span><span aria-current="page">Power Query field guide</span></nav>
+<header class="intro tkhead">
+<div class="kicker">📖 Reference · Reference</div>
+<h1>Power Query field guide</h1>
+<p class="lead">The M you actually write at work, organised by job: tables, lists, joins, errors, functions, dates, folders, APIs, folding and performance, plus a troubleshooting matrix.</p>
+<div class="tkmeta"><span class="chip">Data Analyst</span><span class="chip">BI Developer</span><span class="chip">Senior BI Developer</span><span class="chip tool">Power BI Desktop</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><a class="btn sm" href="../toolkit/power-query-field-guide.md" download>Download .md</a><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(17)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#troubleshooting-matrix">Troubleshooting matrix</a><a href="#the-shape-of-a-query">The shape of a query</a><a href="#table-operations">Table operations</a><a href="#list-operations">List operations</a><a href="#joins">Joins</a><a href="#append">Append</a><a href="#errors">Errors</a><a href="#functions-and-parameters">Functions and parameters</a><a href="#dates">Dates</a><a href="#folder-of-files">Folder of files</a><a href="#apis-and-web-contents">APIs and Web.Contents</a><a href="#pagination">Pagination</a><a href="#query-folding">Query folding</a><a href="#combining-sources-safely">Combining sources safely</a><a href="#schema-drift">Schema drift</a><a href="#performance">Performance</a><a href="#dataflows-when-the-work-belongs-upstream">Dataflows: when the work belongs upstream</a></nav></details>
+<article class="tkbody">
+<h2 id="troubleshooting-matrix">Troubleshooting matrix</h2>
+<p>Start here when something is wrong; the sections below explain each fix.</p>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Symptom</th><th scope="col">Likely cause</th><th scope="col">Start here</th></tr></thead><tbody><tr><td>Refresh suddenly got slow</td><td>A step stopped folding, so every row now comes to the mashup engine</td><td><a href="#query-folding">Query folding</a></td></tr><tr><td>&quot;The column 'X' of the table wasn't found&quot;</td><td>The source renamed or dropped a column (schema drift)</td><td><a href="#schema-drift">Schema drift</a></td></tr><tr><td>An API returns exactly 100 or 1,000 rows</td><td>You read one page of a paged API</td><td><a href="#pagination">Pagination</a></td></tr><tr><td>Combining a folder fails on some files</td><td>Files have different columns or headers</td><td><a href="#folder-of-files">Folder of files</a></td></tr><tr><td>&quot;This dataset includes a dynamic data source&quot; in the Service</td><td>The URL is built from data, so the Service can't validate it</td><td><a href="#apis-and-web-contents">APIs and Web.Contents</a></td></tr><tr><td>&quot;Formula.Firewall: Query … references other queries or steps&quot;</td><td>Privacy levels stop data from one source flowing into another</td><td><a href="#combining-sources-safely">Combining sources safely</a></td></tr><tr><td>Memory or refresh time explodes after a merge</td><td>The merged table is re-read for every row, or a big table is buffered</td><td><a href="#performance">Performance</a></td></tr><tr><td>Errors appear after changing a type</td><td>Some values don't convert; the error is per cell</td><td><a href="#errors">Errors</a></td></tr></tbody></table></div>
+<h2 id="the-shape-of-a-query">The shape of a query</h2>
+<p>Every query is a <code>let … in</code> expression. Each step is a name bound to a value; the result is whatever follows <code>in</code>.</p>
+<div class="codewrap"><span class="lang">m</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>let
+    Source   = Csv.Document(File.Contents(DataFolder &amp; &quot;FactSales.csv&quot;), [Delimiter = &quot;,&quot;, Encoding = 65001]),
+    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+    Typed    = Table.TransformColumnTypes(Promoted, {{&quot;OrderDate&quot;, type date}, {&quot;Qty&quot;, Int64.Type}, {&quot;UnitPrice&quot;, type number}}),
+    Filtered = Table.SelectRows(Typed, each [Qty] &lt;&gt; 0)
+in
+    Filtered</code></pre></div>
+<p>The values you meet most:</p>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Value</th><th scope="col">Literal</th><th scope="col">Read a part</th></tr></thead><tbody><tr><td>Record</td><td><code>[Name = &quot;Ada&quot;, Age = 36]</code></td><td><code>rec[Name]</code></td></tr><tr><td>List</td><td><code>{1, 2, 3}</code></td><td><code>list{0}</code> (zero-based)</td></tr><tr><td>Table</td><td><code>#table({&quot;A&quot;, &quot;B&quot;}, {{1, 2}})</code></td><td><code>tbl{0}</code> is the first row as a record; <code>tbl[A]</code> is a column as a list</td></tr><tr><td>Function</td><td><code>(x) =&gt; x * 2</code></td><td><code>each [Qty] * 2</code> is shorthand for <code>(_) =&gt; _[Qty] * 2</code></td></tr></tbody></table></div>
+<div class="callout note" role="note"><p><b>Note:</b> M is case-sensitive. <code>Table.selectrows</code> is an error; <code>Table.SelectRows</code> works.</p>
+</div>
+<h2 id="table-operations">Table operations</h2>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Job</th><th scope="col">Function</th></tr></thead><tbody><tr><td>Keep columns</td><td><code>Table.SelectColumns(t, {&quot;A&quot;, &quot;B&quot;}, MissingField.UseNull)</code></td></tr><tr><td>Remove columns</td><td><code>Table.RemoveColumns(t, {&quot;Junk&quot;}, MissingField.Ignore)</code></td></tr><tr><td>Rename</td><td><code>Table.RenameColumns(t, {{&quot;Old&quot;, &quot;New&quot;}}, MissingField.Ignore)</code></td></tr><tr><td>Change types</td><td><code>Table.TransformColumnTypes(t, {{&quot;Qty&quot;, Int64.Type}})</code></td></tr><tr><td>Transform a column in place</td><td><code>Table.TransformColumns(t, {{&quot;Name&quot;, Text.Trim, type text}})</code></td></tr><tr><td>Add a column</td><td><code>Table.AddColumn(t, &quot;Net&quot;, each [Qty] * [UnitPrice], type number)</code></td></tr><tr><td>Filter rows</td><td><code>Table.SelectRows(t, each [Region] = &quot;West&quot;)</code></td></tr><tr><td>Group</td><td><code>Table.Group(t, {&quot;Region&quot;}, {{&quot;Sales&quot;, each List.Sum([Net]), type number}})</code></td></tr><tr><td>Unpivot</td><td><code>Table.UnpivotOtherColumns(t, {&quot;Product&quot;}, &quot;Month&quot;, &quot;Value&quot;)</code></td></tr><tr><td>Remove duplicates</td><td><code>Table.Distinct(t, {&quot;OrderID&quot;, &quot;LineNo&quot;})</code></td></tr></tbody></table></div>
+<p>Always give <code>Table.AddColumn</code> a type as its fourth argument. Untyped columns load as text or &quot;any&quot; and quietly break sorting, relationships and DAX.</p>
+<h2 id="list-operations">List operations</h2>
+<div class="codewrap"><span class="lang">m</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>List.Sum({1, 2, 3})                                  // 6
+List.Transform({1, 2, 3}, each _ * 10)               // {10, 20, 30}
+List.Select({1, 2, 3, 4}, each Number.IsEven(_))     // {2, 4}
+List.Distinct(t[Region])                             // unique values of a column
+List.Dates(#date(2026, 1, 1), 365, #duration(1, 0, 0, 0))
+List.Generate(() =&gt; 1, each _ &lt;= 5, each _ + 1)      // {1, 2, 3, 4, 5}</code></pre></div>
+<p><code>List.Generate</code> is the loop of M: an initial state, a condition to continue, and a step. It is how you page through APIs (see <a href="#pagination">Pagination</a>).</p>
+<h2 id="joins">Joins</h2>
+<p>Merge = join. Pick the join kind for the question, not by habit:</p>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Join kind</th><th scope="col">Keeps</th><th scope="col">Use it for</th></tr></thead><tbody><tr><td>Left outer</td><td>every left row, matches from the right</td><td>Lookups (add a category to sales)</td></tr><tr><td>Inner</td><td>only rows that match</td><td>Restricting to known keys</td></tr><tr><td>Left anti</td><td>left rows with <b>no</b> match</td><td>Finding orphans: sales whose product isn't in DimProduct</td></tr><tr><td>Right anti</td><td>right rows with no match</td><td>Finding unused dimension members</td></tr><tr><td>Full outer</td><td>everything from both</td><td>Reconciling two systems</td></tr></tbody></table></div>
+<div class="codewrap"><span class="lang">m</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>Merged   = Table.NestedJoin(Sales, {&quot;ProductKey&quot;}, Products, {&quot;ProductKey&quot;}, &quot;P&quot;, JoinKind.LeftOuter),
+Expanded = Table.ExpandTableColumn(Merged, &quot;P&quot;, {&quot;Category&quot;}, {&quot;Category&quot;})</code></pre></div>
+<div class="callout warning" role="note"><p><b>Warning:</b> A merge on a key that isn't unique on the right side duplicates left rows. Before merging, check <code>Table.RowCount(Products) = List.Count(List.Distinct(Products[ProductKey]))</code>.</p>
+</div>
+<p>Anti joins are the cheapest data-quality test you have: one merge tells you how many facts have no dimension row. The testing track's <a href="../testing.html#qa-data">data quality tests</a> are built on this idea.</p>
+<h2 id="append">Append</h2>
+<p><code>Table.Combine({Jan, Feb, Mar})</code> stacks tables. Columns are matched <b>by name</b>, not position; a column missing from one table becomes null for its rows. Rename to a common schema before appending, and add a <code>SourceFile</code> or <code>Period</code> column so you can trace rows back.</p>
+<h2 id="errors">Errors</h2>
+<p>Errors in Power Query are per cell, so one bad value doesn't stop the column loading but does leave an error in that cell, and refresh can fail on them.</p>
+<div class="codewrap"><span class="lang">m</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>SafeQty = Table.AddColumn(t, &quot;QtyClean&quot;, each try Number.From([Qty]) otherwise null, type nullable number),
+
+// keep the reason, not just a null
+Checked = Table.AddColumn(t, &quot;QtyCheck&quot;, each
+    let r = try Number.From([Qty])
+    in if r[HasError] then &quot;Bad: &quot; &amp; r[Error][Message] else &quot;OK&quot;, type text)</code></pre></div>
+<ul><li><code>try x otherwise y</code> returns <code>y</code> when <code>x</code> errors.</li><li><code>try x</code> alone returns a record with <code>HasError</code>, <code>Value</code> and <code>Error</code> (with <code>Reason</code>, <code>Message</code>, <code>Detail</code>).</li><li>Find error rows before loading: <b>View → Column quality</b>, or <code>Table.SelectRowsWithErrors(t, {&quot;Qty&quot;})</code>.</li><li>Remove them on purpose with <code>Table.RemoveRowsWithErrors</code>, never by accident.</li></ul>
+<h2 id="functions-and-parameters">Functions and parameters</h2>
+<p>A custom function is a query whose value is a function. Write the logic once, call it per row or per file.</p>
+<div class="codewrap"><span class="lang">m</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>// fnCleanPrice: &quot;$1,299.00 USD&quot; → 1299
+(raw as nullable text) as nullable number =&gt;
+let
+    stripped = if raw = null then null else Text.Remove(raw, {&quot;$&quot;, &quot;,&quot;, &quot; &quot;}),
+    noCode   = if stripped = null then null else Text.Replace(stripped, &quot;USD&quot;, &quot;&quot;),
+    value    = try Number.From(noCode, &quot;en-US&quot;) otherwise null
+in
+    value</code></pre></div>
+<p>Parameters (<b>Manage parameters</b>) hold values that differ by environment, such as a server name or folder path. Deployment pipelines and <code>fabric-cicd</code> can swap parameter values between Dev, Test and Prod; hard-coded paths can't be swapped.</p>
+<h2 id="dates">Dates</h2>
+<div class="codewrap"><span class="lang">m</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>// a calendar from the data's first to last date
+let
+    Start = List.Min(Sales[OrderDate]),
+    End   = List.Max(Sales[OrderDate]),
+    Days  = List.Dates(Start, Duration.Days(End - Start) + 1, #duration(1, 0, 0, 0)),
+    T     = Table.FromList(Days, Splitter.SplitByNothing(), {&quot;Date&quot;}, null, ExtraValues.Error),
+    Typed = Table.TransformColumnTypes(T, {{&quot;Date&quot;, type date}}),
+    Year  = Table.AddColumn(Typed, &quot;Year&quot;, each Date.Year([Date]), Int64.Type),
+    // fiscal year starting 1 July
+    FY    = Table.AddColumn(Year, &quot;FiscalYear&quot;, each Date.Year(Date.AddMonths([Date], 6)), Int64.Type)
+in
+    FY</code></pre></div>
+<p>Locale matters when converting text to dates: <code>Date.FromText(&quot;03/04/2026&quot;, [Culture = &quot;en-GB&quot;])</code> is 3 April; with <code>&quot;en-US&quot;</code> it is 4 March. Set the culture explicitly; never rely on the machine that happens to refresh.</p>
+<h2 id="folder-of-files">Folder of files</h2>
+<p>The <b>Folder</b> connector plus <b>Combine files</b> creates a sample query, a function and a combined query. It works when every file has the same columns. When they don't:</p>
+<ol><li>Normalise inside the function: promote headers, rename to a standard schema, select only the standard columns with <code>MissingField.UseNull</code>.</li><li>Add the file name as a column (it is already in the folder listing as <code>Name</code>) so you can trace a bad row to its file.</li><li>Filter the folder listing on <code>Extension</code> and on a naming pattern, so a stray <code>~$draft.xlsx</code> doesn't break refresh.</li></ol>
+<h2 id="apis-and-web-contents">APIs and Web.Contents</h2>
+<div class="codewrap"><span class="lang">m</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>let
+    Base   = &quot;https://api.example.com&quot;,
+    Result = Json.Document(Web.Contents(Base, [
+        RelativePath = &quot;v1/orders&quot;,
+        Query        = [from = &quot;2026-01-01&quot;, page = &quot;1&quot;],
+        Headers      = [Accept = &quot;application/json&quot;]
+    ]))
+in
+    Result</code></pre></div>
+<p>Keep the base URL a constant and put everything that changes in <code>RelativePath</code> and <code>Query</code>. The Power BI Service validates data sources before refresh, and a URL concatenated from data (<code>&quot;https://api.example.com/orders?page=&quot; &amp; Text.From(n)</code>) becomes a <b>dynamic data source</b> that the Service won't schedule. Never put a key or token in the query text: use the connector's credential dialog, or a gateway or Key Vault-backed connection.</p>
+<h2 id="pagination">Pagination</h2>
+<p>Most APIs return a page at a time with a &quot;next&quot; link or a page number. Loop with <code>List.Generate</code> until the API says stop:</p>
+<div class="codewrap"><span class="lang">m</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>let
+    GetPage = (page as number) =&gt;
+        Json.Document(Web.Contents(&quot;https://api.example.com&quot;, [RelativePath = &quot;v1/orders&quot;, Query = [page = Text.From(page), pageSize = &quot;500&quot;]])),
+    Pages = List.Generate(
+        () =&gt; [p = 1, r = GetPage(1)],
+        each List.Count([r][data]) &gt; 0,
+        each [p = [p] + 1, r = GetPage([p] + 1)],
+        each [r][data]),
+    Rows  = List.Combine(Pages),
+    T     = Table.FromRecords(Rows)
+in
+    T</code></pre></div>
+<p>If the API returns a <code>nextLink</code>, loop on that instead (<code>each [r][nextLink] &lt;&gt; null</code>), passing only the changing part through <code>RelativePath</code> or <code>Query</code>.</p>
+<h2 id="query-folding">Query folding</h2>
+<p>Folding means Power Query translates your steps into the source's language (usually SQL) so the source does the work. A refresh that folds reads only the rows and columns it needs; one that doesn't drags everything across the network first.</p>
+<p>Check it: right-click a step → <b>View Native Query</b> (enabled means that step folds), or look at the folding indicators in the Applied Steps pane.</p>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Usually folds</th><th scope="col">Usually breaks folding</th></tr></thead><tbody><tr><td>Select or remove columns, filter rows, rename, sort, group by, merges between tables in the same database, simple type changes</td><td>Adding an index column, <code>Table.Buffer</code>, custom M functions per row, merges across two different sources, many text transformations, anything after a step that already broke folding</td></tr></tbody></table></div>
+<div class="callout rule" role="note"><p><b>Rule:</b> Put the steps that fold first (filter and remove columns early) and the ones that can't fold last. Incremental refresh <b>needs</b> the date filter to fold, or every refresh reads the whole table.</p>
+</div>
+<h2 id="combining-sources-safely">Combining sources safely</h2>
+<p>Privacy levels (Private, Organizational, Public) stop data from one source being sent to another. When a query mixes sources, Power Query may refuse with <code>Formula.Firewall</code>. Fix it by design, not by switching privacy off:</p>
+<ol><li>Set the right privacy level on each source (<b>File → Options → Data source settings</b>).</li><li>Separate &quot;staging&quot; queries that read one source each from the query that combines them.</li><li>Only use &quot;Ignore privacy levels&quot; for sources you'd happily send to each other anyway, and know that the Service enforces its own settings.</li></ol>
+<h2 id="schema-drift">Schema drift</h2>
+<p>Sources change: a column is renamed, a new one appears, a type changes. Defend at the edges:</p>
+<ul><li>Select columns by name early with <code>MissingField.UseNull</code>, so a dropped column becomes null rather than a refresh failure.</li><li>Rename with <code>MissingField.Ignore</code>.</li><li>Type explicitly once, after selection.</li><li>Add a test query that compares <code>Table.ColumnNames(Source)</code> with the list you expect and fails loudly with <code>error &quot;Schema changed: …&quot;</code> when they differ. A failed refresh with a clear message beats a successful one with wrong numbers.</li><li>Agree the schema with the source owner in a <a href="../templates.html#tpl-data-contract">data contract</a>.</li></ul>
+<h2 id="performance">Performance</h2>
+<ul><li><b>Reference, don't duplicate,</b> but know that each referencing query re-evaluates its source. A staging query referenced by five queries can be read five times.</li><li><b><code>Table.Buffer</code></b> holds a table in memory so it's read once. Use it on small lookup tables used repeatedly, never on a big fact table, and never before steps you want to fold.</li><li><b>Disable load</b> on staging queries that only feed others.</li><li><b>Remove columns early.</b> Every column you load costs memory in the model too.</li><li><b>Push heavy work upstream.</b> Aggregating 300 million rows belongs in SQL or a warehouse, not in the mashup engine (see <a href="../toolkit/sql-for-bi.html#where-should-this-transformation-happen">SQL for BI developers</a>).</li></ul>
+<h2 id="dataflows-when-the-work-belongs-upstream">Dataflows: when the work belongs upstream</h2>
+<p>Use a Dataflow Gen2 (or a pipeline) instead of a query inside one semantic model when the same cleaned table feeds several models, when the transformation is expensive and should run once, or when another team owns the source logic. Keep presentation-only shaping in the model. The <a href="../toolkit/fabric-architecture.html">Fabric architecture</a> guide covers where each kind of work lives.</p>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../beginner.html#b-pq">Getting data and cleaning it in Power Query</a> <span class="small muted">Beginner</span></li><li><a href="../intermediate.html#i-pq">Advanced Power Query and M</a> <span class="small muted">Intermediate</span></li><li><a href="../advanced.html#a-fabric">Dataflows, Fabric Lakehouse and Direct Lake</a> <span class="small muted">Advanced</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s01-executive-sales-dashboard.html">BI-1042: Executive sales dashboard</a></li><li><a href="../experience/s08-cfo-refresh-outage.html">INC-2071: The board pack refresh failed at 06:17</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-data-contract">Data contract</a></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://learn.microsoft.com/en-us/powerquery-m/" rel="noopener" target="_blank" class="ext">Power Query M language reference</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/powerquery-m/power-query-m-function-reference" rel="noopener" target="_blank" class="ext">Power Query M function reference</a> <span class="tier official">Official</span> <span class="small muted">Searchable list of every function.</span></li><li><a href="https://learn.microsoft.com/en-us/power-query/query-folding-basics" rel="noopener" target="_blank" class="ext">Query folding overview</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/power-query-folding" rel="noopener" target="_blank" class="ext">Query folding guidance for Power BI</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-query/data-privacy-firewall" rel="noopener" target="_blank" class="ext">Data privacy firewall (Formula.Firewall)</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-query/error-handling" rel="noopener" target="_blank" class="ext">Error handling in Power Query</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-data#refresh-and-dynamic-data-sources" rel="noopener" target="_blank" class="ext">Refresh and dynamic data sources</a> <span class="tier official">Official</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20Power%20Query%20field%20guide">Open an issue</a> or edit <code>content/toolkit/guides/power-query-field-guide.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>

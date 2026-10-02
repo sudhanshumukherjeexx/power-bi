@@ -96,6 +96,8 @@ function all() {
     site: optional('site.json', {}),
     scenarios: scenarios(),
     templates: optional('templates/index.json', []),
+    toolkit: require('./toolkit').load(root),
+    external: optional('resources/external.json', null),
     root
   };
 }

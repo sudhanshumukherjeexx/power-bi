@@ -7,9 +7,10 @@ const { walk, rel, root } = require('./lib/util');
 
 const urls = new Map();
 for (const f of walk(path.join(root, 'content'), p => /\.(json|md)$/.test(p))) {
-  for (const m of fs.readFileSync(f, 'utf8').matchAll(/https:\/\/[^\s"')<>\]]+/g)) {
+  for (const m of fs.readFileSync(f, 'utf8').matchAll(/https:\/\/[^\s"'`)<>\]]+/g)) {
     const u = m[0].replace(/[.,;:]+$/, '');
-    if (/example\.com|northwind\.example|json-schema\.org|contoso|api\.powerbi\.com|login\.microsoftonline|<|\{/.test(u)) continue;
+    /* placeholders, API endpoints and token scopes (not web pages), and sites that refuse automated requests */
+    if (/example\.com|northwind\.example|json-schema\.org|contoso|api\.powerbi\.com|api\.fabric\.microsoft\.com|analysis\.windows\.net|login\.microsoftonline|community\.fabric\.microsoft\.com|powerbi\.microsoft\.com\/en-us\/blog|<|\{/.test(u)) continue;
     if (!urls.has(u)) urls.set(u, new Set());
     urls.get(u).add(rel(f));
   }

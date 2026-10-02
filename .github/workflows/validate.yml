@@ -30,7 +30,7 @@ jobs:
       - name: Content, datasets, curriculum, links, SQL and scripts
         run: node tests/run.js
       - name: HTML validity
-        run: npx --yes html-validate@9 "*.html" "experience/*.html"
+        run: npx --yes html-validate@9 "*.html" "experience/*.html" "toolkit/*.html"
 
   external-links:
     # Informational: official documentation moves. Never blocks a merge.

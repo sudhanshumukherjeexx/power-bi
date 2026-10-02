@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Power BI Performance Clinic · BI Developer Toolkit · Power BI Holy Grail</title>
+<meta name="description" content="Find what is slow first (rendering, DAX, model, Power Query, source SQL, gateway or capacity), then the fixes for each layer, with the tools that prove it.">
+<link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/performance-clinic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Power BI Holy Grail">
+<meta property="og:title" content="Power BI Performance Clinic · BI Developer Toolkit · Power BI Holy Grail">
+<meta property="og:description" content="Find what is slow first (rendering, DAX, model, Power Query, source SQL, gateway or capacity), then the fixes for each layer, with the tools that prove it.">
+<meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/toolkit/performance-clinic.html">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Power BI Grail">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-root="../" data-guide="performance-clinic">
+<a class="skip" href="#app">Skip to content</a>
+<!--nav:toolkit-->
+<header class="top gnav"><div class="in">
+  <a class="brand" href="../index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
+  <nav class="mainnav" aria-label="Main"><a href="../learn.html">Learn</a><a href="../experience.html">Practice</a><a href="../flashcards.html">Interview</a><a href="../toolkit.html" aria-current="true">Toolkit</a><a href="../progress.html">Progress</a><a href="../resources.html">Resources</a></nav>
+  <span class="sp"></span>
+  <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <span data-theme-toggle-slot></span>
+</div></header>
+<!--/nav-->
+<main class="wrap tk" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="../toolkit/patterns.html">Patterns &amp; Playbooks</a><span aria-hidden="true">/</span><span aria-current="page">Power BI Performance Clinic</span></nav>
+<header class="intro tkhead">
+<div class="kicker">🧩 Patterns &amp; Playbooks · Troubleshooting</div>
+<h1>Power BI Performance Clinic</h1>
+<p class="lead">Find what is slow first (rendering, DAX, model, Power Query, source SQL, gateway or capacity), then the fixes for each layer, with the tools that prove it.</p>
+<div class="tkmeta"><span class="chip">BI Developer</span><span class="chip">Senior BI Developer</span><span class="chip">BI Engineer</span><span class="chip tool">Performance Analyzer</span><span class="chip tool">DAX Studio</span><span class="chip tool">VertiPaq Analyzer</span><span class="chip tool">DAX query view</span><span class="verified" title="Checked against the sources on this date">Checked 2 Oct 2026</span><a class="btn sm" href="../toolkit/performance-clinic.md" download>Download .md</a><button class="btn sm" type="button" data-print>Print</button></div>
+</header>
+<details class="tktoc" open><summary class="ctl-lbl">On this page <span>(9)</span></summary><nav class="jump wrapjump" aria-label="On this page"><a href="#rule-one-measure-before-you-change-anything">Rule one: measure before you change anything</a><a href="#what-is-slow">What is slow?</a><a href="#report-performance">Report performance</a><a href="#dax-performance">DAX performance</a><a href="#model-performance">Model performance</a><a href="#directquery">DirectQuery</a><a href="#refresh">Refresh</a><a href="#capacity">Capacity</a><a href="#prove-it">Prove it</a></nav></details>
+<article class="tkbody">
+<h2 id="rule-one-measure-before-you-change-anything">Rule one: measure before you change anything</h2>
+<p>Performance work without a baseline is guessing. Record the time for the slow page or query (Performance Analyzer for visuals, DAX Studio for queries with a cold cache, refresh history for refreshes), change one thing, measure again, and write the before and after in a <a href="../templates.html#tpl-performance-report">performance report</a>. <a href="../experience/s04-monday-performance-incident.html">Sprint 04</a> is a full exercise in this.</p>
+<h2 id="what-is-slow">What is slow?</h2>
+<div class="tree"><ul><li>&quot;The report is slow.&quot; What exactly is slow?<ul><li>Opening or interacting with a page?<ul><li>Performance Analyzer: is the time in &quot;DAX query&quot;?<ul><li class="act">→ One or two visuals dominate: DAX performance, then Model performance.</li></ul></li><li>In &quot;Visual display&quot; and &quot;Other&quot;?<ul><li class="act">→ Report performance: too many visuals, heavy visuals, slicers.</li></ul></li><li>Is the model DirectQuery or composite?<ul><li class="act">→ DirectQuery: source SQL, network and gateway.</li></ul></li></ul></li><li>Refresh takes too long or fails?<ul><li class="act">→ Refresh: folding, partitions, incremental refresh, gateway, parallelism.</li></ul></li><li>Everything is slow at certain times for everyone?<ul><li class="act">→ Capacity: throttling and concurrency.</li></ul></li></ul></li></ul></div>
+<h2 id="report-performance">Report performance</h2>
+<ul><li><b>Too many visuals.</b> Each visual sends at least one query. A page with 30 cards is 30 queries; combine KPIs into one visual or use a multi-row card.</li><li><b>High-cardinality slicers.</b> A slicer listing 50,000 customers queries and renders all of them. Use search, a hierarchy, or a filter pane filter.</li><li><b>Interactions.</b> Cross-highlighting re-queries every visual on the page. Turn off interactions that nobody uses (Format → Edit interactions).</li><li><b>Custom visuals.</b> Some render slowly or send heavy queries; test them with Performance Analyzer before standardising on one.</li><li><b>Bookmarks and stacked visuals.</b> Pages that toggle layers of visuals with bookmarks are hard to test and easy to make slow. Measure them with Performance Analyzer, and prefer separate pages for big switches.</li><li><b>Unnecessary queries.</b> Visual-level filters with complex measures, tooltips pages on every visual, and &quot;show items with no data&quot; all add work.</li></ul>
+<p>Budget: aim for every page to render in a few seconds on the target capacity, and write the budget down so regressions are visible (<a href="../testing.html#qa-ops">performance budgets</a>).</p>
+<h2 id="dax-performance">DAX performance</h2>
+<p>The engine has two parts: the <b>storage engine</b> (SE: fast, multi-threaded, scans compressed columns, caches results) and the <b>formula engine</b> (FE: single-threaded, handles everything the SE can't). Fast queries do most of their work in the SE.</p>
+<p>In DAX Studio, run the query with <b>Server Timings</b> on and a cleared cache:</p>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">What you see</th><th scope="col">Likely cause</th><th scope="col">Fix</th></tr></thead><tbody><tr><td>High FE time, few SE queries</td><td>Complex logic per row in the FE, large iterations</td><td>Iterate a smaller table (a dimension or <code>VALUES</code> of a column); pre-compute in a column or upstream</td></tr><tr><td>Many SE queries (dozens or hundreds)</td><td>Context transition inside an iterator over many rows</td><td>Reduce the iterator's cardinality; replace measure calls inside iterators with columns; use variables</td></tr><tr><td>SE queries with <code>CallbackDataID</code></td><td>The SE calls back into the FE per row (for example <code>IF</code>, <code>DIVIDE</code> inside an iterator)</td><td>Move the condition out of the iterator, or filter first and aggregate after</td></tr><tr><td>Huge materialisations (millions of rows returned to the FE)</td><td><code>FILTER</code> over a fact table, <code>SUMMARIZE</code> with many columns</td><td>Filter columns not tables; <code>KEEPFILTERS</code>; <code>SUMMARIZECOLUMNS</code></td></tr><tr><td>The same expression computed repeatedly</td><td>No variables</td><td><code>VAR</code> it once</td></tr></tbody></table></div>
+<div class="callout senior" role="note"><p><b>Senior:</b> Don't optimise a measure until you've confirmed it is the bottleneck. A clean, readable measure that costs 50 ms isn't worth making clever.</p>
+</div>
+<h2 id="model-performance">Model performance</h2>
+<ul><li><b>Cardinality is cost.</b> VertiPaq compresses columns with few distinct values extremely well. Timestamps with seconds, GUIDs, free text and transaction IDs are the usual memory hogs. Split date and time, round, or drop columns nobody uses.</li><li><b>Model size</b> drives refresh memory and query speed. Check it in VertiPaq Analyzer.</li><li><b>Calculated columns</b> are computed after load and compress worse than imported columns. Build them in Power Query or SQL.</li><li><b>Data types.</b> Whole numbers compress better than decimals, decimals better than text. Fixed decimal for money.</li><li><b>Relationship design.</b> Star schema, single direction, integer keys. Bidirectional and many-to-many relationships make every query heavier.</li><li><b>Auto date/time.</b> Turn it off; it creates a hidden date table for every date column.</li><li><b>Pre-aggregation.</b> If reports only ever show months and categories, an aggregated table answers them without scanning detail.</li></ul>
+<h2 id="directquery">DirectQuery</h2>
+<p>Every visual becomes SQL against the source, every time.</p>
+<ul><li><b>Generated SQL:</b> copy it from Performance Analyzer and run it at the source.</li><li><b>Indexes:</b> the source must be tuned for the queries Power BI sends; read the <a href="../toolkit/sql-for-bi.html#reading-an-execution-plan">execution plan</a>.</li><li><b>Source latency and load:</b> a busy OLTP database will be slow for reports and reports will slow it down. Report from a replica or warehouse.</li><li><b>Transformations:</b> Power Query steps in DirectQuery become part of every query; keep them minimal or move them into a view.</li><li><b>Aggregations:</b> an Import aggregation table (by month and category) can answer most visuals, with DirectQuery only for detail.</li><li><b>Limits:</b> queries returning more than a million intermediate rows fail by design.</li></ul>
+<h2 id="refresh">Refresh</h2>
+<ul><li><b>Folding:</b> the date filter and column selection should fold to the source (<a href="../toolkit/power-query-field-guide.html#query-folding">field guide</a>).</li><li><b>Incremental refresh:</b> refresh only recent partitions; keep history untouched. Requires a foldable date filter on <code>RangeStart</code> / <code>RangeEnd</code>.</li><li><b>Partitions:</b> with XMLA you can refresh one table or partition instead of the whole model.</li><li><b>Gateway:</b> size and cluster it; the gateway machine's CPU and memory limit on-premises refresh and DirectQuery (<a href="https://learn.microsoft.com/en-us/power-bi/guidance/gateway-onprem-sizing" rel="noopener" target="_blank" class="ext">sizing guidance</a>).</li><li><b>Parallelism:</b> many queries refreshing at once can overwhelm a small source. Schedule big models apart, or limit parallel queries.</li><li><b>Do less:</b> every column and row you don't load is refresh time you don't spend.</li></ul>
+<h2 id="capacity">Capacity</h2>
+<ul><li><b>Throttling:</b> when a capacity uses more compute than it has over time, Fabric first delays interactive requests and then rejects them. Background work (refresh) is smoothed over a longer window than interactive work.</li><li><b>Concurrency:</b> many users opening the same heavy page at 9:00 behave like a load test.</li><li><b>Memory:</b> each model must fit in the capacity's per-model memory limit, including during refresh.</li><li><b>CU consumption:</b> the <a href="https://learn.microsoft.com/en-us/fabric/enterprise/metrics-app" rel="noopener" target="_blank" class="ext">Capacity Metrics app</a> shows which items and operations use compute. Fix the top consumer before buying a bigger SKU.</li></ul>
+<h2 id="prove-it">Prove it</h2>
+<p>A performance fix is finished when you can show the before and after under the same conditions, the regression check that will catch it next time, and the budget it now meets. Use the <a href="../toolkit/checklists.html#performance-review-checklist">performance review checklist</a>.</p>
+
+</article>
+<aside class="tkrel" aria-label="Related"><div><h3>Learn it</h3><ul><li><a href="../advanced.html#a-perf">Performance</a> <span class="small muted">Advanced</span></li><li><a href="../advanced.html#a-composite">Composite models, DirectQuery and hybrid tables</a> <span class="small muted">Advanced</span></li><li><a href="../sql.html#sql-tune">Making slow source queries fast</a> <span class="small muted">SQL for BI</span></li><li><a href="../testing.html#qa-ops">Refresh tests, performance budgets and regression</a> <span class="small muted">Testing and validation</span></li></ul></div><div><h3>Practise it</h3><ul><li><a href="../experience/s04-monday-performance-incident.html">INC-2044: The executive dashboard takes 18 seconds</a></li></ul></div><div><h3>Templates</h3><ul><li><a href="../templates.html#tpl-performance-report">Performance before/after report</a></li></ul></div><div class="wide"><h3>Further reading</h3><ul class="refs"><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/power-bi-optimization" rel="noopener" target="_blank" class="ext">Optimization guide for Power BI</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/create-reports/performance-analyzer" rel="noopener" target="_blank" class="ext">Performance Analyzer</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/import-modeling-data-reduction" rel="noopener" target="_blank" class="ext">Data reduction techniques for Import modeling</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/guidance/directquery-model-guidance" rel="noopener" target="_blank" class="ext">DirectQuery model guidance</a> <span class="tier official">Official</span></li><li><a href="https://learn.microsoft.com/en-us/power-bi/connect-data/incremental-refresh-overview" rel="noopener" target="_blank" class="ext">Incremental refresh overview</a> <span class="tier official">Official</span></li><li><a href="https://daxstudio.org/docs/features/traces/server-timings-trace/" rel="noopener" target="_blank" class="ext">DAX Studio: Server Timings</a> <span class="tier specialist">Specialist</span></li><li><a href="https://www.sqlbi.com/books/" rel="noopener" target="_blank" class="ext">Optimizing DAX, Second Edition</a> <span class="tier book">Book</span> <span class="tier paid">Paid</span></li></ul></div></aside>
+<p class="small muted tkfoot">Something missing or out of date? <a href="https://github.com/sudhanshumukherjeexx/power-bi/issues/new?title=Toolkit%3A%20Power%20BI%20Performance%20Clinic">Open an issue</a> or edit <code>content/toolkit/guides/performance-clinic.md</code>.</p>
+</main>
+<footer class="wrap foot">
+  
+  <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Resources</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
+  <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/glossary.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/tkguide.js"></script>
+</body>
+</html>
