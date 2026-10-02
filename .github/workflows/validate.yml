@@ -1,8 +1,9 @@
-name: Validate
+name: Validate and deploy
 
-# Runs on every push and pull request. The site deploys straight from the main branch (GitHub Pages,
-# "Deploy from a branch"), so this workflow is the gate: it fails when generated files are stale,
-# when a dataset or an expected result contradicts the data, or when a link, id or reference is broken.
+# Every push and pull request is validated: generated files must be current, datasets and expected results
+# must agree with the data, and every link, id and reference must resolve. Pushes to main then publish the
+# site/ folder to GitHub Pages, but only if validation passed, so a broken build never goes live.
+# (Repository settings → Pages → Source must be "GitHub Actions".)
 on:
   push:
     branches: [main]
@@ -30,10 +31,34 @@ jobs:
       - name: Content, datasets, curriculum, links, SQL and scripts
         run: node tests/run.js
       - name: HTML validity
-        run: npx --yes html-validate@9 "*.html" "experience/*.html" "toolkit/*.html"
+        run: npx --yes html-validate@9 "site/*.html" "site/experience/*.html" "site/toolkit/*.html"
+
+  deploy:
+    # Publish site/ only for main, only after validation passed. Scheduled runs never deploy.
+    needs: validate
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4
 
   external-links:
-    # Informational: official documentation moves. Never blocks a merge.
+    # Informational: official documentation moves. Never blocks a merge or a deploy.
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     continue-on-error: true

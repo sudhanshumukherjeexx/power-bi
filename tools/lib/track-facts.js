@@ -100,7 +100,7 @@ module.exports = (c, h) => {
   F.dw_eur_q1_usd = eu.reduce((a, l) => a + val(l), 0);
   F.dw_eur_q1_usd_at_q1end = Math.round(F.dw_eur_q1_local * c.fxOf('2026-03'));
   /* course data used by the warehousing track */
-  const ccsv = require('./csv'), cpath = require('path').join(__dirname, '..', '..', 'data');
+  const ccsv = require('./csv'), cpath = require('path').join(__dirname, '..', '..', 'site', 'data');
   const inv = ccsv.objects(cpath + '/FactInventory.csv');
   for (const [m, n] of [['2026-01', 'jan'], ['2026-02', 'feb'], ['2026-03', 'mar']]) {
     const ds = inv.filter(r => r.SnapshotDate.startsWith(m)).map(r => r.SnapshotDate).sort().pop();

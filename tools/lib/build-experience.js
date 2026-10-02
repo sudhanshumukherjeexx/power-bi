@@ -18,7 +18,7 @@ function page(s, stageName) {
 <!--nav:practice-->
 ${P.nav('practice', '../')}
 <!--/nav-->
-<main class="wrap xpwrap" id="app" tabindex="-1"><noscript><p>This scenario needs JavaScript. Its files are in the <a href="https://github.com/sudhanshumukherjeexx/power-bi/tree/main/data/experience">data/experience folder on GitHub</a>.</p></noscript></main>
+<main class="wrap xpwrap" id="app" tabindex="-1"><noscript><p>This scenario needs JavaScript. Its files are in the <a href="https://github.com/sudhanshumukherjeexx/power-bi/tree/main/site/data/experience">data/experience folder on GitHub</a>.</p></noscript></main>
 ${P.footer('../')}
 ${scripts.map(x => `<script src="../assets/js/${x}.js"></script>`).join('\n')}
 </body>

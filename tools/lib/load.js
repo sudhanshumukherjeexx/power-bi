@@ -3,6 +3,8 @@
 const fs = require('fs'), path = require('path');
 const csv = require('./csv');
 const root = path.join(__dirname, '..', '..');
+/* the published website: everything GitHub Pages serves lives here */
+const siteDir = path.join(root, 'site');
 const C = (...p) => path.join(root, 'content', ...p);
 const readJSON = f => {
   try { return JSON.parse(fs.readFileSync(f, 'utf8')); }
@@ -46,7 +48,7 @@ function solutions() {
 /* course datasets: metadata from content/, rows from the generated CSVs */
 function datasets() {
   return readJSON(C('datasets', 'datasets.json')).map(d => {
-    const { cols, rows } = csv.read(path.join(root, 'data', d.key + '.csv'));
+    const { cols, rows } = csv.read(path.join(siteDir, 'data', d.key + '.csv'));
     return Object.assign({}, d, { cols, rows });
   });
 }
@@ -98,8 +100,9 @@ function all() {
     templates: optional('templates/index.json', []),
     toolkit: require('./toolkit').load(root),
     external: optional('resources/external.json', null),
-    root
+    root,
+    siteDir
   };
 }
 
-module.exports = { all, modules, solutions, datasets, scenarios, readJSON, root, C };
+module.exports = { all, modules, solutions, datasets, scenarios, readJSON, root, siteDir, C };

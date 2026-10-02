@@ -3,7 +3,7 @@
 'use strict';
 const fs = require('fs'), path = require('path');
 const load = require('../tools/lib/load');
-const { root, walk, rel } = require('./lib/util');
+const { root, site, walk, rel } = require('./lib/util');
 
 module.exports = t => {
   const a = load.all();
@@ -44,7 +44,9 @@ module.exports = t => {
       if (r.startsWith('/') && f.endsWith('404.html')) continue; /* 404.html rewrites these for the project base path */
       const [p, hash] = r.split('#');
       /* paths in generated scripts are relative to the page that runs them; resolve against the site root */
-      const target = p ? path.resolve(isHtml ? base : (/[\\/]experience[\\/]/.test(f) && f.endsWith('.html') ? base : root), p) : f;
+      /* content and scripts write paths from the site root; repository docs (README, CONTRIBUTING…) from the repo root */
+      const repoDoc = f.endsWith('.md') && !/^(content|site)\//.test(rel(f));
+      const target = !p ? f : isHtml ? path.resolve(base, p) : repoDoc && fs.existsSync(path.resolve(root, p)) ? path.resolve(root, p) : path.resolve(site, p);
       checked++;
       if (!t.ok(fs.existsSync(target), `${rel(f)}: link to missing file "${r}"`)) continue;
       if (!hash || !target.endsWith('.html')) continue;

@@ -3,7 +3,7 @@
 'use strict';
 const fs = require('fs'), path = require('path');
 const P = require('./partials');
-const root = path.join(__dirname, '..', '..');
+const root = path.join(__dirname, '..', '..', 'site');
 
 const STATIC_WITH_NAV = ['index.html', 'learn.html', 'experience.html', 'progress.html', 'diagnostic.html', 'templates.html', 'flashcards.html', 'glossary.html', 'cheatsheet.html'];
 
@@ -21,7 +21,7 @@ function modulePage(m, kind) {
 <!--nav:${sec}-->
 ${P.nav(sec)}
 <!--/nav-->
-<main class="wrap" id="app" tabindex="-1"><noscript><p>This page needs JavaScript to show the assignments. Everything else on the site, including the datasets in the <a href="https://github.com/sudhanshumukherjeexx/power-bi/tree/main/data">data folder on GitHub</a>, works without it.</p></noscript></main>
+<main class="wrap" id="app" tabindex="-1"><noscript><p>This page needs JavaScript to show the assignments. Everything else on the site, including the datasets in the <a href="https://github.com/sudhanshumukherjeexx/power-bi/tree/main/site/data">data folder on GitHub</a>, works without it.</p></noscript></main>
 ${P.footer()}
 ${scripts.map(s => `<script src="assets/js/${s}.js"></script>`).join('\n')}
 </body>

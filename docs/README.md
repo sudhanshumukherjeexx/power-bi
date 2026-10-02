@@ -6,6 +6,7 @@ How the project is organised and how to change it is in [CONTRIBUTING.md](../CON
 
 | Document | What it covers |
 |---|---|
+| [deployment.md](deployment.md) | How the site is tested and published to GitHub Pages, the one-time setup, local preview and rollback. |
 | [enterprise-data.md](enterprise-data.md) | The enterprise-scale data generator: options, the defects it plants, and what each data size teaches. |
 
 ## History

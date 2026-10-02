@@ -4,7 +4,7 @@
 'use strict';
 const fs = require('fs'), path = require('path'), crypto = require('crypto');
 module.exports = (all, ctx, outSoFar) => {
-  const root = all.root;
+  const root = all.siteDir;
   const list = new Set(['./', '404.html', 'manifest.webmanifest']);
   const add = rel => list.add(rel.split(path.sep).join('/'));
   for (const f of fs.readdirSync(root)) if (f.endsWith('.html')) add(f);

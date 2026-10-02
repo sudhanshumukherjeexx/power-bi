@@ -1,10 +1,10 @@
-/* Regenerates every CSV in data/ from the seeded generators. Output is byte-for-byte reproducible.
+/* Regenerates every CSV in site/data/ from the seeded generators. Output is byte-for-byte reproducible.
    Usage (from the project root):  node tools/generate-data.js [--check]
      --check   do not write; exit 1 if any file on disk differs from what the generators produce */
 'use strict';
 const fs = require('fs'), path = require('path');
 const csv = require('./lib/csv');
-const root = path.join(__dirname, '..');
+const root = path.join(__dirname, '..', 'site');
 
 function outputs() {
   const out = {};

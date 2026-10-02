@@ -7,12 +7,14 @@ Thanks for helping. This project is used by people teaching themselves Power BI,
 You need Node.js 22.5 or later (for the built-in SQLite used by the SQL tests). There are no npm dependencies.
 
 ```bash
-npm run data     # regenerate data/ from the seeded generators (only if you changed a generator)
-npm run build    # regenerate the site files from content/
+npm run data     # regenerate site/data/ from the seeded generators (only if you changed a generator)
+npm run build    # regenerate the site files in site/ from content/
 npm test         # run every check
 ```
 
-Preview locally with any static server from the project root, for example `npx serve .` or `python -m http.server`, and open `/index.html`.
+Preview locally by serving the `site/` folder with any static server, for example `npx serve site` or `python -m http.server --directory site`, and open `/index.html`.
+
+The repository has three parts: `content/` is what you edit, `site/` is the website GitHub Pages publishes, and `tools/` turns one into the other. On every push to `main`, GitHub Actions runs all the checks and publishes `site/` only if they pass.
 
 ## How the project is organised
 
@@ -28,27 +30,28 @@ Preview locally with any static server from the project root, for example `npx s
 | `content/flashcards/`, `content/glossary/`, `content/certifications/`, `content/career-paths/`, `content/datasets/` | Flashcards, glossary, versioned exam outlines, career paths, dataset descriptions. |
 | `content/*.json` | Stages, skills, goals, personas, diagnostic and site settings. |
 | `content/schema/` | JSON Schemas for the content files. VS Code validates against them automatically via `$schema`. |
-| Hand-written pages | `index.html`, `learn.html`, `experience.html`, `progress.html`, `diagnostic.html`, `templates.html`, `flashcards.html`, `glossary.html`, `cheatsheet.html`, `404.html`. Edit them directly; the build only rewrites the navigation between `<!--nav:…-->` and `<!--/nav-->`. |
-| Hand-written scripts | `assets/js/` `site.js` (shared helpers, search, progress storage), `progress.js`, `course.js`, `levelpage.js`, `learn.js`, `home.js`, `diagnostic.js`, `progresspage.js`, `xp.js`, `xphub.js`, `tplpage.js`, `tkhub.js`, `tkguide.js`. |
-| `assets/css/`, `assets/icons/`, `manifest.webmanifest` | Styles, icons and the app manifest. |
+| Hand-written pages (in `site/`) | `index.html`, `learn.html`, `experience.html`, `progress.html`, `diagnostic.html`, `templates.html`, `flashcards.html`, `glossary.html`, `cheatsheet.html`, `404.html`. Edit them directly; the build only rewrites the navigation between `<!--nav:…-->` and `<!--/nav-->`. |
+| Hand-written scripts | `site/assets/js/`: `site.js` (shared helpers, search, progress storage), `progress.js`, `course.js`, `levelpage.js`, `learn.js`, `home.js`, `diagnostic.js`, `progresspage.js`, `xp.js`, `xphub.js`, `tplpage.js`, `tkhub.js`, `tkguide.js`. |
+| `site/assets/css/`, `site/assets/icons/`, `site/manifest.webmanifest` | Styles, icons and the app manifest. |
 | `tools/` | The build (`build.js` and `tools/lib/`), data generators, starter-project builder, enterprise data generator. |
 | `tests/` | Everything CI runs (`node tests/run.js`), plus the external link checker. |
 | `docs/` | Project documentation; see [docs/README.md](docs/README.md). |
+| `.github/workflows/validate.yml` | CI: runs every check on pushes and pull requests, and publishes `site/` to GitHub Pages after a passing push to `main`. |
 
 ### Generated: never edit by hand
 
-These are built from the source above and committed, so the site deploys without a build step. Generated files start with a `GENERATED` banner, and CI fails if one is out of date: change the source and run `npm run build`.
+These live in `site/`, are built from the source above, and are committed, so the site also opens straight from the folder with no build step. Generated files start with a `GENERATED` banner, and CI fails if one is out of date: change the source and run `npm run build`.
 
 | Path | Built from |
 |---|---|
-| `assets/js/` (every other script: `content.js`, `tracks.js`, `solutions*.js`, `experience.js`, `xp/`, `toolkit.js`, `external.js`, `search-index.js`, …) | `content/` |
-| Level and track pages (`beginner.html` … `advanced.html`, `sql.html` … `modern.html`) and `resources.html` | `content/skills/`, by `tools/lib/build-pages.js` |
-| `experience/*.html` | `content/experience/` |
-| `toolkit.html`, `toolkit/` (hub, door pages, guide pages, `.md` and file downloads) | `content/toolkit/` |
-| `templates/*.md` (downloads) | `content/templates/` |
-| `data/` | Seeded generators in `tools/generate-data.js` (`npm run data`) |
-| `starter/northwind-starter.zip` | `tools/build-starter.js` |
-| `sw.js` | The offline cache list and version, from every file above |
+| `site/assets/js/` (every other script: `content.js`, `tracks.js`, `solutions*.js`, `experience.js`, `xp/`, `toolkit.js`, `external.js`, `search-index.js`, …) | `content/` |
+| `site/` level and track pages (`beginner.html` … `advanced.html`, `sql.html` … `modern.html`) and `resources.html` | `content/skills/`, by `tools/lib/build-pages.js` |
+| `site/experience/*.html` | `content/experience/` |
+| `site/toolkit.html`, `site/toolkit/` (hub, door pages, guide pages, `.md` and file downloads) | `content/toolkit/` |
+| `site/templates/*.md` (downloads) | `content/templates/` |
+| `site/data/` | Seeded generators in `tools/generate-data.js` (`npm run data`) |
+| `site/starter/northwind-starter.zip` | `tools/build-starter.js` |
+| `site/sw.js` | The offline cache list and version, from every file above |
 
 ## Adding or fixing Skill Mode content
 
@@ -91,7 +94,7 @@ Any topic about Fabric, Service features, licensing or certifications needs `ver
 1. Create `content/experience/<id>-<slug>/scenario.json` and `solution.json`.
    - **IDs:** `sNN` for sprints, `dNN` for drills. See the schemas.
    - **The brief must not contain the answer.** Root causes go only in `solution.json`. A test checks this.
-2. Put evidence files in `data/experience/<id>/`, preferably generated in `tools/lib/scenario-files.js`, with facts in `tools/lib/scenario-facts.js`.
+2. Put evidence files in `site/data/experience/<id>/`, preferably generated in `tools/lib/scenario-files.js`, with facts in `tools/lib/scenario-facts.js`.
 3. Use the recurring people in `content/personas.json`, and keep the story consistent with earlier scenarios. Check dates, names and which decisions have already been made.
 4. **Rubric:** weights sum to 100.
 5. **Hints:** at least three for sprints; they narrow where to look and never give the answer.

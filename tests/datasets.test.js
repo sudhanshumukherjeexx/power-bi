@@ -3,7 +3,7 @@
 'use strict';
 const fs = require('fs'), path = require('path');
 const csv = require('../tools/lib/csv');
-const { root } = require('./lib/util');
+const { root, site } = require('./lib/util');
 
 function profileCheck(t, label, file, p, tables) {
   const { cols, rows } = tables(file);
@@ -39,7 +39,7 @@ module.exports = t => {
   const tables = f => cache[f] || (cache[f] = csv.read(f));
   const meta = JSON.parse(fs.readFileSync(path.join(root, 'content/datasets/datasets.json'), 'utf8'));
   for (const d of meta) {
-    const f = path.join(root, 'data', d.key + '.csv');
+    const f = path.join(site, 'data', d.key + '.csv');
     if (!t.ok(fs.existsSync(f), `data/${d.key}.csv is missing`)) continue;
     profileCheck(t, d.key, f, d.profile, tables);
   }
@@ -48,7 +48,7 @@ module.exports = t => {
     const pf = path.join(root, packFile);
     if (!fs.existsSync(pf)) continue;
     for (const d of JSON.parse(fs.readFileSync(pf, 'utf8'))) {
-      const f = path.join(root, d.file);
+      const f = path.join(site, d.file);
       if (!t.ok(fs.existsSync(f), `${d.file} is missing`)) continue;
       if (d.profile) profileCheck(t, d.file, f, d.profile, tables);
     }
@@ -56,7 +56,7 @@ module.exports = t => {
   /* generators reproduce the committed files exactly */
   const gen = require('../tools/generate-data').outputs();
   for (const [r, text] of Object.entries(gen)) {
-    const f = path.join(root, r);
+    const f = path.join(site, r);
     t.ok(fs.existsSync(f) && fs.readFileSync(f, 'utf8') === text, `${r} differs from its generator. Run: node tools/generate-data.js`);
   }
 };

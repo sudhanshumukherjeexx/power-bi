@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- **Repository layout:** the published website moved into `site/`, so the repository root now holds only the project: `content/`, `site/`, `tools/`, `tests/`, `docs/` and the project files. Public URLs are unchanged.
+- **Deployment:** GitHub Actions publishes `site/` to GitHub Pages after every push to `main`, but only when all checks pass, so a broken build can't go live. Pull requests run the same checks.
+
 ## 2.1.0 (2026-10-02): the BI Developer Toolkit
 
 ### Added

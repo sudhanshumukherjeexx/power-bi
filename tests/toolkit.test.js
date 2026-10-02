@@ -5,7 +5,7 @@
 const fs = require('fs'), path = require('path');
 const load = require('../tools/lib/load');
 const { check } = require('../tools/lib/toolkit');
-const { root } = require('./lib/util');
+const { site } = require('./lib/util');
 
 module.exports = t => {
   const all = load.all();
@@ -16,7 +16,7 @@ module.exports = t => {
   t.ok(tk.doors.length === 6, `the hub shows exactly six doors, found ${tk.doors.length}`);
   t.ok(tk.guides.length >= 25, `expected at least 25 guides, found ${tk.guides.length}`);
 
-  const read = rel => { const f = path.join(root, rel); return fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : null; };
+  const read = rel => { const f = path.join(site, rel); return fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : null; };
   const hub = read('toolkit.html');
   if (t.ok(hub, 'toolkit.html is not generated')) {
     for (const d of tk.doors) t.ok(hub.includes(`href="toolkit/${d.id}.html"`), `toolkit.html: no door link to ${d.id}`);

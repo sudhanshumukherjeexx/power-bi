@@ -1,14 +1,14 @@
 /* Generated files are current, every JavaScript file compiles, and every inline script compiles. */
 'use strict';
 const fs = require('fs'), path = require('path'), vm = require('vm');
-const { root, walk, rel } = require('./lib/util');
+const { root, site, walk, rel } = require('./lib/util');
 
 module.exports = t => {
   let out;
   try { out = require('../tools/build').outputs(); t.ok(true); }
   catch (e) { t.ok(false, 'tools/build.js failed: ' + e.message); return; }
   for (const [r, text] of Object.entries(out)) {
-    const f = path.join(root, r);
+    const f = path.join(site, r);
     t.ok(fs.existsSync(f) && fs.readFileSync(f, 'utf8') === text, `${r} is out of date. Run: node tools/build.js`);
   }
 

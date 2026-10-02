@@ -27,4 +27,4 @@ You'll get an acknowledgement within 7 days.
 
 ## Data in this repository
 
-All company data is synthetic and generated from fixed seeds. The API responses under `data/tracks/automation` are mock files and contain no real tenant information. Example scripts read credentials from environment variables. Never commit secrets: CI and reviewers will reject them.
+All company data is synthetic and generated from fixed seeds. The API responses under `site/data/tracks/automation` are mock files and contain no real tenant information. Example scripts read credentials from environment variables. Never commit secrets: CI and reviewers will reject them.

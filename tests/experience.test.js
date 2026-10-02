@@ -6,7 +6,7 @@ const fs = require('fs'), path = require('path');
 const load = require('../tools/lib/load');
 const { validate } = require('./lib/schema');
 const csv = require('../tools/lib/csv');
-const { root } = require('./lib/util');
+const { root, site } = require('./lib/util');
 
 module.exports = t => {
   const raw = load.scenarios({ raw: true });
@@ -35,7 +35,7 @@ module.exports = t => {
     for (const k of r.skills) t.ok(skills.has(k), `${where}: unknown skill "${k}"`);
     for (const p of [...(r.prereq || []), ...(r.next ? [r.next] : [])]) t.ok(ids.has(p), `${where}: refers to unknown scenario "${p}"`);
     for (const e of r.earlier || []) t.ok(ids.has(e.scenario) && S.find(x => x.id === e.scenario).decision, `${where}: earlier decision must point at a decision scenario (${e.scenario})`);
-    for (const ev of r.evidence) if (ev.kind === 'file') t.ok(fs.existsSync(path.join(root, ev.file)), `${where}: evidence file ${ev.file} does not exist`);
+    for (const ev of r.evidence) if (ev.kind === 'file') t.ok(fs.existsSync(path.join(site, ev.file)), `${where}: evidence file ${ev.file} does not exist`);
     for (const d of r.deliverables) if (d.artifact && tpl.size) t.ok(tpl.has(d.artifact), `${where}: deliverable "${d.id}" uses unknown template "${d.artifact}"`);
     const w = r.rubric.reduce((a, x) => a + x.w, 0); t.eq(w, 100, `${where}: rubric weights must sum to 100`);
     t.ok(new Set(r.rubric.map(x => x.id)).size === r.rubric.length, `${where}: duplicate rubric id`);
@@ -52,11 +52,11 @@ module.exports = t => {
     t.ok(!PH.test(JSON.stringify(s)) && !PH.test(JSON.stringify(s._solution || {})), `${where}: unfilled {{placeholder}}`);
   }
   /* the scenario bundle must not contain model answers */
-  const bundle = fs.readFileSync(path.join(root, 'assets/js/experience.js'), 'utf8');
+  const bundle = fs.readFileSync(path.join(site, 'assets/js/experience.js'), 'utf8');
   for (const s of S) if (s._solution) t.ok(!bundle.includes(JSON.stringify(s._solution.summary).slice(1, 80)), `assets/js/experience.js contains the model answer for ${s.id}`);
 
   /* ---------- independent recomputation of headline numbers ---------- */
-  const D = n => csv.objects(path.join(root, 'data/experience/company', n + '.csv'));
+  const D = n => csv.objects(path.join(site, 'data/experience/company', n + '.csv'));
   const orders = D('orders'), lines = D('order_lines'), returns = D('returns'), fx = D('fx_rates');
   const O = new Map(orders.map(o => [o.OrderID, o]));
   const rate = (cur, m) => cur === 'EUR' ? +fx.find(f => f.Month === m).USDPerUnit : 1;

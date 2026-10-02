@@ -71,7 +71,7 @@ Expected results are tested, not trusted:
 
 ## Run it locally and contribute
 
-It's a static site with no dependencies. Run `npm run check` to build and test. Any static file server can preview it. See [CONTRIBUTING.md](CONTRIBUTING.md) to add a topic, a scenario or a fix.
+It's a static site with no dependencies. The website lives in `site/`, its source in `content/`, and the build in `tools/`. Run `npm run check` to build and test, and preview with any static server pointed at `site/` (for example `npx serve site`). Pushes to `main` are tested and published to GitHub Pages by GitHub Actions. See [CONTRIBUTING.md](CONTRIBUTING.md) to add a topic, a scenario or a fix.
 
 ## Disclaimer
 

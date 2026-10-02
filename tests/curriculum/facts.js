@@ -5,7 +5,7 @@
 'use strict';
 const path = require('path');
 const csv = require('../../tools/lib/csv');
-const root = path.join(__dirname, '..', '..');
+const root = path.join(__dirname, '..', '..', 'site');
 
 const T = {};
 const tbl = name => T[name] || (T[name] = csv.objects(path.join(root, 'data', name + '.csv')));

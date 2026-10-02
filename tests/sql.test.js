@@ -6,7 +6,7 @@
 const fs = require('fs'), path = require('path');
 const csv = require('../tools/lib/csv');
 const load = require('../tools/lib/load');
-const { root } = require('./lib/util');
+const { site } = require('./lib/util');
 
 let sqlite;
 try { process.removeAllListeners('warning'); sqlite = require('node:sqlite'); } catch (e) { sqlite = null; }
@@ -21,8 +21,8 @@ const TABLES = {
 function database() {
   const db = new sqlite.DatabaseSync(':memory:');
   for (const [name, file] of Object.entries(TABLES)) {
-    const f = path.join(root, file);
-    if (!fs.existsSync(f)) continue;
+    const f = path.join(site, file);
+    if (!fs.existsSync(f)) throw new Error(`SQL test table file ${file} is missing`);
     const { cols, rows } = csv.read(f);
     const numeric = cols.map((_, i) => rows.every(r => r[i] === '' || /^-?\d+(\.\d+)?$/.test(r[i])));
     const isInt = cols.map((_, i) => numeric[i] && rows.every(r => r[i] === '' || /^-?\d+$/.test(r[i])));
