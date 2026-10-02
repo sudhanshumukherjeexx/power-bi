@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <script>
-/* Old links into the all-in-one course page (index.html#b-pq, #ds-FactSales, #certs …) now live on course.html */
-(function(){var h=location.hash;if(/^#([a-z]+-[a-z0-9-]+|roadmap|paths|certs|starter|datasets|levels)/.test(h)&&!/^#(goal|ways|dash)/.test(h))location.replace('course.html'+h)})();
+/* Old links into the former all-in-one home page (index.html#b-pq, #ds-FactSales, #certs …) go to the page that has that section now */
+(function(){var h=location.hash,m=h.match(/^#([bia])-/),p=m?{b:'beginner',i:'intermediate',a:'advanced'}[m[1]]+'.html'+h:/^#(ds-|starter|datasets)/.test(h)?'resources.html'+h:/^#(certs|paths|levels)/.test(h)?'learn.html'+h:/^#roadmap/.test(h)?'learn.html':null;if(p)location.replace(p)})();
 </script>
 <title>Power BI Holy Grail: learn Power BI by doing the work</title>
 <meta name="description" content="A free, open-source Power BI apprenticeship. Hands-on assignments with checkable results, then realistic tickets, incidents and architecture decisions from a simulated BI team.">
@@ -37,7 +37,7 @@
 <!--nav:home-->
 <header class="top gnav"><div class="in">
   <a class="brand" href="index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
-  <nav class="mainnav" aria-label="Main"><a href="learn.html">Learn</a><a href="experience.html">Practice</a><a href="flashcards.html">Interview</a><a href="progress.html">Progress</a></nav>
+  <nav class="mainnav" aria-label="Main"><a href="learn.html">Learn</a><a href="experience.html">Practice</a><a href="flashcards.html">Interview</a><a href="progress.html">Progress</a><a href="resources.html">Resources</a></nav>
   <span class="sp"></span>
   <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
   <span data-theme-toggle-slot></span>
@@ -79,7 +79,7 @@
   <div class="honest"><b>A promise we can keep.</b> No website can give you five years of experience. What it can do is put you in front of the problems, failures and decisions that usually take years to meet, on purpose and with feedback, so you recognise them when they happen for real. Every number in the exercises is generated from a fixed seed and checked automatically.</div>
 </main>
 <footer class="wrap foot">
-  <p><a href="learn.html">Learn</a> · <a href="experience.html">Practice</a> · <a href="flashcards.html">Interview</a> · <a href="progress.html">Progress</a> · <a href="resources.html">Resources</a> · <a href="glossary.html">Glossary</a> · <a href="templates.html">Templates</a> · <a href="course.html">Course on one page</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <p><a href="learn.html">Learn</a> · <a href="experience.html">Practice</a> · <a href="flashcards.html">Interview</a> · <a href="progress.html">Progress</a> · <a href="resources.html">Resources</a> · <a href="glossary.html">Glossary</a> · <a href="templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
   <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
   <p class="small muted">Your progress is saved in this browser only. Northwind Outdoors is a fictional company and all data is synthetic.</p>
 </footer>

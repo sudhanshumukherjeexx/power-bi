@@ -28,13 +28,12 @@ function outputs() {
   const csvText = require('./lib/csv').stringify;
   const DS = {};
   all.datasets.forEach(d => DS[d.key] = { name: d.name, desc: d.desc, cols: d.cols, csv: csvText(d.cols, d.rows).split('\n').slice(1).join('\n').replace(/\n$/, '') });
-  out['assets/js/content.js'] = BANNER('content/skills/{beginner,intermediate,advanced}, content/roadmap.json, content/datasets and data/*.csv') +
-    `/* DS = practice datasets (rows parsed from compact CSV on first use), ROAD = roadmap, LEVELS = Skill Mode levels with their topics. */\n` +
+  out['assets/js/content.js'] = BANNER('content/skills/{beginner,intermediate,advanced}, content/datasets and data/*.csv') +
+    `/* DS = practice datasets (rows parsed from compact CSV on first use), LEVELS = Skill Mode levels with their topics. */\n` +
     `const DS=(function(){\nconst P=t=>{const R=[];let r=[],c='',q=false;for(let i=0;i<t.length;i++){const h=t[i];if(q){if(h==='"'){if(t[i+1]==='"'){c+='"';i++}else q=false}else c+=h}else if(h==='"')q=true;else if(h===','){r.push(c);c=''}else if(h==='\\n'){r.push(c);R.push(r);r=[];c=''}else c+=h}r.push(c);R.push(r);return R};\n` +
     map('D', DS) +
     `for(const k in D){const d=D[k];let rows=null;Object.defineProperty(d,'rows',{enumerable:true,get(){return rows||(rows=P(d.csv))}})}\nreturn D})();\n` +
     `const toCSV=ds=>[ds.cols.join(','),...ds.rows.map(r=>r.map(v=>{const s=String(v);return /[",\\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}).join(','))].join('\\n');\n` +
-    list('ROAD', all.roadmap) +
     list('LEVELS', levels.map(moduleOut));
 
   const levelTopicIds = new Set(levels.flatMap(m => m.topics));

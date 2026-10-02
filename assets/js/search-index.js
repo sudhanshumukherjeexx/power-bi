@@ -7,7 +7,6 @@ const SEARCH_INDEX=[
 ["Page","Your progress","Competency matrix, portfolio, decision log, certification readiness","Competency matrix, portfolio, decision log, certification readiness","progress.html",""],
 ["Page","Find my starting point","Diagnostic: sixteen questions, a recommended start","Diagnostic: sixteen questions, a recommended start","diagnostic.html",""],
 ["Page","Professional templates","Requirements, ADR, incident report, postmortem, PR, runbook and more","Requirements, ADR, incident report, postmortem, PR, runbook and more","templates.html",""],
-["Page","Course on one page","Every level and topic on a single long page","Every level and topic on a single long page","course.html",""],
 ["Page","Resources","Study tools, starter project, datasets","Study tools, starter project, datasets","resources.html",""],
 ["Page","Interview flashcards","Spaced repetition, all decks","Spaced repetition, all decks","flashcards.html",""],
 ["Page","Mock interview","Timed questions, out loud","Timed questions, out loud","flashcards.html#mock",""],

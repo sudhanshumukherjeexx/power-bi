@@ -6,7 +6,7 @@ const root = path.join(__dirname, '..', '..');
 const site = JSON.parse(fs.readFileSync(path.join(root, 'content', 'site.json'), 'utf8'));
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-const SECTIONS = [['learn', 'Learn', 'learn.html'], ['practice', 'Practice', 'experience.html'], ['interview', 'Interview', 'flashcards.html'], ['progress', 'Progress', 'progress.html']];
+const SECTIONS = [['learn', 'Learn', 'learn.html'], ['practice', 'Practice', 'experience.html'], ['interview', 'Interview', 'flashcards.html'], ['progress', 'Progress', 'progress.html'], ['resources', 'Resources', 'resources.html']];
 
 function nav(active, r = '') {
   return `<header class="top gnav"><div class="in">

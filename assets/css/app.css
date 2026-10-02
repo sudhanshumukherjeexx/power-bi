@@ -21,7 +21,7 @@ header.gnav .brand .bt{white-space:nowrap}
   header.gnav .in{flex-wrap:wrap;row-gap:4px}
   header.gnav .brand .bt{display:inline}
   .mainnav{order:3;width:100%;margin:0;justify-content:space-between;border-top:1px solid var(--line);padding-top:4px}
-  .mainnav a{flex:1;justify-content:center;padding:6px 4px;font-size:.88rem}
+  .mainnav a{flex:1 1 auto;justify-content:center;padding:6px 2px;font-size:.84rem}
   [id]{scroll-margin-top:calc(118px + var(--sat))}
 }
 .crumbs{display:flex;gap:6px;align-items:center;font-size:.82rem;color:var(--ink-3);padding-top:18px;flex-wrap:wrap}
@@ -282,3 +282,18 @@ details.tpl>summary>span{display:flex;flex-direction:column;gap:2px}
 .tplbody ul.check{list-style:none;padding-left:0}.tplbody .box{font-size:1.05rem;color:var(--ink-3)}
 .seg.scroll{flex-wrap:nowrap!important}
 .seg.scroll a{flex:0 0 auto!important}
+/* Resources hub: glossary groups and level dots */
+.rgloss{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;align-items:start;margin-top:12px}
+.rgloss details{background:var(--panel);border:1px solid var(--line);border-radius:8px}
+.rgloss summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;padding:10px 14px;min-height:44px;font-weight:600}
+.rgloss summary::-webkit-details-marker{display:none}
+.rgloss summary::after{content:"▾";margin-left:auto;color:var(--ink-3)}
+.rgloss details[open] summary::after{content:"▴"}
+.rgloss summary .n{font-family:var(--mono);font-size:.75rem;font-weight:400;color:var(--ink-3)}
+.rterms{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 14px}
+.rterms a{border:1px solid var(--line-2);border-radius:999px;padding:4px 10px;font-size:.84rem;text-decoration:none;color:var(--ink-2)}
+.rterms a:hover{border-color:var(--yellow);color:var(--ink)}
+.tools a b .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.jump.wrapjump{flex-wrap:wrap;overflow:visible}
+@media (max-width:560px){#tools .tools,#templates .tools,#cheatsheets .tools{grid-template-columns:1fr 1fr;gap:8px}#tools .tools a,#templates .tools a,#cheatsheets .tools a{padding:12px}#tools .tools a b,#templates .tools a b,#cheatsheets .tools a b{font-size:.92rem}#tools .tools a span,#templates .tools a span,#cheatsheets .tools a span{font-size:.8rem}}
+@media (min-width:561px){.jump{flex-wrap:wrap;overflow:visible}}

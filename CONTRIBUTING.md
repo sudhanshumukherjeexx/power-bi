@@ -26,7 +26,7 @@ Preview locally with any static server from the project root, for example `npx s
 | `tests/` | Everything CI runs. |
 | `docs/` | Architecture and migration notes. |
 
-Hand-written pages (`index.html`, `learn.html`, `experience.html`, `progress.html`, `diagnostic.html`, `templates.html`, `flashcards.html`, `glossary.html`, `cheatsheet.html`, `course.html`) are edited directly. The build only rewrites the navigation between `<!--nav:…-->` and `<!--/nav-->`.
+Hand-written pages (`index.html`, `learn.html`, `experience.html`, `progress.html`, `diagnostic.html`, `templates.html`, `flashcards.html`, `glossary.html`, `cheatsheet.html`) are edited directly. The build only rewrites the navigation between `<!--nav:…-->` and `<!--/nav-->`.
 
 ## Adding or fixing Skill Mode content
 

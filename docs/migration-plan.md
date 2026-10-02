@@ -30,7 +30,7 @@ content/                        source of truth (JSON, reviewed in PRs)
   experience/<scenario>/scenario.json, solution.json
   flashcards/concepts.json   glossary/glossary.json   career-paths/roles.json
   certifications/pl-300.json dp-600.json (versioned skill outlines)
-  stages.json  skills.json  personas.json  diagnostic.json  roadmap.json
+  stages.json  skills.json  personas.json  diagnostic.json
   datasets/datasets.json        dataset metadata and profile assertions
   templates/*.md                professional artifact templates
 data/                           generated CSVs (small, course pack)
@@ -65,9 +65,8 @@ All live in `assets/js/`.
 
 | URL | Role |
 |---|---|
-| `/` (`index.html`) | Entrance. New users see a headline, one primary and one secondary action, and a "what are you trying to become" question. Returning users also see Continue, progress, due cards and stage. Old `index.html#…` deep links redirect to `course.html#…`. |
+| `/` (`index.html`) | Entrance. New users see a headline, one primary and one secondary action, and a "what are you trying to become" question. Returning users also see Continue, progress, due cards and stage. Old `index.html#…` deep links redirect to the level, Resources or Learn page that now holds that section. |
 | `learn.html` | Skill Mode hub: levels, tracks, career paths, certifications. |
-| `course.html` | The previous all-in-one course page, preserved. |
 | `beginner/intermediate/advanced.html` | Unchanged URLs. These are now generated from one template. |
 | `sql`, `warehousing`, `testing`, `automation`, `governance`, `fabric`, `modern` `.html` | New Skill Mode tracks, built from the same template. |
 | `experience.html` | Experience Mode: stages, sprints, drills, decision log. |

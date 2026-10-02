@@ -12,7 +12,6 @@ const PAGES = [
   ['Your progress', 'Competency matrix, portfolio, decision log, certification readiness', 'progress.html'],
   ['Find my starting point', 'Diagnostic: sixteen questions, a recommended start', 'diagnostic.html'],
   ['Professional templates', 'Requirements, ADR, incident report, postmortem, PR, runbook and more', 'templates.html'],
-  ['Course on one page', 'Every level and topic on a single long page', 'course.html'],
   ['Resources', 'Study tools, starter project, datasets', 'resources.html'],
   ['Interview flashcards', 'Spaced repetition, all decks', 'flashcards.html'],
   ['Mock interview', 'Timed questions, out loud', 'flashcards.html#mock'],

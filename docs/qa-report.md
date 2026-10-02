@@ -36,7 +36,7 @@ All 19 flows passed with no JavaScript exceptions:
 8. **Drills:** the interactive requirements and governance drills both work.
 9. **Search:** type and level/track/stage filters work, and the index loads on first use.
 10. **Offline:** after one visit, the service worker serves pages while offline.
-11. **Old deep links:** links into the old home page redirect to `course.html` with the anchor kept.
+11. **Old deep links:** links into the old home page (`index.html#b-pq`, `#ds-FactSales`, `#certs`) redirect to the level, Resources or Learn page that holds that section.
 
 ## Visual and responsive review
 

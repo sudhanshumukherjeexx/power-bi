@@ -87,7 +87,6 @@ function all() {
     glossary: readJSON(C('glossary', 'glossary.json')),
     roles: readJSON(C('career-paths', 'roles.json')),
     certs: listJSON(C('certifications')).map(f => readJSON(C('certifications', f))).sort((a, b) => (a.order || 0) - (b.order || 0)),
-    roadmap: readJSON(C('roadmap.json')),
     stages: optional('stages.json', []),
     skills: optional('skills.json', []),
     personas: optional('personas.json', []),

@@ -57,7 +57,7 @@
   - Automated assertions also found and fixed a rounding error in `i-rls-2` ($1,967.55 → $1,967.54).
 - **Direct Lake content:** now distinguishes Direct Lake on OneLake from Direct Lake on SQL analytics endpoint (fallback, views, security), checked against Microsoft Learn on 2026-10-01.
 - **PBIP content:** reflects PBIR as the default report format.
-- **The old all-in-one home page** moved to `course.html`. Old deep links into the home page (index.html with a topic or dataset anchor) redirect there.
+- **The old all-in-one home page is retired.** Its content lives on the level, Learn and Resources pages, and old deep links (index.html with a topic, dataset or certification anchor) redirect to the right one. The years-based roadmap was dropped in favour of the professional stages.
 - **The service worker's precache list and version** are generated from the files they cover.
 
 ### Migration

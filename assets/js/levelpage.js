@@ -9,7 +9,7 @@ const app=document.getElementById('app');
 const levels=typeof LEVELS!=='undefined'?LEVELS:[],tracks=typeof TRACKS!=='undefined'?TRACKS:[];
 const mod=[...levels,...tracks].find(m=>m.id===page);
 const kind=mod?(levels.includes(mod)?'level':'track'):'level';
-const PAGES=kind==='level'?[...levels.map(L=>({id:L.id,name:L.name,cls:L.cls})),{id:'resources',name:'Resources',cls:'yellow'}]:tracks.map(T=>({id:T.id,name:T.name,cls:T.cls}));
+const PAGES=kind==='level'?levels.map(L=>({id:L.id,name:L.name,cls:L.cls})):tracks.map(T=>({id:T.id,name:T.name,cls:T.cls}));
 const i=PAGES.findIndex(p=>p.id===page);
 const seg=`<nav class="seg${kind==='track'?' scroll':''}" aria-label="${kind==='level'?'Levels':'Tracks'}">${PAGES.map(p=>`<a href="${p.id}.html"${p.id===page?' aria-current="page"':''}><span class="dot" style="background:var(--${p.cls})"></span>${esc(p.name)}</a>`).join('')}</nav>`;
 const prev=PAGES[i-1],next=PAGES[i+1];
@@ -18,15 +18,36 @@ const crumbs=`<nav class="crumbs" aria-label="Breadcrumb"><a href="learn.html">L
 
 if(page==='resources'){
   const trackFiles=typeof TRACK_DATA!=='undefined'?Object.entries(TRACK_DATA):[];
-  app.innerHTML=`${crumbs}<section class="intro"><h1><span class="hl">Resources</span> <span class="tag res">Tools &amp; data</span></h1><p>Everything you need beside the lessons: study tools you can use without Power BI, a ready-made Power BI project, the practice datasets and the professional templates.</p></section>${seg}
-  <section class="sect" id="tools"><h2>Study tools</h2><div class="tools">
-    <a href="flashcards.html"><b>🃏 Interview flashcards</b><span>Plain-English cards with spaced repetition.</span></a>
-    <a href="flashcards.html#mock"><b>⏱ Mock interview</b><span>Timed questions, answered out loud.</span></a>
-    <a href="glossary.html"><b>📖 Glossary</b><span>${GLOSSARY.length} terms explained without jargon.</span></a>
-    <a href="cheatsheet.html"><b>🖨 Cheat sheets</b><span>Printable, one per level.</span></a>
-    <a href="templates.html"><b>🗂 Professional templates</b><span>Requirements, ADR, incident report, postmortem and more.</span></a>
-    <a href="learn.html#certs"><b>🎓 Certification map</b><span>PL-300 and DP-600, current outline.</span></a>
-  </div></section>
+  const tpls=typeof TEMPLATES!=='undefined'?TEMPLATES:[];
+  const tools=[
+    ['flashcards.html','🃏 Interview flashcards','Plain-English cards with spaced repetition.'],
+    ['flashcards.html#mock','⏱ Mock interview','Timed questions, answered out loud.'],
+    ['glossary.html','📖 Glossary',`${GLOSSARY.length} terms explained without jargon.`],
+    ['cheatsheet.html','🖨 Cheat sheets','Printable, one per level.'],
+    ['templates.html','🗂 Professional templates','Requirements, ADR, incident report, postmortem and more.'],
+    ['diagnostic.html','🧪 Diagnostic','Find your starting point in a few minutes.'],
+    ['learn.html#paths','🧭 Pick your path','Analyst, Developer, Engineer or Lead.'],
+    ['learn.html#certs','🎓 Certification map','PL-300 and DP-600, current outline.'],
+    ['progress.html','📈 Your progress','Stage, competencies, portfolio and decision log.']];
+  const jumps=[['tools','Study tools'],['glossary','Glossary'],...(tpls.length?[['templates','Templates']]:[]),['cheatsheets','Cheat sheets'],['starter','Starter project'],['datasets','Datasets'],...(trackFiles.length?[['trackdata','Track files']]:[]),['enterprise','Enterprise pack']];
+  const gcats=[...new Set(GLOSSARY.map(g=>g.c))];
+  const gloss=gcats.map(c=>{const ts=GLOSSARY.filter(g=>g.c===c).sort((a,b)=>a.t.localeCompare(b.t));return `<details><summary>${esc(c)} <span class="n">${ts.length}</span></summary><div class="rterms">${ts.map(g=>`<a href="glossary.html#${PBI.slug(g.t)}" title="${esc(g.d.length>140?g.d.slice(0,140)+'…':g.d)}">${esc(g.t)}</a>`).join('')}</div></details>`}).join('');
+  app.innerHTML=`<section class="intro"><h1><span class="hl">Resources</span> <span class="tag res">Tools &amp; data</span></h1><p>Everything you need beside the lessons: study tools you can use without Power BI, the glossary, professional templates, cheat sheets, a ready-made Power BI project and the practice datasets.</p></section>
+  <div class="ctl-lbl">On this page</div>
+  <nav class="jump wrapjump" aria-label="Sections on this page">${jumps.map(([id,n])=>`<a href="#${id}">${n}</a>`).join('')}</nav>
+  <section class="sect" id="tools"><h2>Study tools</h2><div class="tools">${tools.map(([h,t,d])=>`<a href="${h}"><b>${t}</b><span>${esc(d)}</span></a>`).join('')}</div></section>
+  <section class="sect" id="glossary"><h2>Glossary</h2>
+    <p class="muted" style="max-width:70ch">${GLOSSARY.length} Power BI and data terms in plain English, grouped by subject. Open a group and pick a term, or <a href="glossary.html">open the full glossary</a> to search every definition.</p>
+    <div class="rgloss">${gloss}</div>
+  </section>
+  ${tpls.length?`<section class="sect" id="templates"><h2>Professional templates</h2>
+    <p class="muted" style="max-width:70ch">The documents BI teams write at work. Read one on the <a href="templates.html">templates page</a> or download the Markdown and fill it in.</p>
+    <div class="tools">${tpls.map(t=>`<a href="templates.html#tpl-${esc(t.id)}"><b>${esc(t.title)}</b><span>${esc(t.summary)}</span></a>`).join('')}</div>
+  </section>`:''}
+  <section class="sect" id="cheatsheets"><h2>Cheat sheets</h2>
+    <p class="muted" style="max-width:70ch">One printable page per level with the patterns you reach for most. Print or save as PDF from the cheat sheet page.</p>
+    <div class="tools">${levels.map(L=>`<a href="cheatsheet.html#${L.id}"><b><span class="dot" style="background:var(--${L.cls})"></span>${esc(L.name)}</b><span>${L.topics.length} topics on one printable page.</span></a>`).join('')}<a href="cheatsheet.html"><b>All levels</b><span>Every sheet, ready to print.</span></a></div>
+  </section>
   <section class="sect" id="starter"><h2>Starter Power BI project</h2>
     <p class="muted" style="max-width:70ch">Want to skip ahead to DAX? This Power BI project has 12 clean tables loaded, typed and related in a star schema, with DimDate marked as the date table. The Beginner modeling topic asks you to build this model yourself, so use the starter only to skip ahead. RawOrdersExport and SurveyWide aren't included: cleaning them is part of the Power Query topics.</p>
     <div class="tools">
@@ -41,8 +62,7 @@ if(page==='resources'){
     <div>${Course.datasetsListHtml()}</div>
   </section>
   ${trackFiles.length?`<section class="sect" id="trackdata"><h2>Track and scenario files</h2><p class="muted" style="max-width:70ch">Larger or specialised files used by the SQL, warehousing, testing and automation tracks. They are generated from a fixed seed by <code>tools/generate-data.js</code>, so everyone gets identical numbers.</p><div class="dsgrid">${trackFiles.map(([k,d])=>`<a href="${esc(d.file)}" download>${esc(d.name)}<span>${esc(d.desc||'')}</span></a>`).join('')}</div></section>`:''}
-  <section class="sect" id="enterprise"><h2>Enterprise scale pack</h2><p class="muted" style="max-width:70ch">Small data teaches the logic; big data teaches the design. Generate 100 thousand to 50 million realistic sales rows on your own machine (skewed customers, late arrivals, duplicates, several currencies, slowly changing customers) with Node.js: <code>node tools/generate-enterprise-data.js --rows 1000000</code>. See <a href="https://github.com/sudhanshumukherjeexx/power-bi/blob/main/docs/enterprise-data.md">the guide</a> for what each size teaches.</p></section>
-  ${pager}`;
+  <section class="sect" id="enterprise"><h2>Enterprise scale pack</h2><p class="muted" style="max-width:70ch">Small data teaches the logic; big data teaches the design. Generate 100 thousand to 50 million realistic sales rows on your own machine (skewed customers, late arrivals, duplicates, several currencies, slowly changing customers) with Node.js: <code>node tools/generate-enterprise-data.js --rows 1000000</code>. See <a href="https://github.com/sudhanshumukherjeexx/power-bi/blob/main/docs/enterprise-data.md">the guide</a> for what each size teaches.</p></section>`;
   document.getElementById('dataUrl').textContent=new URL('data/',location.href).href;
   document.addEventListener('click',e=>{if(e.target.closest('#copyDataUrl'))Course.copyText(document.getElementById('dataUrl').textContent,'Data address copied')});
   PBI.touch('Resources');
