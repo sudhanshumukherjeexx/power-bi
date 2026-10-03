@@ -343,6 +343,14 @@ if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostnam
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
 document.addEventListener('DOMContentLoaded',()=>{if(!standalone)document.querySelectorAll('[data-install]').forEach(b=>b.hidden=false)});
 
+/* ---------- More menu (narrow screens): a native <details>, closed by Escape, an outside click or a choice ---------- */
+function initMore(){
+  const closeAll=except=>document.querySelectorAll('details.navmore[open]').forEach(d=>{if(d!==except)d.open=false});
+  document.addEventListener('click',e=>{const d=e.target.closest('details.navmore');closeAll(d);if(d&&e.target.closest('.navmenu a,.navmenu button'))d.open=false});
+  document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const d=document.querySelector('details.navmore[open]');if(d){d.open=false;d.querySelector('summary').focus()}});
+}
+
 initSearch();
 initPopover();
+initMore();
 })();

@@ -16,7 +16,7 @@ module.exports = (all, ctx, outSoFar) => {
   for (const m of all.modules) add(`${m.id}.html`);
   if (all.toolkit) {
     add('toolkit.html'); add('assets/js/toolkit.js');
-    for (const d of all.toolkit.doors) add(`toolkit/${d.id}.html`);
+    for (const d of all.toolkit.doors) add(d.href || `toolkit/${d.id}.html`);
     for (const g of all.toolkit.guides) add(`toolkit/${g.id}.html`);
   }
   add('assets/js/meta.js'); add('assets/js/experience.js'); add('assets/js/templates.js'); add('assets/js/search-index.js');

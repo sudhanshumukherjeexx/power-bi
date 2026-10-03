@@ -631,6 +631,6 @@ const TOOLKIT={roles:[["start","Start here"],["playbook","Playbook"],["learn","L
 ["career","Find your starting point","Diagnostic","Sixteen questions that recommend where to start.","diagnostic.html","p:career",""],
 ["reference","Glossary","Reference","139 Power BI and data terms explained in plain English.","glossary.html","",""],
 ["reference","Cheat sheets","Reference","Printable one-page summaries per level: DAX, Power Query, modeling and Service.","cheatsheet.html","",""],
-["practise","Practice datasets","Resources","The 14 Northwind datasets to preview, copy or download.","resources.html#datasets","p:model-design",""],
-["practise","Starter Power BI project","Resources","A PBIP star schema with every clean table loaded and related.","resources.html#starter","p:model-design",""]
+["practise","Practice datasets","Library","The 14 Northwind datasets to preview, copy or download.","resources.html#datasets","p:model-design",""],
+["practise","Starter Power BI project","Library","A PBIP star schema with every clean table loaded and related.","resources.html#starter","p:model-design",""]
 ]};

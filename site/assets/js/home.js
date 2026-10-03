@@ -1,30 +1,59 @@
-/* Home page: a calm entrance for new learners, a short dashboard for returning ones. */
+/* Home page. New learners get a calm entrance; returning learners get continuation first:
+   one Continue card, one line of what's due and what to focus on, and the discovery sections folded away. */
 (function(){
 'use strict';
 const P=PBI.P,esc=PBI.esc;
 const main=P.main(),cards=P.cards();
 const started=Object.values(main.done).some(Boolean)||Object.keys(main.quiz).length||Object.keys(main.xp).length||Object.keys(cards.srs).length||main.diag||main.goal;
 
-/* returning learner: continue where they left off */
-if(started){
-  const next=P.nextStep(main,cards);
-  /* stored links are re-checked on read: only internal pages, never javascript: or another site */
-  const last=main.last&&PBI.safeHref(main.last.href)?main.last:null;
-  const cta=document.getElementById('cta');
-  const target=last?{href:last.href,title:last.title,lbl:'Continue where you left off'}:next&&PBI.safeHref(next.href)?{href:next.href,title:next.t,lbl:'Your next step'}:{href:'beginner.html',title:'Beginner level',lbl:'Start here'};
-  cta.innerHTML=`<a class="btn primary" href="${esc(target.href)}">Continue</a><a class="btn" href="progress.html">Your progress</a>`;
-  document.getElementById('kicker').textContent='Welcome back';
-  document.getElementById('cont').innerHTML=`<a class="continue" href="${esc(target.href)}"><span><span class="lbl">${esc(target.lbl)}</span><b>${esc(target.title)}</b>${next&&last?`<span class="small muted">Next on your route: ${esc(next.t)}</span>`:''}</span><span class="go" aria-hidden="true">→</span></a>`;
-
-  const skill=P.skillTotals(main,cards),xp=P.xpTotals(main),due=P.due(cards),stage=P.currentStage(main,cards);
-  document.getElementById('tiles').innerHTML=
-    `<a class="tile" href="learn.html"><span class="k">Skill Mode</span><b>${skill.done}/${skill.asg}</b><span class="s">assignments done</span>${P.bar(skill.pct,'Skill Mode')}</a>`+
-    `<a class="tile" href="experience.html"><span class="k">Experience Mode</span><b>${xp.done}/${xp.n}</b><span class="s">${xp.active?xp.active+' in progress':'scenarios finished'}</span>${P.bar(xp.pct,'Experience Mode')}</a>`+
-    `<a class="tile" href="flashcards.html"><span class="k">Flashcards</span><b>${due.due}</b><span class="s">due today · ${due.fresh} new</span></a>`+
-    `<a class="tile" href="progress.html#stages"><span class="k">Stage ${stage.n} of 5</span><b style="font-size:1.05rem">${esc(stage.name)}</b><span class="s">${esc(stage.question)}</span>${P.bar(stage.pct,stage.name)}</a>`;
-  document.getElementById('dash').hidden=false;
+/* what the Continue card says about the place you left: a scenario, a level or track, or any other page */
+function describe(href,title){
+  const page=href.split('#')[0];
+  const s=SCENARIO_INDEX.find(x=>'experience/'+x.slug+'.html'===page);
+  if(s){
+    const rec=main.xp[s.id]||{},st=STAGES.find(x=>x.id===s.stage)||{};
+    const dels=s.deliverables.length,done=s.deliverables.filter(d=>rec.del&&rec.del[d.id]).length;
+    return {id:s.ticket,title:s.title,meta:`${esc(st.name||'')} · ${rec.done?'finished':`${done} of ${dels} deliverables written`}${rec.hints?` · ${rec.hints} hint${rec.hints>1?'s':''}`:''}`,pct:dels?Math.round(100*done/dels):0,kind:'Scenario'};
+  }
+  const m=MODULES.find(x=>x.id+'.html'===page);
+  if(m){const r=P.moduleReadiness(m,main,cards);return {id:null,title:m.name,meta:`${r.done} of ${r.asg} assignments · ${r.pct}% ready`,pct:r.pct,kind:m.kind==='track'?'Track':'Level'}}
+  return {id:null,title,meta:'',pct:null,kind:'Page'};
 }
-if(main.diag&&main.diag.rec&&PBI.safeHref(main.diag.rec.href)){
+
+if(started){
+  document.body.classList.add('returning');
+  const next=P.nextStep(main,cards);
+  const last=main.last&&PBI.safeHref(main.last.href)?main.last:null;   /* stored links are re-checked on read */
+  const target=last?{href:last.href,title:last.title}:next&&PBI.safeHref(next.href)?{href:next.href,title:next.t}:{href:'beginner.html',title:'Beginner level'};
+  const d=describe(target.href,target.title);
+
+  document.getElementById('kicker').textContent='Welcome back';
+  document.getElementById('h1').textContent='Pick up where you left off.';
+  document.getElementById('lead').hidden=true;
+  document.getElementById('cta').hidden=true;
+  document.getElementById('cont').innerHTML=`<div class="resume"><div class="rlbl">${last?'Continue':'Your next step'}</div>
+<a class="rcard" href="${esc(target.href)}"><span class="rtop">${d.id?`<span class="mono rid">${esc(d.id)}</span>`:''}<span class="rkind">${esc(d.kind)}</span></span><b>${esc(d.title)}</b>${d.meta?`<span class="rmeta">${d.meta}</span>`:''}${d.pct!==null?P.bar(d.pct,d.title):''}<span class="btn primary">Continue</span></a>
+${next&&last&&next.href!==last.href?`<p class="small muted">Next on your route: <a href="${esc(next.href)}">${esc(next.t)}</a></p>`:''}</div>`;
+
+  /* one line instead of a dashboard */
+  const due=P.due(cards),stage=P.currentStage(main,cards),comp=P.competency(main,cards);
+  const focus=comp.filter(c=>(stage.skills||[]).includes(c.id)).sort((a,b)=>a.pct-b.pct)[0];
+  const port=P.portfolio(main).length;
+  document.getElementById('dash').innerHTML=`<p class="homeline">
+<a href="flashcards.html"><b>${due.due}</b> card${due.due===1?'':'s'} due</a>
+<a href="progress.html#stages">Stage <b>${esc(stage.name)}</b></a>
+${focus?`<a href="progress.html#competency">Focus <b>${esc(focus.name)}</b></a>`:''}
+<a href="progress.html#portfolio">Portfolio evidence <b>${port}</b></a></p>`;
+  document.getElementById('dash').hidden=false;
+
+  /* discovery stays one click away */
+  const ex=document.createElement('details');ex.className='explore';
+  ex.innerHTML='<summary>Explore other paths</summary>';
+  const dash=document.getElementById('dash');dash.after(ex);
+  ['ways','goal'].forEach(id=>{const el=document.getElementById(id);if(el)ex.appendChild(el)});
+  const honest=document.querySelector('.honest');if(honest)ex.appendChild(honest);
+}
+if(!started&&main.diag&&main.diag.rec&&PBI.safeHref(main.diag.rec.href)){
   const r=main.diag.rec;
   document.getElementById('lead').insertAdjacentHTML('afterend',`<p class="small muted">Your diagnostic suggested starting at <a href="${esc(r.href)}">${esc(r.label)}</a>.</p>`);
 }

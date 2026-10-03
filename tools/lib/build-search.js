@@ -8,11 +8,11 @@ const cut = (s, n = 320) => { s = String(s || '').replace(/\s+/g, ' ').trim(); r
 const PAGES = [
   ['Home', 'Start, continue, and choose a goal', 'index.html'],
   ['Learn: Skill Mode', 'Levels, tracks, career paths and certification maps', 'learn.html'],
-  ['Practice real work: Experience Mode', 'Tickets, incidents, change requests and decisions at Northwind Outdoors', 'experience.html'],
+  ['Experience Mode: real BI work', 'Tickets, incidents, change requests and decisions at Northwind Outdoors', 'experience.html'],
   ['Your progress', 'Competency review: evidence, stages, portfolio evidence, decision log, certification preparation', 'progress.html'],
   ['Find my starting point', 'Diagnostic: sixteen questions, a recommended start', 'diagnostic.html'],
   ['Professional templates', 'Requirements, ADR, incident report, postmortem, PR, runbook and more', 'templates.html'],
-  ['Resources', 'Study tools, starter project, datasets', 'resources.html'],
+  ['Library (BI Developer Toolkit)', 'Glossary, cheat sheets, external resources, datasets, starter project, study tools', 'resources.html'],
   ['BI Developer Toolkit', 'References, tools, troubleshooting, playbooks, checklists, templates and career guides', 'toolkit.html'],
   ['Interview flashcards', 'Spaced repetition, all decks', 'flashcards.html'],
   ['Mock interview', 'Timed questions, out loud', 'flashcards.html#mock'],

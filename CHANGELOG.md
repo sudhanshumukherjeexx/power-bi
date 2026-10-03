@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+### Learner changes: one place for everything, and continuation first (Phase 3)
+
+- **Resources is now the Library, inside the Toolkit.** The glossary, cheat sheets, external catalog, datasets, starter project and study tools are a seventh Toolkit door, so there is one place to look things up instead of two. `resources.html` still works and keeps all its content.
+- **Five destinations:** Learn · Experience · Interview · Toolkit · Progress. "Practice" is now called **Experience**, the name the rest of the site uses.
+- **Phones get a More menu** with Progress, Glossary, Library, Templates, and export/import. The header row no longer squeezes six labels into 390px. Every target is at least 44px, and the menu works with the keyboard (Enter opens it, Escape closes it and returns focus).
+- **Returning home is continuation first:** one Continue card (the ticket id, stage and deliverables for a scenario, or readiness for a level), then one line with cards due, current stage, focus skill and portfolio evidence. Everything else folds under *Explore other paths*. First-time visitors see the same welcome as before.
+- **Focus mode in scenarios:** once you take a ticket, the main navigation steps back and the header shows **← Exit scenario** and the ticket id.
+- **Less dashboard:** the four stat tiles on the home page and the Experience hub are replaced by a single line each.
+
+### Maintainer changes (Phase 3)
+
+- `content/toolkit/index.json`: a door may have `href` (a page of the site) instead of guides. The Toolkit check rejects a door that has both.
+- `tools/lib/partials.js`: `SECTIONS` (five), `ALIAS` (`resources` → `toolkit`), `MORE`, and `nav(active, r, page)` marks the current page inside More.
+- The `hidden` attribute now always wins over component `display` rules.
+
 ### Learner changes: a new visual identity (Phase 2)
 
 - **Graphite × Warm Ivory × Grail Gold.** Warm ivory surfaces and graphite text replace the blue-grey palette, and a true graphite dark theme replaces the inverted one. Grail Gold, which evolved from Power BI yellow, now marks only the primary action, where you are, progress and important insight.

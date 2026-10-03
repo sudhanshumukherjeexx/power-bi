@@ -54,7 +54,7 @@ function run(push){
   const raw=terms(st.q),ts=raw.length>1&&raw.some(t=>dfn(t)<=.15*items.length)?raw.filter(t=>dfn(t)<=.15*items.length):raw,phrase=st.q.toLowerCase();
   let list=items.filter(it=>need.every(n=>it.tags.includes(n)));
   const unknown=ts.filter(t=>!(SYN[t]||[]).length&&!items.some(it=>wre(t).test(it.all)));
-  if(unknown.length){doors.hidden=true;res.hidden=false;res.innerHTML=`<div class="tkempty"><h2>Nothing in the Toolkit mentions “${esc(unknown.join('”, “'))}”</h2><p>Check the spelling, or try a product or feature name (DAX, RLS, gateway, Direct Lake). <a href="toolkit/whats-broken.html">What's broken?</a> covers the most common problems.</p></div><p><button class="btn sm" type="button" id="tkback">← Back to the six doors</button></p>`;return}
+  if(unknown.length){doors.hidden=true;res.hidden=false;res.innerHTML=`<div class="tkempty"><h2>Nothing in the Toolkit mentions “${esc(unknown.join('”, “'))}”</h2><p>Check the spelling, or try a product or feature name (DAX, RLS, gateway, Direct Lake). <a href="toolkit/whats-broken.html">What's broken?</a> covers the most common problems.</p></div><p><button class="btn sm" type="button" id="tkback">← Back to the Toolkit</button></p>`;return}
   if(ts.length){const sc=list.map(it=>({it,s:score(it,ts,phrase)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);const top=sc.length?sc[0].s:0;list=sc.filter(x=>x.s>=Math.max(.8,top*.05)).map(x=>x.it)}
   else list.sort((a,b)=>ORDER.indexOf(a.role)-ORDER.indexOf(b.role));
   doors.hidden=true;res.hidden=false;
@@ -66,7 +66,7 @@ function run(push){
   const snip=it=>{if(!ts.length)return esc(it.text.slice(0,140))+(it.text.length>140?'…':'');const pos=ts.map(t=>it.lt0.indexOf(t)).filter(x=>x>=0),i=pos.length?Math.min(...pos):0;const from=Math.max(0,i-60);return(from?'…':'')+esc(it.text.slice(from,from+160))+(it.text.length>from+160?'…':'')};
   res.innerHTML=`<div class="tkpath"><h2>${st.q?`Your path for “${esc(st.q)}”`:'Matching resources'}</h2><ol>${present.slice(0,7).map(r=>`<li><span class="role">${esc(ROLE[r])}</span> ${link(groups[r][0])} <span class="small muted">${esc(groups[r][0].sub)}</span></li>`).join('')}</ol></div>`+
     present.map(r=>{const g=groups[r];return `<section class="tkgrp"><h3>${esc(ROLE[r])} <span class="n">${g.length}</span></h3><ul>${g.slice(0,6).map(it=>`<li>${link(it)}<span class="sub">${esc(it.sub)}</span><span class="snip">${snip(it)}</span></li>`).join('')}</ul>${g.length>6?`<details><summary>${g.length-6} more</summary><ul>${g.slice(6,40).map(it=>`<li>${link(it)}<span class="sub">${esc(it.sub)}</span></li>`).join('')}</ul></details>`:''}</section>`}).join('')+
-    `<p><button class="btn sm" type="button" id="tkback">← Back to the six doors</button></p>`;
+    `<p><button class="btn sm" type="button" id="tkback">← Back to the Toolkit</button></p>`;
 }
 form.addEventListener('submit',e=>{e.preventDefault();run();res.hidden||res.scrollIntoView({block:'start',behavior:'smooth'})});
 let timer;q.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(run,180)});

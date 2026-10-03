@@ -1,5 +1,5 @@
 /* BI Developer Toolkit outputs:
-     toolkit.html              the hub: six doors, "what are you trying to do?" search and filters
+     toolkit.html              the hub: seven doors (Library links to resources.html), "what are you trying to do?" search and filters
      toolkit/<door>.html       one page per door, listing its guides
      toolkit/<guide>.html      one page per guide, rendered from content/toolkit/guides/<guide>.md at build time
      toolkit/<guide>.md        the guide as a download, for guides marked "download": true
@@ -127,7 +127,7 @@ ${P.footer(r)}
   }
 
   /* ---------- door pages ---------- */
-  for (const d of tk.doors) {
+  for (const d of tk.doors.filter(x => !x.href)) {
     const gs = tk.guides.filter(g => g.door === d.id);
     const groups = [...new Set(gs.map(g => g.group || ''))];
     out[`toolkit/${d.id}.html`] = `${P.head({ title: `${d.name} · BI Developer Toolkit · Power BI Holy Grail`, description: `${d.q} ${d.desc}`, path: `toolkit/${d.id}.html`, r })}
@@ -173,7 +173,7 @@ ${facetOpts(all.certs.map(c => [c.id, c.code]), 'Certification')}
 <div class="tkbroken"><span class="small muted">Something broken?</span>${tk.broken.map(([t, h]) => `<a class="chip" href="${h}">${esc(t)}</a>`).join('')}<a class="chip" href="toolkit/whats-broken.html">More…</a></div>
 </header>
 <section id="tkresults" class="tkresults" aria-live="polite" hidden></section>
-<section id="tkdoors" aria-label="Sections"><div class="doors tkdoors">${tk.doors.map(d => { const gs = tk.guides.filter(g => g.door === d.id); return `<a class="door" href="toolkit/${d.id}.html"><span class="dic">${ICON.use(d.icon)}</span><h2>${esc(d.name)}</h2><p class="q">“${esc(d.q)}”</p><p>${esc(d.desc)}</p><span class="more">${gs.length} guide${gs.length > 1 ? 's' : ''} →</span></a>`; }).join('')}</div></section>
+<section id="tkdoors" aria-label="Sections"><div class="doors tkdoors">${tk.doors.map(d => { const gs = tk.guides.filter(g => g.door === d.id); return `<a class="door" href="${d.href || `toolkit/${d.id}.html`}"><span class="dic">${ICON.use(d.icon)}</span><h2>${esc(d.name)}</h2><p class="q">“${esc(d.q)}”</p><p>${esc(d.desc)}</p><span class="more">${d.href ? esc(d.links || 'Open') : `${gs.length} guide${gs.length > 1 ? 's' : ''}`} →</span></a>`; }).join('')}</div></section>
 <p class="small muted tkfoot">Every page here is checked against its sources and carries the date it was last checked. Official Microsoft documentation is linked wherever it is the authority; specialist and community sources are labelled as such.</p>
 </main>
 ${P.footer()}
@@ -226,8 +226,8 @@ ${P.footer()}
    ['career', 'Find your starting point', 'Diagnostic', 'Sixteen questions that recommend where to start.', 'diagnostic.html', 'p:career'],
    ['reference', 'Glossary', 'Reference', `${all.glossary.length} Power BI and data terms explained in plain English.`, 'glossary.html', ''],
    ['reference', 'Cheat sheets', 'Reference', 'Printable one-page summaries per level: DAX, Power Query, modeling and Service.', 'cheatsheet.html', ''],
-   ['practise', 'Practice datasets', 'Resources', 'The 14 Northwind datasets to preview, copy or download.', 'resources.html#datasets', 'p:model-design'],
-   ['practise', 'Starter Power BI project', 'Resources', 'A PBIP star schema with every clean table loaded and related.', 'resources.html#starter', 'p:model-design']
+   ['practise', 'Practice datasets', 'Library', 'The 14 Northwind datasets to preview, copy or download.', 'resources.html#datasets', 'p:model-design'],
+   ['practise', 'Starter Power BI project', 'Library', 'A PBIP star schema with every clean table loaded and related.', 'resources.html#starter', 'p:model-design']
   ].forEach(x => add(...x));
   out['assets/js/toolkit.js'] = BANNER('content/toolkit') +
     `/* The Toolkit hub's search index. Item: [role, title, sub, text, href, tags, keywords]; tags are s:stage k:skill t:tool p:problem c:cert. */\n` +

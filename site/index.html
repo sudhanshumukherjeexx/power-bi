@@ -35,7 +35,7 @@
 <!--nav:home-->
 <header class="top gnav"><div class="in">
   <a class="brand" href="index.html" aria-label="Power BI Holy Grail: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">Power BI Holy Grail</span></a>
-  <nav class="mainnav" aria-label="Main"><a href="learn.html">Learn</a><a href="experience.html">Practice</a><a href="flashcards.html">Interview</a><a href="toolkit.html">Toolkit</a><a href="progress.html">Progress</a><a href="resources.html">Resources</a></nav>
+  <nav class="mainnav" aria-label="Main"><a href="learn.html">Learn</a><a href="experience.html">Experience</a><a href="flashcards.html">Interview</a><a href="toolkit.html">Toolkit</a><a href="progress.html" class="nav-wide">Progress</a><details class="navmore"><summary>More<span class="vh"> pages</span></summary><div class="navmenu"><a href="progress.html">Progress</a><a href="glossary.html">Glossary</a><a href="resources.html">Library</a><a href="templates.html">Templates</a><hr><button type="button" data-export>Export progress</button><button type="button" data-import>Import progress</button></div></details></nav>
   <span class="sp"></span>
   <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
   <span data-theme-toggle-slot></span>
@@ -53,10 +53,7 @@
     <div id="cont"></div>
   </section>
 
-  <section id="dash" hidden aria-labelledby="dash-h">
-    <div class="section-h"><h2 id="dash-h">Where you are</h2><a href="progress.html">Competency review →</a></div>
-    <div class="tiles" id="tiles"></div>
-  </section>
+  <section id="dash" hidden aria-label="Where you are"></section>
 
   <section id="ways" aria-labelledby="ways-h">
     <div class="section-h"><h2 id="ways-h">Three ways in</h2></div>
@@ -78,7 +75,7 @@
   <div class="honest"><b>A promise we can keep.</b> No website can give you five years of experience. What it can do is put you in front of the problems, failures and decisions that usually take years to meet, on purpose and with feedback, so you recognise them when they happen for real. Every number in the exercises is generated from a fixed seed and checked automatically.</div>
 </main>
 <footer class="wrap foot">
-  <p><a href="learn.html">Learn</a> · <a href="experience.html">Practice</a> · <a href="flashcards.html">Interview</a> · <a href="progress.html">Progress</a> · <a href="resources.html">Resources</a> · <a href="glossary.html">Glossary</a> · <a href="templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
+  <p><a href="learn.html">Learn</a> · <a href="experience.html">Experience</a> · <a href="flashcards.html">Interview</a> · <a href="progress.html">Progress</a> · <a href="toolkit.html">Toolkit</a> · <a href="resources.html">Library</a> · <a href="glossary.html">Glossary</a> · <a href="templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>
   <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
   <p class="small muted">Your progress is saved in this browser only. Northwind Outdoors is a fictional company and all data is synthetic.</p>
 </footer>

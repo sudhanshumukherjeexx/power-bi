@@ -3,11 +3,11 @@ const SEARCH_FACETS=[{"g":"Levels","items":[["beginner","Beginner"],["intermedia
 const SEARCH_INDEX=[
 ["Page","Home","Start, continue, and choose a goal","Start, continue, and choose a goal","index.html",""],
 ["Page","Learn: Skill Mode","Levels, tracks, career paths and certification maps","Levels, tracks, career paths and certification maps","learn.html",""],
-["Page","Practice real work: Experience Mode","Tickets, incidents, change requests and decisions at Northwind Outdoors","Tickets, incidents, change requests and decisions at Northwind Outdoors","experience.html",""],
+["Page","Experience Mode: real BI work","Tickets, incidents, change requests and decisions at Northwind Outdoors","Tickets, incidents, change requests and decisions at Northwind Outdoors","experience.html",""],
 ["Page","Your progress","Competency review: evidence, stages, portfolio evidence, decision log, certification preparation","Competency review: evidence, stages, portfolio evidence, decision log, certification preparation","progress.html",""],
 ["Page","Find my starting point","Diagnostic: sixteen questions, a recommended start","Diagnostic: sixteen questions, a recommended start","diagnostic.html",""],
 ["Page","Professional templates","Requirements, ADR, incident report, postmortem, PR, runbook and more","Requirements, ADR, incident report, postmortem, PR, runbook and more","templates.html",""],
-["Page","Resources","Study tools, starter project, datasets","Study tools, starter project, datasets","resources.html",""],
+["Page","Library (BI Developer Toolkit)","Glossary, cheat sheets, external resources, datasets, starter project, study tools","Glossary, cheat sheets, external resources, datasets, starter project, study tools","resources.html",""],
 ["Page","BI Developer Toolkit","References, tools, troubleshooting, playbooks, checklists, templates and career guides","References, tools, troubleshooting, playbooks, checklists, templates and career guides","toolkit.html",""],
 ["Page","Interview flashcards","Spaced repetition, all decks","Spaced repetition, all decks","flashcards.html",""],
 ["Page","Mock interview","Timed questions, out loud","Timed questions, out loud","flashcards.html#mock",""],

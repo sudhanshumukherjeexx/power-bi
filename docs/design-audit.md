@@ -84,6 +84,10 @@ At 390px the six labels share one row at 0.84rem with 2px of padding. They fit, 
 | Footer | five links plus three buttons | keep (export and import must stay reachable everywhere) |
 | Hubs | `.mcard` coloured top borders and shadows | border only |
 
+## Known debt after 2.3.0
+
+- Flashcards, Glossary and Cheat sheet still carry their own base styles inline (`.top`, `.brand`, `.btn`, `.seg`…) instead of loading `pages.css`. A mechanical merge was tried in Phase 3 and reverted: `pages.css` contains level-page rules (`table`, `th, td`, `.intro h1`) that leak into those pages and overflowed the cheat sheet by up to 310px. The fix is to split `pages.css` into shared base (`base.css`) and level-page components, and then let all pages load the base. Pixel comparisons at 1280 and 390px in both themes guard the change.
+
 ## Accessibility notes
 
 - Skip link, `main` focus, `aria-current` nav, search dialog focus trap, tabs with roving tabindex in scenarios, reduced-motion overrides and theme `role="switch"` all exist.

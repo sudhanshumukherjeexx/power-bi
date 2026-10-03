@@ -25,7 +25,7 @@ The repository has three parts: `content/` is what you edit, `site/` is the webs
 | `content/skills/`, `content/solutions/` | Skill Mode levels and tracks: topics, assignments, quizzes and worked solutions (JSON). |
 | `content/experience/` | Experience Mode scenarios and their model answers. |
 | `content/toolkit/` | The BI Developer Toolkit: `index.json` (doors and tags) and one Markdown guide per file in `guides/`, plus downloads in `files/`. |
-| `content/resources/` | The external resource catalog shown on Resources, under topics and on scenario pages. |
+| `content/resources/` | The external resource catalog shown in the Toolkit Library, under topics and on scenario pages. |
 | `content/templates/` | Professional templates (Markdown) and their index. |
 | `content/flashcards/`, `content/glossary/`, `content/certifications/`, `content/career-paths/`, `content/datasets/` | Flashcards, glossary, versioned exam outlines, career paths, dataset descriptions. |
 | `content/*.json` | Stages, skills, goals, personas, diagnostic and site settings. |
@@ -47,7 +47,7 @@ These live in `site/`, are built from the source above, and are committed, so th
 | Path | Built from |
 |---|---|
 | `site/assets/js/` (every other script: `content.js`, `tracks.js`, `solutions*.js`, `experience.js`, `xp/`, `toolkit.js`, `external.js`, `search-index.js`, …) | `content/` |
-| `site/` level and track pages (`beginner.html` … `advanced.html`, `sql.html` … `modern.html`) and `resources.html` | `content/skills/`, by `tools/lib/build-pages.js` |
+| `site/` level and track pages (`beginner.html` … `advanced.html`, `sql.html` … `modern.html`) and `resources.html` (the Toolkit Library) | `content/skills/`, by `tools/lib/build-pages.js` |
 | `site/experience/*.html` | `content/experience/` |
 | `site/toolkit.html`, `site/toolkit/` (hub, door pages, guide pages, `.md` and file downloads) | `content/toolkit/` |
 | `site/templates/*.md` (downloads) | `content/templates/` |
@@ -136,6 +136,9 @@ The visual identity is Graphite × Warm Ivory × Grail Gold, set in IBM Plex. `t
 - **Cards are for objects:** scenarios, tickets, datasets, modules. Don't put cards inside cards.
 - **Identifiers** (BI-1042, INC-2044, ADR-007, SEV2) are set in Plex Mono.
 - **Experience Mode is operational:** a graphite ticket panel, mono ids and timestamps, and severity as text. Skill Mode stays editorial.
+- **Navigation:** five destinations (Learn, Experience, Interview, Toolkit, Progress). Under 860px wide, Progress moves into **More** with Glossary, Library, Templates and export/import (`MORE` in `tools/lib/partials.js`). Don't add a top-level item. Find it a home in the Toolkit or under More.
+- **The Library** is the Toolkit door whose `href` is `resources.html` (`content/toolkit/index.json`). A door with `href` opens that page instead of a generated door page and holds no guides.
+- **Focus mode:** while a scenario is open (taken and not finished), `xp.js` adds `body.xpfocus`, which hides the main navigation and shows "← Exit scenario". Keep anything you add to a scenario page usable without the global navigation.
 - **Icons** come from the sprite, sit next to a text label, and are `aria-hidden`. No emoji in UI chrome. Scenario dialogue may use them.
 - **Contrast:** text is 4.5:1 or more on every surface in both themes. Check new colour pairs before using them.
 

@@ -17,7 +17,8 @@ function card(s){
 function render(){
   const idx=SCENARIO_INDEX;
   const t=P.xpTotals(main);
-  let h=`<div class="tiles"><div class="tile"><span class="k">Finished</span><b>${t.done}/${t.n}</b>${P.bar(t.pct,'Scenarios finished')}</div><div class="tile"><span class="k">In progress</span><b>${t.active}</b></div><a class="tile" href="progress.html#decisions"><span class="k">Decision log</span><b>${idx.filter(s=>main.xp[s.id]&&main.xp[s.id].dec).length}</b><span class="s">architecture decisions recorded</span></a><a class="tile" href="progress.html#portfolio"><span class="k">Portfolio</span><b>${P.portfolio(main).length}</b><span class="s">deliverables written</span></a></div>`;
+  /* one line, not a dashboard */
+  let h=`<p class="homeline"><a href="progress.html#experience"><b>${t.done}/${t.n}</b> finished</a><a href="progress.html#experience"><b>${t.active}</b> in progress</a><a href="progress.html#decisions"><b>${idx.filter(s=>main.xp[s.id]&&main.xp[s.id].dec).length}</b> decisions recorded</a><a href="progress.html#portfolio">Portfolio evidence <b>${P.portfolio(main).length}</b></a></p>`;
   h+=`<div class="filters" role="group" aria-label="Show">${FILTERS.map(([k,l])=>`<button type="button" data-f="${k}" aria-pressed="${k===filter}">${l}</button>`).join('')}</div>`;
   for(const st of STAGES){
     const list=idx.filter(s=>s.stage===st.id&&match(s));

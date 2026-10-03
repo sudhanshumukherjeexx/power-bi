@@ -57,7 +57,10 @@ function check(tk, all) {
     if (/utm_[a-z]+=/.test(g._body + JSON.stringify(g.refs || []))) errs.push(`${at}: remove tracking parameters (utm_…) from links`);
     if (!/^## /m.test(g._body)) errs.push(`${at}: needs at least one "## " section`);
   }
-  for (const d of tk.doors) if (!tk.guides.some(g => g.door === d.id)) errs.push(`content/toolkit/index.json: door "${d.id}" has no guides`);
+  for (const d of tk.doors) {
+    if (d.href) { if (!/^[a-z0-9-]+\.html$/.test(d.href)) errs.push(`content/toolkit/index.json: door "${d.id}" href must be a page of this site`); if (tk.guides.some(g => g.door === d.id)) errs.push(`content/toolkit/index.json: door "${d.id}" links to ${d.href}, so it can't also hold guides`); continue; }
+    if (!tk.guides.some(g => g.door === d.id)) errs.push(`content/toolkit/index.json: door "${d.id}" has no guides`);
+  }
   return errs;
 }
 

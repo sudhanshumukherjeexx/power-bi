@@ -13,17 +13,18 @@ module.exports = t => {
   if (!t.ok(tk, 'content/toolkit is missing')) return;
   for (const e of check(tk, all)) t.ok(false, e);
 
-  t.ok(tk.doors.length === 6, `the hub shows exactly six doors, found ${tk.doors.length}`);
+  t.ok(tk.doors.length === 7, `the hub shows seven doors (six plus the Library), found ${tk.doors.length}`);
+  t.ok(tk.doors.some(d => d.id === 'library' && d.href === 'resources.html'), 'the Library door opens resources.html');
   t.ok(tk.guides.length >= 25, `expected at least 25 guides, found ${tk.guides.length}`);
 
   const read = rel => { const f = path.join(site, rel); return fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : null; };
   const hub = read('toolkit.html');
   if (t.ok(hub, 'toolkit.html is not generated')) {
-    for (const d of tk.doors) t.ok(hub.includes(`href="toolkit/${d.id}.html"`), `toolkit.html: no door link to ${d.id}`);
+    for (const d of tk.doors) t.ok(hub.includes(`href="${d.href || `toolkit/${d.id}.html`}"`), `toolkit.html: no door link to ${d.id}`);
     t.ok(/id="tkq"/.test(hub) && /What are you trying to do\?/.test(hub), 'toolkit.html: the search box is missing');
     for (const f of ['skill', 'stage', 'tool', 'problem', 'certification']) t.ok(hub.includes(`data-f="${f}"`), `toolkit.html: the ${f} filter is missing`);
   }
-  for (const d of tk.doors) {
+  for (const d of tk.doors.filter(x => !x.href)) {
     const html = read(`toolkit/${d.id}.html`);
     if (!t.ok(html, `toolkit/${d.id}.html is not generated`)) continue;
     for (const g of tk.guides.filter(x => x.door === d.id)) t.ok(html.includes(`toolkit/${g.id}.html`), `door ${d.id} doesn't list ${g.id}`);

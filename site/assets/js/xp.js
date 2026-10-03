@@ -31,7 +31,7 @@ function header(){
   const r=rec(),status=!r?'new':r.done?'done':'active';
   const sc=r&&r.done?P.scenarioScore(meta,r):null;
   const rep=persona(S.ticket.reporter);
-  return `<nav class="crumbs" aria-label="Breadcrumb"><a href="${R}experience.html">Practice</a><span aria-hidden="true">/</span><a href="${R}experience.html#stage-${S.stage}">Stage ${stage.n}: ${esc(stage.name)}</a><span aria-hidden="true">/</span><span aria-current="page">${esc(S.ticket.id)}</span></nav>
+  return `<nav class="crumbs" aria-label="Breadcrumb"><a href="${R}experience.html">Experience</a><span aria-hidden="true">/</span><a href="${R}experience.html#stage-${S.stage}">Stage ${stage.n}: ${esc(stage.name)}</a><span aria-hidden="true">/</span><span aria-current="page">${esc(S.ticket.id)}</span></nav>
   <header class="ticket">
     <div class="tk-top"><span class="tk-kind k-${S.ticket.kind}">${KIND[S.ticket.kind]||'Ticket'}</span>${S.ticket.severity?`<span class="${sevCls(S.ticket.severity)}">${S.ticket.severity}</span>`:''}<span class="tk-id">${esc(S.ticket.id)}</span>${S.type==='drill'?'<span class="chip">Drill</span>':''}<span class="tk-status st-${status}">${status==='done'?`Done${sc?' · '+sc.pct+'%':''}`:status==='active'?'In progress':'Not started'}</span></div>
     <h1>${esc(S.title)}</h1>
@@ -117,7 +117,7 @@ function hints(){
   const r=rec(),n=r?r.hints||0:0;
   return `<p class="muted small">Hints narrow where to look; they never give the answer. Using one doesn't lower your outcome. It's recorded separately as independence (10 points per hint, at most 40), because at work asking early is often the right call.</p><ol class="hints">${S.hints.map((h,i)=>i<n?`<li class="shown"><b>Hint ${i+1}</b> ${fmt(h)}</li>`:'').join('')}</ol>${n<S.hints.length?`<button class="btn" type="button" id="hintBtn">Show hint ${n+1} of ${S.hints.length}</button>`:'<p class="small muted">No more hints. Try the evidence again, then the model answer in the Finish tab.</p>'}${contextHtml()}`;
 }
-/* "Need more context?": external reading linked to this scenario in the catalog (Resources). Reading costs nothing. */
+/* "Need more context?": external reading linked to this scenario in the catalog (Toolkit Library). Reading costs nothing. */
 function contextHtml(){
   if(typeof EXTERNAL==='undefined')return '';
   const list=EXTERNAL.items.filter(x=>x.s.some(s=>s[0]===S.id));
@@ -176,8 +176,17 @@ function renderPane(k){
   if(k==='review'&&rec()&&rec().sol)loadSolution();
   if(k==='brief'||k==='evidence')linkTerms(el);
 }
+/* focus: while a ticket is open, the global navigation steps back and the header offers a way out */
+function focusMode(){
+  const r=rec(),on=!!(r&&!r.done);
+  document.body.classList.toggle('xpfocus',on);
+  const bar=document.querySelector('header.gnav .in');if(!bar)return;
+  let ex=bar.querySelector('.exitfocus');
+  if(on&&!ex){bar.querySelector('.brand').insertAdjacentHTML('afterend',`<a class="exitfocus" href="${R}experience.html"><span aria-hidden="true">←</span> Exit scenario</a><span class="focusid mono" aria-hidden="true">${esc(S.ticket.id)}</span>`)}
+}
 function render(){
   app.innerHTML=header()+tabs();
+  focusMode();
   const want=(location.hash.match(/tab=(\w+)/)||[])[1]||(location.hash.startsWith('#ev-')?'evidence':'brief');
   show(TABS.some(t=>t[0]===want)?want:'brief');
   if(location.hash.startsWith('#ev-')){const el=document.getElementById(location.hash.slice(1));if(el)requestAnimationFrame(()=>el.scrollIntoView())}

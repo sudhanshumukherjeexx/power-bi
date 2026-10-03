@@ -520,3 +520,57 @@ dialog.dlg .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
 .msg .when,.ev-kind,.tk-meta dd time{font-variant-numeric:tabular-nums}
 .ev{border-left:2px solid var(--border-strong)}
 .ev-kind{color:var(--text-secondary);border-color:var(--border-strong);text-transform:uppercase;letter-spacing:.04em}
+
+/* ---------- More menu (narrow screens): Progress, Glossary, Library, Templates, export/import ---------- */
+.navmore{display:none;position:relative}
+.navmore>summary{list-style:none;cursor:pointer;color:var(--ink-2);font-size:.92rem;font-weight:500;padding:8px 12px;border-radius:var(--r-2);min-height:44px;display:inline-flex;align-items:center;user-select:none}
+.navmore>summary::-webkit-details-marker{display:none}
+.navmore>summary::after{content:"";width:6px;height:6px;margin-left:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg)}
+.navmore[open]>summary::after{transform:translateY(1px) rotate(-135deg)}
+.navmore>summary:hover{background:var(--panel-2);color:var(--ink)}
+.navmore>summary.cur{color:var(--ink);box-shadow:inset 0 -3px 0 var(--gold-line)}
+.navmenu{position:absolute;right:0;top:calc(100% + 6px);z-index:40;min-width:210px;background:var(--surface-1);border:1px solid var(--border-strong);border-radius:var(--r-3);box-shadow:var(--shadow-overlay);padding:6px;display:flex;flex-direction:column}
+.navmenu a,.navmenu button{display:flex;align-items:center;min-height:44px;padding:8px 12px;border-radius:var(--r-2);text-decoration:none;color:var(--ink);font-size:.95rem;background:none;border:0;text-align:left;font-weight:500}
+.navmenu a:hover,.navmenu button:hover{background:var(--surface-3)}
+.navmenu a[aria-current]{box-shadow:inset 3px 0 0 var(--gold-line);font-weight:600}
+.navmenu hr{border:0;border-top:1px solid var(--border);margin:6px 4px}
+.navmenu button{color:var(--ink-2);font-size:.88rem}
+@media (max-width:860px){.mainnav .nav-wide{display:none}.navmore{display:block}}
+@media (max-width:560px){.navmore{flex:1 1 auto;display:flex;justify-content:center}.navmore>summary{padding:6px 2px;font-size:.84rem;justify-content:center;width:100%}.mainnav a{min-height:44px}.navmenu{right:0}}
+
+/* ---------- returning home: continuation first ---------- */
+body.returning .home-hero{padding:40px 0 10px}
+body.returning .home-hero h1{font-size:clamp(1.6rem,4.5vw,2.3rem);margin-bottom:18px}
+.resume{max-width:640px}
+.rlbl{font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--grail-gold-ink);border-left:2px solid var(--gold-line);padding-left:10px;margin-bottom:10px}
+.rcard{display:flex;flex-direction:column;gap:6px;background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r-3);padding:18px 20px;text-decoration:none;color:var(--ink)}
+.rcard:hover{border-color:var(--border-strong);box-shadow:var(--shadow-hover)}
+.rcard .rtop{display:flex;gap:10px;align-items:baseline}
+.rcard .rid{font-size:.85rem;color:var(--ink-2)}
+.rcard .rkind{font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3)}
+.rcard b{font-size:1.2rem;line-height:1.3}
+.rcard .rmeta{font-size:.88rem;color:var(--ink-2)}
+.rcard .pbar{max-width:320px;height:6px;margin:4px 0}
+.rcard .btn{align-self:flex-start;margin-top:8px;min-height:44px;padding:10px 20px}
+.homeline{display:flex;flex-wrap:wrap;gap:6px 22px;margin:22px 0 4px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);font-size:.92rem}
+.homeline a{text-decoration:none;color:var(--ink-2);min-height:32px;display:inline-flex;align-items:center;gap:6px}
+.homeline a:hover{color:var(--ink)}.homeline b{color:var(--ink);font-weight:600}
+details.explore{margin:26px 0 10px}
+details.explore>summary{font-weight:600;color:var(--ink);font-size:1rem;padding:8px 0;min-height:44px;display:flex;align-items:center;gap:8px;width:fit-content}
+details.explore[open]>summary{margin-bottom:10px}
+
+/* ---------- Experience Mode focus: while a ticket is open, the site steps back ---------- */
+.exitfocus,.focusid{display:none}
+body.xpfocus .mainnav{display:none}
+body.xpfocus .exitfocus{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:6px 12px;margin-left:8px;border-radius:var(--r-2);text-decoration:none;color:var(--ink-2);font-size:.9rem;font-weight:500}
+body.xpfocus .exitfocus:hover{background:var(--panel-2);color:var(--ink)}
+body.xpfocus .focusid{display:inline;font-size:.82rem;color:var(--ink-3);margin-left:4px;padding-left:12px;border-left:1px solid var(--border)}
+@media (max-width:560px){body.xpfocus header.gnav .in{flex-wrap:nowrap}body.xpfocus header.gnav .brand .bt{display:none}body.xpfocus .focusid{display:none}}
+/* the hidden attribute always wins over component display rules */
+[hidden]{display:none!important}
+.mainnav .navmenu a,.mainnav .navmenu button{flex:none;justify-content:flex-start;width:100%;padding:8px 12px;font-size:.95rem}
+.mainnav .navmenu button{font-size:.88rem}
+details.explore>summary{list-style:none}
+details.explore>summary::-webkit-details-marker{display:none}
+details.explore>summary::before{content:"";width:7px;height:7px;border-right:1.75px solid currentColor;border-bottom:1.75px solid currentColor;transform:rotate(-45deg);margin-right:4px;transition:transform .15s}
+details.explore[open]>summary::before{transform:rotate(45deg)}

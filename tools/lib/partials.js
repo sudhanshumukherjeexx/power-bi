@@ -6,12 +6,20 @@ const root = path.join(__dirname, '..', '..');
 const site = JSON.parse(fs.readFileSync(path.join(root, 'content', 'site.json'), 'utf8'));
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-const SECTIONS = [['learn', 'Learn', 'learn.html'], ['practice', 'Practice', 'experience.html'], ['interview', 'Interview', 'flashcards.html'], ['toolkit', 'Toolkit', 'toolkit.html'], ['progress', 'Progress', 'progress.html'], ['resources', 'Resources', 'resources.html']];
+/* Top-level destinations. "practice" is the section id hand-written pages already use; its label is Experience.
+   Pages of the old Resources section (glossary, cheat sheet, library) belong to the Toolkit. */
+const SECTIONS = [['learn', 'Learn', 'learn.html'], ['practice', 'Experience', 'experience.html'], ['interview', 'Interview', 'flashcards.html'], ['toolkit', 'Toolkit', 'toolkit.html'], ['progress', 'Progress', 'progress.html']];
+const ALIAS = { resources: 'toolkit' };
+/* On narrow screens Progress moves into More, beside the pages people reach for between lessons. */
+const MORE = [['progress', 'Progress', 'progress.html'], ['glossary', 'Glossary', 'glossary.html'], ['library', 'Library', 'resources.html'], ['templates', 'Templates', 'templates.html']];
 
-function nav(active, r = '') {
+function nav(active, r = '', page = '') {
+  const sec = ALIAS[active] || active;
+  const inMore = ([id, , href]) => href === page || (id === 'progress' && sec === 'progress');
+  const moreCur = MORE.some(inMore);
   return `<header class="top gnav"><div class="in">
   <a class="brand" href="${r}index.html" aria-label="${esc(site.name)}: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">${esc(site.name)}</span></a>
-  <nav class="mainnav" aria-label="Main">${SECTIONS.map(([id, label, href]) => `<a href="${r}${href}"${id === active ? ' aria-current="true"' : ''}>${label}</a>`).join('')}</nav>
+  <nav class="mainnav" aria-label="Main">${SECTIONS.map(([id, label, href]) => `<a href="${r}${href}"${id === sec ? ' aria-current="true"' : ''}${id === 'progress' ? ' class="nav-wide"' : ''}>${label}</a>`).join('')}<details class="navmore"><summary${moreCur ? ' class="cur"' : ''}>More<span class="vh"> pages</span></summary><div class="navmenu">${MORE.map(m => `<a href="${r}${m[2]}"${inMore(m) ? ' aria-current="page"' : ''}>${m[1]}</a>`).join('')}<hr><button type="button" data-export>Export progress</button><button type="button" data-import>Import progress</button></div></details></nav>
   <span class="sp"></span>
   <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
   <span data-theme-toggle-slot></span>
@@ -50,7 +58,7 @@ ${css.map(c => `<link rel="stylesheet" href="${r}assets/css/${c}.css">`).join('\
 function footer(r = '', note = '') {
   return `<footer class="wrap foot">
   ${note ? `<p>${note}</p>` : ''}
-  <p>Your progress is saved in this browser only. <a href="${r}progress.html">See your progress</a> · <a href="${r}toolkit.html">Toolkit</a> · <a href="${r}resources.html">Resources</a> · <a href="${r}glossary.html">Glossary</a> · <a href="${r}templates.html">Templates</a> · <a href="${site.repo}">Source on GitHub</a></p>
+  <p>Your progress is saved in this browser only. <a href="${r}progress.html">See your progress</a> · <a href="${r}toolkit.html">Toolkit</a> · <a href="${r}resources.html">Library</a> · <a href="${r}glossary.html">Glossary</a> · <a href="${r}templates.html">Templates</a> · <a href="${site.repo}">Source on GitHub</a></p>
   <div class="row"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" data-install hidden>Install app</button></div>
   <p class="small muted">Northwind Outdoors is a fictional company. All data is synthetic and generated from a fixed seed, so every learner sees the same numbers.</p>
 </footer>
@@ -58,8 +66,8 @@ function footer(r = '', note = '') {
 }
 
 /* replace <!--nav:SECTION-->…<!--/nav--> in a hand-written page */
-function inject(html, r = '') {
-  return html.replace(/<!--nav:([a-z]+)-->[\s\S]*?<!--\/nav-->/g, (_, sec) => `<!--nav:${sec}-->\n${nav(sec, r)}\n<!--/nav-->`);
+function inject(html, r = '', page = '') {
+  return html.replace(/<!--nav:([a-z]+)-->[\s\S]*?<!--\/nav-->/g, (_, sec) => `<!--nav:${sec}-->\n${nav(sec, r, page)}\n<!--/nav-->`);
 }
 
 module.exports = { site, esc, nav, head, footer, inject, SECTIONS };

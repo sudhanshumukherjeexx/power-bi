@@ -54,7 +54,6 @@ if(page==='resources'){
     ['flashcards.html#mock','clock|Mock interview','Timed questions, answered out loud.'],
     ['glossary.html','book|Glossary',`${GLOSSARY.length} terms explained without jargon.`],
     ['cheatsheet.html','printer|Cheat sheets','Printable, one per level.'],
-    ['toolkit.html','wrench|BI Developer Toolkit','Troubleshooting trees, field guides, checklists and playbooks for real work.'],
     ['templates.html','folder|Professional templates','Requirements, ADR, incident report, postmortem and more.'],
     ['diagnostic.html','flask|Diagnostic','Find your starting point in a few minutes.'],
     ['learn.html#paths','compass|Pick your path','Analyst, Developer, Engineer or Lead.'],
@@ -63,7 +62,7 @@ if(page==='resources'){
   const jumps=[['tools','Study tools'],['glossary','Glossary'],...(tpls.length?[['templates','Templates']]:[]),['cheatsheets','Cheat sheets'],...(typeof EXTERNAL!=='undefined'?[['external','External resources']]:[]),['starter','Starter project'],['datasets','Datasets'],...(trackFiles.length?[['trackdata','Track files']]:[]),['enterprise','Enterprise pack']];
   const gcats=[...new Set(GLOSSARY.map(g=>g.c))];
   const gloss=gcats.map(c=>{const ts=GLOSSARY.filter(g=>g.c===c).sort((a,b)=>a.t.localeCompare(b.t));return `<details><summary>${esc(c)} <span class="n">${ts.length}</span></summary><div class="rterms">${ts.map(g=>`<a href="glossary.html#${PBI.slug(g.t)}" title="${esc(g.d.length>140?g.d.slice(0,140)+'…':g.d)}">${esc(g.t)}</a>`).join('')}</div></details>`}).join('');
-  app.innerHTML=`<section class="intro"><h1><span class="hl">Resources</span> <span class="tag res">Tools &amp; data</span></h1><p>Everything you need beside the lessons: study tools you can use without Power BI, the glossary, professional templates, cheat sheets, a ready-made Power BI project and the practice datasets.</p></section>
+  app.innerHTML=`<nav class="crumbs" aria-label="Breadcrumb"><a href="toolkit.html">Toolkit</a><span aria-hidden="true">/</span><span aria-current="page">Library</span></nav><section class="intro"><h1>Library</h1><p>Everything you look things up in: the glossary, professional templates, printable cheat sheets, a curated catalog of external resources, a ready-made Power BI project and the practice datasets. The troubleshooting guides, field manuals and playbooks are in the rest of the <a href="toolkit.html">Toolkit</a>.</p></section>
   <div class="ctl-lbl">On this page</div>
   <nav class="jump wrapjump" aria-label="Sections on this page">${jumps.map(([id,n])=>`<a href="#${id}">${n}</a>`).join('')}</nav>
   <section class="sect" id="tools"><h2>Study tools</h2><div class="tools">${tools.map(([h,t,d])=>{const [ic,lbl]=t.split('|');return `<a href="${h}"><b><svg class="ic" aria-hidden="true" focusable="false"><use href="assets/icons/icons.svg#${ic}"/></svg> ${esc(lbl)}</b><span>${esc(d)}</span></a>`}).join('')}</div></section>
@@ -98,7 +97,7 @@ if(page==='resources'){
   document.getElementById('dataUrl').textContent=new URL('data/',location.href).href;
   document.addEventListener('click',e=>{if(e.target.closest('#copyDataUrl'))Course.copyText(document.getElementById('dataUrl').textContent,'Data address copied')});
   initExternal();
-  PBI.touch('Resources');
+  PBI.touch('Library');
 }else if(mod){
   const L=mod;
   const tag=kind==='level'?L.years:(L.tag||'Track');
