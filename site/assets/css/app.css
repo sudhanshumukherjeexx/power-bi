@@ -426,3 +426,54 @@ details.refs li{margin:4px 0}
 /* tables of words (not data) wrap instead of scrolling sideways */
 .tbl.prose th,.tbl.prose td{white-space:normal;position:static}
 .tbl.prose td,.tbl.prose td code{overflow-wrap:anywhere}
+
+/* ---------- evidence types (2.2.0): every score says what it rests on; text, never colour alone ---------- */
+.ev-tag{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--line-2);border-radius:999px;padding:1px 7px;color:var(--ink-2);vertical-align:middle;white-space:nowrap;font-weight:500}
+.ev-tag.verified{border-color:var(--ok);color:var(--ok)}
+.ev-tag.self{border-style:dashed}
+.ev-tag.recall{border-color:var(--beg);color:var(--beg)}
+.evgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin:12px 0 6px}
+.evcol{display:flex;flex-direction:column;gap:4px;padding:14px 16px;min-width:0}
+.evcol>.ev-tag{align-self:flex-start}
+.evcol+.evcol{border-left:1px solid var(--line)}
+.evcol>b{font-size:1.6rem;font-variant-numeric:tabular-nums;line-height:1.2;margin-top:4px}.evcol>b .of{font-size:.95rem;color:var(--ink-3);font-weight:500}
+.evcol>span:not(.ev-tag){font-size:.86rem;color:var(--ink-2)}
+@media (max-width:700px){.evgrid{grid-template-columns:1fr}.evcol+.evcol{border-left:0;border-top:1px solid var(--line)}}
+.evkey{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 0}
+details.how{margin:8px 0 0;font-size:.86rem}
+details.how>summary{color:var(--ink-2);font-size:.82rem;cursor:pointer;width:fit-content}
+details.how dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:8px 0 4px}
+details.how dt{font-weight:600;color:var(--ink)}details.how dd{margin:0;color:var(--ink-2)}
+@media (max-width:560px){details.how dl{grid-template-columns:1fr}details.how dd{margin-bottom:6px}}
+.stagelist .gates{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.gate{font-family:var(--mono);font-size:.72rem;border:1px solid var(--line-2);border-radius:999px;padding:1px 8px;color:var(--ink-2)}
+.gate.ok{border-color:var(--ok);color:var(--ok)}
+.stagelist li.cleared .n{border-color:var(--ok);color:var(--ok)}
+.stagelist li>span:nth-child(2){min-width:0}
+.matrix .row .nm .lvl{display:block;font-size:.72rem;font-weight:400;color:var(--ink-3);font-family:var(--mono)}
+.matrix .row .minis{grid-column:2/4;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.mini{display:block;height:4px;background:var(--line);border-radius:2px;overflow:hidden;position:relative}
+.mini i{display:block;height:100%}
+.mini.verified i{background:var(--ok)}.mini.self i{background:var(--ink-3)}.mini.recall i{background:var(--beg)}
+@media (max-width:560px){.matrix .row .minis{grid-column:1/-1;order:3}}
+.certrows{display:grid;gap:10px;margin:12px 0}
+.certrow{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.certrow h3{margin:0 0 8px;font-size:1rem}.certrow h3 a{text-decoration:none}
+.certrow .cm{display:grid;grid-template-columns:minmax(150px,240px) 1fr 48px;gap:10px;align-items:center;font-size:.86rem;margin:4px 0}
+.certrow .cm b{font-family:var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+@media (max-width:560px){.certrow .cm{grid-template-columns:1fr 44px}.certrow .cm .pbar{grid-column:1/-1;order:3}}
+.backupnote{margin:10px 0 0;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--panel);max-width:75ch}
+.backupnote .btn{margin-left:6px}
+.mono{font-family:var(--mono)}
+.scorebox{display:flex;gap:8px 18px;flex-wrap:wrap;align-items:baseline}
+.scorebox .sx{display:inline-flex;gap:6px;align-items:baseline}
+.scorebox .sx .k{font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3)}
+.scorebox .sx b{font-size:1.15rem;font-variant-numeric:tabular-nums}
+/* native dialog: import comparison */
+dialog.dlg,dialog.dlg table{font-family:var(--sans)}
+dialog.dlg{border:1px solid var(--line-2);border-radius:8px;background:var(--panel);color:var(--ink);padding:20px 22px;width:min(560px,calc(100vw - 32px));box-shadow:0 20px 60px rgb(0 0 0 / .3)}
+dialog.dlg::backdrop{background:rgb(10 14 20 / .5)}
+dialog.dlg h2{margin:0 0 6px;font-size:1.15rem}
+dialog.dlg .tbl{margin:10px 0}
+dialog.dlg .tbl th[scope=row]{font-weight:500;background:none;color:var(--ink);font-size:.86rem}
+dialog.dlg .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}

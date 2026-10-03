@@ -8,9 +8,10 @@ const started=Object.values(main.done).some(Boolean)||Object.keys(main.quiz).len
 /* returning learner: continue where they left off */
 if(started){
   const next=P.nextStep(main,cards);
-  const last=main.last;
+  /* stored links are re-checked on read: only internal pages, never javascript: or another site */
+  const last=main.last&&PBI.safeHref(main.last.href)?main.last:null;
   const cta=document.getElementById('cta');
-  const target=last?{href:last.href,title:last.title,lbl:'Continue where you left off'}:next?{href:next.href,title:next.t,lbl:'Your next step'}:{href:'beginner.html',title:'Beginner level',lbl:'Start here'};
+  const target=last?{href:last.href,title:last.title,lbl:'Continue where you left off'}:next&&PBI.safeHref(next.href)?{href:next.href,title:next.t,lbl:'Your next step'}:{href:'beginner.html',title:'Beginner level',lbl:'Start here'};
   cta.innerHTML=`<a class="btn primary" href="${esc(target.href)}">Continue</a><a class="btn" href="progress.html">Your progress</a>`;
   document.getElementById('kicker').textContent='Welcome back';
   document.getElementById('cont').innerHTML=`<a class="continue" href="${esc(target.href)}"><span><span class="lbl">${esc(target.lbl)}</span><b>${esc(target.title)}</b>${next&&last?`<span class="small muted">Next on your route: ${esc(next.t)}</span>`:''}</span><span class="go" aria-hidden="true">→</span></a>`;
@@ -23,7 +24,7 @@ if(started){
     `<a class="tile" href="progress.html#stages"><span class="k">Stage ${stage.n} of 5</span><b style="font-size:1.05rem">${esc(stage.name)}</b><span class="s">${esc(stage.question)}</span>${P.bar(stage.pct,stage.name)}</a>`;
   document.getElementById('dash').hidden=false;
 }
-if(main.diag&&main.diag.rec){
+if(main.diag&&main.diag.rec&&PBI.safeHref(main.diag.rec.href)){
   const r=main.diag.rec;
   document.getElementById('lead').insertAdjacentHTML('afterend',`<p class="small muted">Your diagnostic suggested starting at <a href="${esc(r.href)}">${esc(r.label)}</a>.</p>`);
 }

@@ -4,7 +4,7 @@ const SEARCH_INDEX=[
 ["Page","Home","Start, continue, and choose a goal","Start, continue, and choose a goal","index.html",""],
 ["Page","Learn: Skill Mode","Levels, tracks, career paths and certification maps","Levels, tracks, career paths and certification maps","learn.html",""],
 ["Page","Practice real work: Experience Mode","Tickets, incidents, change requests and decisions at Northwind Outdoors","Tickets, incidents, change requests and decisions at Northwind Outdoors","experience.html",""],
-["Page","Your progress","Competency matrix, portfolio, decision log, certification readiness","Competency matrix, portfolio, decision log, certification readiness","progress.html",""],
+["Page","Your progress","Competency review: evidence, stages, portfolio evidence, decision log, certification preparation","Competency review: evidence, stages, portfolio evidence, decision log, certification preparation","progress.html",""],
 ["Page","Find my starting point","Diagnostic: sixteen questions, a recommended start","Diagnostic: sixteen questions, a recommended start","diagnostic.html",""],
 ["Page","Professional templates","Requirements, ADR, incident report, postmortem, PR, runbook and more","Requirements, ADR, incident report, postmortem, PR, runbook and more","templates.html",""],
 ["Page","Resources","Study tools, starter project, datasets","Study tools, starter project, datasets","resources.html",""],

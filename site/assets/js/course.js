@@ -4,10 +4,9 @@
 const Course=(function(){
 'use strict';
 const KEY=PBI.KEYS.main;
-const state=Object.assign({done:{},quiz:{},theme:null,path:null,sol:{},navOpen:{}},PBI.load(KEY));
-state.done=state.done||{};state.quiz=state.quiz||{};state.sol=state.sol||{};state.navOpen=state.navOpen||{};
+const state=Object.assign({done:{},quiz:{},quizFirst:{},theme:null,path:null,sol:{},navOpen:{}},PBI.migrate(PBI.load(KEY)));
 /* only write the fields the course owns, so Experience Mode progress saved in another tab survives */
-const OWN=['done','quiz','sol','theme','path','navOpen'];
+const OWN=['done','quiz','quizFirst','sol','theme','path','navOpen'];
 const save=()=>PBI.update(KEY,st=>{OWN.forEach(k=>st[k]=state[k]);return st});
 const cardState=PBI.loadCards();
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -33,7 +32,7 @@ function solHtml(id,open){
 }
 function refreshSol(id){const el=document.querySelector(`.sol[data-sol="${id}"]`);if(el){el.outerHTML=solHtml(id,el.open);linkTerms(document.querySelector(`.sol[data-sol="${id}"]`))}}
 
-function readyHtml(T){const r=PBI.readiness(T,state,cardState);return `<span class="ready ${r.pct?'':'r0'}" title="Readiness: ${r.done}/${r.asg} assignments, ${r.ok}/${r.mcq} multiple choice correct, ${r.learned}/${r.cards} topic flashcards learned"><span class="rbar"><i style="width:${r.pct}%"></i></span>${r.pct}% ready</span>`}
+function readyHtml(T){const r=PBI.readiness(T,state,cardState);return `<span class="ready ${r.pct?'':'r0'}" title="Readiness: ${r.done}/${r.asg} assignments ticked (self-assessed), ${r.ok}/${r.mcq} multiple choice right first time (verified), flashcard recall ${r.ev.recall===null?'n/a':r.ev.recall+'%'}"><span class="rbar"><i style="width:${r.pct}%"></i></span>${r.pct}% ready</span>`}
 const ALL=()=>[...(typeof LEVELS!=='undefined'?LEVELS:[]),...(typeof TRACKS!=='undefined'?TRACKS:[])];
 function updateReadiness(){
   ALL().forEach(L=>L.topics.forEach(T=>{
@@ -89,7 +88,7 @@ function datasetsGridHtml(){return Object.entries(DS).map(([k,v])=>`<a href="#ds
 function datasetsListHtml(){return Object.entries(DS).map(([k,v])=>`<div class="dataset" id="ds-${k}"><header><h3>${esc(v.name)}</h3><div class="acts"><button class="btn sm primary" data-copy="${k}">Copy CSV</button><button class="btn sm" data-copyheader="${k}">Copy header only</button><a class="btn sm" href="data/${k}.csv" download="${k}.csv">Download .csv</a></div><div class="desc">${esc(v.desc)}</div></header><div class="tblwrap"><table><thead><tr>${v.cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${v.rows.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`).join('')}
 
 function linkTerms(root){if(root)PBI.linkTerms(root,root.classList&&root.classList.contains('sol')?null:'.topic','.asg ol li, .asg .brief, .asg .req li, .why dd, .expect, .qa .a, .quiz .q, .quiz .why, .task, .sol li, .sol .check, .sol .note')}
-function updateScores(){document.querySelectorAll('[data-score]').forEach(el=>{const tid=el.dataset.score;const qs=[...document.querySelectorAll(`.quiz[data-q^="${tid}-q"]`)];const ans=qs.filter(q=>state.quiz[q.dataset.q]!==undefined);const ok=ans.filter(q=>String(state.quiz[q.dataset.q])===q.dataset.a).length;el.textContent=qs.length?`Multiple choice: ${ok} correct of ${ans.length} answered (${qs.length} total). Practical tasks are self-graded against the hint.`:''})}
+function updateScores(){document.querySelectorAll('[data-score]').forEach(el=>{const tid=el.dataset.score;const qs=[...document.querySelectorAll(`.quiz[data-q^="${tid}-q"]`)];const ans=qs.filter(q=>state.quiz[q.dataset.q]!==undefined);const ok=ans.filter(q=>PBI.store.mcqOk(state,q.dataset.q,q.dataset.a)).length;el.textContent=qs.length?`Multiple choice: ${ok} right first time of ${ans.length} answered (${qs.length} total). Only your first answer counts toward readiness; change it as often as you like to learn. Practical tasks are self-graded against the hint.`:''})}
 
 /* deep links: #topic:asg|int|ass:index (used by search) */
 function goHash(){
@@ -116,7 +115,7 @@ document.addEventListener('click',e=>{
 document.addEventListener('change',e=>{
   if(e.target.matches('[data-asg]')){state.done[e.target.dataset.asg]=e.target.checked;save();
     if(e.target.checked){const a=e.target.dataset.asg,lbl=document.querySelector(`label[for="${a}"]`);PBI.touch(lbl?lbl.textContent:document.title,(location.pathname.split('/').pop()||'index.html')+'#'+a.replace(/-(\d+)$/,':asg:$1'))}updateReadiness();refreshSol(e.target.dataset.asg);changed();return}
-  if(e.target.matches('.quiz input[type=radio]')){const q=e.target.closest('.quiz');const id=q.dataset.q;state.quiz[id]=+e.target.value;save();q.classList.add('answered');[...q.querySelectorAll('label')].forEach((l,j)=>{l.classList.toggle('ok',j==q.dataset.a);l.classList.toggle('bad',j==+e.target.value&&j!=q.dataset.a)});updateScores();updateReadiness();changed()}
+  if(e.target.matches('.quiz input[type=radio]')){const q=e.target.closest('.quiz');const id=q.dataset.q;state.quiz[id]=+e.target.value;if(state.quizFirst[id]===undefined)state.quizFirst[id]=+e.target.value;save();q.classList.add('answered');[...q.querySelectorAll('label')].forEach((l,j)=>{l.classList.toggle('ok',j==q.dataset.a);l.classList.toggle('bad',j==+e.target.value&&j!=q.dataset.a)});updateScores();updateReadiness();changed()}
 });
 
 return {state,save,cardState,esc,copyText,topicHtml,solHtml,readyHtml,updateReadiness,datasetsGridHtml,datasetsListHtml,linkTerms,updateScores,goHash,scrollToHash,onChange:fn=>hooks.push(fn)};

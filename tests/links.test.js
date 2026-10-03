@@ -36,6 +36,8 @@ module.exports = t => {
     const base = path.dirname(f);
     /* comments are prose, not links */
     const src = isHtml ? raw : raw.replace(/\/\*[\s\S]*?\*\//g, '');
+    /* links that open a new tab must not hand the new page a reference back to this one */
+    for (const m of src.matchAll(/<a[^>]*target=\?["']_blank[^>]*>/g)) t.ok(/rel=\?["'][^"']*noopener/.test(m[0]), `${rel(f)}: new-tab link without rel="noopener": ${m[0].slice(0, 120)}`);
     const refs = new Set();
     for (const m of src.matchAll(/\b(?:href|src)=\\?["']([^"'<>{}$\\]+)\\?["']/g)) refs.add(m[1]);
     if (!isHtml) for (const m of src.matchAll(/["'`(]((?:\.\.\/)*[a-z0-9-]+(?:\/[a-z0-9-]+)*\.html(?:#[^"'`)\s]*)?)["'`)]/g)) refs.add(m[1]);

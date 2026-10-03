@@ -59,7 +59,7 @@ if(page==='resources'){
     ['diagnostic.html','🧪 Diagnostic','Find your starting point in a few minutes.'],
     ['learn.html#paths','🧭 Pick your path','Analyst, Developer, Engineer or Lead.'],
     ['learn.html#certs','🎓 Certification map','PL-300 and DP-600, current outline.'],
-    ['progress.html','📈 Your progress','Stage, competencies, portfolio and decision log.']];
+    ['progress.html','📈 Your progress','Stage, competencies, portfolio evidence and decision log.']];
   const jumps=[['tools','Study tools'],['glossary','Glossary'],...(tpls.length?[['templates','Templates']]:[]),['cheatsheets','Cheat sheets'],...(typeof EXTERNAL!=='undefined'?[['external','External resources']]:[]),['starter','Starter project'],['datasets','Datasets'],...(trackFiles.length?[['trackdata','Track files']]:[]),['enterprise','Enterprise pack']];
   const gcats=[...new Set(GLOSSARY.map(g=>g.c))];
   const gloss=gcats.map(c=>{const ts=GLOSSARY.filter(g=>g.c===c).sort((a,b)=>a.t.localeCompare(b.t));return `<details><summary>${esc(c)} <span class="n">${ts.length}</span></summary><div class="rterms">${ts.map(g=>`<a href="glossary.html#${PBI.slug(g.t)}" title="${esc(g.d.length>140?g.d.slice(0,140)+'…':g.d)}">${esc(g.t)}</a>`).join('')}</div></details>`}).join('');
@@ -108,9 +108,9 @@ if(page==='resources'){
   <nav class="jump" aria-label="Topics on this page">${L.topics.map(T=>`<a href="#${T.id}">${esc(T.name.split(':')[0])}<span class="p" data-jp="${T.id}"></span></a>`).join('')}</nav>
   <div id="topics">${L.topics.map(Course.topicHtml).join('')}</div>${pager}`;
   const stats=()=>{
-    let done=0,asg=0,ok=0,mcq=0,learned=0,cards=0,pct=0;
-    L.topics.forEach(T=>{const r=PBI.readiness(T,state,Course.cardState);done+=r.done;asg+=r.asg;ok+=r.ok;mcq+=r.mcq;learned+=r.learned;cards+=r.cards;pct+=r.pct;const j=document.querySelector(`[data-jp="${T.id}"]`);if(j)j.textContent=r.pct+'%'});
-    document.getElementById('stats').innerHTML=`<div class="stat ok"><b>${Math.round(pct/L.topics.length)}%</b><span>${kind} readiness</span></div><div class="stat"><b>${done}/${asg}</b><span>assignments done</span></div><div class="stat"><b>${ok}/${mcq}</b><span>quiz correct</span></div><div class="stat"><b>${learned}/${cards}</b><span>topic cards learned</span></div>`;
+    let done=0,asg=0,ok=0,mcq=0,recall=0,cards=0,pct=0;
+    L.topics.forEach(T=>{const r=PBI.readiness(T,state,Course.cardState);done+=r.done;asg+=r.asg;ok+=r.ok;mcq+=r.mcq;recall+=r.recall;cards+=r.cards;pct+=r.pct;const j=document.querySelector(`[data-jp="${T.id}"]`);if(j)j.textContent=r.pct+'%'});
+    document.getElementById('stats').innerHTML=`<div class="stat ok"><b>${Math.round(pct/L.topics.length)}%</b><span>${kind} readiness</span></div><div class="stat"><b>${done}/${asg}</b><span>assignments ticked · self-assessed</span></div><div class="stat"><b>${ok}/${mcq}</b><span>quiz right first time · verified</span></div><div class="stat"><b>${cards?Math.round(100*recall/cards):0}%</b><span>flashcard recall</span></div>`;
   };
   stats();Course.onChange(stats);
   Course.updateScores();Course.updateReadiness();

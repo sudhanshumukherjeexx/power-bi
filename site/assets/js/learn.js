@@ -30,9 +30,10 @@ function renderCert(){
     <p class="small" style="margin:0 0 6px"><span class="chip ok">Outline in force: ${esc(v.label)}</span> <span class="chip">Checked ${dateTxt(c.verified.date)}</span> ${c.next?`<span class="chip warn">Changes on ${dateTxt(c.next.effective)}</span>`:''}</p>
     ${c.next?`<p class="small muted">Booking after ${dateTxt(c.next.effective)}? ${esc(c.next.changes)}</p>`:`<p class="small muted">${esc(v.changes)}</p>`}
     <p class="small muted">${esc(c.note||'')} <a href="${esc(c.url)}" rel="noopener" target="_blank">Official study guide</a></p>
-    ${(c.next||v).areas.map((a,i)=>{const r=R.areas[i]||{pct:0};return `<div style="border-top:1px solid var(--line);padding:12px 0">
-      <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap"><b>${esc(a.n)}</b><span class="small muted">${esc(a.w)} of the exam · your readiness ${r.pct}%</span></div>
-      <div style="margin:6px 0">${P.bar(r.pct,a.n)}</div>
+    <p class="small" style="margin:10px 0 0"><b>Curriculum coverage ${R.coverage}%</b> <span class="ev-tag self">self-assessed</span> · <b>Practice ${R.practice}%</b> <span class="ev-tag verified">verified + recall</span></p><p class="small muted" style="margin:2px 0 0">Weighted by Microsoft's published domain weights (midpoint of each range). Coverage is the share of mapped assignments you ticked; practice is your first-answer accuracy and flashcard mastery on those topics. Neither predicts an exam result.</p>
+    ${(c.next||v).areas.map((a,i)=>{const r=R.areas[i]||{coverage:0,practice:0};return `<div style="border-top:1px solid var(--line);padding:12px 0">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap"><b>${esc(a.n)}</b><span class="small muted">${esc(a.w)} of the exam · coverage ${r.coverage}% · practice ${r.practice}%</span></div>
+      <div style="margin:6px 0">${P.bar(r.coverage,a.n+' coverage')}</div>
       <div class="small">Practise in: ${a.topics.map(id=>`<a href="${topicHref(id)}">${esc(topicName(id))}</a>`).join(', ')}</div>
       ${a.skills?`<details style="margin-top:6px"><summary>${a.skills.length} skill groups, ${a.skills.reduce((x,s)=>x+s.items.length,0)} objectives</summary>${a.skills.map(s=>`<div style="margin:8px 0 0"><b style="font-size:.9rem">${esc(s.n)}</b> <span class="small muted">→ ${s.topics.map(id=>`<a href="${topicHref(id)}">${esc(topicName(id))}</a>`).join(', ')}</span><ul style="margin:4px 0 0;padding-left:18px;font-size:.86rem;color:var(--ink-2)">${s.items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`).join('')}</details>`:''}
     </div>`}).join('')}

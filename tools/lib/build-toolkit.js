@@ -115,6 +115,7 @@ ${rel.length ? `<aside class="tkrel" aria-label="Related">${rel.join('')}</aside
 </main>
 ${P.footer(r)}
 <script src="${r}assets/js/glossary.js"></script>
+<script src="${r}assets/js/store.js"></script>
 <script src="${r}assets/js/site.js"></script>
 <script src="${r}assets/js/tkguide.js"></script>
 </body>
@@ -142,6 +143,7 @@ ${(d.also || []).length ? `<h2 class="tkgroup">Elsewhere on the site</h2><p>${d.
 <p><a href="${r}toolkit.html">← All of the Toolkit</a></p>
 </main>
 ${P.footer(r)}
+<script src="${r}assets/js/store.js"></script>
 <script src="${r}assets/js/site.js"></script>
 <script src="${r}assets/js/tkguide.js"></script>
 </body>
@@ -175,6 +177,7 @@ ${facetOpts(all.certs.map(c => [c.id, c.code]), 'Certification')}
 </main>
 ${P.footer()}
 <script src="assets/js/toolkit.js"></script>
+<script src="assets/js/store.js"></script>
 <script src="assets/js/site.js"></script>
 <script src="assets/js/tkhub.js"></script>
 </body>

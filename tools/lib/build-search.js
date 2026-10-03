@@ -9,7 +9,7 @@ const PAGES = [
   ['Home', 'Start, continue, and choose a goal', 'index.html'],
   ['Learn: Skill Mode', 'Levels, tracks, career paths and certification maps', 'learn.html'],
   ['Practice real work: Experience Mode', 'Tickets, incidents, change requests and decisions at Northwind Outdoors', 'experience.html'],
-  ['Your progress', 'Competency matrix, portfolio, decision log, certification readiness', 'progress.html'],
+  ['Your progress', 'Competency review: evidence, stages, portfolio evidence, decision log, certification preparation', 'progress.html'],
   ['Find my starting point', 'Diagnostic: sixteen questions, a recommended start', 'diagnostic.html'],
   ['Professional templates', 'Requirements, ADR, incident report, postmortem, PR, runbook and more', 'templates.html'],
   ['Resources', 'Study tools, starter project, datasets', 'resources.html'],

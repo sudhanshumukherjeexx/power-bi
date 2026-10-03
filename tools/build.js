@@ -51,7 +51,7 @@ function outputs() {
     `/* t = term, k = other spellings, c = category, d = definition, s = related terms */\n` +
     list('GLOSSARY', all.glossary);
   out['assets/js/paths.js'] = BANNER('content/career-paths and content/certifications') +
-    list('ROLES', all.roles) + list('CERTS', all.certs.map(clean)) +
+    list('ROLES', all.roles) + list('CERTS', all.certs.map(c => clean(require('./lib/cert-weights').weigh(c)))) +
     `/* the outline in force today (Microsoft revises exams; versions carry their effective date) */
 CERTS.forEach(c=>{const d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const v=c.versions.filter(x=>x.effective<=t).pop()||c.versions[0];c.current=v;c.areas=v.areas;c.next=c.versions.find(x=>x.effective>t)||null});
 `;

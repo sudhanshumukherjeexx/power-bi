@@ -12,7 +12,7 @@ const kindOf=s=>s.kind||'ticket';
 
 function card(s){
   const st=P.scenarioStatus(main,s.id),rec=main.xp[s.id],sc=rec&&rec.done?P.scenarioScore(s,rec):null;
-  return `<a class="xcard" href="experience/${s.slug}.html"><span class="xtop"><span class="tk-kind k-${kindOf(s)}">${KIND[kindOf(s)]||'Ticket'}</span>${s.severity?`<span class="sev sev${s.severity.slice(-1)}">${s.severity}</span>`:''}<span class="tk-id">${esc(s.ticket)}</span>${s.type==='drill'?'<span class="chip">Drill</span>':''}</span><h3>${esc(s.title)}</h3><p>${esc(s.summary)}</p><span class="foot2"><span>~${Math.round(s.minutes/60*10)/10} h</span><span class="st">${st==='done'?`<span class="chip ok">Done${sc?' · '+sc.pct+'%':''}</span>`:st==='active'?'<span class="chip">In progress</span>':''}</span></span></a>`;
+  return `<a class="xcard" href="experience/${s.slug}.html"><span class="xtop"><span class="tk-kind k-${kindOf(s)}">${KIND[kindOf(s)]||'Ticket'}</span>${s.severity?`<span class="sev sev${s.severity.slice(-1)}">${s.severity}</span>`:''}<span class="tk-id">${esc(s.ticket)}</span>${s.type==='drill'?'<span class="chip">Drill</span>':''}</span><h3>${esc(s.title)}</h3><p>${esc(s.summary)}</p><span class="foot2"><span>~${Math.round(s.minutes/60*10)/10} h</span><span class="st">${st==='done'?`<span class="chip ok">Done${sc?' · outcome '+sc.quality+'%':''}</span>`:st==='active'?'<span class="chip">In progress</span>':''}</span></span></a>`;
 }
 function render(){
   const idx=SCENARIO_INDEX;

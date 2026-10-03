@@ -4,7 +4,10 @@
 (function(){
 'use strict';
 const KEYS={main:'pbi-holy-grail-v1',cards:'pbi-holy-grail-cards-v1'};
-const PBI=window.PBI={KEYS};
+const KEY_BACKUP='pbi-holy-grail-backup-v1';
+/* store.js (loaded first) adds PBI.store: schema, migration, safe links, mastery, readiness, import validation */
+const PBI=window.PBI=Object.assign(window.PBI||{},{KEYS});
+const ST=PBI.store;
 /* pages in a sub-folder (experience/) set <body data-root="../"> so links resolve from the site root */
 PBI.ROOT=(document.body&&document.body.dataset.root)||'';
 const pad2=n=>String(n).padStart(2,'0');
@@ -20,23 +23,17 @@ PBI.save=(key,val)=>{try{localStorage.setItem(key,JSON.stringify(val))}catch(e){
 /* read-modify-write, so two open tabs don't overwrite each other's fields */
 PBI.update=(key,fn)=>{const st=PBI.load(key);const r=fn(st);PBI.save(key,r||st);return r||st};
 
-/* ---------- progress schema: v1 (course ticks, quiz, solutions, theme) → v2 (adds goal, diagnostic,
-   Experience Mode scenarios, recent activity). v1 fields are kept exactly as they were. ---------- */
-PBI.SCHEMA=2;
-PBI.migrate=st=>{
-  st=st&&typeof st==='object'?st:{};
-  const v=st.schemaVersion||1;
-  if(v<2){st.goal=st.goal||null;st.diag=st.diag||null;st.xp=st.xp||{};st.seen=st.seen||{};st.last=st.last||null}
-  ['done','quiz','sol','navOpen','xp','seen'].forEach(k=>{if(!st[k]||typeof st[k]!=='object')st[k]={}});
-  st.schemaVersion=PBI.SCHEMA;
-  return st;
-};
+/* ---------- progress schema (rules in store.js): v1 course ticks, quiz, solutions, theme → v2 goal, diagnostic,
+   Experience Mode, recent activity → v3 first quiz answers. Fields are only ever added, never renamed. ---------- */
+PBI.SCHEMA=ST.SCHEMA;
+PBI.migrate=ST.migrate;
 (function(){const raw=PBI.load(KEYS.main);if(raw.schemaVersion!==PBI.SCHEMA)PBI.save(KEYS.main,PBI.migrate(raw))})();
 /* remember where the learner was, for "Continue" on the home page */
 PBI.touch=(title,href)=>{
   const base=document.body.dataset.root||'';
-  const here=href||(location.pathname.split('/').slice(base?-2:-1).join('/')+location.hash);
-  PBI.update(KEYS.main,st=>{PBI.migrate(st);st.last={href:here,title:title||document.title,at:new Date().toISOString()};st.seen[here.split('#')[0]]=PBI.today();return st});
+  const here=PBI.safeHref(href||(location.pathname.split('/').slice(base?-2:-1).join('/')+location.hash));
+  if(!here)return;
+  PBI.update(KEYS.main,st=>{PBI.migrate(st);st.last={href:here,title:String(title||document.title).slice(0,200),at:new Date().toISOString()};st.seen[here.split('#')[0]]=PBI.today();return st});
 };
 PBI.toast=msg=>{let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=msg;t.classList.add('show');clearTimeout(PBI.toast._t);PBI.toast._t=setTimeout(()=>t.classList.remove('show'),1800)};
 PBI.cardId={concept:q=>'c'+PBI.hash(q),topic:q=>'t'+PBI.hash(q)};
@@ -56,7 +53,7 @@ const SRS=PBI.SRS={
   label(st,id){
     const r=SRS.rec(st,id);if(!r)return {cls:'new',txt:'New'};
     if(r.b===0)return {cls:'again',txt:'Review again'};
-    if(r.b>=3)return {cls:'known',txt:'Mastered'};
+    if(r.b>=ST.MASTERED_BOX)return {cls:'known',txt:'Mastered'};
     const days=Math.round((new Date(r.d)-new Date(PBI.today()))/86400000);
     return {cls:'learning',txt:days<=0?'Due today':days===1?'Due tomorrow':'Due in '+days+' days'};
   }
@@ -73,16 +70,16 @@ PBI.loadCards=()=>{
   st.srs=st.srs||{};return st;
 };
 
-/* ---------- readiness per topic: assignments 50%, multiple choice 25%, flashcards 25% ---------- */
+/* ---------- readiness per topic (full course content; progress.js does the same from the compact outline).
+   Formula and evidence types are in store.js: assignments 50% (self-assessed), first multiple-choice
+   answers 25% (verified), flashcard mastery 25% (recall). ---------- */
 PBI.readiness=(T,main,cards)=>{
   const done=T.asg.filter((_,i)=>main.done&&main.done[T.id+'-'+i]).length;
   const mcq=T.ass.map((q,i)=>({q,id:T.id+'-q'+i})).filter(x=>x.q.type==='mcq');
-  const ok=mcq.filter(x=>main.quiz&&main.quiz[x.id]!==undefined&&String(main.quiz[x.id])===String(x.q.a)).length;
+  const ok=mcq.filter(x=>ST.mcqOk(main,x.id,x.q.a)).length;
   const ids=T.int.map(q=>PBI.cardId.topic(q.q));
-  const learned=ids.filter(id=>{const r=cards.srs&&cards.srs[id];return r&&r.b>=1}).length;
-  const parts=[[0.5,T.asg.length?done/T.asg.length:null],[0.25,mcq.length?ok/mcq.length:null],[0.25,ids.length?learned/ids.length:null]].filter(p=>p[1]!==null);
-  const w=parts.reduce((a,p)=>a+p[0],0)||1;
-  return {pct:Math.round(100*parts.reduce((a,p)=>a+p[0]*p[1],0)/w),done,asg:T.asg.length,ok,mcq:mcq.length,learned,cards:ids.length};
+  const recall=ids.reduce((a,id)=>a+PBI.mastery(cards.srs&&cards.srs[id]),0);
+  return PBI.readinessFrom({asg:T.asg.length,done,mcq:mcq.length,ok,cards:ids.length,recall});
 };
 
 /* ---------- theme switch: any element with [data-theme-toggle] (top-right on every page) ---------- */
@@ -103,30 +100,61 @@ PBI.initThemeToggles=onChange=>{
 };
 PBI.initTheme=()=>PBI.initThemeToggles();
 
-/* ---------- progress export / import ---------- */
+/* ---------- progress export / import ----------
+   Import never trusts the file: store.js rebuilds both stores from a whitelist, the learner compares the file
+   with this browser before anything is replaced, and the current progress is kept as a backup first. */
 PBI.exportProgress=()=>{
-  const payload={app:'power-bi-holy-grail',version:2,schemaVersion:PBI.SCHEMA,exported:new Date().toISOString(),data:{}};
+  const payload={app:ST.APP,version:ST.EXPORT_VERSION,schemaVersion:PBI.SCHEMA,exported:new Date().toISOString(),data:{}};
   Object.values(KEYS).forEach(k=>payload.data[k]=PBI.load(k));
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='power-bi-progress-'+PBI.today()+'.json';
   document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
   PBI.toast('Progress file saved');
 };
+/* curriculum ids on this page, so entries for lessons or scenarios that don't exist are dropped */
+PBI.knownIds=()=>{
+  const k={};
+  if(typeof MODULES!=='undefined'){k.topics=new Set(MODULES.flatMap(m=>m.topics.map(t=>t.id)));
+    if(typeof CONCEPT_IDS!=='undefined')k.cards=new Set([...Object.values(CONCEPT_IDS).flat(),...MODULES.flatMap(m=>m.topics.flatMap(t=>t.cards))])}
+  if(typeof SCENARIO_INDEX!=='undefined'){k.scenarios={};SCENARIO_INDEX.forEach(s=>k.scenarios[s.id]={rubric:new Set(s.rubric.map(r=>r.id)),del:new Set(s.deliverables.map(d=>d.id)),hints:s.hints})}
+  return k;
+};
+/* one backup slot: the progress as it was before the last import, reset or restore */
+PBI.backup=reason=>{try{localStorage.setItem(KEY_BACKUP,JSON.stringify({at:new Date().toISOString(),reason,main:PBI.load(KEYS.main),cards:PBI.load(KEYS.cards)}))}catch(e){}};
+PBI.backupInfo=()=>{try{const b=JSON.parse(localStorage.getItem(KEY_BACKUP)||'null');if(!b||typeof b!=='object')return null;
+  const r=ST.sanitizeProgress({app:ST.APP,version:ST.EXPORT_VERSION,data:{[KEYS.main]:b.main||{},[KEYS.cards]:b.cards||{}}},KEYS,PBI.knownIds());
+  return {at:typeof b.at==='string'?b.at:'',reason:['import','reset','restore'].includes(b.reason)?b.reason:'import',main:r.main,cards:r.cards,sum:ST.summary(r.main,r.cards)}}catch(e){return null}};
+PBI.restoreBackup=()=>{const b=PBI.backupInfo();if(!b)return false;PBI.backup('restore');PBI.save(KEYS.main,b.main);PBI.save(KEYS.cards,b.cards);return true};
+const fmtDate=iso=>{if(!iso)return 'unknown date';const d=new Date(iso);return isNaN(d)?'unknown date':d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})+(iso.length>10?', '+d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'}):'')};
+PBI.fmtDate=fmtDate;
+function compareDialog(res){
+  const cur=ST.summary(PBI.load(KEYS.main),PBI.load(KEYS.cards)),imp=ST.summary(res.main,res.cards);
+  const rows=[['Assignments ticked','assignments'],['Quiz questions answered','quiz'],['Scenarios started','scenarios'],['Scenarios finished','scenariosDone'],['Scenarios with notes','notes'],['Flashcards reviewed','cards']];
+  const dlg=document.createElement('dialog');dlg.className='dlg';dlg.setAttribute('aria-labelledby','impH');
+  dlg.innerHTML=`<form method="dialog"><h2 id="impH">Replace this browser's progress?</h2>
+<p class="small muted">The file was exported ${PBI.esc(fmtDate(res.exported))}. Importing replaces everything below; it does not merge.</p>
+<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col"></th><th scope="col" class="num">Import file</th><th scope="col" class="num">This browser now</th></tr></thead><tbody>${rows.map(([l,k])=>`<tr><th scope="row">${l}</th><td class="num">${imp[k]}</td><td class="num">${cur[k]}</td></tr>`).join('')}</tbody></table></div>
+${res.dropped.length?`<p class="small">${res.dropped.length} unknown or invalid entr${res.dropped.length===1?'y':'ies'} in the file will be ignored.</p>`:''}
+<p class="small">This browser's current progress is kept as a backup. You can put it back from <b>Progress → Restore previous progress</b>.</p>
+<div class="row"><button class="btn primary" value="replace">Replace</button><button class="btn" value="cancel" autofocus>Cancel</button></div></form>`;
+  document.body.appendChild(dlg);
+  dlg.addEventListener('close',()=>{
+    if(dlg.returnValue==='replace'){PBI.backup('import');PBI.save(KEYS.main,res.main);PBI.save(KEYS.cards,res.cards);PBI.toast('Progress imported');setTimeout(()=>location.reload(),600)}
+    dlg.remove();
+  });
+  dlg.showModal();
+}
 PBI.importProgress=()=>{
   const inp=document.createElement('input');inp.type='file';inp.accept='application/json,.json';
   inp.addEventListener('change',()=>{
     const f=inp.files&&inp.files[0];if(!f)return;
+    if(f.size>5e6){PBI.toast('That file is too large to be a progress file');return}
     const rd=new FileReader();
     rd.onload=()=>{
-      try{
-        const p=JSON.parse(rd.result);
-        if(p.app!=='power-bi-holy-grail'||!p.data)throw new Error('not a progress file');
-        if((p.version||1)>2){PBI.toast('This progress file comes from a newer version of the site');return}
-        if(!confirm('Replace the progress in this browser with the file from '+(p.exported||'').slice(0,10)+'?'))return;
-        /* version 1 files only have the v1 fields; migrate fills in the rest */
-        Object.values(KEYS).forEach(k=>{if(p.data[k])PBI.save(k,k===KEYS.main?PBI.migrate(p.data[k]):p.data[k])});
-        PBI.toast('Progress imported');setTimeout(()=>location.reload(),600);
-      }catch(e){PBI.toast('That file is not a Power BI Holy Grail progress file')}
+      let res;
+      try{res=ST.sanitizeProgress(JSON.parse(rd.result),KEYS,PBI.knownIds())}
+      catch(e){PBI.toast(e instanceof ST.ImportError?'Not imported: '+e.message:'Not imported: the file is not valid JSON');return}
+      compareDialog(res);
     };
     rd.readAsText(f);
   });

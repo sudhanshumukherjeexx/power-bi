@@ -83,7 +83,7 @@ function evidence(){
 function work(){
   const r=rec()||{del:{},notes:''};
   const tplLink=a=>a&&TEMPLATE_INDEX.find(t=>t.id===a)?` <a class="small" href="${R}templates.html#tpl-${a}">template</a>`:'';
-  let h=`<h2 class="xph">Deliverables</h2><p class="small muted">Tick each one when you have actually written it. Ticked deliverables appear in your portfolio.</p><ul class="dels">${S.deliverables.map(d=>`<li><label><input type="checkbox" data-del="${esc(d.id)}"${r.del&&r.del[d.id]?' checked':''}> <span>${fmt(d.t)}</span></label>${tplLink(d.artifact)}</li>`).join('')}</ul>`;
+  let h=`<h2 class="xph">Deliverables</h2><p class="small muted">Tick each one when you have actually written it. Ticked deliverables appear under portfolio evidence on your progress page.</p><ul class="dels">${S.deliverables.map(d=>`<li><label><input type="checkbox" data-del="${esc(d.id)}"${r.del&&r.del[d.id]?' checked':''}> <span>${fmt(d.t)}</span></label>${tplLink(d.artifact)}</li>`).join('')}</ul>`;
   if(S.decision)h+=decisionHtml();
   if(S.interactive)h+=`<div id="interactive">${interactiveHtml()}</div>`;
   if(['senior','engineer','architect'].includes(S.stage))h+=`<details class="senior"><summary>The senior conversation: a structure for your write-up</summary><ol><li><b>Problem</b>: one sentence, in business terms.</li><li><b>Impact</b>: who is affected, how much, since when.</li><li><b>Evidence</b>: what you measured or found, with numbers.</li><li><b>Options</b>: two or three, each with cost and risk.</li><li><b>Recommendation</b>: one option, and why.</li><li><b>Risk</b>: what could go wrong and how you'd notice.</li><li><b>Ask</b>: the decision or help you need, from whom, by when.</li></ol></details>`;
@@ -115,7 +115,7 @@ function assessmentResult(ans){
 }
 function hints(){
   const r=rec(),n=r?r.hints||0:0;
-  return `<p class="muted small">Hints narrow where to look; they never give the answer. Using one is not a failure, it just takes 5% off this scenario's score (at most 20%).</p><ol class="hints">${S.hints.map((h,i)=>i<n?`<li class="shown"><b>Hint ${i+1}</b> ${fmt(h)}</li>`:'').join('')}</ol>${n<S.hints.length?`<button class="btn" type="button" id="hintBtn">Show hint ${n+1} of ${S.hints.length}</button>`:'<p class="small muted">No more hints. Try the evidence again, then the model answer in the Finish tab.</p>'}${contextHtml()}`;
+  return `<p class="muted small">Hints narrow where to look; they never give the answer. Using one doesn't lower your outcome. It's recorded separately as independence (10 points per hint, at most 40), because at work asking early is often the right call.</p><ol class="hints">${S.hints.map((h,i)=>i<n?`<li class="shown"><b>Hint ${i+1}</b> ${fmt(h)}</li>`:'').join('')}</ol>${n<S.hints.length?`<button class="btn" type="button" id="hintBtn">Show hint ${n+1} of ${S.hints.length}</button>`:'<p class="small muted">No more hints. Try the evidence again, then the model answer in the Finish tab.</p>'}${contextHtml()}`;
 }
 /* "Need more context?": external reading linked to this scenario in the catalog (Resources). Reading costs nothing. */
 function contextHtml(){
@@ -126,13 +126,18 @@ function contextHtml(){
   const tier=s=>s==='third-party'?'Third party':s[0].toUpperCase()+s.slice(1);
   return `<section class="xpctx"><h3>Need more context?</h3><p class="small muted">Background reading for this ticket. Reading doesn't affect your score.</p><ul>${list.map(x=>`<li><span class="k">${esc(cat[x.c])}</span><a href="${esc(x.u)}" rel="noopener" target="_blank" class="ext">${esc(x.t)}</a> <span class="tier ${esc(x.src)}">${tier(x.src)}</span><span class="d">${esc(x.d)}</span></li>`).join('')}</ul></section>`;
 }
+/* outcome and independence are separate: asking for help is recorded, never held against the outcome */
+function scoreText(sc){
+  if(!sc)return 'Rate each criterion to see your result.';
+  return `<span class="sx"><span class="k">Outcome</span><b>${sc.quality}%</b><span class="ev-tag self">self-assessed</span></span><span class="sx"><span class="k">Independence</span><b>${sc.independence}%</b></span><span class="sx small muted">${sc.hints} hint${sc.hints===1?'':'s'} used · model answer ${sc.solEarly?'opened before finishing':'not opened early'}${sc.complete?'':` · ${sc.scored} of ${sc.criteria} criteria rated`}</span>`;
+}
 function review(){
   const r=rec()||{rub:{}};
   const sc=r.rub?P.scenarioScore(meta,r):null;
   const lv=['Not done','Attempted','Partly','Solid','Exemplary'];
-  return `<h2 class="xph">Score your work against the rubric</h2><p class="small muted">Be honest: compare your work with "what good looks like". The rubric is how a BI lead would review this, not only whether the number is right.</p>
+  return `<h2 class="xph">Rate your work against the rubric</h2><p class="small muted">This is a self-assessment: nothing here inspects your files. Compare your work with "what good looks like" the way a BI lead reviewing it would. Honest ratings are what make your progress page mean something.</p>
   <div class="rubric">${S.rubric.map(c=>`<fieldset class="rb"><legend><b>${esc(c.n)}</b> <span class="w">${c.w}%</span></legend><p class="good">${fmt(c.good)}</p><div class="lv">${lv.map((l,i)=>`<label><input type="radio" name="rb-${esc(c.id)}" value="${i}" data-rub="${esc(c.id)}"${r.rub&&r.rub[c.id]===i?' checked':''}><span>${i} · ${l}</span></label>`).join('')}</div></fieldset>`).join('')}</div>
-  <div class="scorebox" aria-live="polite">${sc?`Self-assessed ${sc.raw}%${sc.hints?` · ${sc.hints} hint${sc.hints>1?'s':''}`:''}${sc.solEarly?' · solution opened before finishing':''} → <b>score ${sc.pct}%</b>`:'Score each criterion to see your score.'}</div>
+  <div class="scorebox" aria-live="polite">${scoreText(sc)}</div>
   <div class="cta">${r.done?`<span class="chip ok">Completed ${esc((r.doneAt||'').slice(0,10))}</span><button class="btn sm" type="button" id="reopen">Reopen</button>`:`<button class="btn primary" type="button" id="finishBtn">Mark scenario complete</button>`}${!r.sol?`<button class="btn" type="button" id="solBtn">${r.done?'Show the model answer':'Show the model answer now'}</button>`:''}</div>
   <div id="solution">${r.sol?'<div class="empty">Loading the model answer…</div>':''}</div>
   ${r.done?debrief():''}`;
@@ -188,7 +193,7 @@ app.addEventListener('click',async e=>{
   const cc=e.target.closest('[data-copycode]');if(cc){copy(cc.closest('.codewrap').querySelector('code').textContent);return}
   if(e.target.closest('#solBtn')){
     const r=rec();
-    if(!(r&&r.done)&&!confirm('Open the model answer before finishing? You will learn more from finishing first. Opening it now records an early reveal, which lowers this scenario\'s score.'))return;
+    if(!(r&&r.done)&&!confirm('Open the model answer before finishing? You will learn more from finishing first. Opening it now is recorded under independence (30 points). Your outcome rating is unaffected.'))return;
     saveRec(x=>{x.sol=true;if(!x.done)x.solEarly=true});renderPane('review');return}
   if(e.target.closest('#finishBtn')){
     const r=rec();
@@ -204,7 +209,7 @@ app.addEventListener('click',async e=>{
 });
 app.addEventListener('change',e=>{
   const d=e.target.closest('[data-del]');if(d){saveRec(x=>{x.del=x.del||{};x.del[d.dataset.del]=d.checked});return}
-  const rb=e.target.closest('[data-rub]');if(rb){saveRec(x=>{x.rub=x.rub||{};x.rub[rb.dataset.rub]=+rb.value});const sc=P.scenarioScore(meta,rec());const box=document.querySelector('.scorebox');if(box&&sc)box.innerHTML=`Self-assessed ${sc.raw}%${sc.hints?` · ${sc.hints} hint${sc.hints>1?'s':''}`:''}${sc.solEarly?' · solution opened before finishing':''} → <b>score ${sc.pct}%</b>`;return}
+  const rb=e.target.closest('[data-rub]');if(rb){saveRec(x=>{x.rub=x.rub||{};x.rub[rb.dataset.rub]=+rb.value});const sc=P.scenarioScore(meta,rec());const box=document.querySelector('.scorebox');if(box)box.innerHTML=scoreText(sc);return}
   const pk=e.target.closest('[data-pick]');if(pk){saveRec(x=>{x.picks=x.picks||{};x.picks[pk.dataset.pick]=pk.checked});return}
   const dm=e.target.closest('[data-dim]');if(dm){saveRec(x=>{x.ans=x.ans||{};x.ans[dm.dataset.dim]=+dm.value});document.getElementById('interactive').innerHTML=interactiveHtml();return}
 });

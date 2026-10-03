@@ -39,7 +39,7 @@ Each scenario gives you emails, tickets, chat messages, evidence files, progress
 
 Data Analyst → BI Developer → Senior BI Developer → BI Engineer → BI Architect / Lead.
 
-Stages are about responsibility, not years. Your progress page shows your stage, a competency matrix built from evidence (assignments, quiz answers, flashcard retention, scenario rubric scores), a portfolio of the documents you've written, and readiness for PL-300 and DP-600.
+Stages are about responsibility, not years. Your progress page is a competency review: every number says whether it rests on **verified** evidence (first answers to multiple-choice questions), **self-assessed** evidence (ticked assignments and deliverables, your own rubric ratings) or **recall** (spaced-repetition flashcards), and explains how it was calculated. A stage is cleared only when its scenarios are finished *and* rated well, not merely ticked. It also shows the deliverables you've written (portfolio evidence) and weighted coverage and practice for PL-300 and DP-600.
 
 ## What else is inside
 

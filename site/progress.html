@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Your progress: competency matrix and portfolio · Power BI Holy Grail</title>
-<meta name="description" content="Your Power BI competency matrix, professional stage, Experience Mode scores, portfolio artifacts, decision log and certification readiness, computed from evidence in this browser.">
+<title>Your progress: competency review and portfolio evidence · Power BI Holy Grail</title>
+<meta name="description" content="Your Power BI competency matrix, professional stage, Experience Mode outcomes, portfolio evidence, decision log and certification preparation, computed from evidence in this browser.">
 <link rel="canonical" href="https://sudhanshumukherjeexx.github.io/power-bi/progress.html">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
@@ -38,8 +38,9 @@
 <main class="wrap" id="app" tabindex="-1">
   <section class="intro">
     <h1><span class="hl">Your progress</span></h1>
-    <p>Everything here is computed from evidence: assignments you ticked, quiz answers, flashcards you remembered, and Experience Mode scenarios you finished and scored against the rubric. Reading a page doesn't count. Hints and early solution reveals reduce a scenario's score a little; they are never a fail.</p>
+    <p>A competency review, built only from evidence, and every number says which kind. <b>Verified</b>: your first answer to a multiple-choice question, checked against the key. <b>Self-assessed</b>: assignments and deliverables you ticked and scenarios you rated against the rubric; nothing inspects your files. <b>Recall</b>: flashcards you remembered over spaced reviews. Reading a page never counts.</p>
     <div class="cta"><button class="btn sm" type="button" data-export>Export progress</button><button class="btn sm" type="button" data-import>Import progress</button><button class="btn sm" type="button" id="resetAll">Reset everything</button></div>
+    <div id="backup"></div>
   </section>
   <div id="pp"><div class="empty">Loading…</div></div>
 </main>
@@ -47,6 +48,7 @@
 <div class="toast" id="toast" role="status"></div>
 <script src="assets/js/meta.js"></script>
 <script src="assets/js/paths.js"></script>
+<script src="assets/js/store.js"></script>
 <script src="assets/js/site.js"></script>
 <script src="assets/js/progress.js"></script>
 <script src="assets/js/progresspage.js"></script>

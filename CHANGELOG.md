@@ -2,6 +2,29 @@
 
 ## Unreleased
 
+### Learner changes: trustworthy progress (2.2.0, Phase 1)
+
+- **Every score says what it rests on.** Progress now separates *verified* evidence (your first answer to each multiple-choice question), *self-assessed* evidence (ticked assignments and deliverables, your own rubric ratings) and *recall* (flashcards). Each percentage on the progress page has a "How this is calculated" panel.
+- **Only your first multiple-choice answer counts.** You can still change answers to learn, but readiness uses the first one.
+- **One definition of flashcard mastery** everywhere: box 1 = 25%, 2 = 50%, 3 = 75%, 4 or more = 100%. "Mastered" now means box 4, which takes four correct recalls over at least 11 days. It used to mean box 3, and some scores counted a card seen correctly once as learned.
+- **Professional stages need quality, not only completion.** Experience credit is now the average outcome of finished scenarios multiplied by the share finished. A stage is cleared when skill readiness reaches 70%, 70% of its scenarios are finished and their average outcome is 65% or more. Finishing scenarios with low ratings no longer moves you up.
+- **Hints no longer lower your score.** A scenario shows an *outcome* (your rubric rating) and, separately, *independence* (−10 per hint, at most −40, and −30 for opening the model answer early). Only the outcome counts toward competency and stages.
+- **Certification preparation** is weighted by Microsoft's published domain weights (midpoint of each range). It shows *curriculum coverage* and *practice* separately, and says plainly that neither predicts an exam result.
+- **"Portfolio" is now "Portfolio evidence"**, and says that it lists deliverables you ticked rather than inspected files.
+- **Safer import.** Imported progress files are validated field by field: unknown fields, wrong types, oversized text, unknown lessons or scenarios, and any non-internal link are dropped. Before anything is replaced, a dialog compares the file with this browser. Your current progress is kept as a backup, and **Progress → Restore previous progress** brings it back. Resetting also keeps a backup.
+
+**Your numbers may drop after this update.** That's intended: stage and readiness figures now count only what the evidence supports.
+
+### Maintainer changes
+
+- `site/assets/js/store.js` (new, DOM-free) holds the progress schema, migration, safe internal links, mastery, readiness and import validation. Every page loads it before `site.js`.
+- Progress schema 2 → 3 (adds `quizFirst`, seeded from `quiz`). Export file version 3, and import accepts versions 1–3. No field was removed or renamed.
+- `tools/lib/cert-weights.js` normalises certification domain weights at build time (`wm`, `wn` in `CERTS`).
+- New tests: `tests/scoring.test.js` and `tests/progress-import.test.js` (hostile import fixtures) run the shipped scripts in a Node VM (`tests/lib/browser-env.js`). The link test now fails any new-tab link without `rel="noopener"`.
+- Audits and the plan for the next phases are in `docs/`: design, progress scoring, security, SEO and the implementation plan.
+
+### Earlier unreleased changes
+
 ### Changed
 
 - **Repository layout:** the published website moved into `site/`, so the repository root now holds only the project: `content/`, `site/`, `tools/`, `tests/`, `docs/` and the project files. Public URLs are unchanged.

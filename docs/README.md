@@ -7,6 +7,11 @@ How the project is organised and how to change it is in [CONTRIBUTING.md](../CON
 | Document | What it covers |
 |---|---|
 | [deployment.md](deployment.md) | How the site is tested and published to GitHub Pages, the one-time setup, local preview and rollback. |
+| [implementation-plan.md](implementation-plan.md) | Plan for 2.2.0 onward: target architecture, token, scoring and schema migration, navigation, phases, risks, rollback, definition of done. |
+| [progress-scoring-audit.md](progress-scoring-audit.md) | Every learner-facing number: where it's stored, its formula, what was wrong, and the evidence model that replaced it. |
+| [security-audit.md](security-audit.md) | Threat model (imported progress files), findings, and the import hardening, CSP, font and CI supply-chain plans. |
+| [seo-audit.md](seo-audit.md) | What crawlers see on each page type, what must never be rendered statically, and the static-rendering plan. |
+| [design-audit.md](design-audit.md) | Tokens, components, navigation, Toolkit vs Resources overlap and contrast measurements before the redesign. |
 | [enterprise-data.md](enterprise-data.md) | The enterprise-scale data generator: options, the defects it plants, and what each data size teaches. |
 
 ## History
