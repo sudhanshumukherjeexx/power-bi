@@ -142,6 +142,12 @@ The visual identity is Graphite × Warm Ivory × Grail Gold, set in IBM Plex. `t
 - **Icons** come from the sprite, sit next to a text label, and are `aria-hidden`. No emoji in UI chrome. Scenario dialogue may use them.
 - **Contrast:** text is 4.5:1 or more on every surface in both themes. Check new colour pairs before using them.
 
+## What may be static (search engines and readers without JavaScript)
+
+Level pages, track pages, scenarios, the Library and the glossary are rendered into HTML at build time (`tools/lib/static-render.js`), and their scripts then replace the static version. Static HTML is public, so it may contain only what a learner sees **before acting**: assignments, briefs, messages, tasks, deliverables, evidence names, interview *questions* and quiz *options*. Never put hints, rubric criteria, retrospective questions, model answers, interview answers, quiz explanations or worked solutions in it. `tests/leaks.test.js` fails the build if you do.
+
+The sitemap and `robots.txt` are generated (`tools/lib/build-seo.js`). Every page needs a unique `<title>` and a description of 50+ characters. To change the social preview image, edit `tools/og/og.html` and run `node tools/render-og.js`.
+
 ## Style
 
 - **Plain English**, short sentences, British or American spelling consistently within a file.

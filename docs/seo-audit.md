@@ -53,3 +53,25 @@ Ticket `labels` (for example `performance, dax`) are part of the ticket and are 
 - **JSON-LD:** `Course` on the home page, `LearningResource` on level, track and scenario pages, `TechArticle` on Toolkit guides, and `BreadcrumbList` wherever breadcrumbs exist.
 - **`og:image`:** one static 1200×630 PNG in the new identity, committed under `site/assets/og/`.
 - **A test that fails the build** if any static HTML contains a hint, a rubric "good" string, a retrospective question, a model-answer summary, a correct-option marker or a worked solution. Leaks are caught by CI, not by review.
+
+## Status after Phase 4
+
+Measured on the generated site with JavaScript disabled (words of visible text in `<main>`):
+
+| Page | Before | After |
+|---|---|---|
+| Beginner level | ~95 | 2,986 |
+| SQL track | ~93 | 2,596 |
+| Library (`resources.html`) | ~95 | 3,060 |
+| Glossary | 330 | 4,345 |
+| Scenario INC-2044 | ~86 | 520 |
+| Drill REQ-301 | ~83 | 198 (the whole brief) |
+
+- **Static rendering:** `tools/lib/static-render.js` renders level and track pages, scenario briefs, the Library and the glossary. The page scripts replace `<main>` on load, and the browser checks confirm one `h1`, no duplicate ids and the interactive controls present after hydration.
+- **Leak test:** `tests/leaks.test.js` checks every generated page for scenario hints, rubric criteria, retrospective questions, model-answer sentences, interview answers, quiz explanations, worked solutions and answer-key attributes. Planting hints and quiz explanations into the renderer produced 148 failures, and removing them restored a clean run. Text a guided assignment already shows in its steps is public by design and isn't counted.
+- **Head:** every page has exactly one canonical URL, Open Graph tags with an absolute `og:image` (1200×630, `tools/og/og.html`, rendered by `node tools/render-og.js`), a Twitter card and a description of 50+ characters. Hand-written pages get the same block between `<!--seo-->` markers at build time. No two pages share a `<title>`.
+- **Structured data:** `Course` (home), `LearningResource` (levels, tracks, scenarios), `TechArticle` with `dateModified` from the verification date (Toolkit guides), and `BreadcrumbList` wherever there are breadcrumbs. The tests reject any other type.
+- **Fallbacks:** each page type has its own `<noscript>` sentence saying what needs JavaScript there. The old "needs JavaScript to show the assignments" sentence is gone.
+- **`sitemap.xml`:** 75 URLs, with `lastmod` from verification dates only. **`robots.txt`** is generated, but crawlers read it only at the host root (`sudhanshumukherjeexx.github.io/robots.txt`), so for this project site it is informational. Submit the sitemap in Google Search Console and Bing Webmaster Tools.
+
+Not done: ticket `labels` are still shown. That's a content decision the maintainer hasn't made yet (see the implementation plan).

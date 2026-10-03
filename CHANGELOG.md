@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+### Learner changes: readable without JavaScript, findable by search engines (Phase 4)
+
+- **Pages show their content before any script runs.** Level and track pages carry every assignment, interview question and quiz question in the HTML, and scenarios carry the ticket, stakeholder messages, tasks, deliverables and evidence list. The Library and the glossary are complete too. Search engines, link previews, reader modes and people with JavaScript off now see the real material. Without JavaScript, the Beginner page went from about 95 words to about 3,000.
+- **No answers leak.** Hints, rubrics, retrospectives, model answers, interview answers, quiz explanations and worked solutions are never in the HTML. They still load only when you ask, and a test enforces this.
+- **Honest fallbacks:** each page says exactly what needs JavaScript there (ticking, readiness, quiz checking, reveals, notes) instead of a generic message.
+- **Link previews:** a social image in the new identity, Open Graph and Twitter tags on every page, and one canonical URL each.
+
+### Maintainer changes (Phase 4)
+
+- `tools/lib/static-render.js` (levels, tracks, scenarios, Library, glossary), `tools/lib/build-seo.js` (`sitemap.xml`, `robots.txt`), and `tools/render-og.js` with `tools/og/og.html` (`site/assets/og/og-default.png`).
+- `partials.head()` takes `type` and `jsonld`. Hand-written pages get the SEO block between `<!--seo-->` markers.
+- Structured data: `Course`, `LearningResource`, `TechArticle`, `BreadcrumbList`.
+- `tests/leaks.test.js` checks for answer leaks and SEO completeness. `tests/build.test.js` validates JSON-LD as JSON. The link test no longer scans `tools/` templates, because their output pages are checked instead.
+
 ### Learner changes: one place for everything, and continuation first (Phase 3)
 
 - **Resources is now the Library, inside the Toolkit.** The glossary, cheat sheets, external catalog, datasets, starter project and study tools are a seventh Toolkit door, so there is one place to look things up instead of two. `resources.html` still works and keeps all its content.

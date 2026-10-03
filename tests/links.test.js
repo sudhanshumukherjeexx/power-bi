@@ -26,7 +26,9 @@ module.exports = t => {
   a.stages.forEach(s => dynamic.add('stage-' + s.id));
   const dynamicPrefixes = ['card=', 'deck=', 'mock', 'cat=', 'q=', 'scenario=', 'tab=', 'ev-', 'cr-', 'tpl-'];
 
-  const files = walk(root, p => /\.(html|js|json|md)$/.test(p) && !/[\\/](node_modules|\.git|starter|tests|docs)[\\/]/.test(p) && !/[\\/]content[\\/]schema[\\/]/.test(p));
+  /* tools/ holds page templates; the pages they generate are checked instead (a relative path in a template depends
+     on the folder of the page it writes) */
+  const files = walk(root, p => /\.(html|js|json|md)$/.test(p) && !/[\\/](node_modules|\.git|starter|tests|docs|tools)[\\/]/.test(p) && !/[\\/]content[\\/]schema[\\/]/.test(p));
   const idCache = {};
   const idsOf = f => idCache[f] || (idCache[f] = new Set([...fs.readFileSync(f, 'utf8').matchAll(/\bid="([^"]+)"/g)].map(m => m[1])));
   let checked = 0;

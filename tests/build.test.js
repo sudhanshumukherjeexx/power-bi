@@ -22,7 +22,12 @@ module.exports = t => {
   const html = walk(root, p => p.endsWith('.html') && !/[\\/](node_modules|starter)[\\/]/.test(p));
   for (const f of html) {
     const src = fs.readFileSync(f, 'utf8');
-    const re = /<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi; let m, n = 0;
-    while ((m = re.exec(src))) { n++; t.ok(compile(m[1], `${rel(f)} inline script ${n}`), ''); }
+    const re = /<script(?![^>]*\bsrc=)([^>]*)>([\s\S]*?)<\/script>/gi; let m, n = 0;
+    while ((m = re.exec(src))) {
+      n++;
+      /* structured data is JSON, not script: it must parse */
+      if (/type="application\/ld\+json"/.test(m[1])) { let ok = true; try { JSON.parse(m[2]); } catch (e) { ok = false; } t.ok(ok, `${rel(f)} JSON-LD block ${n} is not valid JSON`); continue; }
+      t.ok(compile(m[2], `${rel(f)} inline script ${n}`), '');
+    }
   }
 };

@@ -11,6 +11,13 @@
 <meta property="og:title" content="Hotfix, rollback or wait?: BI drill (INC-2079) · Power BI Holy Grail">
 <meta property="og:description" content="BI release management drill: a production KPI is wrong after a release. Choose between a normal release, a hotfix and a rollback, and justify it.">
 <meta property="og:url" content="https://sudhanshumukherjeexx.github.io/power-bi/experience/d04-hotfix-or-rollback.html">
+<meta property="og:image" content="https://sudhanshumukherjeexx.github.io/power-bi/assets/og/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Power BI Holy Grail: Learn Power BI by doing the work.">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Experience","item":"https://sudhanshumukherjeexx.github.io/power-bi/experience.html"},{"@type":"ListItem","position":2,"name":"Stage: Senior BI Developer","item":"https://sudhanshumukherjeexx.github.io/power-bi/experience.html#stage-senior"},{"@type":"ListItem","position":3,"name":"INC-2079","item":"https://sudhanshumukherjeexx.github.io/power-bi/experience/d04-hotfix-or-rollback.html"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"Hotfix, rollback or wait?","description":"BI release management drill: a production KPI is wrong after a release. Choose between a normal release, a hotfix and a rollback, and justify it.","url":"https://sudhanshumukherjeexx.github.io/power-bi/experience/d04-hotfix-or-rollback.html","learningResourceType":"Exercise","educationalLevel":"Senior BI Developer","timeRequired":"PT30M","inLanguage":"en","isAccessibleForFree":true,"isPartOf":{"@type":"Course","name":"Power BI Holy Grail","url":"https://sudhanshumukherjeexx.github.io/power-bi/"}}</script>
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#15181D" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -37,7 +44,20 @@
   <span data-theme-toggle-slot></span>
 </div></header>
 <!--/nav-->
-<main class="wrap xpwrap" id="app" tabindex="-1"><noscript><p>This scenario needs JavaScript. Its files are in the <a href="https://github.com/sudhanshumukherjeexx/power-bi/tree/main/site/data/experience">data/experience folder on GitHub</a>.</p></noscript></main>
+<main class="wrap xpwrap" id="app" tabindex="-1">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../experience.html">Experience</a><span aria-hidden="true">/</span><a href="../experience.html#stage-senior">Stage 3: Senior BI Developer</a><span aria-hidden="true">/</span><span aria-current="page">INC-2079</span></nav>
+<header class="ticket"><div class="tk-top"><span class="tk-kind k-decision">Decision</span><span class="sev sev2">SEV2</span><span class="tk-id">INC-2079</span><span class="chip">Drill</span></div>
+<h1>Hotfix, rollback or wait?</h1><p class="tk-sum">Release 2.3 went live last night. This morning one KPI on the sales app is wrong. The board pack is tomorrow. Choose: normal release, hotfix or rollback.</p>
+<dl class="tk-meta"><div><dt>Reported by</dt><dd>Jordan Reed, VP Sales</dd></div><div><dt>Opened</dt><dd>Wed 10 Jun 2026, 08:15</dd></div><div><dt>Priority</dt><dd>High</dd></div><div><dt>Time box</dt><dd>0.5 h</dd></div></dl>
+<div class="tk-skills"><span class="chip">Deployment and Git</span><span class="chip">Testing and validation</span><span class="chip">Communication</span><span class="chip">Architecture</span></div></header>
+
+<div class="impact"><b>Why the business cares</b> Every option has a cost. Rolling back also undoes fixes people are waiting for; a rushed hotfix can break something else the day before the board pack; waiting leaves a wrong number in front of managers.</div>
+<noscript><p class="small muted">Taking the ticket, saving notes and deliverables, hints, the rubric and the model answer need JavaScript. The brief and the files are below.</p></noscript>
+<section class="xppane" aria-labelledby="brief-h"><h2 class="xph" id="brief-h">Brief</h2><div class="inbox"><article class="msg via-email"><header><span class="av" aria-hidden="true">JR</span><span class="who"><b>Jordan Reed</b><span>VP Sales</span></span><span class="when"><span class="via">email</span> Wed 10 Jun, 08:15</span></header><h3>Avg order value is off</h3><div class="body"><p>Avg Order Value on the sales app jumped from about $210 to $340 overnight. Nothing like that happened in the business. Managers are asking.</p></div></article><article class="msg via-chat"><header><span class="av" aria-hidden="true">ET</span><span class="who"><b>Elena Torres</b><span>BI Lead (your manager)</span></span><span class="when"><span class="via">chat</span> Wed 10 Jun, 08:30</span></header><div class="body"><p>Your call; tell me by 10:00 and why. Release notes attached. Next normal release train is Thursday 15:00, after the board pack goes out.</p></div></article></div>
+<h2 class="xph">What you are expected to do</h2><ul class="tasks"><li>Find what's actually wrong in the AOV change.</li><li>Weigh the three options against the facts in the release notes.</li><li>Record your decision with its justification and the safeguards you'd require.</li></ul>
+<h2 class="xph">Deliverables</h2><ul class="dels"><li>Decision with justification and safeguards</li><li>Hotfix release note (if you chose it)</li></ul>
+<h2 class="xph">Evidence</h2><ul class="evlist"><li id="ev-notes"><b>Release 2.3 notes (deployed Tue 9 Jun, 18:00)</b></li><li id="ev-diff"><b>The AOV change in release 2.3</b></li></ul></section>
+</main>
 <footer class="wrap foot">
   
   <p>Your progress is saved in this browser only. <a href="../progress.html">See your progress</a> · <a href="../toolkit.html">Toolkit</a> · <a href="../resources.html">Library</a> · <a href="../glossary.html">Glossary</a> · <a href="../templates.html">Templates</a> · <a href="https://github.com/sudhanshumukherjeexx/power-bi">Source on GitHub</a></p>

@@ -4,21 +4,27 @@
    experience/<slug>.html    one page per scenario (title and description for search engines) */
 'use strict';
 const P = require('./partials');
+const SR = require('./static-render');
 
 const strip = s => { const o = Object.assign({}, s); for (const k of Object.keys(o)) if (k.startsWith('_')) delete o[k]; return o; };
 
-function page(s, stageName) {
+function page(s, stageName, all) {
   const kind = { incident: 'Incident', change: 'Change request', review: 'Review', decision: 'Decision', uat: 'UAT', ticket: 'Ticket' }[s.ticket.kind] || 'Ticket';
   const title = `${s.title}: ${s.type === 'drill' ? 'BI drill' : 'Power BI scenario'} (${s.ticket.id}) · Power BI Holy Grail`;
   const description = s.seo || `${kind} ${s.ticket.id} for the ${stageName} stage: ${s.summary}`;
   const scripts = ['meta', 'experience', 'glossary', 'external', 'store', 'site', 'progress', 'xp'];
-  return `${P.head({ title, description, path: `experience/${s.slug}.html`, r: '../' })}
+  const url = `experience/${s.slug}.html`;
+  const jsonld = [P.crumbsLd([['Experience', 'experience.html'], [`Stage: ${stageName}`, `experience.html#stage-${s.stage}`], [s.ticket.id, url]]),
+    { '@type': 'LearningResource', name: s.title, description, url: P.site.url + url, learningResourceType: s.type === 'drill' ? 'Exercise' : 'Simulation', educationalLevel: stageName, timeRequired: `PT${s.minutes}M`, inLanguage: 'en', isAccessibleForFree: true, isPartOf: { '@type': 'Course', name: P.site.name, url: P.site.url } }];
+  return `${P.head({ title, description, path: url, r: '../', jsonld })}
 <body data-root="../" data-scenario="${s.id}">
 <a class="skip" href="#app">Skip to content</a>
 <!--nav:practice-->
 ${P.nav('practice', '../')}
 <!--/nav-->
-<main class="wrap xpwrap" id="app" tabindex="-1"><noscript><p>This scenario needs JavaScript. Its files are in the <a href="https://github.com/sudhanshumukherjeexx/power-bi/tree/main/site/data/experience">data/experience folder on GitHub</a>.</p></noscript></main>
+<main class="wrap xpwrap" id="app" tabindex="-1">
+${SR.scenario(s, all)}
+</main>
 ${P.footer('../')}
 ${scripts.map(x => `<script src="../assets/js/${x}.js"></script>`).join('\n')}
 </body>
@@ -36,7 +42,7 @@ module.exports = (all, { BANNER, J }) => {
     if (s._solution) out[`assets/js/xp/${s.id}.js`] = BANNER(`content/experience/${s._folder}/solution.json`) +
       `(window.XP_SOLUTIONS=window.XP_SOLUTIONS||{})[${J(s.id)}]=${J(s._solution)};\n`;
     const st = all.stages.find(x => x.id === s.stage);
-    out[`experience/${s.slug}.html`] = page(s, st ? st.name : s.stage);
+    out[`experience/${s.slug}.html`] = page(s, st ? st.name : s.stage, all);
   }
   return out;
 };

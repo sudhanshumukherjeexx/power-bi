@@ -26,8 +26,28 @@ function nav(active, r = '', page = '') {
 </div></header>`;
 }
 
-function head({ title, description, path: pagePath = '', r = '', css = ['tokens', 'site', 'pages', 'app'], extra = '' }) {
+/* canonical URL, Open Graph, Twitter card and the social image: the same block for generated pages and, via
+   seoInject, for hand-written ones */
+const OG_IMAGE = 'assets/og/og-default.png';
+function seo({ title, description, path: pagePath = '', type = 'website' }) {
   const url = site.url + pagePath;
+  return `<link rel="canonical" href="${esc(url)}">
+<meta property="og:type" content="${type}">
+<meta property="og:site_name" content="${esc(site.name)}">
+<meta property="og:title" content="${esc(title)}">
+<meta property="og:description" content="${esc(description)}">
+<meta property="og:url" content="${esc(url)}">
+<meta property="og:image" content="${esc(site.url + OG_IMAGE)}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="${esc(site.name)}: ${esc(site.tagline)}">
+<meta name="twitter:card" content="summary_large_image">`;
+}
+/* structured data: only types that describe the page accurately (Course, LearningResource, TechArticle, BreadcrumbList) */
+const ld = objs => (objs || []).filter(Boolean).map(o => `<script type="application/ld+json">${JSON.stringify(Object.assign({ '@context': 'https://schema.org' }, o)).replace(/</g, '\\u003c')}</script>`).join('\n');
+const crumbsLd = items => ({ '@type': 'BreadcrumbList', itemListElement: items.map(([name, p], i) => ({ '@type': 'ListItem', position: i + 1, name, item: site.url + p })) });
+
+function head({ title, description, path: pagePath = '', r = '', css = ['tokens', 'site', 'pages', 'app'], extra = '', type = 'website', jsonld = null }) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,12 +55,7 @@ function head({ title, description, path: pagePath = '', r = '', css = ['tokens'
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
-<link rel="canonical" href="${esc(url)}">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="${esc(site.name)}">
-<meta property="og:title" content="${esc(title)}">
-<meta property="og:description" content="${esc(description)}">
-<meta property="og:url" content="${esc(url)}">
+${seo({ title, description, path: pagePath, type })}${jsonld ? '\n' + ld(jsonld) : ''}
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#15181D" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -70,4 +85,4 @@ function inject(html, r = '', page = '') {
   return html.replace(/<!--nav:([a-z]+)-->[\s\S]*?<!--\/nav-->/g, (_, sec) => `<!--nav:${sec}-->\n${nav(sec, r, page)}\n<!--/nav-->`);
 }
 
-module.exports = { site, esc, nav, head, footer, inject, SECTIONS };
+module.exports = { site, esc, nav, head, seo, ld, crumbsLd, footer, inject, SECTIONS, OG_IMAGE };
