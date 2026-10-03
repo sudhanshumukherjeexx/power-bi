@@ -9,6 +9,7 @@
 'use strict';
 const fs = require('fs'), path = require('path');
 const P = require('./partials');
+const ICON = require('./icons');
 const { render, esc, slug } = require('./md');
 const { check } = require('./toolkit');
 
@@ -101,7 +102,7 @@ ${P.nav('toolkit', r)}
 <main class="wrap tk" id="app" tabindex="-1">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="${r}toolkit.html">Toolkit</a><span aria-hidden="true">/</span><a href="${r}toolkit/${door.id}.html">${esc(door.name)}</a><span aria-hidden="true">/</span><span aria-current="page">${esc(g.title)}</span></nav>
 <header class="intro tkhead">
-<div class="kicker">${door.icon} ${esc(door.name)} · ${esc(KIND_LABEL[g.kind])}</div>
+<div class="kicker">${ICON.use(door.icon, r)} ${esc(door.name)} · ${esc(KIND_LABEL[g.kind])}</div>
 <h1>${esc(g.title)}</h1>
 <p class="lead">${esc(g.summary)}</p>
 <div class="tkmeta">${chips}<span class="verified" title="Checked against the sources on this date">Checked ${dateTxt(g.verified.date)}</span>${g.download ? `<a class="btn sm" href="${r}toolkit/${g.id}.md" download>Download .md</a>` : ''}<button class="btn sm" type="button" data-print>Print</button></div>
@@ -137,7 +138,7 @@ ${P.nav('toolkit', r)}
 <!--/nav-->
 <main class="wrap tk" id="app" tabindex="-1">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="${r}toolkit.html">Toolkit</a><span aria-hidden="true">/</span><span aria-current="page">${esc(d.name)}</span></nav>
-<header class="intro tkhead"><div class="kicker">${d.icon} BI Developer Toolkit</div><h1>${esc(d.name)}</h1><p class="lead">“${esc(d.q)}” ${esc(d.desc)}</p></header>
+<header class="intro tkhead"><div class="kicker">${ICON.use(d.icon, r)} BI Developer Toolkit</div><h1>${esc(d.name)}</h1><p class="lead">“${esc(d.q)}” ${esc(d.desc)}</p></header>
 ${groups.map(gr => `${gr ? `<h2 class="tkgroup">${esc(gr)}</h2>` : ''}<div class="cards">${gs.filter(g => (g.group || '') === gr).map(g => `<a class="mcard tkcard" href="${r}toolkit/${g.id}.html"><span class="tkk">${esc(KIND_LABEL[g.kind])}</span><h3>${esc(g.title)}</h3><p>${esc(g.summary)}</p><span class="small muted">${(g.stages || []).map(stageName).join(' · ')}</span></a>`).join('')}</div>`).join('')}
 ${(d.also || []).length ? `<h2 class="tkgroup">Elsewhere on the site</h2><p>${d.also.map(([h, t]) => `<a class="btn sm" href="${r}${h}">${esc(t)}</a>`).join(' ')}</p>` : ''}
 <p><a href="${r}toolkit.html">← All of the Toolkit</a></p>
@@ -172,7 +173,7 @@ ${facetOpts(all.certs.map(c => [c.id, c.code]), 'Certification')}
 <div class="tkbroken"><span class="small muted">Something broken?</span>${tk.broken.map(([t, h]) => `<a class="chip" href="${h}">${esc(t)}</a>`).join('')}<a class="chip" href="toolkit/whats-broken.html">More…</a></div>
 </header>
 <section id="tkresults" class="tkresults" aria-live="polite" hidden></section>
-<section id="tkdoors" aria-label="Sections"><div class="doors tkdoors">${tk.doors.map(d => { const gs = tk.guides.filter(g => g.door === d.id); return `<a class="door" href="toolkit/${d.id}.html"><span class="ic" aria-hidden="true">${d.icon}</span><h2>${esc(d.name)}</h2><p class="q">“${esc(d.q)}”</p><p>${esc(d.desc)}</p><span class="more">${gs.length} guide${gs.length > 1 ? 's' : ''} →</span></a>`; }).join('')}</div></section>
+<section id="tkdoors" aria-label="Sections"><div class="doors tkdoors">${tk.doors.map(d => { const gs = tk.guides.filter(g => g.door === d.id); return `<a class="door" href="toolkit/${d.id}.html"><span class="dic">${ICON.use(d.icon)}</span><h2>${esc(d.name)}</h2><p class="q">“${esc(d.q)}”</p><p>${esc(d.desc)}</p><span class="more">${gs.length} guide${gs.length > 1 ? 's' : ''} →</span></a>`; }).join('')}</div></section>
 <p class="small muted tkfoot">Every page here is checked against its sources and carries the date it was last checked. Official Microsoft documentation is linked wherever it is the authority; specialist and community sources are labelled as such.</p>
 </main>
 ${P.footer()}

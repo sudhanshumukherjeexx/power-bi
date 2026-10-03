@@ -1,0 +1,106 @@
+/* Design tokens: the only place colours, type, radii and shadows are defined.
+   Identity: Graphite × Warm Ivory × Grail Gold. Power BI is what learners study; Holy Grail is the product they use.
+   Every pair was checked for WCAG contrast (docs/design-audit.md):
+     text-primary / text-secondary / text-muted ≥ 4.5:1 on every surface, both themes
+     gold-line, control-border ≥ 3:1 (non-text indicators: current page, focus, form controls)
+     grail-gold is a fill and always carries --on-gold text (≥ 7.9:1)
+   Gold means: primary action, current location, progress, important insight. Never decoration.
+   The old names (--panel, --ink, --yellow…) are aliases kept for the rules not yet migrated; remove in 2.4.0. */
+
+/* ---------- IBM Plex, self-hosted (Latin subset, SIL OFL: assets/fonts/OFL.txt) ---------- */
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/ibm-plex-sans-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-style:italic;font-weight:400;font-display:swap;src:url(../fonts/ibm-plex-sans-latin-400-italic.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:500;font-display:swap;src:url(../fonts/ibm-plex-sans-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:600;font-display:swap;src:url(../fonts/ibm-plex-sans-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:700;font-display:swap;src:url(../fonts/ibm-plex-sans-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/ibm-plex-mono-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;src:url(../fonts/ibm-plex-mono-latin-500-normal.woff2) format('woff2')}
+
+:root{
+  /* surfaces: warm ivory */
+  --bg:#F7F7F4;
+  --surface-1:#FFFFFF;
+  --surface-2:#FBFBF9;
+  --surface-3:#F1F2EE;
+  /* text: graphite */
+  --text-primary:#16181D;
+  --text-secondary:#5C626D;
+  --text-muted:#676D77;
+  /* lines */
+  --border:#E2E3DF;
+  --border-strong:#CCCEC8;
+  --control-border:#858A92;
+  /* grail gold */
+  --grail-gold:#D9A514;
+  --grail-gold-hover:#C3910B;
+  --grail-gold-soft:#FFF6D8;
+  --grail-gold-ink:#7D5D00;
+  --gold-line:#A67C06;
+  --on-gold:#16181D;
+  /* code and operational surfaces */
+  --code-bg:#17191E;
+  --code-text:#EBEDF0;
+  --graphite:#1B1E24;
+  --graphite-text:#EDEEEA;
+  --graphite-muted:#A9AFB8;
+  /* status: always paired with text */
+  --success:#3A7652;--success-soft:#E6F1EA;
+  --warning:#93640F;--warning-soft:#FBF0DC;
+  --danger:#B4473C;--danger-soft:#F8E4E1;
+  --info:#426A9A;--info-soft:#E5EDF6;
+  /* topic accents: a dot, a 3px rule or a hairline border, never a fill behind text */
+  --t-beg:#3F6FA8;--t-int:#6D5BA8;--t-adv:#B05A2A;
+  --t-sql:#2F7A72;--t-dw:#3F5FA8;--t-qa:#3A7652;--t-api:#6D5BA8;--t-gov:#9A6A1C;--t-fab:#2D7489;--t-mod:#A04A72;
+  /* type */
+  --sans:'IBM Plex Sans',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  /* shape: 4px controls, 6px surfaces, 8px major cards, pills only for tags */
+  --r-1:4px;--r-2:6px;--r-3:8px;--r-pill:999px;
+  /* spacing */
+  --s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-5:24px;--s-6:32px;--s-7:48px;
+  /* elevation: overlays and hover only; separation is background, border and space */
+  --shadow-hover:0 1px 2px rgb(22 24 29 / .06),0 4px 12px rgb(22 24 29 / .06);
+  --shadow-overlay:0 1px 3px rgb(22 24 29 / .1),0 16px 48px rgb(22 24 29 / .18);
+  --scrim:rgb(13 15 18 / .5);
+  /* safe areas */
+  --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--sal:env(safe-area-inset-left,0px);--sar:env(safe-area-inset-right,0px);
+  color-scheme:light;
+}
+
+/* dark: graphite, not inverted light */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0D0F12;--surface-1:#15181D;--surface-2:#1B1F25;--surface-3:#20242B;
+  --text-primary:#F3F4F2;--text-secondary:#A9AFB8;--text-muted:#858C97;
+  --border:#292E35;--border-strong:#383E47;--control-border:#747B86;
+  --grail-gold:#E2B636;--grail-gold-hover:#E9C557;--grail-gold-soft:#302912;--grail-gold-ink:#E9C557;--gold-line:#E2B636;--on-gold:#0D0F12;
+  --code-bg:#090B0E;--code-text:#EBEDF0;--graphite:#1B1F25;--graphite-text:#F3F4F2;--graphite-muted:#A9AFB8;
+  --success:#6FBF8E;--success-soft:#16271D;--warning:#E0A84A;--warning-soft:#2B2213;--danger:#EE8A7E;--danger-soft:#2E1A18;--info:#86A9D6;--info-soft:#18212D;
+  --t-beg:#86A9D6;--t-int:#A99BDB;--t-adv:#E0946A;--t-sql:#6FC2B6;--t-dw:#8FA8E0;--t-qa:#6FBF8E;--t-api:#B3A6E6;--t-gov:#E0B05A;--t-fab:#6EBFD4;--t-mod:#E08FB3;
+  --shadow-hover:0 1px 2px rgb(0 0 0 / .4),0 4px 12px rgb(0 0 0 / .3);--shadow-overlay:0 1px 3px rgb(0 0 0 / .5),0 16px 48px rgb(0 0 0 / .5);--scrim:rgb(0 0 0 / .6);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0D0F12;--surface-1:#15181D;--surface-2:#1B1F25;--surface-3:#20242B;
+  --text-primary:#F3F4F2;--text-secondary:#A9AFB8;--text-muted:#858C97;
+  --border:#292E35;--border-strong:#383E47;--control-border:#747B86;
+  --grail-gold:#E2B636;--grail-gold-hover:#E9C557;--grail-gold-soft:#302912;--grail-gold-ink:#E9C557;--gold-line:#E2B636;--on-gold:#0D0F12;
+  --code-bg:#090B0E;--code-text:#EBEDF0;--graphite:#1B1F25;--graphite-text:#F3F4F2;--graphite-muted:#A9AFB8;
+  --success:#6FBF8E;--success-soft:#16271D;--warning:#E0A84A;--warning-soft:#2B2213;--danger:#EE8A7E;--danger-soft:#2E1A18;--info:#86A9D6;--info-soft:#18212D;
+  --t-beg:#86A9D6;--t-int:#A99BDB;--t-adv:#E0946A;--t-sql:#6FC2B6;--t-dw:#8FA8E0;--t-qa:#6FBF8E;--t-api:#B3A6E6;--t-gov:#E0B05A;--t-fab:#6EBFD4;--t-mod:#E08FB3;
+  --shadow-hover:0 1px 2px rgb(0 0 0 / .4),0 4px 12px rgb(0 0 0 / .3);--shadow-overlay:0 1px 3px rgb(0 0 0 / .5),0 16px 48px rgb(0 0 0 / .5);--scrim:rgb(0 0 0 / .6);
+  color-scheme:dark;
+}
+
+/* ---------- aliases for rules written against the 2.0 token names ---------- */
+:root{
+  --panel:var(--surface-1);--panel-2:var(--surface-3);
+  --ink:var(--text-primary);--ink-2:var(--text-secondary);--ink-3:var(--text-muted);
+  --line:var(--border);--line-2:var(--border-strong);
+  --yellow:var(--grail-gold);--yellow-ink:var(--grail-gold-ink);--yellow-soft:var(--grail-gold-soft);--yellow-c:var(--grail-gold);
+  --hl-ink:var(--text-primary);--ink-hl:var(--text-primary);
+  --code-ink:var(--code-text);
+  --ok:var(--success);--ok-soft:var(--success-soft);--bad:var(--danger);--bad-soft:var(--danger-soft);
+  --beg:var(--t-beg);--int:var(--t-int);--adv:var(--t-adv);
+  --sql:var(--t-sql);--dw:var(--t-dw);--qa:var(--t-qa);--api:var(--t-api);--gov:var(--t-gov);--fab:var(--t-fab);--mod:var(--t-mod);
+  --radius:var(--r-2);--shadow:none;
+}

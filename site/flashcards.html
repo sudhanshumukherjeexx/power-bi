@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="description" content="Power BI interview flashcards with spaced repetition and a timed mock interview. 188 plain-English questions and answers.">
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#15181D" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="PBI Cards">
@@ -16,32 +16,10 @@
 <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/icons/icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/site.css">
 <link rel="stylesheet" href="assets/css/app.css">
 <style>
-:root{
-  --bg:#EEF1F5;--panel:#FFFFFF;--panel-2:#F6F8FA;--ink:#1B2430;--ink-2:#4A5568;--ink-3:#7A8594;
-  --line:#D9DEE6;--line-2:#C4CBD6;--yellow:#F2C811;--yellow-ink:#7A6200;--yellow-soft:#FFF3BF;
-  --code-bg:#1B2430;--code-ink:#E8ECF2;--ok:#1F7A4D;--ok-soft:#DDF3E6;--bad:#B23A2E;--bad-soft:#FAE1DE;
-  --beg:#2E7BC4;--int:#7A4FBF;--adv:#C2410C;--radius:6px;--shadow:0 1px 2px rgb(27 36 48 / .06),0 8px 24px rgb(27 36 48 / .08);
-  --sans:'IBM Plex Sans',ui-sans-serif,system-ui,-apple-system,Segoe UI,Helvetica,Arial,sans-serif;--mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--sal:env(safe-area-inset-left,0px);--sar:env(safe-area-inset-right,0px);
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#12171E;--panel:#1A212B;--panel-2:#212A36;--ink:#E9EDF3;--ink-2:#B4BDCA;--ink-3:#7F8A99;
-  --line:#2C3644;--line-2:#3A4655;--yellow-ink:#F2C811;--yellow-soft:#3A3212;
-  --code-bg:#0D1117;--ok:#5FD08F;--ok-soft:#173224;--bad:#F08B80;--bad-soft:#3A1F1C;
-  --beg:#6FB0EC;--int:#B396EB;--adv:#F0925A;--shadow:0 1px 2px rgb(0 0 0 / .3),0 8px 24px rgb(0 0 0 / .3);color-scheme:dark;
-}}
-:root[data-theme="dark"]{
-  --bg:#12171E;--panel:#1A212B;--panel-2:#212A36;--ink:#E9EDF3;--ink-2:#B4BDCA;--ink-3:#7F8A99;
-  --line:#2C3644;--line-2:#3A4655;--yellow-ink:#F2C811;--yellow-soft:#3A3212;
-  --code-bg:#0D1117;--ok:#5FD08F;--ok-soft:#173224;--bad:#F08B80;--bad-soft:#3A1F1C;
-  --beg:#6FB0EC;--int:#B396EB;--adv:#F0925A;--shadow:0 1px 2px rgb(0 0 0 / .3),0 8px 24px rgb(0 0 0 / .3);color-scheme:dark;
-}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-tap-highlight-color:transparent}
@@ -49,20 +27,20 @@ a{color:inherit}
 button{font:inherit;color:inherit;cursor:pointer}
 h1,h2,h3{line-height:1.2;margin:0 0 .4em;font-weight:600}
 p{margin:0 0 .8em}
-:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+:focus-visible{outline:3px solid var(--gold-line);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 /* top bar */
 .top{position:sticky;top:0;z-index:30;background:var(--panel);border-bottom:1px solid var(--line);padding:calc(8px + var(--sat)) calc(16px + var(--sar)) 8px calc(16px + var(--sal))}
 .top .in{max-width:880px;margin:0 auto;display:flex;align-items:center;gap:8px}
 .brand{display:flex;align-items:center;gap:10px;font-weight:700;text-decoration:none;min-height:44px;min-width:0}
-.brand .mark{width:26px;height:26px;background:var(--yellow);border-radius:4px;display:grid;place-items:center;color:#1B2430;font-weight:700;font-size:.8rem;flex:none}
+.brand .mark{width:26px;height:26px;background:var(--graphite);border:1px solid var(--border-strong);box-shadow:inset 0 -3px 0 var(--grail-gold);border-radius:var(--r-1);display:grid;place-items:center;color:var(--graphite-text);font-weight:700;font-size:.8rem;flex:none}
 .brand small{font-weight:500;color:var(--ink-2);font-size:.85rem}
 .top .sp{flex:1}
 .btn{border:1px solid var(--line-2);background:var(--panel);padding:8px 14px;border-radius:4px;font-size:.88rem;min-height:40px;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;white-space:nowrap}
 .btn:hover{border-color:var(--ink-3)}
 .btn.sm{min-height:34px;padding:5px 11px;font-size:.82rem}
-.btn.primary{background:var(--yellow);border-color:var(--yellow);color:#1B2430;font-weight:600}
+.btn.primary{background:var(--yellow);border-color:var(--gold-line);color:var(--on-gold);font-weight:600}
 .btn.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ink);font-weight:600}
 .btn.bad{background:var(--bad-soft);border-color:var(--bad);color:var(--ink);font-weight:600}
 .btn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
@@ -90,11 +68,11 @@ p{margin:0 0 .8em}
 #filtSum{font-weight:400;color:var(--ink-2);font-size:.82rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 @media (min-width:641px){.filt>summary,.howto>summary{display:none}}
 .ctl-lbl{font-family:var(--mono);font-size:.72rem;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-.seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:3px;gap:3px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.seg{display:flex;background:var(--surface-3);border:1px solid var(--border);border-radius:8px;padding:3px;gap:3px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .seg::-webkit-scrollbar{display:none}
 .seg button{flex:1 0 auto;border:0;background:none;padding:8px 12px;border-radius:6px;font-size:.88rem;color:var(--ink-2);min-height:40px;white-space:nowrap}
-.seg button[aria-pressed="true"]{background:var(--yellow);color:#1B2430;font-weight:600}
-.seg button .n{font-family:var(--mono);font-size:.72rem;opacity:.75;margin-left:4px}
+.seg button[aria-pressed="true"]{background:var(--surface-1);color:var(--text-primary);font-weight:600;box-shadow:inset 0 -2px 0 var(--gold-line),0 0 0 1px var(--border)}
+.seg button .n{font-family:var(--mono);font-size:.72rem;color:var(--text-muted);margin-left:4px}
 .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:none;border:1px solid var(--line-2);background:var(--panel);border-radius:999px;padding:6px 12px;font-size:.84rem;min-height:36px;white-space:nowrap;scroll-snap-align:start;color:var(--ink-2)}
@@ -111,37 +89,32 @@ p{margin:0 0 .8em}
 .stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
 .stat b{display:block;font-size:1.25rem;line-height:1.2;font-variant-numeric:tabular-nums}
 .stat span{font-size:.75rem;color:var(--ink-3);font-family:var(--mono)}
-.stat.due b{color:var(--bad)}.stat.learn b{color:var(--int)}.stat.mast b{color:var(--ok)}
+.stat b{color:var(--text-primary)}
 
 /* stage */
 .meta{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.85rem;color:var(--ink-2);margin-bottom:8px;flex-wrap:wrap}
 .meta .count{font-family:var(--mono)}
-.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:14px}
+.bar{height:6px;background:var(--line);border-radius:var(--r-1);overflow:hidden;margin-bottom:14px}
 .bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
-.card{perspective:1400px;cursor:pointer;touch-action:pan-y;user-select:none;-webkit-user-select:none;border-radius:12px;outline-offset:4px}
+.card{perspective:1400px;cursor:pointer;touch-action:pan-y;user-select:none;-webkit-user-select:none;border-radius:var(--r-3);outline-offset:4px}
 .flip{display:grid;transition:transform .45s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d;-webkit-transform-style:preserve-3d}
 .card.flipped .flip{transform:rotateY(180deg)}
 .card.noanim .flip{transition:none}
-.face{grid-area:1/1;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:22px 24px;min-height:min(56vh,380px);display:flex;flex-direction:column;backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.back{transform:rotateY(180deg);border-top:4px solid var(--yellow)}
+.face{grid-area:1/1;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-3);box-shadow:var(--shadow);padding:22px 24px;min-height:min(56vh,380px);display:flex;flex-direction:column;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.back{transform:rotateY(180deg);border-top:4px solid var(--gold-line)}
 .face .tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.tag{font-family:var(--mono);font-size:.72rem;padding:2px 8px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line);color:var(--ink-2)}
-.tag.lv{color:#fff;border:0}
-.tag.Tracks{background:var(--ink-3)}.tag.Beginner{background:var(--beg)}.tag.Intermediate{background:var(--int)}.tag.Advanced{background:var(--adv)}
-:root[data-theme="dark"] .tag.lv{color:#12171E}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.lv{color:#12171E}}
 .front .q,.mockq .q{font-size:clamp(1.2rem,3.4vw,1.55rem);font-weight:600;line-height:1.3;margin:auto 0;padding:10px 0}
 .face .hint{font-size:.8rem;color:var(--ink-3);margin-top:14px;font-family:var(--mono)}
 .back .q{font-size:.92rem;color:var(--ink-2);font-weight:500;margin-bottom:10px}
 .back .a,.ansbox .a{font-size:1.02rem;line-height:1.6}
 .x,.t{margin-top:12px;padding:10px 12px;border-radius:0 4px 4px 0;font-size:.92rem}
 .x{background:var(--panel-2);border-left:3px solid var(--beg)}
-.t{background:var(--yellow-soft);border-left:3px solid var(--yellow)}
+.t{background:var(--yellow-soft);border-left:3px solid var(--gold-line)}
 .x b,.t b{display:block;font-size:.72rem;font-family:var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3);margin-bottom:2px}
 .t b{color:var(--yellow-ink)}
 .go{margin-top:14px;font-size:.88rem}
 .go a{color:var(--ink);font-weight:600}
-.status{font-family:var(--mono);font-size:.72rem;padding:2px 8px;border-radius:3px}
+.status{font-family:var(--mono);font-size:.72rem;padding:2px 8px;border-radius:var(--r-1)}
 .status.known{background:var(--ok-soft);color:var(--ok)}
 .status.again{background:var(--bad-soft);color:var(--bad)}
 .status.learning{background:var(--panel-2);color:var(--int);border:1px solid var(--line)}
@@ -150,13 +123,13 @@ p{margin:0 0 .8em}
 .actions{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:8px;margin-top:14px}
 .actions .btn{min-height:48px;font-size:.95rem}
 .keys{font-size:.8rem;color:var(--ink-3);margin-top:10px;text-align:center}
-.keys kbd{font-family:var(--mono);background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:0 5px;font-size:.75rem}
-.empty{background:var(--panel);border:1px dashed var(--line-2);border-radius:12px;padding:36px 24px;text-align:center}
+.keys kbd{font-family:var(--mono);background:var(--panel);border:1px solid var(--line);border-radius:var(--r-1);padding:0 5px;font-size:.75rem}
+.empty{background:var(--panel);border:1px dashed var(--line-2);border-radius:var(--r-3);padding:36px 24px;text-align:center}
 .empty h2{font-size:1.3rem}
 
 /* mock interview */
 .mock h2{font-size:1.5rem}
-.mockcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:22px 24px}
+.mockcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-3);box-shadow:var(--shadow);padding:22px 24px}
 .mockq{min-height:min(34vh,260px);display:flex;flex-direction:column}
 .clock{font-family:var(--mono);font-size:1.4rem;font-weight:600;font-variant-numeric:tabular-nums}
 .clock.low{color:var(--bad)}
@@ -258,7 +231,7 @@ p{margin:0 0 .8em}
     </div>
     </div></details>
     <div class="row">
-      <button type="button" class="btn primary" id="mockBtn">⏱ Mock interview</button>
+      <button type="button" class="btn primary" id="mockBtn"><svg class="ic" aria-hidden="true" focusable="false"><use href="assets/icons/icons.svg#clock"/></svg> Mock interview</button>
       <button type="button" class="btn" id="shuffleBtn" aria-pressed="false">Shuffle</button>
       <button type="button" class="btn" id="viewBtn" aria-pressed="false">List view</button>
       <button type="button" class="btn" id="printBtn" title="Print or save the current cards as PDF">Print / PDF</button>
@@ -396,7 +369,7 @@ function renderCard(){
   if(!has){
     $('count').textContent='0 cards';
     const doneForToday=st.mode==='due'&&p.length;
-    host.innerHTML=`<div class="empty"><h2>${doneForToday?'Nothing due today 🎉':'No cards match'}</h2><p class="muted">${doneForToday?'Every card here is scheduled for a later day. Come back tomorrow, study other categories, or run a mock interview.':'Try another level or category.'}</p>${doneForToday?'<button type="button" class="btn primary" data-mode="all">Show all cards</button>':''}</div>`;
+    host.innerHTML=`<div class="empty"><h2>${doneForToday?'Nothing due today':'No cards match'}</h2><p class="muted">${doneForToday?'Every card here is scheduled for a later day. Come back tomorrow, study other categories, or run a mock interview.':'Try another level or category.'}</p>${doneForToday?'<button type="button" class="btn primary" data-mode="all">Show all cards</button>':''}</div>`;
     return;
   }
   if(pos>=order.length)pos=order.length-1;
@@ -488,7 +461,7 @@ function tick(){
 function reveal(timeUp){
   const c=mock.qs[mock.i];mock.revealed=true;clearInterval(mock.timer);mock.used=Math.min(st.mockT,Math.round((Date.now()-mock.t0)/1000));mock.late=!!timeUp;
   $('mockAns').hidden=false;
-  $('mockAns').innerHTML=`${timeUp?'<div class="late">⏰ Time\'s up. In a real interview, wrap up in one sentence.</div>':''}<div class="a">${esc(c.a)}</div>${extras(c)}`;
+  $('mockAns').innerHTML=`${timeUp?'<div class="late">Time\'s up. In a real interview, wrap up in one sentence.</div>':''}<div class="a">${esc(c.a)}</div>${extras(c)}`;
   PBI.linkTerms($('mockAns'),null,'.a, .x, .t');
   $('mockAct').className='actions mockact';
   $('mockAct').innerHTML='<button type="button" class="btn bad" id="mockAgain">Review again</button><button type="button" class="btn ok" id="mockGot">Got it</button>';
@@ -503,7 +476,7 @@ function finishMock(){
   clearInterval(mock.timer);$('mockRun').hidden=true;$('mockDone').hidden=false;
   const n=mock.results.length,ok=mock.results.filter(r=>r.ok).length,avg=n?Math.round(mock.results.reduce((a,r)=>a+r.used,0)/n):0,late=mock.results.filter(r=>r.late).length;
   const missed=mock.results.filter(r=>!r.ok);
-  $('mockDone').innerHTML=`<h2>${ok===n?'Clean sweep 🎉':ok>=n*0.7?'Strong round':'Good practice'}</h2><div class="summary"><div class="stat mast"><b>${ok}/${n}</b><span>answered well</span></div><div class="stat"><b>${avg}s</b><span>avg time used</span></div><div class="stat due"><b>${late}</b><span>ran out of time</span></div></div>${missed.length?`<p class="muted">Study these next. They're now marked Review again:</p><div class="missed">${missed.map(r=>`<a href="#card=${r.c.id}">${esc(r.c.q)}<span>${esc(r.c.c)}</span></a>`).join('')}</div>`:'<p class="muted">Every answer went well. Those cards are now scheduled days ahead.</p>'}<div class="row" style="margin-top:14px"><button type="button" class="btn primary" id="mockAgainRound">Another round</button><button type="button" class="btn" id="mockBack">Back to cards</button></div>`;
+  $('mockDone').innerHTML=`<h2>${ok===n?'Clean sweep':ok>=n*0.7?'Strong round':'Good practice'}</h2><div class="summary"><div class="stat mast"><b>${ok}/${n}</b><span>answered well</span></div><div class="stat"><b>${avg}s</b><span>avg time used</span></div><div class="stat due"><b>${late}</b><span>ran out of time</span></div></div>${missed.length?`<p class="muted">Study these next. They're now marked Review again:</p><div class="missed">${missed.map(r=>`<a href="#card=${r.c.id}">${esc(r.c.q)}<span>${esc(r.c.c)}</span></a>`).join('')}</div>`:'<p class="muted">Every answer went well. Those cards are now scheduled days ahead.</p>'}<div class="row" style="margin-top:14px"><button type="button" class="btn primary" id="mockAgainRound">Another round</button><button type="button" class="btn" id="mockBack">Back to cards</button></div>`;
   scrollTo({top:0});
 }
 

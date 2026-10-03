@@ -43,5 +43,5 @@ Assets worth protecting:
 ## Later phases
 
 - **CSP (Phase 6):** move the three inline page scripts into files, then add `<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-…'; connect-src 'self'; base-uri 'self'; form-action 'none'">` with the theme bootstrap hashed. `frame-ancestors` is ignored in meta tags, so clickjacking protection isn't possible on GitHub Pages. That's acceptable, because there is no state-changing action a framed page could be tricked into that the learner can't undo.
-- **Fonts (Phase 2):** self-host IBM Plex Sans (400, 500, 600, 700) and Plex Mono (400, 500) as Latin `woff2` subsets under `site/assets/fonts/`, with the OFL licence beside them. Remove the Google Fonts requests.
+- **Fonts (done in Phase 2):** IBM Plex Sans (400, 400 italic, 500, 600, 700) and Plex Mono (400, 500) are self-hosted as Latin `woff2` subsets in `site/assets/fonts/` (148 KB in total), with the OFL licence beside them, and precached by the service worker. The site makes no third-party requests, so S8 is closed. `tests/design.test.js` fails if a font CDN reappears.
 - **CI (Phase 6):** move `html-validate`, Playwright and axe-core to pinned `devDependencies` with a committed lockfile, run `npm ci`, and enable Dependabot for npm and GitHub Actions.

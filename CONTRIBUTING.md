@@ -31,8 +31,10 @@ The repository has three parts: `content/` is what you edit, `site/` is the webs
 | `content/*.json` | Stages, skills, goals, personas, diagnostic and site settings. |
 | `content/schema/` | JSON Schemas for the content files. VS Code validates against them automatically via `$schema`. |
 | Hand-written pages (in `site/`) | `index.html`, `learn.html`, `experience.html`, `progress.html`, `diagnostic.html`, `templates.html`, `flashcards.html`, `glossary.html`, `cheatsheet.html`, `404.html`. Edit them directly; the build only rewrites the navigation between `<!--nav:…-->` and `<!--/nav-->`. |
-| Hand-written scripts | `site/assets/js/`: `site.js` (shared helpers, search, progress storage), `progress.js`, `course.js`, `levelpage.js`, `learn.js`, `home.js`, `diagnostic.js`, `progresspage.js`, `xp.js`, `xphub.js`, `tplpage.js`, `tkhub.js`, `tkguide.js`. |
-| `site/assets/css/`, `site/assets/icons/`, `site/manifest.webmanifest` | Styles, icons and the app manifest. |
+| Hand-written scripts | `site/assets/js/`: `store.js` (progress schema, migration, import validation, mastery and readiness; no DOM, tested in Node), `site.js` (shared helpers, search, export and import), `progress.js` (every score and its evidence type), `course.js`, `levelpage.js`, `learn.js`, `home.js`, `diagnostic.js`, `progresspage.js`, `xp.js`, `xphub.js`, `tplpage.js`, `tkhub.js`, `tkguide.js`. |
+| `site/assets/css/` | `tokens.css` (the only place colours, type, radii and shadows are defined), then `site.css`, `pages.css`, `app.css`. |
+| `tools/lib/icons.js` | The line-icon set. The build writes it to `site/assets/icons/icons.svg`; draw an icon with `<svg class="ic" aria-hidden="true"><use href="assets/icons/icons.svg#name"/></svg>`. |
+| `site/assets/fonts/`, `site/assets/icons/` (app icons), `site/manifest.webmanifest` | Self-hosted IBM Plex (Latin subset, licence in `OFL.txt`), app icons and the app manifest. |
 | `tools/` | The build (`build.js` and `tools/lib/`), data generators, starter-project builder, enterprise data generator. |
 | `tests/` | Everything CI runs (`node tests/run.js`), plus the external link checker. |
 | `docs/` | Project documentation; see [docs/README.md](docs/README.md). |
@@ -51,6 +53,7 @@ These live in `site/`, are built from the source above, and are committed, so th
 | `site/templates/*.md` (downloads) | `content/templates/` |
 | `site/data/` | Seeded generators in `tools/generate-data.js` (`npm run data`) |
 | `site/starter/northwind-starter.zip` | `tools/build-starter.js` |
+| `site/assets/icons/icons.svg` | `tools/lib/icons.js` |
 | `site/sw.js` | The offline cache list and version, from every file above |
 
 ## Adding or fixing Skill Mode content
@@ -120,6 +123,21 @@ The BI Developer Toolkit (`toolkit.html`) is built from `content/toolkit/`:
 1. Add a new version; don't overwrite the old one.
 2. Map skills to topics.
 3. Update `verified`.
+
+## Design rules
+
+The visual identity is Graphite × Warm Ivory × Grail Gold, set in IBM Plex. `tests/design.test.js` enforces the mechanical parts.
+
+- **Tokens only.** Use the variables in `tokens.css` (`--surface-1`, `--text-secondary`, `--border`, `--gold-line`…). Never write a hex colour in a component. Old names such as `--panel` and `--ink` still work as aliases until 2.4.0.
+- **Gold has four jobs:** the primary action, the current location, progress, and important insight. Fills use `--grail-gold` with `--on-gold` text. A line or outline that is the only indicator (current tab, focus) uses `--gold-line`, which keeps 3:1 contrast. Don't use gold for decoration.
+- **Topic colour is an accent:** a dot (`.tag.sql`), a 3px rule or a hairline border, never a fill behind text.
+- **The rule motif:** a 2px gold line with a mono caption (`.note-rule`, callouts, *Expected result*) marks insight. Keep it rare enough to mean something.
+- **Shape:** radii are 4px (controls), 6px (surfaces), 8px (major cards) and 999px (tags). Shadows are only for overlays (`--shadow-overlay`) and hover. Separate things with background, border and space.
+- **Cards are for objects:** scenarios, tickets, datasets, modules. Don't put cards inside cards.
+- **Identifiers** (BI-1042, INC-2044, ADR-007, SEV2) are set in Plex Mono.
+- **Experience Mode is operational:** a graphite ticket panel, mono ids and timestamps, and severity as text. Skill Mode stays editorial.
+- **Icons** come from the sprite, sit next to a text label, and are `aria-hidden`. No emoji in UI chrome. Scenario dialogue may use them.
+- **Contrast:** text is 4.5:1 or more on every surface in both themes. Check new colour pairs before using them.
 
 ## Style
 

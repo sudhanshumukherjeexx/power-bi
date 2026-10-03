@@ -18,7 +18,7 @@ function nav(active, r = '') {
 </div></header>`;
 }
 
-function head({ title, description, path: pagePath = '', r = '', css = ['site', 'pages', 'app'], extra = '' }) {
+function head({ title, description, path: pagePath = '', r = '', css = ['tokens', 'site', 'pages', 'app'], extra = '' }) {
   const url = site.url + pagePath;
   return `<!DOCTYPE html>
 <html lang="en">
@@ -34,7 +34,7 @@ function head({ title, description, path: pagePath = '', r = '', css = ['site', 
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${esc(url)}">
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1A212B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#15181D" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="${esc(site.short)}">
@@ -43,9 +43,6 @@ function head({ title, description, path: pagePath = '', r = '', css = ['site', 
 <link rel="icon" href="${r}assets/icons/icon.svg" type="image/svg+xml">
 <link rel="icon" href="${r}assets/icons/icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="${r}assets/icons/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 ${css.map(c => `<link rel="stylesheet" href="${r}assets/css/${c}.css">`).join('\n')}${extra ? '\n' + extra : ''}
 </head>`;
 }

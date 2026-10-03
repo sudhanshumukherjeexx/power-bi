@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+### Learner changes: a new visual identity (Phase 2)
+
+- **Graphite × Warm Ivory × Grail Gold.** Warm ivory surfaces and graphite text replace the blue-grey palette, and a true graphite dark theme replaces the inverted one. Grail Gold, which evolved from Power BI yellow, now marks only the primary action, where you are, progress and important insight.
+- **Calmer pages.** Topic colours are now small dots and thin rules instead of solid blocks. Selected options are quiet underlines instead of gold slabs. Corners are tighter, and cards no longer cast shadows.
+- **The Holy Grail rule:** a thin gold line with a small mono caption marks expected results, notes, warnings and setup instructions.
+- **Experience Mode looks operational:** each ticket is a graphite panel with mono ids, outlined severity labels and timestamps, so a scenario reads as work, not a lesson.
+- **Line icons** replace emoji in the interface: the Toolkit doors, study tools, home page and buttons.
+- **New app icon:** graphite, with a gold rule.
+- **Fonts load from the site itself.** IBM Plex is self-hosted, so it works offline from the first visit and no request goes to Google.
+- **Contrast:** every text and indicator colour was checked in both themes. axe-core reports no contrast violations on the 14 main pages.
+
+### Maintainer changes (Phase 2)
+
+- `site/assets/css/tokens.css` is the single source for colours, type, radii, spacing and shadows. The five copies of the token set (in `pages.css` and inline in Flashcards, Glossary and Cheat sheet) are gone, and the old token names remain as aliases until 2.4.0.
+- `tools/lib/icons.js` is the icon set. The build writes `site/assets/icons/icons.svg`, and pages use `<use href>`.
+- `tests/design.test.js`: one token source, no font CDN, `tokens.css` loaded first, icons exist, no emoji in chrome, radii on the scale.
+- CONTRIBUTING has a new **Design rules** section.
+
 ### Learner changes: trustworthy progress (2.2.0, Phase 1)
 
 - **Every score says what it rests on.** Progress now separates *verified* evidence (your first answer to each multiple-choice question), *self-assessed* evidence (ticked assignments and deliverables, your own rubric ratings) and *recall* (flashcards). Each percentage on the progress page has a "How this is calculated" panel.

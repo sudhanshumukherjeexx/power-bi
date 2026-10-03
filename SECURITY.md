@@ -1,6 +1,6 @@
 # Security policy
 
-This is a static website with no server, no accounts and no data collection. Learner progress stays in the browser's local storage.
+This is a static website with no server, no accounts and no data collection. Learner progress stays in the browser's local storage. Every file the site needs, fonts included, is served from the site itself; it makes no third-party requests.
 
 ## Reporting a vulnerability
 

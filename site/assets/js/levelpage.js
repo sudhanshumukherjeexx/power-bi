@@ -50,23 +50,23 @@ if(page==='resources'){
   const trackFiles=typeof TRACK_DATA!=='undefined'?Object.entries(TRACK_DATA):[];
   const tpls=typeof TEMPLATES!=='undefined'?TEMPLATES:[];
   const tools=[
-    ['flashcards.html','🃏 Interview flashcards','Plain-English cards with spaced repetition.'],
-    ['flashcards.html#mock','⏱ Mock interview','Timed questions, answered out loud.'],
-    ['glossary.html','📖 Glossary',`${GLOSSARY.length} terms explained without jargon.`],
-    ['cheatsheet.html','🖨 Cheat sheets','Printable, one per level.'],
-    ['toolkit.html','🧰 BI Developer Toolkit','Troubleshooting trees, field guides, checklists and playbooks for real work.'],
-    ['templates.html','🗂 Professional templates','Requirements, ADR, incident report, postmortem and more.'],
-    ['diagnostic.html','🧪 Diagnostic','Find your starting point in a few minutes.'],
-    ['learn.html#paths','🧭 Pick your path','Analyst, Developer, Engineer or Lead.'],
-    ['learn.html#certs','🎓 Certification map','PL-300 and DP-600, current outline.'],
-    ['progress.html','📈 Your progress','Stage, competencies, portfolio evidence and decision log.']];
+    ['flashcards.html','cards|Interview flashcards','Plain-English cards with spaced repetition.'],
+    ['flashcards.html#mock','clock|Mock interview','Timed questions, answered out loud.'],
+    ['glossary.html','book|Glossary',`${GLOSSARY.length} terms explained without jargon.`],
+    ['cheatsheet.html','printer|Cheat sheets','Printable, one per level.'],
+    ['toolkit.html','wrench|BI Developer Toolkit','Troubleshooting trees, field guides, checklists and playbooks for real work.'],
+    ['templates.html','folder|Professional templates','Requirements, ADR, incident report, postmortem and more.'],
+    ['diagnostic.html','flask|Diagnostic','Find your starting point in a few minutes.'],
+    ['learn.html#paths','compass|Pick your path','Analyst, Developer, Engineer or Lead.'],
+    ['learn.html#certs','cap|Certification map','PL-300 and DP-600, current outline.'],
+    ['progress.html','activity|Your progress','Stage, competencies, portfolio evidence and decision log.']];
   const jumps=[['tools','Study tools'],['glossary','Glossary'],...(tpls.length?[['templates','Templates']]:[]),['cheatsheets','Cheat sheets'],...(typeof EXTERNAL!=='undefined'?[['external','External resources']]:[]),['starter','Starter project'],['datasets','Datasets'],...(trackFiles.length?[['trackdata','Track files']]:[]),['enterprise','Enterprise pack']];
   const gcats=[...new Set(GLOSSARY.map(g=>g.c))];
   const gloss=gcats.map(c=>{const ts=GLOSSARY.filter(g=>g.c===c).sort((a,b)=>a.t.localeCompare(b.t));return `<details><summary>${esc(c)} <span class="n">${ts.length}</span></summary><div class="rterms">${ts.map(g=>`<a href="glossary.html#${PBI.slug(g.t)}" title="${esc(g.d.length>140?g.d.slice(0,140)+'…':g.d)}">${esc(g.t)}</a>`).join('')}</div></details>`}).join('');
   app.innerHTML=`<section class="intro"><h1><span class="hl">Resources</span> <span class="tag res">Tools &amp; data</span></h1><p>Everything you need beside the lessons: study tools you can use without Power BI, the glossary, professional templates, cheat sheets, a ready-made Power BI project and the practice datasets.</p></section>
   <div class="ctl-lbl">On this page</div>
   <nav class="jump wrapjump" aria-label="Sections on this page">${jumps.map(([id,n])=>`<a href="#${id}">${n}</a>`).join('')}</nav>
-  <section class="sect" id="tools"><h2>Study tools</h2><div class="tools">${tools.map(([h,t,d])=>`<a href="${h}"><b>${t}</b><span>${esc(d)}</span></a>`).join('')}</div></section>
+  <section class="sect" id="tools"><h2>Study tools</h2><div class="tools">${tools.map(([h,t,d])=>{const [ic,lbl]=t.split('|');return `<a href="${h}"><b><svg class="ic" aria-hidden="true" focusable="false"><use href="assets/icons/icons.svg#${ic}"/></svg> ${esc(lbl)}</b><span>${esc(d)}</span></a>`}).join('')}</div></section>
   <section class="sect" id="glossary"><h2>Glossary</h2>
     <p class="muted" style="max-width:70ch">${GLOSSARY.length} Power BI and data terms in plain English, grouped by subject. Open a group and pick a term, or <a href="glossary.html">open the full glossary</a> to search every definition.</p>
     <div class="rgloss">${gloss}</div>

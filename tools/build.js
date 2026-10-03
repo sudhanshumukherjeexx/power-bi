@@ -50,6 +50,8 @@ function outputs() {
   out['assets/js/glossary.js'] = BANNER('content/glossary/glossary.json') +
     `/* t = term, k = other spellings, c = category, d = definition, s = related terms */\n` +
     list('GLOSSARY', all.glossary);
+  /* line icons: one sprite, drawn with <use> (tools/lib/icons.js) */
+  out['assets/icons/icons.svg'] = require('./lib/icons').sprite();
   out['assets/js/paths.js'] = BANNER('content/career-paths and content/certifications') +
     list('ROLES', all.roles) + list('CERTS', all.certs.map(c => clean(require('./lib/cert-weights').weigh(c)))) +
     `/* the outline in force today (Microsoft revises exams; versions carry their effective date) */
