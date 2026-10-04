@@ -1,7 +1,7 @@
 {
-  "name": "Power BI Holy Grail",
-  "short_name": "Power BI Grail",
-  "description": "A free Power BI apprenticeship: hands-on skills with checkable results, then realistic tickets, incidents and decisions from a simulated BI team.",
+  "name": "The Power BI Fellowship",
+  "short_name": "BI Fellowship",
+  "description": "A free Power BI fellowship: hands-on skills with checkable results, then realistic tickets, incidents and decisions from a simulated BI team.",
   "id": "./index.html",
   "start_url": "./index.html",
   "scope": "./",

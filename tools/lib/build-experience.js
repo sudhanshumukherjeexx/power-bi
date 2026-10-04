@@ -10,7 +10,7 @@ const strip = s => { const o = Object.assign({}, s); for (const k of Object.keys
 
 function page(s, stageName, all) {
   const kind = { incident: 'Incident', change: 'Change request', review: 'Review', decision: 'Decision', uat: 'UAT', ticket: 'Ticket' }[s.ticket.kind] || 'Ticket';
-  const title = `${s.title}: ${s.type === 'drill' ? 'BI drill' : 'Power BI scenario'} (${s.ticket.id}) · Power BI Holy Grail`;
+  const title = `${s.title}: ${s.type === 'drill' ? 'BI drill' : 'Power BI scenario'} (${s.ticket.id}) · The Power BI Fellowship`;
   const description = s.seo || `${kind} ${s.ticket.id} for the ${stageName} stage: ${s.summary}`;
   const scripts = ['meta', 'experience', 'glossary', 'external', 'store', 'site', 'progress', 'xp'];
   const url = `experience/${s.slug}.html`;

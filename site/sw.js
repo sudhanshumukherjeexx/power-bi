@@ -3,7 +3,7 @@
    Precached (CORE): every page and script, so the app itself works offline after one visit. Scenario evidence files
    and model answers are cached only when the learner uses "Make available offline" (cache pbi-offline-v1).
    VERSION is a hash of the precached files, so any change refreshes every visitor's cache. */
-const VERSION = 'pbi-holy-grail-577dd16ae9bd';
+const VERSION = 'pbi-holy-grail-b89a01539284';
 /* scenarios the learner chose to make available offline (xp.js); kept across versions until they remove them */
 const OFFLINE_PREFIX = 'pbi-offline-';
 const CORE = [

@@ -2,6 +2,31 @@
 
 Each release lists changes **for learners**, **for maintainers**, **breaking changes**, **progress data** (anything that touches what's stored in your browser) and **curriculum**. Releases are tagged `vX.Y.Z` and published on GitHub. Release notes are generated from this file by `node tools/release-notes.js <version>`.
 
+## 2.6.1 (2026-10-04): The Power BI Fellowship
+
+### For learners
+
+- **New name: The Power BI Fellowship** (formerly Power BI Holy Grail). The site, address, content and your progress are unchanged.
+- "Apprenticeship" is now "fellowship" throughout. On a phone, the installed app is labelled **BI Fellowship**.
+
+### For maintainers
+
+- The name comes from `content/site.json` (`name`, `short`). Titles, the header, the footer, structured data, the manifest, the social images, the README screenshots and the starter project's README were updated and regenerated.
+- **Deliberately unchanged:** the browser storage keys (`pbi-holy-grail-v1`, `-cards-v1`, `-backup-v1`), the export file id (`power-bi-holy-grail`), the service-worker cache prefix and the seed for the starter project's ids. Renaming them would lose learners' progress, break existing export files or change generated data. Comments in `site.js` and `store.js` say so. `docs/history/` keeps the old name, as records of their time.
+- The npm package is now `power-bi-fellowship`. The repository and the site address stay `power-bi`.
+
+### Breaking changes
+
+None.
+
+### Progress data
+
+Unchanged. Existing progress and export files keep working.
+
+### Curriculum
+
+None.
+
 ## 2.6.0 (2026-10-04): operations
 
 ### For learners
@@ -199,7 +224,7 @@ None.
 - Two Experience Mode references pointed at Microsoft Learn pages that had moved.
 - Tables in long guides and the certification navigator no longer need horizontal scrolling on desktop.
 
-## 2.0.0 (2026-10-01): the apprenticeship release
+## 2.0.0 (2026-10-01): the fellowship release
 
 ### Added
 

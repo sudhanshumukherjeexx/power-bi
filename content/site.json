@@ -1,10 +1,10 @@
 {
-  "name": "Power BI Holy Grail",
-  "short": "Power BI Grail",
+  "name": "The Power BI Fellowship",
+  "short": "BI Fellowship",
   "url": "https://sudhanshumukherjeexx.github.io/power-bi/",
   "repo": "https://github.com/sudhanshumukherjeexx/power-bi",
   "tagline": "Learn Power BI by doing the work.",
-  "description": "A free, open-source Power BI apprenticeship: hands-on assignments with checkable results, then realistic tickets, incidents and architecture decisions from a simulated BI team.",
+  "description": "A free, open-source Power BI fellowship: hands-on assignments with checkable results, then realistic tickets, incidents and architecture decisions from a simulated BI team.",
   "analytics": {
     "provider": "cloudflare",
     "token": "773c3e6c2e824cefa05db20e6acd6796",

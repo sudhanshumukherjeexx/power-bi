@@ -1,8 +1,8 @@
 {
-  "name": "power-bi-holy-grail",
-  "version": "2.6.0",
+  "name": "power-bi-fellowship",
+  "version": "2.6.1",
   "private": true,
-  "description": "A free, open-source Power BI apprenticeship: Skill Mode assignments with checked answers and Experience Mode work simulations. Static site, no runtime dependencies.",
+  "description": "A free, open-source Power BI fellowship: Skill Mode assignments with checked answers and Experience Mode work simulations. Static site, no runtime dependencies.",
   "license": "MIT",
   "engines": {
     "node": ">=22.5"

@@ -5,7 +5,7 @@
 (function(root){
 'use strict';
 const S={};
-S.APP='power-bi-holy-grail';
+S.APP='power-bi-holy-grail';   /* the export file id predates the Fellowship name; kept so every exported file still imports */
 S.SCHEMA=3;            /* v1 course fields → v2 goal, diagnostic, scenarios → v3 first quiz answers */
 S.EXPORT_VERSION=3;
 const isObj=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
@@ -174,7 +174,7 @@ function sanitizeCards(src,known,drop){
 /* returns {main, cards, dropped:[paths], version, exported} or throws ImportError with a reason a learner can read */
 S.sanitizeProgress=(payload,keys,known)=>{
   if(!isObj(payload))throw new ImportError('the file is not a JSON object');
-  if(payload.app!==S.APP)throw new ImportError('the file is not a Power BI Holy Grail progress file');
+  if(payload.app!==S.APP)throw new ImportError('the file is not a Power BI Fellowship progress file');
   const version=payload.version===undefined?1:payload.version;
   if(!Number.isInteger(version)||version<1)throw new ImportError('the file has no valid version');
   if(version>S.EXPORT_VERSION)throw new ImportError('the file comes from a newer version of the site');

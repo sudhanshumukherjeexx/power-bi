@@ -92,7 +92,7 @@ module.exports = (all, { BANNER, J }) => {
     if ((g.files || []).length) rel.push(`<div><h3>Downloads</h3><ul>${g.files.map(f => `<li><a href="${r}toolkit/files/${esc(f.name)}" download>${esc(f.title || f.name)}</a> <span class="small muted">${esc(f.name)}</span></li>`).join('')}</ul></div>`);
     if ((g.refs || []).length) rel.push(`<div class="wide"><h3>Further reading</h3><ul class="refs">${g.refs.map(x => `<li><a href="${esc(x.u)}" rel="noopener" target="_blank" class="ext">${esc(x.t)}</a> <span class="tier ${esc(x.src)}">${TIER_LABEL[x.src]}</span>${x.paid ? ' <span class="tier paid">Paid</span>' : ''}${x.note ? ` <span class="small muted">${esc(x.note)}</span>` : ''}</li>`).join('')}</ul></div>`);
     const chips = (g.stages || []).map(s => `<span class="chip">${esc(stageName(s))}</span>`).join('') + (g.tools || []).slice(0, 4).map(t => `<span class="chip tool">${esc(toolName(t))}</span>`).join('');
-    const title = `${g.title} · BI Developer Toolkit · Power BI Holy Grail`;
+    const title = `${g.title} · BI Developer Toolkit · The Power BI Fellowship`;
     const gl = [P.crumbsLd([['Toolkit', 'toolkit.html'], [door.name, door.href || `toolkit/${door.id}.html`], [g.title, `toolkit/${g.id}.html`]]),
       { '@type': 'TechArticle', headline: g.title, description: g.summary, url: P.site.url + `toolkit/${g.id}.html`, inLanguage: 'en', isAccessibleForFree: true, ...(g.verified && g.verified.date ? { dateModified: g.verified.date } : {}), about: (g.tools || []).slice(0, 6).map(t => toolName(t)), isPartOf: { '@type': 'WebSite', name: P.site.name, url: P.site.url } }];
     out[`toolkit/${g.id}.html`] = `${P.head({ title, description: g.summary, path: `toolkit/${g.id}.html`, r, type: 'article', jsonld: gl })}
@@ -132,7 +132,7 @@ ${P.footer(r)}
   for (const d of tk.doors.filter(x => !x.href)) {
     const gs = tk.guides.filter(g => g.door === d.id);
     const groups = [...new Set(gs.map(g => g.group || ''))];
-    out[`toolkit/${d.id}.html`] = `${P.head({ title: `${d.name} · BI Developer Toolkit · Power BI Holy Grail`, description: `${d.q} ${d.desc}`, path: `toolkit/${d.id}.html`, r, jsonld: [P.crumbsLd([['Toolkit', 'toolkit.html'], [d.name, `toolkit/${d.id}.html`]])] })}
+    out[`toolkit/${d.id}.html`] = `${P.head({ title: `${d.name} · BI Developer Toolkit · The Power BI Fellowship`, description: `${d.q} ${d.desc}`, path: `toolkit/${d.id}.html`, r, jsonld: [P.crumbsLd([['Toolkit', 'toolkit.html'], [d.name, `toolkit/${d.id}.html`]])] })}
 <body data-root="${r}" data-door="${d.id}">
 <a class="skip" href="#app">Skip to content</a>
 <!--nav:toolkit-->
@@ -156,7 +156,7 @@ ${P.footer(r)}
 
   /* ---------- hub ---------- */
   const facetOpts = (list, label) => `<label><span>${label}</span><select data-f="${label.toLowerCase()}"><option value="">Any</option>${list.map(([v, n]) => `<option value="${esc(v)}">${esc(n)}</option>`).join('')}</select></label>`;
-  out['toolkit.html'] = `${P.head({ title: 'BI Developer Toolkit: references, tools, playbooks and templates · Power BI Holy Grail', description: tk.tagline + ' DAX and Power Query field guides, troubleshooting trees, a performance clinic, production runbook, checklists, templates and career guides.', path: 'toolkit.html' })}
+  out['toolkit.html'] = `${P.head({ title: 'BI Developer Toolkit: references, tools, playbooks and templates · The Power BI Fellowship', description: tk.tagline + ' DAX and Power Query field guides, troubleshooting trees, a performance clinic, production runbook, checklists, templates and career guides.', path: 'toolkit.html' })}
 <body data-page="toolkit">
 <a class="skip" href="#app">Skip to content</a>
 <!--nav:toolkit-->

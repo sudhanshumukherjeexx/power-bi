@@ -22,7 +22,7 @@ for (const f of walk(path.join(root, 'content'), p => /\.(json|md)$/.test(p))) {
   const check = async u => {
     for (let attempt = 0; attempt < 2; attempt++) {
       try {
-        const r = await fetch(u, { method: 'GET', redirect: 'follow', headers: { 'user-agent': 'power-bi-holy-grail-link-check' }, signal: AbortSignal.timeout(20000) });
+        const r = await fetch(u, { method: 'GET', redirect: 'follow', headers: { 'user-agent': 'power-bi-fellowship-link-check' }, signal: AbortSignal.timeout(20000) });
         return r.status;
       } catch (e) { if (attempt) return 'error: ' + e.message; }
     }

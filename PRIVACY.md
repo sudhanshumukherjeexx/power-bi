@@ -1,6 +1,6 @@
 # Privacy
 
-Power BI Holy Grail has no accounts, no server and no cookies. Your progress (ticks, quiz answers, scenario notes, ratings, flashcard history) is stored **only in your browser**, and leaves it only when you export a file yourself.
+The Power BI Fellowship has no accounts, no server and no cookies. Your progress (ticks, quiz answers, scenario notes, ratings, flashcard history) is stored **only in your browser**, and leaves it only when you export a file yourself.
 
 ## What is never collected
 

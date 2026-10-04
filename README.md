@@ -1,8 +1,8 @@
 <p align="center"><img src="site/assets/icons/icon.svg" width="72" height="72" alt=""></p>
 
-<h1 align="center">Power BI Holy Grail</h1>
+<h1 align="center">The Power BI Fellowship</h1>
 
-<p align="center"><b>Learn Power BI by doing the work.</b><br>A free, open-source apprenticeship: hands-on skills, then the tickets, incidents and decisions BI developers usually meet only after years on the job.</p>
+<p align="center"><b>Learn Power BI by doing the work.</b><br>A free, open-source fellowship: hands-on skills, then the tickets, incidents and decisions BI developers usually meet only after years on the job.</p>
 
 <p align="center"><a href="https://sudhanshumukherjeexx.github.io/power-bi/"><b>Open the site →</b></a></p>
 

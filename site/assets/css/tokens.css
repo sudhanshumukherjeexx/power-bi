@@ -1,5 +1,5 @@
 /* Design tokens: the only place colours, type, radii and shadows are defined.
-   Identity: Graphite × Warm Ivory × Grail Gold. Power BI is what learners study; Holy Grail is the product they use.
+   Identity: Graphite × Warm Ivory × Grail Gold. Power BI is what learners study; The Power BI Fellowship is the product they use.
    Every pair was checked for WCAG contrast (docs/design-audit.md):
      text-primary / text-secondary / text-muted ≥ 4.5:1 on every surface, both themes
      gold-line, control-border ≥ 3:1 (non-text indicators: current page, focus, form controls)

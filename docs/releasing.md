@@ -18,13 +18,14 @@ Each tag points at the commit where that release was complete:
 
 | Tag | Commit | Name |
 |---|---|---|
-| v2.0.0 | `a7326a1` | The apprenticeship release |
+| v2.0.0 | `a7326a1` | The fellowship release |
 | v2.1.0 | `31bb04b` | The BI Developer Toolkit |
 | v2.2.0 | `714bd06` | Trustworthy progress (includes the move to `site/` and gated deploys) |
 | v2.3.0 | `ba4b554` | A new identity and a simpler map |
 | v2.4.0 | `069d696` | Readable without JavaScript, findable |
 | v2.5.0 | `33629cc` | Tested in a real browser |
-| v2.6.0 | the commit that bumps `package.json` to 2.6.0 | Operations |
+| v2.6.0 | `a720aac` | Operations |
+| v2.6.1 | the commit that bumps `package.json` to 2.6.1 | The Power BI Fellowship (rename) |
 
 ## Repository settings (one time)
 
@@ -32,7 +33,7 @@ Each tag points at the commit where that release was complete:
 
 ```bash
 gh repo edit sudhanshumukherjeexx/power-bi \
-  --description "Open-source Power BI apprenticeship: hands-on skills, real BI tickets, incidents, performance debugging, deployment, Fabric and architecture." \
+  --description "Open-source Power BI fellowship: hands-on skills, real BI tickets, incidents, performance debugging, deployment, Fabric and architecture." \
   --homepage "https://sudhanshumukherjeexx.github.io/power-bi/" \
   --add-topic power-bi --add-topic business-intelligence --add-topic dax --add-topic power-query \
   --add-topic microsoft-fabric --add-topic sql --add-topic data-modeling --add-topic bi-developer \

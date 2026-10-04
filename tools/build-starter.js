@@ -144,7 +144,7 @@ fs.writeFileSync(path.join(rep, 'report.json'), JSON.stringify({
 
 fs.writeFileSync(path.join(out, '.gitignore'), '**/.pbi/localSettings.json\n**/.pbi/cache.abf\n');
 fs.writeFileSync(path.join(out, 'README.txt'), [
-  'Northwind Starter - Power BI Holy Grail',
+  'Northwind Starter - The Power BI Fellowship',
   '=======================================',
   '',
   '1. Unzip so this folder is C:\\PowerBI\\northwind-starter\\ (the CSVs are in its data\\ subfolder).',

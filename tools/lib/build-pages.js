@@ -11,8 +11,8 @@ const STATIC_WITH_NAV = ['index.html', 'learn.html', 'experience.html', 'progres
 
 function modulePage(m, kind, all) {
   const isTrack = kind === 'track';
-  const title = m.id === 'resources' ? 'Library: glossary, cheat sheets, datasets and external resources · BI Developer Toolkit · Power BI Holy Grail'
-    : isTrack ? `${m.name}: hands-on track · Power BI Holy Grail` : `${m.name} Power BI: assignments with worked solutions · Power BI Holy Grail`;
+  const title = m.id === 'resources' ? 'Library: glossary, cheat sheets, datasets and external resources · BI Developer Toolkit · The Power BI Fellowship'
+    : isTrack ? `${m.name}: hands-on track · The Power BI Fellowship` : `${m.name} Power BI: assignments with worked solutions · The Power BI Fellowship`;
   const description = m.seo || (m.id === 'resources' ? 'The BI Developer Toolkit library: the Power BI glossary, printable cheat sheets, a curated catalog of external resources, the Northwind Outdoors practice datasets, the starter Power BI project (PBIP) and study tools.'
     : `${m.name}: ${m.tagline || 'hands-on assignments'} Each assignment has a checkable expected result and a worked solution.`);
   const isRes = m.id === 'resources', sec = isRes ? 'toolkit' : 'learn';

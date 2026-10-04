@@ -3,6 +3,7 @@
    Pages load their data files (content.js, cards.js, glossary.js…) before this file. */
 (function(){
 'use strict';
+/* storage keys keep the product's original name on purpose: renaming them would lose every learner's progress */
 const KEYS={main:'pbi-holy-grail-v1',cards:'pbi-holy-grail-cards-v1'};
 const KEY_BACKUP='pbi-holy-grail-backup-v1';
 /* store.js (loaded first) adds PBI.store: schema, migration, safe links, mastery, readiness, import validation */
