@@ -64,7 +64,7 @@ CERTS.forEach(c=>{const d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1
 
 /* later build steps (tracks, experience, pages, service worker) register here */
 const extensions = [];
-for (const f of ['build-tracks', 'build-meta', 'build-experience', 'build-templates', 'build-external', 'build-toolkit', 'build-pages', 'build-search', 'build-seo', 'build-sw']) {
+for (const f of ['build-tracks', 'build-meta', 'build-experience', 'build-templates', 'build-external', 'build-toolkit', 'build-pages', 'build-search', 'build-csp', 'build-seo', 'build-sw']) {
   const p = path.join(__dirname, 'lib', f + '.js');
   if (fs.existsSync(p)) extensions.push(require(p));
 }

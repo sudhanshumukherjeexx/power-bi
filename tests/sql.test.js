@@ -11,12 +11,7 @@ const { site } = require('./lib/util');
 let sqlite;
 try { process.removeAllListeners('warning'); sqlite = require('node:sqlite'); } catch (e) { sqlite = null; }
 
-const TABLES = {
-  orders: 'data/experience/company/orders.csv', order_lines: 'data/experience/company/order_lines.csv', returns: 'data/experience/company/returns.csv',
-  customers: 'data/experience/company/customers.csv', products: 'data/experience/company/products.csv', regions: 'data/experience/company/regions.csv',
-  fx_rates: 'data/experience/company/fx_rates.csv', customer_changes: 'data/tracks/warehousing/customer_changes.csv', early_orders: 'data/tracks/warehousing/early_orders.csv',
-  order_events: 'data/tracks/warehousing/order_events.csv', web_sessions_local: 'data/tracks/warehousing/web_sessions_local.csv', mini_sales: 'data/tracks/testing/mini_sales.csv'
-};
+const TABLES = require('../tools/lib/sql-tables');
 
 function database() {
   const db = new sqlite.DatabaseSync(':memory:');

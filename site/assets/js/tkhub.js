@@ -54,11 +54,11 @@ function run(push){
   const raw=terms(st.q),ts=raw.length>1&&raw.some(t=>dfn(t)<=.15*items.length)?raw.filter(t=>dfn(t)<=.15*items.length):raw,phrase=st.q.toLowerCase();
   let list=items.filter(it=>need.every(n=>it.tags.includes(n)));
   const unknown=ts.filter(t=>!(SYN[t]||[]).length&&!items.some(it=>wre(t).test(it.all)));
-  if(unknown.length){doors.hidden=true;res.hidden=false;res.innerHTML=`<div class="tkempty"><h2>Nothing in the Toolkit mentions “${esc(unknown.join('”, “'))}”</h2><p>Check the spelling, or try a product or feature name (DAX, RLS, gateway, Direct Lake). <a href="toolkit/whats-broken.html">What's broken?</a> covers the most common problems.</p></div><p><button class="btn sm" type="button" id="tkback">← Back to the Toolkit</button></p>`;return}
+  if(unknown.length){doors.hidden=true;res.hidden=false;res.innerHTML=`<div class="tkempty"><h2>Nothing in the Toolkit mentions “${esc(unknown.join('”, “'))}”</h2><p>Check the spelling, or try a product or feature name (DAX, RLS, gateway, Direct Lake). <a href="toolkit/whats-broken.html">What's broken?</a> covers the most common problems.</p><p class="small">${PBI.gapLink(unknown.join(' '),'the BI Developer Toolkit')} · a prefilled GitHub issue you can edit before sending.</p></div><p><button class="btn sm" type="button" id="tkback">← Back to the Toolkit</button></p>`;return}
   if(ts.length){const sc=list.map(it=>({it,s:score(it,ts,phrase)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);const top=sc.length?sc[0].s:0;list=sc.filter(x=>x.s>=Math.max(.8,top*.05)).map(x=>x.it)}
   else list.sort((a,b)=>ORDER.indexOf(a.role)-ORDER.indexOf(b.role));
   doors.hidden=true;res.hidden=false;
-  if(!list.length){res.innerHTML=`<div class="tkempty"><h2>Nothing matched${st.q?` “${esc(st.q)}”`:''}</h2><p>Try fewer words, a product name (DAX, RLS, gateway) or remove a filter. <a href="toolkit/whats-broken.html">What's broken?</a> covers the most common problems.</p></div>`;return}
+  if(!list.length){res.innerHTML=`<div class="tkempty"><h2>Nothing matched${st.q?` “${esc(st.q)}”`:''}</h2><p>Try fewer words, a product name (DAX, RLS, gateway) or remove a filter. <a href="toolkit/whats-broken.html">What's broken?</a> covers the most common problems.</p><p class="small">${PBI.gapLink(unknown.join(' '),'the BI Developer Toolkit')} · a prefilled GitHub issue you can edit before sending.</p></div>`;return}
   const groups={};for(const it of list)(groups[it.role]=groups[it.role]||[]).push(it);
   const present=ORDER.filter(r=>groups[r]);
   const ext=h=>/^https?:/.test(h);

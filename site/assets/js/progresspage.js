@@ -56,7 +56,7 @@ const byArt={};port.forEach(p=>{const k=p.del.artifact||'other';(byArt[k]=byArt[
 const portHtml=`<section id="portfolio"><div class="section-h"><h2>Portfolio evidence</h2><a href="templates.html">Templates →</a></div>
 <p class="small muted" style="max-width:70ch">Deliverables you ticked as written, grouped by type. ${tag('self')} This is a checklist of what you say you produced; the files themselves live wherever you wrote them.</p>
 ${port.length?`<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Artifact</th><th scope="col">From</th></tr></thead><tbody>${Object.entries(byArt).map(([k,list])=>list.map((p,i)=>`<tr><td>${i?'':`<b>${esc(k==='other'?'Other deliverables':tpl(k))}</b>`}<div class="small">${esc(p.del.t)}</div></td><td><a href="${xpHref(p.scenario)}">${esc(p.scenario.title)}</a></td></tr>`).join('')).join('')}</tbody></table></div>`:'<div class="empty">Deliverables you tick in Experience Mode scenarios appear here, grouped by type: requirements, KPI dictionary, incident report, ADR, pull request…</div>'}
-<details style="margin-top:12px"><summary>Turning this into a real portfolio</summary><ol style="font-size:.92rem;color:var(--ink-2)"><li>Create one public repository per finished scenario, named after the business problem ("revenue-reconciliation"), not the course.</li><li>Commit your own documents (requirements, validation, ADR, postmortem) and your PBIP folder. Leave out the scenario's model answer: employers want your reasoning, and publishing the answer spoils it for other learners.</li><li>Write a README with Problem, Impact, Evidence, Options, Recommendation, Risk and Ask. That is the senior conversation, in writing.</li><li>Add screenshots of your report and of your validation table (before/after numbers).</li><li>Say clearly that the company and data are fictional and generated, and link to this project.</li></ol></details></section>`;
+<details style="margin-top:12px"><summary>Turning this into a real portfolio</summary><ol style="font-size:.92rem;color:var(--text-secondary)"><li>Create one public repository per finished scenario, named after the business problem ("revenue-reconciliation"), not the course.</li><li>Commit your own documents (requirements, validation, ADR, postmortem) and your PBIP folder. Leave out the scenario's model answer: employers want your reasoning, and publishing the answer spoils it for other learners.</li><li>Write a README with Problem, Impact, Evidence, Options, Recommendation, Risk and Ask. That is the senior conversation, in writing.</li><li>Add screenshots of your report and of your validation table (before/after numbers).</li><li>Say clearly that the company and data are fictional and generated, and link to this project.</li></ol></details></section>`;
 
 /* ---------- decision log ---------- */
 const decs=SCENARIO_INDEX.filter(s=>s.decision&&main.xp[s.id]&&main.xp[s.id].dec);
@@ -90,6 +90,16 @@ function renderBackup(){
   el.innerHTML=`<p class="small backupnote">A backup from ${esc(PBI.fmtDate(b.at))}, saved ${why}, holds ${b.sum.assignments} assignments, ${b.sum.scenarios} scenarios and ${b.sum.cards} flashcards. <button class="btn sm" type="button" id="restoreBk">Restore previous progress</button></p>`;
 }
 renderBackup();
+/* analytics opt-out (only when page-view counting is configured; see PRIVACY.md) */
+(function(){
+  if(!document.querySelector('meta[name="pbi-analytics"]'))return;
+  let off=false;try{off=localStorage.getItem('pbi-analytics-off')==='1'}catch(e){}
+  const gpc=navigator.globalPrivacyControl===true||navigator.doNotTrack==='1';
+  document.getElementById('pp').insertAdjacentHTML('beforeend',`<section id="privacy"><div class="section-h"><h2>Privacy</h2><a href="${PBI.REPO}/blob/main/PRIVACY.md" rel="noopener" target="_blank">What is collected →</a></div>
+<p class="small muted" style="max-width:70ch">The site counts anonymous page views (which page, roughly where, which browser type) to see what gets used. No cookies, no account, and nothing about your progress, answers, notes or searches is ever sent. ${gpc?'Your browser asks sites not to track it, so nothing is counted.':''}</p>
+<label class="small"><input type="checkbox" id="anaOpt"${off||gpc?'':' checked'}${gpc?' disabled':''}> Count my page views anonymously</label></section>`);
+  document.getElementById('anaOpt').addEventListener('change',e=>{try{e.target.checked?localStorage.removeItem('pbi-analytics-off'):localStorage.setItem('pbi-analytics-off','1')}catch(_){}PBI.toast(e.target.checked?'Anonymous page-view counting on':'Page views are no longer counted from this browser')});
+})();
 document.addEventListener('click',e=>{
   if(!e.target.closest('#restoreBk'))return;
   if(!confirm('Put back the backed-up progress? What is in this browser now becomes the backup, so you can switch back.'))return;

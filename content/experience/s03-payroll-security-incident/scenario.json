@@ -13,7 +13,7 @@
   "prereq": ["s01"],
   "next": "s04",
   "verified": { "date": "2026-10-01", "context": "RLS and OLS behaviour per Microsoft Learn (Row-level security, Object-level security), Sept 2026", "review_after_days": 180 },
-  "ticket": { "id": "INC-2031", "kind": "incident", "severity": "SEV2", "priority": "High", "status": "Open", "reporter": "dana", "opened": "Tue 14 Apr 2026, 08:31", "due": "Containment within 4 hours", "labels": ["security", "rls", "payroll", "privacy"] },
+  "ticket": { "id": "INC-2031", "kind": "incident", "severity": "SEV2", "priority": "High", "status": "Open", "reporter": "dana", "opened": "Tue 14 Apr 2026, 08:31", "due": "Containment within 4 hours", "labels": ["hr", "payroll", "urgent"] },
   "story": "Sam built the Sales & Payroll model last quarter so regional managers could see sales and their own team's pay in one place. It was published as an app with an audience per region.",
   "impact": "Salary data is personal data. A manager seeing other teams' pay is a privacy breach that Compliance may have to log, and it damages trust between managers and HR. Until it is contained, every day adds people who might have seen something they shouldn't.",
   "messages": [

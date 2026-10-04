@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Hotfix, rollback or wait?: BI drill (INC-2079) · Power BI Holy Grail</title>
 <meta name="description" content="BI release management drill: a production KPI is wrong after a release. Choose between a normal release, a hotfix and a rollback, and justify it.">
@@ -16,6 +17,8 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Power BI Holy Grail: Learn Power BI by doing the work.">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="pbi-analytics" content="cloudflare:773c3e6c2e824cefa05db20e6acd6796">
+<script defer src="../assets/js/analytics.js"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Experience","item":"https://sudhanshumukherjeexx.github.io/power-bi/experience.html"},{"@type":"ListItem","position":2,"name":"Stage: Senior BI Developer","item":"https://sudhanshumukherjeexx.github.io/power-bi/experience.html#stage-senior"},{"@type":"ListItem","position":3,"name":"INC-2079","item":"https://sudhanshumukherjeexx.github.io/power-bi/experience/d04-hotfix-or-rollback.html"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"Hotfix, rollback or wait?","description":"BI release management drill: a production KPI is wrong after a release. Choose between a normal release, a hotfix and a rollback, and justify it.","url":"https://sudhanshumukherjeexx.github.io/power-bi/experience/d04-hotfix-or-rollback.html","learningResourceType":"Exercise","educationalLevel":"Senior BI Developer","timeRequired":"PT30M","inLanguage":"en","isAccessibleForFree":true,"isPartOf":{"@type":"Course","name":"Power BI Holy Grail","url":"https://sudhanshumukherjeexx.github.io/power-bi/"}}</script>
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
@@ -30,6 +33,7 @@
 <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/base.css">
 <link rel="stylesheet" href="../assets/css/pages.css">
 <link rel="stylesheet" href="../assets/css/app.css">
 </head>
@@ -49,7 +53,7 @@
 <header class="ticket"><div class="tk-top"><span class="tk-kind k-decision">Decision</span><span class="sev sev2">SEV2</span><span class="tk-id">INC-2079</span><span class="chip">Drill</span></div>
 <h1>Hotfix, rollback or wait?</h1><p class="tk-sum">Release 2.3 went live last night. This morning one KPI on the sales app is wrong. The board pack is tomorrow. Choose: normal release, hotfix or rollback.</p>
 <dl class="tk-meta"><div><dt>Reported by</dt><dd>Jordan Reed, VP Sales</dd></div><div><dt>Opened</dt><dd>Wed 10 Jun 2026, 08:15</dd></div><div><dt>Priority</dt><dd>High</dd></div><div><dt>Time box</dt><dd>0.5 h</dd></div></dl>
-<div class="tk-skills"><span class="chip">Deployment and Git</span><span class="chip">Testing and validation</span><span class="chip">Communication</span><span class="chip">Architecture</span></div></header>
+<div class="tk-labels"><span class="vh">Labels: </span><span class="tk-label">release</span><span class="tk-label">production</span><span class="tk-label">urgent</span></div></header>
 
 <div class="impact"><b>Why the business cares</b> Every option has a cost. Rolling back also undoes fixes people are waiting for; a rushed hotfix can break something else the day before the board pack; waiting leaves a wrong number in front of managers.</div>
 <noscript><p class="small muted">Taking the ticket, saving notes and deliverables, hints, the rubric and the model answer need JavaScript. The brief and the files are below.</p></noscript>

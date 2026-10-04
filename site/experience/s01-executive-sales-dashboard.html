@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Executive sales dashboard: Power BI scenario (BI-1042) · Power BI Holy Grail</title>
 <meta name="description" content="Power BI practice scenario: a VP of Sales needs to know why Q1 revenue growth is slowing before Monday. Messy export, vague requirements, duplicate rows and currency conversion.">
@@ -16,6 +17,8 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Power BI Holy Grail: Learn Power BI by doing the work.">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="pbi-analytics" content="cloudflare:773c3e6c2e824cefa05db20e6acd6796">
+<script defer src="../assets/js/analytics.js"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Experience","item":"https://sudhanshumukherjeexx.github.io/power-bi/experience.html"},{"@type":"ListItem","position":2,"name":"Stage: Data Analyst","item":"https://sudhanshumukherjeexx.github.io/power-bi/experience.html#stage-analyst"},{"@type":"ListItem","position":3,"name":"BI-1042","item":"https://sudhanshumukherjeexx.github.io/power-bi/experience/s01-executive-sales-dashboard.html"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"Executive sales dashboard","description":"Power BI practice scenario: a VP of Sales needs to know why Q1 revenue growth is slowing before Monday. Messy export, vague requirements, duplicate rows and currency conversion.","url":"https://sudhanshumukherjeexx.github.io/power-bi/experience/s01-executive-sales-dashboard.html","learningResourceType":"Simulation","educationalLevel":"Data Analyst","timeRequired":"PT300M","inLanguage":"en","isAccessibleForFree":true,"isPartOf":{"@type":"Course","name":"Power BI Holy Grail","url":"https://sudhanshumukherjeexx.github.io/power-bi/"}}</script>
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
@@ -30,6 +33,7 @@
 <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/base.css">
 <link rel="stylesheet" href="../assets/css/pages.css">
 <link rel="stylesheet" href="../assets/css/app.css">
 </head>
@@ -49,7 +53,7 @@
 <header class="ticket"><div class="tk-top"><span class="tk-kind k-ticket">Ticket</span><span class="tk-id">BI-1042</span></div>
 <h1>Executive sales dashboard</h1><p class="tk-sum">The VP of Sales thinks Q1 growth is slowing and needs one slide and a dashboard for Monday's leadership meeting.</p>
 <dl class="tk-meta"><div><dt>Reported by</dt><dd>Jordan Reed, VP Sales</dd></div><div><dt>Opened</dt><dd>Fri 10 Apr 2026, 16:52</dd></div><div><dt>Needed by</dt><dd>Mon 13 Apr 2026, 09:00</dd></div><div><dt>Priority</dt><dd>High</dd></div><div><dt>Time box</dt><dd>5 h</dd></div></dl>
-<div class="tk-skills"><span class="chip">Power Query</span><span class="chip">Dimensional modeling</span><span class="chip">DAX</span><span class="chip">Report design</span><span class="chip">Testing and validation</span><span class="chip">Communication</span></div></header>
+<div class="tk-labels"><span class="vh">Labels: </span><span class="tk-label">sales</span><span class="tk-label">leadership</span><span class="tk-label">monday-meeting</span></div></header>
 
 <div class="impact"><b>Why the business cares</b> Leadership decides on Monday whether to cut the Q2 marketing budget or push harder on wholesale. If the number on the slide is wrong in either direction, they make the wrong call, and they stop trusting the BI team.</div>
 <noscript><p class="small muted">Taking the ticket, saving notes and deliverables, hints, the rubric and the model answer need JavaScript. The brief and the files are below.</p></noscript>

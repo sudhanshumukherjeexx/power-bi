@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>The executive dashboard takes 18 seconds: Power BI scenario (INC-2044) · Power BI Holy Grail</title>
 <meta name="description" content="Power BI performance tuning scenario: an executive page takes 18 seconds. Use Performance Analyzer, Server Timings and VertiPaq metrics to find formula-engine and storage-engine bottlenecks, then prove the fix.">
@@ -16,6 +17,8 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Power BI Holy Grail: Learn Power BI by doing the work.">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="pbi-analytics" content="cloudflare:773c3e6c2e824cefa05db20e6acd6796">
+<script defer src="../assets/js/analytics.js"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Experience","item":"https://sudhanshumukherjeexx.github.io/power-bi/experience.html"},{"@type":"ListItem","position":2,"name":"Stage: Senior BI Developer","item":"https://sudhanshumukherjeexx.github.io/power-bi/experience.html#stage-senior"},{"@type":"ListItem","position":3,"name":"INC-2044","item":"https://sudhanshumukherjeexx.github.io/power-bi/experience/s04-monday-performance-incident.html"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"The executive dashboard takes 18 seconds","description":"Power BI performance tuning scenario: an executive page takes 18 seconds. Use Performance Analyzer, Server Timings and VertiPaq metrics to find formula-engine and storage-engine bottlenecks, then prove the fix.","url":"https://sudhanshumukherjeexx.github.io/power-bi/experience/s04-monday-performance-incident.html","learningResourceType":"Simulation","educationalLevel":"Senior BI Developer","timeRequired":"PT300M","inLanguage":"en","isAccessibleForFree":true,"isPartOf":{"@type":"Course","name":"Power BI Holy Grail","url":"https://sudhanshumukherjeexx.github.io/power-bi/"}}</script>
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
@@ -30,6 +33,7 @@
 <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/base.css">
 <link rel="stylesheet" href="../assets/css/pages.css">
 <link rel="stylesheet" href="../assets/css/app.css">
 </head>
@@ -49,7 +53,7 @@
 <header class="ticket"><div class="tk-top"><span class="tk-kind k-incident">Incident</span><span class="sev sev3">SEV3</span><span class="tk-id">INC-2044</span></div>
 <h1>The executive dashboard takes 18 seconds</h1><p class="tk-sum">Leadership opens the executive page every Monday at 9:00 and waits 18 seconds. Find out why with evidence, fix it, and prove the improvement.</p>
 <dl class="tk-meta"><div><dt>Reported by</dt><dd>Grace Hollis, CEO</dd></div><div><dt>Opened</dt><dd>Mon 4 May 2026, 09:12</dd></div><div><dt>Needed by</dt><dd>Before next Monday's leadership meeting</dd></div><div><dt>Priority</dt><dd>Medium</dd></div><div><dt>Time box</dt><dd>5 h</dd></div></dl>
-<div class="tk-skills"><span class="chip">Performance</span><span class="chip">DAX</span><span class="chip">Dimensional modeling</span><span class="chip">Testing and validation</span><span class="chip">Communication</span></div></header>
+<div class="tk-labels"><span class="vh">Labels: </span><span class="tk-label">executive</span><span class="tk-label">monday</span><span class="tk-label">slow</span></div></header>
 <div class="story"><b>Previously at Northwind</b><p>Since Sprint 02 the company sales model carries both the Sales and the ledger definitions. It now has 31 million order lines from 2023 onwards, and the executive page has gained a few visuals.</p></div>
 <div class="impact"><b>Why the business cares</b> Eight executives wait for the page at the start of every leadership meeting, and some have started asking for Excel exports instead. A slow report is an abandoned report, and the capacity is busiest exactly then.</div>
 <noscript><p class="small muted">Taking the ticket, saving notes and deliverables, hints, the rubric and the model answer need JavaScript. The brief and the files are below.</p></noscript>

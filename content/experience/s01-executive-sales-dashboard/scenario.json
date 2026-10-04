@@ -12,7 +12,7 @@
   "skills": ["power-query", "modeling", "dax", "visuals", "testing", "communication"],
   "prereq": [],
   "next": "s02",
-  "ticket": { "id": "BI-1042", "kind": "ticket", "priority": "High", "status": "Open", "reporter": "jordan", "opened": "Fri 10 Apr 2026, 16:52", "due": "Mon 13 Apr 2026, 09:00", "labels": ["sales", "dashboard", "leadership"] },
+  "ticket": { "id": "BI-1042", "kind": "ticket", "priority": "High", "status": "Open", "reporter": "jordan", "opened": "Fri 10 Apr 2026, 16:52", "due": "Mon 13 Apr 2026, 09:00", "labels": ["sales", "leadership", "monday-meeting"] },
   "impact": "Leadership decides on Monday whether to cut the Q2 marketing budget or push harder on wholesale. If the number on the slide is wrong in either direction, they make the wrong call, and they stop trusting the BI team.",
   "messages": [
     {

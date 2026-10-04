@@ -14,6 +14,13 @@ function card(s){
   const st=P.scenarioStatus(main,s.id),rec=main.xp[s.id],sc=rec&&rec.done?P.scenarioScore(s,rec):null;
   return `<a class="xcard" href="experience/${s.slug}.html"><span class="xtop"><span class="tk-kind k-${kindOf(s)}">${KIND[kindOf(s)]||'Ticket'}</span>${s.severity?`<span class="sev sev${s.severity.slice(-1)}">${s.severity}</span>`:''}<span class="tk-id">${esc(s.ticket)}</span>${s.type==='drill'?'<span class="chip">Drill</span>':''}</span><h3>${esc(s.title)}</h3><p>${esc(s.summary)}</p><span class="foot2"><span>~${Math.round(s.minutes/60*10)/10} h</span><span class="st">${st==='done'?`<span class="chip ok">Done${sc?' · outcome '+sc.quality+'%':''}</span>`:st==='active'?'<span class="chip">In progress</span>':''}</span></span></a>`;
 }
+/* scenarios saved with "Make available offline" (xp.js) get a chip; the check reads the device's cache only */
+async function markOffline(){
+  if(!('caches' in window))return;
+  try{const c=await caches.open('pbi-offline-v1');
+    for(const a of document.querySelectorAll('a.xcard')){const key=new URL(a.getAttribute('href'),location.href).href;
+      if(await c.match(key)&&!a.querySelector('.offline-chip'))a.querySelector('.xtop').insertAdjacentHTML('beforeend','<span class="offline-chip" title="Saved on this device">Offline</span>')}}catch(e){}
+}
 function render(){
   const idx=SCENARIO_INDEX;
   const t=P.xpTotals(main);
@@ -34,6 +41,7 @@ function render(){
   </tbody></table></div><p class="small muted">For every incident: mitigate first, then find the root cause, then fix it permanently, then prevent it. Update stakeholders on a fixed schedule, even when nothing has changed.</p></section>`;
   h+=`<section id="personas" aria-labelledby="team-h"><div class="section-h"><h2 id="team-h">The people you'll work with</h2></div><div class="team">${PERSONAS.map(p=>`<div><b>${esc(p.name)}</b><span>${esc(p.role)}</span><p>${esc(p.cares)}</p></div>`).join('')}</div></section>`;
   host.innerHTML=h;
+  markOffline();
 }
 host.addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;filter=b.dataset.f;history.replaceState(null,'',filter==='all'?location.pathname:'#filter='+filter);render()});
 render();

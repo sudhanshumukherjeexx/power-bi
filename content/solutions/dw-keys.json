@@ -6,7 +6,10 @@
         "lang": "SQL", "title": "dim_customer as SCD type 2", "dialect": "portable",
         "src": [
           "DROP TABLE IF EXISTS dim_customer;",
-          "CREATE TABLE dim_customer AS",
+          "CREATE TABLE dim_customer (CustomerSK INT, CustomerID VARCHAR(20), Segment VARCHAR(40), HomeRegionKey INT,",
+          "                           LoyaltyTier VARCHAR(20), ValidFrom DATE, ValidTo DATE, IsCurrent INT);",
+          "",
+          "-- CREATE TABLE ... AS SELECT isn't SQL Server syntax; a CTE followed by INSERT works in both",
           "WITH feed AS (",
           "    SELECT DISTINCT CustomerID, EffectiveDate, Segment, HomeRegionKey, LoyaltyTier FROM customer_changes",
           "),",
@@ -23,6 +26,7 @@
           "    FROM compared",
           "    WHERE n = 1 OR Segment <> PrevSegment OR HomeRegionKey <> PrevRegion OR LoyaltyTier <> PrevTier",
           ")",
+          "INSERT INTO dim_customer (CustomerSK, CustomerID, Segment, HomeRegionKey, LoyaltyTier, ValidFrom, ValidTo, IsCurrent)",
           "SELECT ROW_NUMBER() OVER (ORDER BY CustomerID, ValidFrom) AS CustomerSK,",
           "       CustomerID, Segment, HomeRegionKey, LoyaltyTier, ValidFrom,",
           "       COALESCE(LEAD(ValidFrom) OVER (PARTITION BY CustomerID ORDER BY ValidFrom), '9999-12-31') AS ValidTo,",
@@ -38,7 +42,7 @@
     ],
     "check": "{{dw_change_rows|int}} feed rows → {{dw_scd2_rows|int}} versions ({{dw_duplicate_changes|int}} duplicate and {{dw_noop_changes|int}} no-op changes dropped); {{dw_current_rows|int}} current.",
     "note": "In production the dimension is loaded incrementally: close the current row (set ValidTo, IsCurrent = 0) and insert the new one in one transaction, and use a sequence for the surrogate key so keys never change between loads.",
-    "verify": "Executed in CI against SQLite."
+    "verify": "Executed in CI against SQLite, and against SQL Server by the SQL Server check."
   },
   "dw-keys-1": {
     "s": ["Join orders to dim_customer on CustomerID AND OrderDate >= ValidFrom AND OrderDate < ValidTo (half-open interval: exactly one version matches).", "Store the resulting CustomerSK on the fact at load time, so reports don't need the range join.", "Type 2: Segment, LoyaltyTier, HomeRegionKey (analysed over time). Type 1: name spelling, email, phone (corrections; history not useful)."],
@@ -72,15 +76,17 @@
       {
         "lang": "SQL", "title": "Which early orders can be resolved?", "dialect": "portable",
         "src": [
+          "-- one row per known customer, so the join never multiplies orders (SQL Server can't SUM over EXISTS)",
           "SELECT COUNT(*) AS EarlyOrders,",
-          "       SUM(CASE WHEN EXISTS (SELECT 1 FROM customer_changes AS c WHERE c.CustomerID = e.CustomerID) THEN 1 ELSE 0 END) AS Resolvable,",
-          "       SUM(CASE WHEN NOT EXISTS (SELECT 1 FROM customer_changes AS c WHERE c.CustomerID = e.CustomerID) THEN 1 ELSE 0 END) AS StillUnknown",
-          "FROM early_orders AS e;"
+          "       SUM(CASE WHEN c.CustomerID IS NOT NULL THEN 1 ELSE 0 END) AS Resolvable,",
+          "       SUM(CASE WHEN c.CustomerID IS NULL THEN 1 ELSE 0 END) AS StillUnknown",
+          "FROM early_orders AS e",
+          "LEFT JOIN (SELECT DISTINCT CustomerID FROM customer_changes) AS c ON c.CustomerID = e.CustomerID;"
         ],
         "expect": { "cols": ["EarlyOrders", "Resolvable", "StillUnknown"], "rows": [["{{dw_early_orders|int}}", "{{dw_early_resolved|int}}", "{{dw_early_unknown|int}}"]] }
       }
     ],
     "check": "{{dw_early_orders|int}} early orders; {{dw_early_resolved|int}} resolvable, {{dw_early_unknown|int}} unknown.",
-    "verify": "Executed in CI against SQLite."
+    "verify": "Executed in CI against SQLite, and against SQL Server by the SQL Server check."
   }
 }

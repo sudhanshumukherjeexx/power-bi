@@ -13,7 +13,7 @@
   "prereq": ["s06"],
   "next": "s08",
   "verified": { "date": "2026-10-01", "context": "Deployment pipelines and deployment rules (Microsoft Learn, Sept 2026)", "review_after_days": 120 },
-  "ticket": { "id": "INC-2058", "kind": "incident", "severity": "SEV2", "priority": "High", "status": "Open", "reporter": "jordan", "opened": "Wed 3 Jun 2026, 08:47", "due": "Today", "labels": ["deployment", "pipeline", "production"] },
+  "ticket": { "id": "INC-2058", "kind": "incident", "severity": "SEV2", "priority": "High", "status": "Open", "reporter": "jordan", "opened": "Wed 3 Jun 2026, 08:47", "due": "Today", "labels": ["production", "release", "finance"] },
   "story": "The release from Sprint 06 was promoted through the deployment pipeline on Monday evening: Development → Test (checked by Nina) → Production.",
   "impact": "Regional managers plan this week's targets from Production. With no May sales and last month's targets they will under-plan, and anyone comparing Production with Test will stop trusting both.",
   "messages": [

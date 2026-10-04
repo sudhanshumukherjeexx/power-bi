@@ -11,7 +11,7 @@
   "minutes": 30,
   "skills": ["governance", "architecture", "security"],
   "prereq": ["s10"],
-  "ticket": { "id": "GOV-050", "kind": "review", "priority": "Normal", "reporter": "elena", "opened": "Tue 22 Sep 2026, 10:00", "labels": ["governance", "maturity"] },
+  "ticket": { "id": "GOV-050", "kind": "review", "priority": "Normal", "reporter": "elena", "opened": "Tue 22 Sep 2026, 10:00", "labels": ["quarterly-review", "leadership"] },
   "impact": "A maturity assessment turns \"we should govern better\" into a short list of next steps the organisation can actually take this quarter.",
   "messages": [
     { "from": "elena", "to": "you", "via": "chat", "at": "Tue 22 Sep, 10:00", "body": ["Before the offsite, score where we are on each governance dimension. Be honest: the point is the next step, not the score. Use your own company instead if you prefer."] }

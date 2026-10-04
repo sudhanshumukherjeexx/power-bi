@@ -67,6 +67,29 @@ module.exports = t => {
     t.ok(!m, `${rel(f)} has an emoji in UI chrome: ${m && m[0]}`);
   }
 
+  /* the 2.0 token names are gone for good (404.html is self-contained and keeps its own small set) */
+  const OLD = /var\(--(panel|panel-2|ink|ink-2|ink-3|line|line-2|yellow|yellow-ink|yellow-soft|yellow-c|hl-ink|ink-hl|code-ink|ok|ok-soft|bad|bad-soft|beg|int|adv|sql|dw|qa|api|gov|fab|mod|radius|shadow)[,)]/;
+  for (const f of [...css, ...html.filter(f => !f.endsWith('404.html')), ...walk(path.join(site, 'assets/js'), p => p.endsWith('.js'))]) {
+    const m = fs.readFileSync(f, 'utf8').match(OLD);
+    t.ok(!m, `${rel(f)} uses the retired token ${m && m[0]}; use the tokens.css name (see CONTRIBUTING, Design rules)`);
+  }
+  /* one shared base: every page loads base.css, and no page repeats one of its rules inline */
+  const ruleMap = s => { const m = {}; s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/@media[^{]*\{([^{}]*\{[^}]*\})*\s*\}/g, '').replace(/([^{}]+)\{([^}]*)\}/g, (_, a, b) => { m[a.trim()] = b.trim(); return ''; }); return m; };
+  const baseRules = ruleMap(fs.readFileSync(path.join(site, 'assets/css/base.css'), 'utf8'));
+  for (const f of html.filter(f => !f.endsWith('404.html'))) {
+    t.ok(/assets\/css\/base\.css/.test(fs.readFileSync(f, 'utf8')), `${rel(f)} must load base.css`);
+    const inline = ruleMap(inlineCss(f));
+    const dup = Object.keys(inline).filter(k => baseRules[k] === inline[k]);
+    t.ok(!dup.length, `${rel(f)} repeats base.css rules inline: ${dup.slice(0, 4).join(', ')}`);
+  }
+
+  /* brand images exist at the sizes GitHub and link previews expect (PNG header: width and height at bytes 16–23) */
+  const png = f => { const p = path.join(__dirname, '..', f); if (!fs.existsSync(p)) return null; const b = fs.readFileSync(p); return b.toString('ascii', 1, 4) === 'PNG' ? [b.readUInt32BE(16), b.readUInt32BE(20)] : null; };
+  for (const [f, w, h] of [['docs/social-preview.png', 1280, 640], ['site/assets/og/og-default.png', 1200, 630], ...['home', 'skill-mode', 'experience-mode', 'toolkit', 'progress'].map(n => [`docs/screenshots/${n}.png`, 1280, 800])]) {
+    const d = png(f);
+    t.ok(d && d[0] === w && d[1] === h, `${f} must exist as a ${w}×${h} PNG (got ${d ? d.join('×') : 'nothing'}); regenerate with node tools/render-og.js or tools/render-screenshots.js`);
+  }
+
   /* radius scale */
   for (const f of css) for (const m of fs.readFileSync(f, 'utf8').matchAll(/border-radius:\s*([^;}]+)/g)) {
     const px = [...m[1].matchAll(/(\d+(?:\.\d+)?)px/g)].map(x => +x[1]);

@@ -37,7 +37,8 @@ function header(){
     <h1>${esc(S.title)}</h1>
     <p class="tk-sum">${esc(S.summary)}</p>
     <dl class="tk-meta"><div><dt>Reported by</dt><dd>${esc(rep.name)}${rep.role?`, ${esc(rep.role)}`:''}</dd></div><div><dt>Opened</dt><dd>${esc(S.ticket.opened)}</dd></div>${S.ticket.due?`<div><dt>Needed by</dt><dd>${esc(S.ticket.due)}</dd></div>`:''}${S.ticket.priority?`<div><dt>Priority</dt><dd>${esc(S.ticket.priority)}</dd></div>`:''}<div><dt>Time box</dt><dd>${Math.round(S.minutes/60*10)/10} h</dd></div></dl>
-    <div class="tk-skills">${S.skills.map(k=>{const s=SKILLS.find(x=>x.id===k);return `<span class="chip">${esc(s?s.name:k)}</span>`}).join('')}</div>
+    ${(S.ticket.labels||[]).length?`<div class="tk-labels"><span class="vh">Labels: </span>${S.ticket.labels.map(l=>`<span class="tk-label">${esc(l)}</span>`).join('')}</div>`:''}
+    <div class="offline-ctl" id="offlineCtl" hidden></div>
     ${status==='new'?`<div class="cta" style="margin-top:12px"><button class="btn primary" type="button" id="startBtn">Take the ticket</button><span class="small muted">Read the brief first. Nothing is graded until you finish.</span></div>`:''}
   </header>
   ${S.story?`<div class="story"><b>Previously at Northwind</b>${para(S.story)}</div>`:''}
@@ -144,7 +145,9 @@ function review(){
 }
 function debrief(){
   const nx=S.next&&SCENARIOS[S.next];
-  return `<section class="debrief"><h2 class="xph">Retrospective</h2><p class="small muted">Write the answers in your notes. This is the part that turns a task into experience.</p><ul>${S.retro.map(q=>`<li>${fmt(q)}</li>`).join('')}</ul>${nx?`<a class="continue" href="${esc(nx.slug)}.html"><span><span class="lbl">Next at Northwind</span><b>${esc(nx.ticket.id)} · ${esc(nx.title)}</b><span class="small muted">${esc(nx.summary)}</span></span><span class="go" aria-hidden="true">→</span></a>`:`<a class="continue" href="${R}experience.html"><span><span class="lbl">Next</span><b>Back to all scenarios</b></span><span class="go" aria-hidden="true">→</span></a>`}</section>`;
+  /* the skills a scenario tests stay hidden until you finish, so the ticket never tells you what kind of problem it is */
+  const practised=`<p class="small"><b>Skills practised:</b> ${S.skills.map(k=>{const s=SKILLS.find(x=>x.id===k);return esc(s?s.name:k)}).join(' · ')}</p>`;
+  return `<section class="debrief">${practised}<h2 class="xph">Retrospective</h2><p class="small muted">Write the answers in your notes. This is the part that turns a task into experience.</p><ul>${S.retro.map(q=>`<li>${fmt(q)}</li>`).join('')}</ul>${nx?`<a class="continue" href="${esc(nx.slug)}.html"><span><span class="lbl">Next at Northwind</span><b>${esc(nx.ticket.id)} · ${esc(nx.title)}</b><span class="small muted">${esc(nx.summary)}</span></span><span class="go" aria-hidden="true">→</span></a>`:`<a class="continue" href="${R}experience.html"><span><span class="lbl">Next</span><b>Back to all scenarios</b></span><span class="go" aria-hidden="true">→</span></a>`}</section>`;
 }
 
 /* ---------- model answer (lazy) ---------- */
@@ -187,15 +190,51 @@ function focusMode(){
 function render(){
   app.innerHTML=header()+tabs();
   focusMode();
+  offlineRender();
   const want=(location.hash.match(/tab=(\w+)/)||[])[1]||(location.hash.startsWith('#ev-')?'evidence':'brief');
   show(TABS.some(t=>t[0]===want)?want:'brief');
   if(location.hash.startsWith('#ev-')){const el=document.getElementById(location.hash.slice(1));if(el)requestAnimationFrame(()=>el.scrollIntoView())}
 }
 const refreshHeader=()=>{const keep=document.querySelector('.xptabs [aria-selected=true]');const k=keep?keep.dataset.tab:'brief';render();show(k)};
 
+/* ---------- make available offline ----------
+   The app shell (every page and script) is precached by the service worker. A scenario's files (evidence, model
+   answer, deliverable templates) are saved only when the learner asks, into a cache that survives site updates. */
+const OFFLINE_CACHE='pbi-offline-v1';
+const canOffline=()=>'caches' in window&&'serviceWorker' in navigator&&window.isSecureContext;
+function offlineUrls(){
+  const files=S.evidence.filter(e=>e.kind==='file').map(e=>R+e.file);
+  const tpls=[...new Set(S.deliverables.map(d=>d.artifact).filter(Boolean))].filter(a=>typeof TEMPLATE_INDEX==='undefined'||TEMPLATE_INDEX.some(t=>t.id===a)).map(a=>R+'templates/'+a+'.md');
+  return [...new Set([location.pathname.replace(/^.*\//,''),R+'assets/js/xp/'+id+'.js',...files,...tpls])].map(u=>new URL(u,location.href).href);
+}
+async function offlineState(){
+  if(!canOffline())return null;
+  const c=await caches.open(OFFLINE_CACHE),urls=offlineUrls();
+  const have=await Promise.all(urls.map(u=>c.match(u)));
+  return {total:urls.length,have:have.filter(Boolean).length};
+}
+async function offlineRender(){
+  const el=document.getElementById('offlineCtl');if(!el)return;
+  const s=await offlineState();if(!s){el.hidden=true;return}
+  el.hidden=false;
+  el.innerHTML=s.have===s.total
+    ?`<span class="offline-ok">✓ Available offline</span><span class="small muted">${s.total} files saved on this device</span><button class="btn sm" type="button" id="offlineRemove">Remove</button>`
+    :`<button class="btn sm" type="button" id="offlineSave"><svg class="ic" aria-hidden="true" focusable="false"><use href="${R}assets/icons/icons.svg#offline"/></svg> Make available offline</button><span class="small muted">Saves the evidence, model answer and templates (${s.total} files) so this scenario works without a connection.</span>`;
+}
+async function offlineSave(btn){
+  btn.disabled=true;btn.textContent='Saving…';
+  const c=await caches.open(OFFLINE_CACHE);let failed=0;
+  for(const u of offlineUrls()){try{const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw 0;await c.put(u,r)}catch(e){failed++}}
+  PBI.toast(failed?`Saved, but ${failed} file${failed>1?'s':''} couldn't be downloaded. Try again online.`:'Available offline on this device');
+  offlineRender();
+}
+async function offlineRemove(){const c=await caches.open(OFFLINE_CACHE);await Promise.all(offlineUrls().map(u=>c.delete(u)));PBI.toast('Removed from this device');offlineRender()}
+
 /* ---------- events ---------- */
 app.addEventListener('click',async e=>{
   const t=e.target.closest('[data-tab]');if(t){show(t.dataset.tab);history.replaceState(null,'','#tab='+t.dataset.tab);return}
+  const os=e.target.closest('#offlineSave');if(os){offlineSave(os);return}
+  if(e.target.closest('#offlineRemove')){offlineRemove();return}
   if(e.target.closest('#startBtn')){saveRec(()=>{});PBI.toast('Ticket assigned to you');refreshHeader();show('evidence');return}
   if(e.target.closest('#hintBtn')){saveRec(r=>{r.hints=Math.min(S.hints.length,(r.hints||0)+1)});document.querySelector('[data-tab=hints]').innerHTML=`Hints <span class="n">${rec().hints}/${S.hints.length}</span>`;renderPane('hints');return}
   const pv=e.target.closest('[data-preview]');if(pv){preview(pv);return}

@@ -13,7 +13,7 @@
   "prereq": ["s05"],
   "next": "s07",
   "verified": { "date": "2026-10-01", "context": "PBIP/TMDL/PBIR project format (Microsoft Learn, 2026-09-23); Tabular Editor 2 BPA", "review_after_days": 120 },
-  "ticket": { "id": "PR-214", "kind": "review", "priority": "Medium", "status": "Blocked: merge conflict", "reporter": "sam", "opened": "Tue 26 May 2026, 14:40", "due": "Release train Thu 28 May", "labels": ["git", "pbip", "tmdl", "pull-request"] },
+  "ticket": { "id": "PR-214", "kind": "review", "priority": "Medium", "status": "Blocked: merge conflict", "reporter": "sam", "opened": "Tue 26 May 2026, 14:40", "due": "Release train Thu 28 May", "labels": ["pull-request", "merge-conflict"] },
   "story": "The shared model from Sprint 05 now lives in Git as a PBIP project. Every change goes through a pull request reviewed by someone else before Elena deploys it.",
   "impact": "A careless merge silently drops someone's change, or renames a measure that twenty visuals still reference, and nobody notices until a report shows blanks in production. Merging well is what makes team development safe.",
   "messages": [

@@ -12,7 +12,7 @@
   "skills": ["dax", "modeling", "testing", "communication", "power-query"],
   "prereq": ["s01"],
   "next": "s03",
-  "ticket": { "id": "BI-1057", "kind": "ticket", "priority": "Urgent", "status": "Open", "reporter": "sarah", "opened": "Wed 15 Apr 2026, 08:14", "due": "Fri 17 Apr 2026, 12:00", "labels": ["finance", "reconciliation", "board-pack"] },
+  "ticket": { "id": "BI-1057", "kind": "ticket", "priority": "Urgent", "status": "Open", "reporter": "sarah", "opened": "Wed 15 Apr 2026, 08:14", "due": "Fri 17 Apr 2026, 12:00", "labels": ["finance", "board-pack", "numbers-disputed"] },
   "story": "Your Q1 dashboard went to the leadership meeting on Monday and Jordan's slide was well received. On Tuesday Jordan forwarded the dashboard link to the CFO.",
   "impact": "The board pack goes to the directors on Friday. If the board sees one revenue figure from Sales and another from Finance, the question stops being \"why is growth slowing\" and becomes \"can we trust any of our numbers\". Finance's number is the one the auditors will check.",
   "messages": [

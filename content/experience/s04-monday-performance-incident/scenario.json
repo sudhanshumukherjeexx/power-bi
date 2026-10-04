@@ -13,7 +13,7 @@
   "prereq": ["s02"],
   "next": "s05",
   "verified": { "date": "2026-10-01", "context": "Performance Analyzer, DAX query view and optimization guidance (Microsoft Learn, Sept 2026); DAX Studio 3.x Server Timings", "review_after_days": 180 },
-  "ticket": { "id": "INC-2044", "kind": "incident", "severity": "SEV3", "priority": "Medium", "status": "Open", "reporter": "grace", "opened": "Mon 4 May 2026, 09:12", "due": "Before next Monday's leadership meeting", "labels": ["performance", "executive", "dax"] },
+  "ticket": { "id": "INC-2044", "kind": "incident", "severity": "SEV3", "priority": "Medium", "status": "Open", "reporter": "grace", "opened": "Mon 4 May 2026, 09:12", "due": "Before next Monday's leadership meeting", "labels": ["executive", "monday", "slow"] },
   "story": "Since Sprint 02 the company sales model carries both the Sales and the ledger definitions. It now has 31 million order lines from 2023 onwards, and the executive page has gained a few visuals.",
   "impact": "Eight executives wait for the page at the start of every leadership meeting, and some have started asking for Excel exports instead. A slow report is an abandoned report, and the capacity is busiest exactly then.",
   "messages": [

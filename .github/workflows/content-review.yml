@@ -1,0 +1,33 @@
+name: Content review
+
+# Weekly: every dated item (lessons, certification outlines, Toolkit guides, scenarios, the external catalog) whose
+# review date has passed gets one GitHub issue, labelled content-review, with the official sources to check and
+# everything that depends on it. Re-verified items get their issue closed. Never duplicates (tools/content-review.js).
+on:
+  schedule:
+    - cron: '23 7 * * 1'   # Mondays
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only print what would change'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+      - name: Open, update and close content-review issues
+        run: node tools/content-review.js --sync ${{ inputs.dry_run && '--dry-run' || '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}

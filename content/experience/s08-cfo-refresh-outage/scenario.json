@@ -13,7 +13,7 @@
   "prereq": ["s07"],
   "next": "s09",
   "verified": { "date": "2026-10-01", "context": "Refresh troubleshooting and gateway data source docs (Microsoft Learn, Sept 2026)", "review_after_days": 180 },
-  "ticket": { "id": "INC-2071", "kind": "incident", "severity": "SEV1", "priority": "Critical", "status": "Open", "reporter": "nina", "opened": "Mon 8 Jun 2026, 07:02", "due": "CFO presents at 08:30", "labels": ["refresh", "gateway", "schema-change", "board"] },
+  "ticket": { "id": "INC-2071", "kind": "incident", "severity": "SEV1", "priority": "Critical", "status": "Open", "reporter": "nina", "opened": "Mon 8 Jun 2026, 07:02", "due": "CFO presents at 08:30", "labels": ["board", "overnight", "failed"] },
   "story": "Finance closed May on Friday 5 June at 18:00. The Finance Board Pack model refreshes every day at 05:30 and normally finishes by 06:10. Sam, the model's listed owner, is on holiday this week.",
   "impact": "The CFO presents May results to the board at 08:30. If she presents wrong numbers, or cancels because she can't trust them, that's a board-level incident. The clock matters as much as the cause.",
   "messages": [

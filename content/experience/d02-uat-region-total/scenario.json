@@ -11,7 +11,7 @@
   "minutes": 60,
   "skills": ["testing", "modeling", "communication"],
   "prereq": ["s01"],
-  "ticket": { "id": "UAT-017", "kind": "uat", "priority": "Normal", "reporter": "nina", "opened": "Tue 21 Apr 2026, 15:40", "labels": ["uat", "regions"] },
+  "ticket": { "id": "UAT-017", "kind": "uat", "priority": "Normal", "reporter": "nina", "opened": "Tue 21 Apr 2026, 15:40", "labels": ["uat", "regions", "excel-mismatch"] },
   "impact": "UAT is where the business decides whether to trust a report. Calling a definition difference a \"bug\" (or a real bug \"by design\") loses that trust for months.",
   "messages": [
     { "from": "nina", "to": "you", "via": "email", "at": "Tue 21 Apr, 15:40", "subject": "UAT-017: Region totals wrong", "body": [

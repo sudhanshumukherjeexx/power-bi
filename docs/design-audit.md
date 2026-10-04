@@ -84,9 +84,10 @@ At 390px the six labels share one row at 0.84rem with 2px of padding. They fit, 
 | Footer | five links plus three buttons | keep (export and import must stay reachable everywhere) |
 | Hubs | `.mcard` coloured top borders and shadows | border only |
 
-## Known debt after 2.3.0
+## Debt paid in 2.6.0
 
-- Flashcards, Glossary and Cheat sheet still carry their own base styles inline (`.top`, `.brand`, `.btn`, `.seg`…) instead of loading `pages.css`. A mechanical merge was tried in Phase 3 and reverted: `pages.css` contains level-page rules (`table`, `th, td`, `.intro h1`) that leak into those pages and overflowed the cheat sheet by up to 310px. The fix is to split `pages.css` into shared base (`base.css`) and level-page components, and then let all pages load the base. Pixel comparisons at 1280 and 390px in both themes guard the change.
+- **Duplicate base styles:** the shared base moved out of `pages.css` into `base.css`, which every page now loads. Flashcards, Glossary and Cheat sheet dropped 43 inline rules that repeated it, and keep only page-specific rules. Pixel comparison against full-page screenshots of 26 pages at 1280 and 390px in both themes: identical everywhere, except Glossary and Cheat sheet, whose section headings now use the design-system heading weight and line height (600, 1.2) instead of browser defaults. That was the intended unification; their page titles stay at 700 like every other page. The earlier attempt (Phase 3) failed because it loaded all of `pages.css`, including level-page table rules.
+- **Retired token names:** 644 references to the 2.0 names were migrated to the `tokens.css` names and the alias block deleted, with pixel-identical results on every page. `tests/design.test.js` rejects the old names and any inline copy of a `base.css` rule.
 
 ## Accessibility notes
 

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Power BI developer scenarios: tickets, incidents and decisions · Power BI Holy Grail</title>
 <meta name="description" content="Experience Mode: join a simulated BI team. Vague tickets, disputed revenue, a security incident, a slow dashboard, a merge conflict, a failed refresh and a Fabric migration decision, with evidence, hints, rubrics and model answers.">
@@ -17,6 +18,8 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Power BI Holy Grail: Learn Power BI by doing the work.">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="pbi-analytics" content="cloudflare:773c3e6c2e824cefa05db20e6acd6796">
+<script defer src="assets/js/analytics.js"></script>
 <!--/seo-->
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#15181D" media="(prefers-color-scheme: dark)">
@@ -30,6 +33,7 @@
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/base.css">
 <link rel="stylesheet" href="assets/css/pages.css">
 <link rel="stylesheet" href="assets/css/app.css">
 </head>
@@ -49,7 +53,7 @@
     <h1><span class="hl">Experience Mode</span></h1>
     <p>You've just joined the BI team at <b>Northwind Outdoors</b>, a mid-sized outdoor gear retailer. Requests arrive as tickets, emails and chat messages. They are incomplete, sometimes contradictory, and occasionally urgent. Nobody tells you which feature to use: you get the evidence and you decide.</p>
     <div class="lifecycle" role="note" aria-label="The BI delivery lifecycle these scenarios cover"><span>Request</span><i>→</i><span>Ambiguity</span><i>→</i><span>Discovery</span><i>→</i><span>Investigation</span><i>→</i><span>Design</span><i>→</i><span>Build</span><i>→</i><span>Test</span><i>→</i><span>UAT</span><i>→</i><span>Deploy</span><i>→</i><span>Monitor</span><i>→</i><span>Incident</span><i>→</i><span>Postmortem</span><i>→</i><span>Improve</span></div>
-    <p class="small muted">Each scenario has a brief, real files to work with, progressive hints, a professional rubric and a model answer that opens when you ask. Scenarios build on each other: the dashboard you build in Sprint 01 is the one Finance disputes in Sprint 02. Most need only Power BI Desktop (free). Where a Fabric or Service feature would need a licence, the evidence includes the logs and screenshots-as-data you would have seen.</p>
+    <p class="small muted">Each scenario has a brief, real files to work with, progressive hints, a professional rubric and a model answer that opens when you ask. Scenarios build on each other: the dashboard you build in Sprint 01 is the one Finance disputes in Sprint 02. Most need only Power BI Desktop (free). Where a Fabric or Service feature would need a licence, the evidence includes the logs and screenshots-as-data you would have seen. Pages work offline after your first visit; to work on a scenario without a connection, open it and choose <b>Make available offline</b> first.</p>
   </section>
   <div id="hub"><div class="empty">Loading scenarios…</div></div>
 </main>

@@ -11,7 +11,7 @@
   "minutes": 45,
   "skills": ["deployment", "modeling", "dax", "performance", "communication"],
   "prereq": ["s06"],
-  "ticket": { "id": "PR-231", "kind": "review", "priority": "Normal", "reporter": "sam", "opened": "Thu 4 Jun 2026, 11:20", "labels": ["pull-request", "review"] },
+  "ticket": { "id": "PR-231", "kind": "review", "priority": "Normal", "reporter": "sam", "opened": "Thu 4 Jun 2026, 11:20", "labels": ["pull-request", "needs-review"] },
   "impact": "Review is the cheapest place to stop a slow, wrong or confusing change. After it ships, every report built on the shared model inherits the problem.",
   "messages": [
     { "from": "sam", "to": "you", "via": "pr", "at": "Thu 4 Jun, 11:20", "subject": "PR-231: Add margin to the sales model", "body": ["Jordan needs margin by customer for Monday. Adds Line Margin and a few measures. Tested in Desktop, numbers look right. Can you approve before the 3pm train? 🙏"] }

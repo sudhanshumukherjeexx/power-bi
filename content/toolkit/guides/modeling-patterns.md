@@ -90,7 +90,7 @@ Every fact table has a **grain**: what one row means ("one order line", "one pro
 
 ## SCD type 2 in practice
 
-```sql
+```sql portable
 -- the dimension keeps every version
 -- CustomerSK (surrogate key), CustomerID (business key), Region, ValidFrom, ValidTo, IsCurrent
 -- facts store CustomerSK of the version valid on the transaction date

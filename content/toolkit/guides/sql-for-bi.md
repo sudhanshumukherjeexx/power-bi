@@ -50,11 +50,11 @@ Examples use the course's company pack (`orders`, `order_lines`, `customers`, `p
 
 ### One row per key (deduplicate)
 
-```sql
+```sql portable
 -- order_lines contains a re-exported batch: the same (OrderID, LineNo) appears twice
 WITH ranked AS (
   SELECT ol.*,
-         ROW_NUMBER() OVER (PARTITION BY OrderID, LineNo ORDER BY ProductKey) AS rn
+         ROW_NUMBER() OVER (PARTITION BY OrderID, "LineNo" ORDER BY ProductKey) AS rn
   FROM order_lines AS ol
 )
 SELECT * FROM ranked WHERE rn = 1;
@@ -64,7 +64,7 @@ When the source has a load timestamp or version column, order by it descending s
 
 ### Orphans: facts with no dimension row
 
-```sql
+```sql portable
 SELECT ol.ProductKey, COUNT(*) AS lines
 FROM order_lines AS ol
 LEFT JOIN products AS p ON p.ProductKey = ol.ProductKey
@@ -74,7 +74,7 @@ GROUP BY ol.ProductKey;
 
 ### Reconcile the report with the source
 
-```sql
+```sql sqlite
 SELECT strftime('%Y-%m', o.OrderDate) AS month,          -- FORMAT(o.OrderDate, 'yyyy-MM') in T-SQL
        ROUND(SUM(ol.Qty * ol.UnitPrice * (1 - ol.DiscountPct / 100.0)), 2) AS net_sales,
        COUNT(DISTINCT o.OrderID) AS orders
@@ -88,7 +88,7 @@ Put the result next to the same breakdown from your model. If they differ, the m
 
 ### Running total
 
-```sql
+```sql portable
 SELECT month, net_sales,
        SUM(net_sales) OVER (ORDER BY month ROWS UNBOUNDED PRECEDING) AS running
 FROM monthly_sales;
@@ -96,7 +96,7 @@ FROM monthly_sales;
 
 ### Incremental extract
 
-```sql
+```sql tsql
 -- the predicate Power BI's incremental refresh folds into each partition query
 SELECT * FROM orders
 WHERE OrderDate >= @RangeStart AND OrderDate < @RangeEnd;

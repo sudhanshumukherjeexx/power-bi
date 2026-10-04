@@ -37,7 +37,7 @@ The repository has three parts: `content/` is what you edit, `site/` is the webs
 | `content/schema/` | JSON Schemas for the content files. VS Code validates against them automatically via `$schema`. |
 | Hand-written pages (in `site/`) | `index.html`, `learn.html`, `experience.html`, `progress.html`, `diagnostic.html`, `templates.html`, `flashcards.html`, `glossary.html`, `cheatsheet.html`, `404.html`. Edit them directly; the build only rewrites the navigation between `<!--nav:…-->` and `<!--/nav-->`. |
 | Hand-written scripts | `site/assets/js/`: `store.js` (progress schema, migration, import validation, mastery and readiness; no DOM, tested in Node), `site.js` (shared helpers, search, export and import), `progress.js` (every score and its evidence type), `course.js`, `levelpage.js`, `learn.js`, `home.js`, `diagnostic.js`, `progresspage.js`, `xp.js`, `xphub.js`, `tplpage.js`, `tkhub.js`, `tkguide.js`. |
-| `site/assets/css/` | `tokens.css` (the only place colours, type, radii and shadows are defined), then `site.css`, `pages.css`, `app.css`. |
+| `site/assets/css/` | `tokens.css` (the only place colours, type, radii and shadows are defined), `site.css` (search, glossary pop-ups, shared widgets), `base.css` (reset, type, top bar, buttons, page wrapper, footer: every page loads it), `pages.css` (level and hub page components), `app.css` (everything newer). Flashcards, Glossary and Cheat sheet keep only their page-specific rules inline. |
 | `tools/lib/icons.js` | The line-icon set. The build writes it to `site/assets/icons/icons.svg`; draw an icon with `<svg class="ic" aria-hidden="true"><use href="assets/icons/icons.svg#name"/></svg>`. |
 | `site/assets/fonts/`, `site/assets/icons/` (app icons), `site/manifest.webmanifest` | Self-hosted IBM Plex (Latin subset, licence in `OFL.txt`), app icons and the app manifest. |
 | `tools/` | The build (`build.js` and `tools/lib/`), data generators, starter-project builder, enterprise data generator. |
@@ -129,11 +129,23 @@ The BI Developer Toolkit (`toolkit.html`) is built from `content/toolkit/`:
 2. Map skills to topics.
 3. Update `verified`.
 
+## SQL examples
+
+Every SQL block declares a dialect: `portable` (must run on SQLite **and** SQL Server), `sqlite` or `tsql` (solutions: `"dialect"`; guides: ` ```sql portable `). Portable code quotes `"LineNo"` (reserved in T-SQL) and doesn't use `CREATE TABLE … AS`. CI parses every block with SQLFluff and runs portable blocks with expected rows on SQLite. `.github/workflows/sql-server.yml` runs them on SQL Server 2022 and compares the results. See [docs/sql-validation.md](docs/sql-validation.md), and regenerate its table with `node tools/sql-catalog.js --doc`.
+
+## Keeping content current
+
+Fast-moving content has `"verified": { "date", "review_after_days" }`. Every Monday `.github/workflows/content-review.yml` opens one `content-review` issue per item whose review is due, listing the official sources and what depends on it, and closes it once you've updated the date. Run `node tools/content-review.js` to see what's due, or add `--today 2027-01-01` to look ahead.
+
+## Security
+
+Pages carry a Content Security Policy generated at build time. Don't add inline `on…=` handlers or `javascript:` URLs. New inline `<script>` blocks are allowed by hash automatically, but prefer a file in `assets/js/`. Imported progress is untrusted: extend `store.js`'s whitelist (and its tests) for any new stored field. Pull requests are reviewed according to `.github/CODEOWNERS`.
+
 ## Design rules
 
 The visual identity is Graphite × Warm Ivory × Grail Gold, set in IBM Plex. `tests/design.test.js` enforces the mechanical parts.
 
-- **Tokens only.** Use the variables in `tokens.css` (`--surface-1`, `--text-secondary`, `--border`, `--gold-line`…). Never write a hex colour in a component. Old names such as `--panel` and `--ink` still work as aliases until 2.4.0.
+- **Tokens only.** Use the variables in `tokens.css` (`--surface-1`, `--text-secondary`, `--border`, `--gold-line`…). Never write a hex colour in a component. The 2.0 names (`--panel`, `--ink`, `--yellow`…) were retired in 2.6.0; the design test rejects them.7.0).
 - **Gold has four jobs:** the primary action, the current location, progress, and important insight. Fills use `--grail-gold` with `--on-gold` text. A line or outline that is the only indicator (current tab, focus) uses `--gold-line`, which keeps 3:1 contrast. Don't use gold for decoration.
 - **Topic colour is an accent:** a dot (`.tag.sql`), a 3px rule or a hairline border, never a fill behind text.
 - **The rule motif:** a 2px gold line with a mono caption (`.note-rule`, callouts, *Expected result*) marks insight. Keep it rare enough to mean something.

@@ -11,7 +11,7 @@
   "minutes": 30,
   "skills": ["communication", "performance"],
   "prereq": ["s04"],
-  "ticket": { "id": "COMM-12", "kind": "ticket", "priority": "Normal", "reporter": "elena", "opened": "Tue 12 May 2026, 16:00", "labels": ["communication"] },
+  "ticket": { "id": "COMM-12", "kind": "ticket", "priority": "Normal", "reporter": "elena", "opened": "Tue 12 May 2026, 16:00", "labels": ["exec-update", "follow-up"] },
   "impact": "Senior developers are trusted because they can be understood. The same facts, told the wrong way, get either ignored by executives or dismissed by engineers.",
   "messages": [
     { "from": "elena", "to": "you", "via": "chat", "at": "Tue 12 May, 16:00", "body": ["Grace asked me why the capacity is near its limit every morning, and Kenji asked the same thing in the platform channel. Same facts below. Write both replies. Max 120 words each."] }

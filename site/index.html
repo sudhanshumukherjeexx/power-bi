@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-EhATc4qV4N8Lf/PayurUhym6aOw1a0ntqPRM1qVM7rQ=' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <script>
 /* Old links into the former all-in-one home page (index.html#b-pq, #ds-FactSales, #certs …) go to the page that has that section now */
@@ -21,6 +22,8 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Power BI Holy Grail: Learn Power BI by doing the work.">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="pbi-analytics" content="cloudflare:773c3e6c2e824cefa05db20e6acd6796">
+<script defer src="assets/js/analytics.js"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Course","name":"Power BI Holy Grail","description":"A free, open-source Power BI apprenticeship: hands-on assignments with checkable results, then realistic tickets, incidents and architecture decisions from a simulated BI team.","url":"https://sudhanshumukherjeexx.github.io/power-bi/","inLanguage":"en","isAccessibleForFree":true,"provider":{"@type":"Person","name":"Sudhanshu Mukherjee","url":"https://github.com/sudhanshumukherjeexx"},"license":"https://opensource.org/licenses/MIT","hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"Self-paced"}}</script>
 <!--/seo-->
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
@@ -35,6 +38,7 @@
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/base.css">
 <link rel="stylesheet" href="assets/css/pages.css">
 <link rel="stylesheet" href="assets/css/app.css">
 </head>
@@ -51,7 +55,7 @@
 <!--/nav-->
 <main class="wrap" id="app" tabindex="-1">
   <section class="home-hero" aria-labelledby="h1">
-    <div class="kicker" id="kicker">Free · open source · works offline</div>
+    <div class="kicker" id="kicker">Free · open source · installable</div>
     <h1 id="h1">Learn Power BI by <span class="hl">doing the work</span>.</h1>
     <p class="lead" id="lead">Start with hands-on skills you can check against real numbers. Then take tickets, incidents and decisions from a simulated BI team: the situations Power BI developers usually meet only after years on the job.</p>
     <div class="cta" id="cta">

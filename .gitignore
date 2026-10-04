@@ -28,3 +28,6 @@ npm-debug.log*
 # browser test output
 playwright-report/
 test-results/
+
+# SQL extracted for SQLFluff (node tools/sql-catalog.js --extract)
+.sql-lint/

@@ -1,95 +1,161 @@
 # Changelog
 
-## Unreleased
+Each release lists changes **for learners**, **for maintainers**, **breaking changes**, **progress data** (anything that touches what's stored in your browser) and **curriculum**. Releases are tagged `vX.Y.Z` and published on GitHub. Release notes are generated from this file by `node tools/release-notes.js <version>`.
 
-### Learner changes: accessibility fixes (Phase 5)
+## 2.6.0 (2026-10-04): operations
 
-- **Flashcards:** a real **Show answer / Show question** button flips the card, so keyboard and screen-reader users have a proper control. The card is a labelled region instead of a button with buttons inside it, and the hidden face is `inert`, so focus can't land on content you can't see. Tapping the card still flips it.
-- **Skill Mode topic tabs** follow the tab pattern: the arrow keys, Home and End move between Assignments, Interview questions and Assessment, and each tab is tied to its panel.
-- **Scrollable code and tables** that overflow become focusable, labelled regions, so you can scroll them with the keyboard. Short blocks add no extra tab stops.
+### For learners
+
+- **SQL that runs where it says it runs.** Testing every example on SQL Server 2022 found four bugs: `LineNo` is a reserved word in T-SQL, so every query that used it unquoted failed on SQL Server (25 lines, including the `MERGE` example and the slow-query evidence file); the SCD type 2 solution used `CREATE TABLE … AS`, which SQL Server doesn't have; and the early-arriving-facts query aggregated over `EXISTS`, which SQL Server rejects. All four now give identical answers on SQLite and SQL Server. Every SQL example says where it runs (portable, SQLite or T-SQL).
+- **Make a scenario available offline.** A button on each scenario saves its evidence files, model answer and deliverable templates on your device, and the scenario shows **Available offline**. The pages themselves work offline after your first visit; the site no longer claims more than that.
+- **Tickets don't give the answer away.** Ticket labels are what a reporter would write (`#executive`, `#monday`, `#slow`), not the technical cause or the skill being tested. The skills a scenario practises appear when you finish it.
+- **Stronger page security:** a Content Security Policy on every page means injected markup can't run script.
+- **Telling us what's missing:** when a search finds nothing, you can suggest the topic in a prefilled GitHub issue (only if you choose to).
+- **Privacy:** the site now counts anonymous page views with Cloudflare Web Analytics (cookieless, aggregate). It never loads under Do Not Track or Global Privacy Control, on pages with a search in the address, or if you turn it off under **Progress → Privacy**. See [PRIVACY.md](PRIVACY.md).
+
+### For maintainers
+
+- **GitHub Actions pinned to commit SHAs** and upgraded to their Node 24 releases (checkout v7, setup-node v7, setup-python v7, configure-pages v6, upload-pages-artifact v5, deploy-pages v5, upload-artifact v7). **Dependabot** covers npm, Actions and pip. **CODEOWNERS** is split by area.
+- **SQL validation in three levels:** executed (SQLite), parsed (SQLFluff 4.4.0, new `sql` CI job that gates deploys) and SQL Server (`.github/workflows/sql-server.yml`, SQL Server 2022 CU27, `tools/sqlserver-check.js` with the pinned `mssql` driver). It compares every executed portable query's result on both engines. See [docs/sql-validation.md](docs/sql-validation.md).
+- **Content review issues:** `.github/workflows/content-review.yml` opens, updates and closes one `content-review` issue per item past its review date (`tools/content-review.js`).
+- **Content Security Policy** generated per page (`tools/lib/build-csp.js`) and verified by `tests/security.test.js` and `tests/e2e/security.spec.js`. The secret scanner covers tracked text files.
+- **Offline:** the service worker keeps `pbi-offline-v1` across versions and falls back to it (`tests/e2e/offline.spec.js` runs the real service worker offline).
+- **Analytics:** `site/assets/js/analytics.js` loads Cloudflare Web Analytics only with a token in `content/site.json` (now set), and never under Do Not Track, Global Privacy Control, an opt-out, a local preview or a search URL (`tests/analytics.test.js`).
+- **Repository presentation:** README rewritten around screenshots (`tools/render-screenshots.js`), a GitHub social preview image, and release notes generated from this changelog (`tools/release-notes.js`).
+- `.gitattributes` keeps text files LF everywhere, so the build is byte-identical on Windows and Linux.
+- **Design-system debt paid:** a shared `base.css` replaces the copies of the base styles in Flashcards, Glossary and Cheat sheet (43 inline rules removed), and the 2.0 token names are retired (644 references migrated, aliases deleted). Pixel-compared on 26 pages at two widths and both themes: identical apart from Glossary and Cheat sheet section headings, which now use the design-system heading style.
+- `tests/design.test.js` also guards the brand images (social preview, link preview, README screenshots) at their exact sizes.
+
+### Breaking changes
+
+None for learners. Contributors: the 2.0 token names (`--panel`, `--ink`, `--yellow`…) no longer exist; use the `tokens.css` names. Contributors: every SQL block must declare a dialect, and portable SQL must quote `"LineNo"`. The tests say where.
+
+### Progress data
+
+Unchanged (schema 3). Offline downloads live in the browser's Cache Storage, not in your progress, and aren't exported.
+
+### Curriculum
+
+SQL fixes in `dw-keys-0`, `dw-keys-2`, `sql-load-2`, `sql-tune-0`, `sql-window-0`, `qa-data-0`, `sql-load-0`, the SQL for BI guide and the slow-query evidence file. Ticket labels rewritten for all 18 scenarios.
+
+## 2.5.0 (2026-10-03): tested in a real browser
+
+### For learners
+
+- **Flashcards:** a real **Show answer / Show question** button flips the card. The card is a labelled region instead of a button with buttons inside it, and the hidden face is `inert`, so focus can't land on content you can't see.
+- **Skill Mode topic tabs** follow the tab pattern: the arrow keys, Home and End move between Assignments, Interview questions and Assessment.
+- **Scrollable code and tables** that overflow can be scrolled with the keyboard. Short blocks add no extra tab stops.
 - **Touch targets:** the Toolkit search button and every primary button are at least 44px tall on phones.
 
-### Maintainer changes (Phase 5)
+### For maintainers
 
-- **Pinned dev dependencies** with a committed lockfile: `@playwright/test` 1.63.0, `@axe-core/playwright` 4.13.0, `html-validate` 9.7.1. The site still ships with no runtime dependency. html-validate 11 is available but needs Node 22.22 or later, so it's left for a deliberate upgrade.
-- **`tests/e2e/`** (106 tests): critical journeys (new learner, Skill Mode, Experience Mode, flashcards, search, export and import, Toolkit, theme, phone navigation), axe-core on nine representative pages in both themes (serious or critical issues fail the build), keyboard paths (skip link, focus rings, search dialog focus trap, both tab widgets), one `h1` per page, labelled fields, reduced motion, and layout assertions at four widths in both themes. Layout is checked with assertions (overflow, overlapping controls, touch targets) rather than pixel snapshots, which differ between operating systems. Screenshots are attached to the report.
-- **CI:** `npm ci` everywhere, and a new `browser` job that `deploy` waits for. On failure, the Playwright report is uploaded as an artifact.
-- `tools/serve.js` (`npm run serve`) serves `site/` under `/power-bi/` like GitHub Pages, with a 404 fallback. It's used by the browser tests and for local preview.
+- **Pinned dev dependencies** with a lockfile: `@playwright/test` 1.63.0, `@axe-core/playwright` 4.13.0, `html-validate` 9.7.1. There is still no runtime dependency.
+- **`tests/e2e/`** (106 tests at release): critical journeys, axe-core on nine pages in both themes (serious or critical issues fail the build), keyboard paths, one `h1` per page, labelled fields, reduced motion, and layout assertions at 1440/1024/768/390px. Layout uses assertions, not pixel snapshots.
+- **CI:** `npm ci`, and a new `browser` job that `deploy` waits for. The report is uploaded on failure. `npm run serve` previews like GitHub Pages.
+- **Fixed:** the build was not byte-identical on Windows (CRLF working copies), which failed CI's "generated files are current" check. `.gitattributes` and a CR-insensitive cache version fix it.
 
-### Learner changes: readable without JavaScript, findable by search engines (Phase 4)
+### Breaking changes
 
-- **Pages show their content before any script runs.** Level and track pages carry every assignment, interview question and quiz question in the HTML, and scenarios carry the ticket, stakeholder messages, tasks, deliverables and evidence list. The Library and the glossary are complete too. Search engines, link previews, reader modes and people with JavaScript off now see the real material. Without JavaScript, the Beginner page went from about 95 words to about 3,000.
-- **No answers leak.** Hints, rubrics, retrospectives, model answers, interview answers, quiz explanations and worked solutions are never in the HTML. They still load only when you ask, and a test enforces this.
-- **Honest fallbacks:** each page says exactly what needs JavaScript there (ticking, readiness, quiz checking, reveals, notes) instead of a generic message.
-- **Link previews:** a social image in the new identity, Open Graph and Twitter tags on every page, and one canonical URL each.
+None.
 
-### Maintainer changes (Phase 4)
+### Progress data
 
-- `tools/lib/static-render.js` (levels, tracks, scenarios, Library, glossary), `tools/lib/build-seo.js` (`sitemap.xml`, `robots.txt`), and `tools/render-og.js` with `tools/og/og.html` (`site/assets/og/og-default.png`).
-- `partials.head()` takes `type` and `jsonld`. Hand-written pages get the SEO block between `<!--seo-->` markers.
-- Structured data: `Course`, `LearningResource`, `TechArticle`, `BreadcrumbList`.
-- `tests/leaks.test.js` checks for answer leaks and SEO completeness. `tests/build.test.js` validates JSON-LD as JSON. The link test no longer scans `tools/` templates, because their output pages are checked instead.
+Unchanged (schema 3).
 
-### Learner changes: one place for everything, and continuation first (Phase 3)
+### Curriculum
 
-- **Resources is now the Library, inside the Toolkit.** The glossary, cheat sheets, external catalog, datasets, starter project and study tools are a seventh Toolkit door, so there is one place to look things up instead of two. `resources.html` still works and keeps all its content.
-- **Five destinations:** Learn · Experience · Interview · Toolkit · Progress. "Practice" is now called **Experience**, the name the rest of the site uses.
-- **Phones get a More menu** with Progress, Glossary, Library, Templates, and export/import. The header row no longer squeezes six labels into 390px. Every target is at least 44px, and the menu works with the keyboard (Enter opens it, Escape closes it and returns focus).
-- **Returning home is continuation first:** one Continue card (the ticket id, stage and deliverables for a scenario, or readiness for a level), then one line with cards due, current stage, focus skill and portfolio evidence. Everything else folds under *Explore other paths*. First-time visitors see the same welcome as before.
-- **Focus mode in scenarios:** once you take a ticket, the main navigation steps back and the header shows **← Exit scenario** and the ticket id.
-- **Less dashboard:** the four stat tiles on the home page and the Experience hub are replaced by a single line each.
+None.
 
-### Maintainer changes (Phase 3)
+## 2.4.0 (2026-10-03): readable without JavaScript, findable
 
-- `content/toolkit/index.json`: a door may have `href` (a page of the site) instead of guides. The Toolkit check rejects a door that has both.
-- `tools/lib/partials.js`: `SECTIONS` (five), `ALIAS` (`resources` → `toolkit`), `MORE`, and `nav(active, r, page)` marks the current page inside More.
-- The `hidden` attribute now always wins over component `display` rules.
+### For learners
 
-### Learner changes: a new visual identity (Phase 2)
+- **Pages show their content before any script runs.** Level and track pages carry every assignment, interview question and quiz question. Scenarios carry the ticket, messages, tasks, deliverables and evidence list. The Library and glossary are complete too. Without JavaScript, the Beginner page went from about 95 words to about 3,000.
+- **No answers leak.** Hints, rubrics, retrospectives, model answers, interview answers, quiz explanations and worked solutions never appear in the HTML. A test enforces this.
+- **Honest fallbacks:** each page says exactly what needs JavaScript there.
+- **Link previews:** a social image, Open Graph and Twitter tags on every page, and one canonical URL each.
 
-- **Graphite × Warm Ivory × Grail Gold.** Warm ivory surfaces and graphite text replace the blue-grey palette, and a true graphite dark theme replaces the inverted one. Grail Gold, which evolved from Power BI yellow, now marks only the primary action, where you are, progress and important insight.
-- **Calmer pages.** Topic colours are now small dots and thin rules instead of solid blocks. Selected options are quiet underlines instead of gold slabs. Corners are tighter, and cards no longer cast shadows.
-- **The Holy Grail rule:** a thin gold line with a small mono caption marks expected results, notes, warnings and setup instructions.
-- **Experience Mode looks operational:** each ticket is a graphite panel with mono ids, outlined severity labels and timestamps, so a scenario reads as work, not a lesson.
-- **Line icons** replace emoji in the interface: the Toolkit doors, study tools, home page and buttons.
-- **New app icon:** graphite, with a gold rule.
-- **Fonts load from the site itself.** IBM Plex is self-hosted, so it works offline from the first visit and no request goes to Google.
-- **Contrast:** every text and indicator colour was checked in both themes. axe-core reports no contrast violations on the 14 main pages.
+### For maintainers
 
-### Maintainer changes (Phase 2)
+- `tools/lib/static-render.js`, `tools/lib/build-seo.js` (`sitemap.xml`, `robots.txt`), `tools/render-og.js` with `tools/og/og.html`.
+- Structured data: `Course`, `LearningResource`, `TechArticle`, `BreadcrumbList`. Hand-written pages get the SEO block between `<!--seo-->` markers.
+- `tests/leaks.test.js` (answer leaks, SEO completeness). `tests/build.test.js` validates JSON-LD.
 
-- `site/assets/css/tokens.css` is the single source for colours, type, radii, spacing and shadows. The five copies of the token set (in `pages.css` and inline in Flashcards, Glossary and Cheat sheet) are gone, and the old token names remain as aliases until 2.4.0.
-- `tools/lib/icons.js` is the icon set. The build writes `site/assets/icons/icons.svg`, and pages use `<use href>`.
-- `tests/design.test.js`: one token source, no font CDN, `tokens.css` loaded first, icons exist, no emoji in chrome, radii on the scale.
-- CONTRIBUTING has a new **Design rules** section.
+### Breaking changes
 
-### Learner changes: trustworthy progress (2.2.0, Phase 1)
+None.
 
-- **Every score says what it rests on.** Progress now separates *verified* evidence (your first answer to each multiple-choice question), *self-assessed* evidence (ticked assignments and deliverables, your own rubric ratings) and *recall* (flashcards). Each percentage on the progress page has a "How this is calculated" panel.
-- **Only your first multiple-choice answer counts.** You can still change answers to learn, but readiness uses the first one.
-- **One definition of flashcard mastery** everywhere: box 1 = 25%, 2 = 50%, 3 = 75%, 4 or more = 100%. "Mastered" now means box 4, which takes four correct recalls over at least 11 days. It used to mean box 3, and some scores counted a card seen correctly once as learned.
-- **Professional stages need quality, not only completion.** Experience credit is now the average outcome of finished scenarios multiplied by the share finished. A stage is cleared when skill readiness reaches 70%, 70% of its scenarios are finished and their average outcome is 65% or more. Finishing scenarios with low ratings no longer moves you up.
-- **Hints no longer lower your score.** A scenario shows an *outcome* (your rubric rating) and, separately, *independence* (−10 per hint, at most −40, and −30 for opening the model answer early). Only the outcome counts toward competency and stages.
-- **Certification preparation** is weighted by Microsoft's published domain weights (midpoint of each range). It shows *curriculum coverage* and *practice* separately, and says plainly that neither predicts an exam result.
-- **"Portfolio" is now "Portfolio evidence"**, and says that it lists deliverables you ticked rather than inspected files.
-- **Safer import.** Imported progress files are validated field by field: unknown fields, wrong types, oversized text, unknown lessons or scenarios, and any non-internal link are dropped. Before anything is replaced, a dialog compares the file with this browser. Your current progress is kept as a backup, and **Progress → Restore previous progress** brings it back. Resetting also keeps a backup.
+### Progress data
 
-**Your numbers may drop after this update.** That's intended: stage and readiness figures now count only what the evidence supports.
+Unchanged.
 
-### Maintainer changes
+### Curriculum
 
-- `site/assets/js/store.js` (new, DOM-free) holds the progress schema, migration, safe internal links, mastery, readiness and import validation. Every page loads it before `site.js`.
-- Progress schema 2 → 3 (adds `quizFirst`, seeded from `quiz`). Export file version 3, and import accepts versions 1–3. No field was removed or renamed.
-- `tools/lib/cert-weights.js` normalises certification domain weights at build time (`wm`, `wn` in `CERTS`).
-- New tests: `tests/scoring.test.js` and `tests/progress-import.test.js` (hostile import fixtures) run the shipped scripts in a Node VM (`tests/lib/browser-env.js`). The link test now fails any new-tab link without `rel="noopener"`.
-- Audits and the plan for the next phases are in `docs/`: design, progress scoring, security, SEO and the implementation plan.
+None.
 
-### Earlier unreleased changes
+## 2.3.0 (2026-10-03): a new identity and a simpler map
 
-### Changed
+### For learners
 
-- **Repository layout:** the published website moved into `site/`, so the repository root now holds only the project: `content/`, `site/`, `tools/`, `tests/`, `docs/` and the project files. Public URLs are unchanged.
-- **Deployment:** GitHub Actions publishes `site/` to GitHub Pages after every push to `main`, but only when all checks pass, so a broken build can't go live. Pull requests run the same checks.
+- **Graphite × Warm Ivory × Grail Gold.** Warm ivory and graphite replace the blue-grey palette, with a true graphite dark theme. Gold marks only the primary action, where you are, progress and important insight.
+- **Calmer pages:** topic colours are small dots, selected options are quiet underlines, corners are tighter, and cards have no shadows. A thin gold rule with a mono caption marks expected results, notes and setup.
+- **Experience Mode looks operational:** graphite ticket panels, mono ids, outlined severity labels.
+- **Line icons** replace interface emoji. There is a new graphite app icon, and IBM Plex is self-hosted, so there are no requests to Google.
+- **One place for everything:** Resources is now the **Library**, a door of the Toolkit. `resources.html` keeps working.
+- **Five destinations:** Learn · Experience · Interview · Toolkit · Progress ("Practice" is now Experience). **Phones get a More menu.**
+- **Returning home is continuation first:** one Continue card and one line of what's due. **Focus mode** in scenarios.
+- **Contrast** checked in both themes: no axe contrast violations on the main pages.
+
+### For maintainers
+
+- `site/assets/css/tokens.css` is the single token source. The old names stay as aliases for now. `tools/lib/icons.js` builds the icon sprite. `tests/design.test.js` enforces the design rules, and CONTRIBUTING has a **Design rules** section.
+- Toolkit doors may have `href`. `partials.js` has `SECTIONS`, `ALIAS` and `MORE`. The `hidden` attribute always wins over component `display` rules.
+
+### Breaking changes
+
+`Resources` is no longer a top-level tab. Its page and anchors still work.
+
+### Progress data
+
+Unchanged.
+
+### Curriculum
+
+None.
+
+## 2.2.0 (2026-10-02): trustworthy progress
+
+### For learners
+
+- **Every score says what it rests on:** *verified* (your first multiple-choice answer), *self-assessed* (ticks, deliverables, your rubric ratings) and *recall* (flashcards), each with a "How this is calculated" panel.
+- **Only your first multiple-choice answer counts** toward readiness.
+- **One definition of flashcard mastery:** box 1 = 25%, 2 = 50%, 3 = 75%, 4 or more = 100%. "Mastered" means box 4.
+- **Professional stages need quality, not only completion:** experience credit is average outcome × share finished. A stage clears at 70% skill readiness, 70% of scenarios finished and a 65% average outcome.
+- **Hints no longer lower your score.** Outcome and independence are shown separately.
+- **Certification preparation** is weighted by Microsoft's domain weights, shown as curriculum coverage and practice. It is not an exam prediction.
+- **"Portfolio" is now "Portfolio evidence".**
+- **Safer import:** imported files are validated field by field, you compare them before replacing, and your current progress is kept as a backup (**Progress → Restore previous progress**).
+- **The website moved into `site/`** and is deployed by GitHub Actions only after every check passes. Public URLs are unchanged.
+
+**Your numbers may drop after this update.** That's intended: they now count only what the evidence supports.
+
+### For maintainers
+
+- `site/assets/js/store.js` (DOM-free schema, migration, safe links, mastery, readiness, import validation). `tools/lib/cert-weights.js`.
+- `tests/scoring.test.js` and `tests/progress-import.test.js` (hostile fixtures) run the shipped scripts in a VM. New-tab links must have `rel="noopener"`.
+- Audits and the implementation plan are in `docs/`.
+
+### Breaking changes
+
+The repository layout changed: the website is in `site/`. GitHub Pages must use **GitHub Actions** as its source (see `docs/deployment.md`).
+
+### Progress data
+
+Schema 2 → 3: adds `quizFirst`, seeded from `quiz`. Export file version 3, and import accepts versions 1–3. Nothing was removed or renamed. A backup key, `pbi-holy-grail-backup-v1`, was added.
+
+### Curriculum
+
+None.
 
 ## 2.1.0 (2026-10-02): the BI Developer Toolkit
 

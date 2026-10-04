@@ -1,0 +1,24 @@
+# Weekly update proposals for the pinned dev tools (npm) and the SHA-pinned GitHub Actions.
+# Each proposal is a pull request, so CI (data, build, tests, HTML, browser) checks it before anyone merges.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 5
+    groups:
+      dev-tools:
+        patterns: ['*']
+        update-types: [minor, patch]
+    labels: [dependencies]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly, day: monday }
+    groups:
+      actions:
+        patterns: ['*']
+    labels: [dependencies]
+  - package-ecosystem: pip
+    directory: /
+    schedule: { interval: monthly }
+    labels: [dependencies]

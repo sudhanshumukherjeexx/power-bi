@@ -5,12 +5,12 @@
       {
         "lang": "SQL", "title": "Data quality suite", "dialect": "portable",
         "src": [
-          "SELECT 'duplicate line keys' AS TestName, COUNT(*) - COUNT(DISTINCT CONCAT(OrderID, '|', LineNo)) AS FailingRows FROM order_lines",
+          "SELECT 'duplicate line keys' AS TestName, COUNT(*) - COUNT(DISTINCT CONCAT(OrderID, '|', \"LineNo\")) AS FailingRows FROM order_lines",
           "UNION ALL SELECT 'orphan lines', COUNT(*) FROM order_lines AS l WHERE NOT EXISTS (SELECT 1 FROM orders AS o WHERE o.OrderID = l.OrderID)",
           "UNION ALL SELECT 'orphan returns', COUNT(*) FROM returns AS r WHERE NOT EXISTS (SELECT 1 FROM orders AS o WHERE o.OrderID = r.OrderID)",
           "UNION ALL SELECT 'non-positive quantity', COUNT(*) FROM order_lines WHERE Qty IS NULL OR Qty <= 0",
           "UNION ALL SELECT 'returned more than sold', COUNT(*) FROM returns AS r",
-          "          WHERE r.Qty > (SELECT MAX(l.Qty) FROM order_lines AS l WHERE l.OrderID = r.OrderID AND l.LineNo = r.LineNo)",
+          "          WHERE r.Qty > (SELECT MAX(l.Qty) FROM order_lines AS l WHERE l.OrderID = r.OrderID AND l.\"LineNo\" = r.\"LineNo\")",
           "UNION ALL SELECT 'ship before order', COUNT(*) FROM orders WHERE ShipDate IS NOT NULL AND ShipDate < OrderDate",
           "UNION ALL SELECT 'EUR month without rate', COUNT(*) FROM orders AS o",
           "          WHERE o.Currency = 'EUR' AND NOT EXISTS (SELECT 1 FROM fx_rates AS f WHERE f.Month = SUBSTRING(CAST(o.OrderDate AS VARCHAR(10)), 1, 7))",

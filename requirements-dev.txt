@@ -1,0 +1,2 @@
+# Python dev tools (CI "sql" job): SQLFluff parses every SQL example in its dialect. Pinned; Dependabot proposes updates.
+sqlfluff==4.4.0

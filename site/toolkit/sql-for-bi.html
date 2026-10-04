@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>SQL you need to survive as a BI developer · BI Developer Toolkit · Power BI Holy Grail</title>
 <meta name="description" content="Not SQL from scratch: the queries a BI developer reads and writes every week, why each matters for Power BI, and a decision guide for where each transformation should happen.">
@@ -16,6 +17,8 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Power BI Holy Grail: Learn Power BI by doing the work.">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="pbi-analytics" content="cloudflare:773c3e6c2e824cefa05db20e6acd6796">
+<script defer src="../assets/js/analytics.js"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Toolkit","item":"https://sudhanshumukherjeexx.github.io/power-bi/toolkit.html"},{"@type":"ListItem","position":2,"name":"Reference","item":"https://sudhanshumukherjeexx.github.io/power-bi/toolkit/reference.html"},{"@type":"ListItem","position":3,"name":"SQL you need to survive as a BI developer","item":"https://sudhanshumukherjeexx.github.io/power-bi/toolkit/sql-for-bi.html"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"SQL you need to survive as a BI developer","description":"Not SQL from scratch: the queries a BI developer reads and writes every week, why each matters for Power BI, and a decision guide for where each transformation should happen.","url":"https://sudhanshumukherjeexx.github.io/power-bi/toolkit/sql-for-bi.html","inLanguage":"en","isAccessibleForFree":true,"dateModified":"2026-10-02","about":["SQL engine","SSMS"],"isPartOf":{"@type":"WebSite","name":"Power BI Holy Grail","url":"https://sudhanshumukherjeexx.github.io/power-bi/"}}</script>
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
@@ -30,6 +33,7 @@
 <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/base.css">
 <link rel="stylesheet" href="../assets/css/pages.css">
 <link rel="stylesheet" href="../assets/css/app.css">
 </head>
@@ -62,7 +66,7 @@
 <div class="codewrap"><span class="lang">sql</span><button class="cp" type="button" data-copycode>Copy</button><pre><code>-- order_lines contains a re-exported batch: the same (OrderID, LineNo) appears twice
 WITH ranked AS (
   SELECT ol.*,
-         ROW_NUMBER() OVER (PARTITION BY OrderID, LineNo ORDER BY ProductKey) AS rn
+         ROW_NUMBER() OVER (PARTITION BY OrderID, &quot;LineNo&quot; ORDER BY ProductKey) AS rn
   FROM order_lines AS ol
 )
 SELECT * FROM ranked WHERE rn = 1;</code></pre></div>

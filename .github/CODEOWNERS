@@ -1,0 +1,37 @@
+# Who reviews what. GitHub requests a review from the owner of every path a pull request touches.
+# One maintainer today; the areas are split so specialist reviewers can be added per line later
+# (for example: /content/experience/ @maintainer @scenario-reviewer).
+
+# Default: everything
+*                               @sudhanshumukherjeexx
+
+# Curriculum: Skill Mode lessons, worked solutions, flashcards, glossary
+/content/skills/                @sudhanshumukherjeexx
+/content/solutions/             @sudhanshumukherjeexx
+/content/flashcards/            @sudhanshumukherjeexx
+/content/glossary/              @sudhanshumukherjeexx
+
+# Experience Mode scenarios and their model answers
+/content/experience/            @sudhanshumukherjeexx
+
+# Certification outlines (dated, versioned; check against Microsoft's study guides)
+/content/certifications/        @sudhanshumukherjeexx
+
+# Toolkit guides and the external resource catalog
+/content/toolkit/               @sudhanshumukherjeexx
+/content/resources/             @sudhanshumukherjeexx
+
+# Engineering: build, generators, tests, CI
+/tools/                         @sudhanshumukherjeexx
+/tests/                         @sudhanshumukherjeexx
+/.github/                       @sudhanshumukherjeexx
+/package.json                   @sudhanshumukherjeexx
+/package-lock.json              @sudhanshumukherjeexx
+
+# Progress storage and import validation (security-relevant)
+/site/assets/js/store.js        @sudhanshumukherjeexx
+/site/assets/js/progress.js     @sudhanshumukherjeexx
+
+# Design system
+/site/assets/css/               @sudhanshumukherjeexx
+/tools/lib/icons.js             @sudhanshumukherjeexx

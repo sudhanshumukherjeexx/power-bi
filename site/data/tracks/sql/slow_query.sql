@@ -10,7 +10,7 @@ LEFT JOIN dbo.Customers AS c
   ON c.CustomerID = o.CustomerID
 WHERE YEAR(o.OrderDate) = 2026
   AND UPPER(o.Status) = 'COMPLETED'
-  AND (SELECT COUNT(*) FROM dbo.Returns AS r WHERE r.OrderID = l.OrderID AND r.LineNo = l.LineNo) = 0
+  AND (SELECT COUNT(*) FROM dbo.Returns AS r WHERE r.OrderID = l.OrderID AND r.[LineNo] = l.[LineNo]) = 0
 ORDER BY o.OrderDate;
 
 -- Actual execution plan (summary)

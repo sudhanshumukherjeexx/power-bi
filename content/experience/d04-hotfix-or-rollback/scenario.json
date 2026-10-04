@@ -11,7 +11,7 @@
   "minutes": 30,
   "skills": ["deployment", "testing", "communication", "architecture"],
   "prereq": ["s07"],
-  "ticket": { "id": "INC-2079", "kind": "decision", "severity": "SEV2", "priority": "High", "reporter": "jordan", "opened": "Wed 10 Jun 2026, 08:15", "labels": ["release", "hotfix", "rollback"] },
+  "ticket": { "id": "INC-2079", "kind": "decision", "severity": "SEV2", "priority": "High", "reporter": "jordan", "opened": "Wed 10 Jun 2026, 08:15", "labels": ["release", "production", "urgent"] },
   "impact": "Every option has a cost. Rolling back also undoes fixes people are waiting for; a rushed hotfix can break something else the day before the board pack; waiting leaves a wrong number in front of managers.",
   "messages": [
     { "from": "jordan", "to": "elena", "via": "email", "at": "Wed 10 Jun, 08:15", "subject": "Avg order value is off", "body": ["Avg Order Value on the sales app jumped from about $210 to $340 overnight. Nothing like that happened in the business. Managers are asking."] },

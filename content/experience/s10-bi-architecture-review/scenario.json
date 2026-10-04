@@ -11,7 +11,7 @@
   "minutes": 360,
   "skills": ["architecture", "governance", "security", "communication", "service"],
   "prereq": ["s09"],
-  "ticket": { "id": "ARCH-012", "kind": "review", "priority": "High", "status": "Open", "reporter": "grace", "opened": "Mon 14 Sep 2026, 09:00", "due": "Leadership offsite, Fri 9 Oct", "labels": ["governance", "architecture", "consolidation", "roadmap"] },
+  "ticket": { "id": "ARCH-012", "kind": "review", "priority": "High", "status": "Open", "reporter": "grace", "opened": "Mon 14 Sep 2026, 09:00", "due": "Leadership offsite, Fri 9 Oct", "labels": ["roadmap", "estate-review"] },
   "story": "You are now leading BI architecture at Northwind. The shared revenue model (Sprint 05), the deployment checks (Sprint 07), the incident process (Sprint 08) and ADR-009 (Sprint 09) all exist, but only for the parts of the estate the BI team touches.",
   "impact": "Every unmanaged copy of a model is a possible wrong number, a possible data leak and a refresh that costs capacity. The offsite will decide the data programme's budget; a vague review gets a vague budget.",
   "messages": [

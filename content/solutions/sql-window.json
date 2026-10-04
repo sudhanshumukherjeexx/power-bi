@@ -7,7 +7,7 @@
         "src": [
           "WITH numbered AS (",
           "    SELECT l.*,",
-          "           ROW_NUMBER() OVER (PARTITION BY OrderID, LineNo ORDER BY OrderID) AS rn",
+          "           ROW_NUMBER() OVER (PARTITION BY OrderID, \"LineNo\" ORDER BY OrderID) AS rn",
           "    FROM order_lines AS l",
           ")",
           "SELECT (SELECT COUNT(*) FROM order_lines)            AS RowsIn,",

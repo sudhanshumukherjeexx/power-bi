@@ -15,20 +15,20 @@
         "lang": "SQL", "title": "Original logic vs rewrite: same rows (portable version run in CI)", "dialect": "portable",
         "src": [
           "WITH original AS (",
-          "    SELECT l.OrderID, l.LineNo",
+          "    SELECT l.OrderID, l.\"LineNo\"",
           "    FROM order_lines AS l",
           "    JOIN orders AS o ON o.OrderID = l.OrderID",
           "    WHERE SUBSTRING(CAST(o.OrderDate AS VARCHAR(10)), 1, 4) = '2026'        -- stands in for YEAR(OrderDate) = 2026",
           "      AND UPPER(o.Status) = 'COMPLETED'",
-          "      AND (SELECT COUNT(*) FROM returns AS r WHERE r.OrderID = l.OrderID AND r.LineNo = l.LineNo) = 0",
+          "      AND (SELECT COUNT(*) FROM returns AS r WHERE r.OrderID = l.OrderID AND r.\"LineNo\" = l.\"LineNo\") = 0",
           "),",
           "rewrite AS (",
-          "    SELECT l.OrderID, l.LineNo",
+          "    SELECT l.OrderID, l.\"LineNo\"",
           "    FROM order_lines AS l",
           "    JOIN orders AS o ON o.OrderID = l.OrderID",
           "    WHERE o.OrderDate >= '2026-01-01' AND o.OrderDate < '2027-01-01'      -- sargable range",
           "      AND o.Status = 'Completed'",
-          "      AND NOT EXISTS (SELECT 1 FROM returns AS r WHERE r.OrderID = l.OrderID AND r.LineNo = l.LineNo)",
+          "      AND NOT EXISTS (SELECT 1 FROM returns AS r WHERE r.OrderID = l.OrderID AND r.\"LineNo\" = l.\"LineNo\")",
           ")",
           "SELECT (SELECT COUNT(*) FROM original) AS OriginalRows,",
           "       (SELECT COUNT(*) FROM rewrite)  AS RewriteRows;"
@@ -38,18 +38,18 @@
       {
         "lang": "SQL", "title": "The rewrite for SQL Server", "dialect": "tsql",
         "src": [
-          "SELECT l.OrderID, l.LineNo, o.OrderDate, o.PostingDate, o.CustomerID, o.Channel,",
+          "SELECT l.OrderID, l.[LineNo], o.OrderDate, o.PostingDate, o.CustomerID, o.Channel,",
           "       o.SalesRegionKey, l.ProductKey, l.Qty, l.UnitPrice, l.DiscountPct, o.Currency",
           "FROM dbo.OrderLines AS l",
           "JOIN dbo.Orders AS o",
           "  ON o.OrderID = l.OrderID                -- after fixing OrderLines.OrderID to int",
           "WHERE o.OrderDate >= '20260101' AND o.OrderDate < '20270101'",
           "  AND o.Status = 'Completed'",
-          "  AND NOT EXISTS (SELECT 1 FROM dbo.Returns AS r WHERE r.OrderID = l.OrderID AND r.LineNo = l.LineNo);",
+          "  AND NOT EXISTS (SELECT 1 FROM dbo.Returns AS r WHERE r.OrderID = l.OrderID AND r.[LineNo] = l.[LineNo]);",
           "",
           "CREATE NONCLUSTERED INDEX IX_Orders_Status_OrderDate",
           "    ON dbo.Orders (Status, OrderDate) INCLUDE (PostingDate, CustomerID, Channel, SalesRegionKey, Currency);",
-          "CREATE NONCLUSTERED INDEX IX_Returns_OrderLine ON dbo.Returns (OrderID, LineNo);"
+          "CREATE NONCLUSTERED INDEX IX_Returns_OrderLine ON dbo.Returns (OrderID, [LineNo]);"
         ]
       }
     ],

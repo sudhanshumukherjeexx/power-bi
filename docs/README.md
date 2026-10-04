@@ -12,6 +12,8 @@ How the project is organised and how to change it is in [CONTRIBUTING.md](../CON
 | [security-audit.md](security-audit.md) | Threat model (imported progress files), findings, and the import hardening, CSP, font and CI supply-chain plans. |
 | [seo-audit.md](seo-audit.md) | What crawlers see on each page type, what must never be rendered statically, and the static-rendering plan. |
 | [design-audit.md](design-audit.md) | Tokens, components, navigation, Toolkit vs Resources overlap and contrast measurements before the redesign. |
+| [sql-validation.md](sql-validation.md) | Every SQL example: its dialect and how it is checked (executed on SQLite, parsed by SQLFluff, run on SQL Server). |
+| [releasing.md](releasing.md) | Cutting a release, the existing tags, and the one-time GitHub settings (About, topics, social preview, labels). |
 | [enterprise-data.md](enterprise-data.md) | The enterprise-scale data generator: options, the defects it plants, and what each data size teaches. |
 
 ## History

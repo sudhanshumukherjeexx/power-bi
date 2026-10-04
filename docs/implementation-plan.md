@@ -105,7 +105,7 @@ Full detail is in [progress-scoring-audit.md](progress-scoring-audit.md#target-m
 | Learners' displayed percentages drop (stage, readiness) | Intended. The changelog explains it, and each number gets a "how this is calculated" panel. |
 | A v3 export imported into an older deployed site | The older importer rejects versions above 2 with a clear message. The site is only ever one version, so this only happens after a rollback. |
 | Old bookmarks to `resources.html#…` | The page stays. The anchors keep resolving or redirect to the Toolkit Library. |
-| CSS alias tokens hide unmigrated rules | Phase 2 finishes by searching for old token names. The aliases are removed in 2.3.0. |
+| CSS alias tokens hide unmigrated rules | Done in 2.6.0: every reference migrated, aliases deleted, the design test rejects the old names. |
 | Static rendering leaks answers | `tests/leaks.test.js` fails the build. |
 | Service worker serves stale CSS after the redesign | `VERSION` is a content hash, so any change invalidates the cache. |
 | Playwright makes CI slow or flaky | Chromium only, with a fixed viewport list, no pixel-exact snapshots (only layout assertions: overflow, overlap, element boxes), and a 10-minute cap. |
@@ -122,12 +122,12 @@ Each phase is a separate commit (or pull request) on `main`, and deploys only if
 | 1 | 2.2.0 | import hardening, backup and compare, safe hrefs, mastery, evidence types, stage, cert, independence, portfolio naming | – |
 | 2 | 2.3.0 | tokens, palette, radius, shadow, icons, motif, self-hosted fonts | – |
 | 3 | 2.3.0 | Resources → Toolkit Library, mobile More menu, returning home, scenario focus, subtraction | – |
-| 4 | 2.4.0 | static rendering, fallbacks, sitemap, robots, JSON-LD, OG image, leak test | – |
-| 5 | 2.4.0 | Playwright journeys, axe, responsive layout checks | – |
-| 6 | 2.4.0 | pinned dev deps, lockfile, Dependabot, stale-content issues, CODEOWNERS, SQLFluff, CSP | – |
-| 7 | 2.5.0 | "Make available offline" for scenarios | – |
-| 8 | – | privacy-respecting analytics | **Yes: whether to collect anything at all, and with which tool** |
-| 9 | – | GitHub About, topics, social preview, releases and tags | **Yes: these publish to GitHub, and you run or approve them** |
+| 4 | 2.4.0 (shipped) | static rendering, fallbacks, sitemap, robots, JSON-LD, OG image, leak test | – |
+| 5 | 2.5.0 (shipped) | Playwright journeys, axe, responsive layout checks | – |
+| 6 | 2.6.0 (done) | pinned dev deps, lockfile, Dependabot, stale-content issues, CODEOWNERS, SQLFluff, CSP | – |
+| 7 | 2.6.0 (done) | "Make available offline" for scenarios | – |
+| 8 | 2.6.0 (done, off until a token is set) | privacy-respecting analytics (Cloudflare Web Analytics, see PRIVACY.md) | Decided: Cloudflare; token pending |
+| 9 | 2.6.0 (repository files done) | README, social preview image, release notes; About, topics and releases via gh (docs/releasing.md) | Waiting for the GitHub CLI |
 
 Open content decision: scenario ticket `labels` (for example `performance, dax`) name the domain before the learner investigates. A real reporter would add labels, but they reduce the ambiguity the brief wants protected. The options are to keep them, to show them only after the learner opens the evidence, or to replace them with reporter-style labels (`executive`, `monday`).
 

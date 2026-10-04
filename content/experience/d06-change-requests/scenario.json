@@ -11,7 +11,7 @@
   "minutes": 180,
   "skills": ["modeling", "dax", "security", "testing", "communication"],
   "prereq": ["s02", "s03"],
-  "ticket": { "id": "CR-118", "kind": "change", "priority": "Normal", "reporter": "elena", "opened": "Mon 20 Apr 2026, 09:00", "labels": ["change-request", "refactoring"] },
+  "ticket": { "id": "CR-118", "kind": "change", "priority": "Normal", "reporter": "elena", "opened": "Mon 20 Apr 2026, 09:00", "labels": ["change-request", "finance", "sales"] },
   "impact": "Most BI work is changing systems that are already in use. Every change moves numbers people have already seen; doing it without impact analysis is how trust is lost.",
   "messages": [
     { "from": "elena", "to": "you", "via": "email", "at": "Mon 20 Apr, 09:00", "subject": "Four CRs for the sales model", "body": [

@@ -6,7 +6,7 @@ const main=P.main(),cards=P.cards();
 const dateTxt=iso=>{const [y,m,d]=iso.split('-').map(Number);return d+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m-1]+' '+y};
 
 const card=m=>{const r=P.moduleReadiness(m,main,cards);const n=m.topics.reduce((a,t)=>a+t.g.length,0);
-  return `<a class="mcard" href="${m.id}.html" style="--c:var(--${esc(m.cls)})"><h3>${esc(m.name)}</h3><p>${esc(m.tagline||'')}</p><span class="meta"><span>${m.topics.length} topics · ${n} assignments</span></span><span class="meta">${P.bar(r.pct,m.name+' readiness')}<span>${r.pct}%</span></span></a>`};
+  return `<a class="mcard" href="${m.id}.html" style="--c:var(--t-${esc(m.cls)})"><h3>${esc(m.name)}</h3><p>${esc(m.tagline||'')}</p><span class="meta"><span>${m.topics.length} topics · ${n} assignments</span></span><span class="meta">${P.bar(r.pct,m.name+' readiness')}<span>${r.pct}%</span></span></a>`};
 document.getElementById('levelCards').innerHTML=MODULES.filter(m=>m.kind==='level').map(card).join('');
 const tracks=MODULES.filter(m=>m.kind==='track');
 document.getElementById('trackCards').innerHTML=tracks.length?tracks.map(card).join(''):'<div class="empty">Tracks are being added.</div>';
@@ -16,7 +16,7 @@ const topicName=id=>{const t=P.topic(id);return t?t.name.split(':')[0]:id};
 const topicHref=id=>{const t=P.topic(id);return t?`${t.module}.html#${id}`:'#'};
 document.getElementById('roles').innerHTML=`<div class="cards">${ROLES.map(r=>{
   const rd=r.core.map(id=>{const t=P.topic(id);return t?P.readiness(t,main,cards).pct:0});const pct=rd.length?Math.round(rd.reduce((a,b)=>a+b,0)/rd.length):0;
-  return `<div class="mcard" style="--c:var(--yellow)"><h3>${esc(r.name)}</h3><p><span class="chip">${esc(r.tag)}</span></p><p>${esc(r.desc)}</p><details><summary>${r.core.length} core topics</summary><ul style="margin:6px 0 0;padding-left:18px;font-size:.88rem">${r.core.map(id=>`<li><a href="${topicHref(id)}">${esc(topicName(id))}</a></li>`).join('')}</ul></details><span class="meta">${P.bar(pct,r.name+' readiness')}<span>${pct}%</span></span></div>`}).join('')}</div>`;
+  return `<div class="mcard" style="--c:var(--grail-gold)"><h3>${esc(r.name)}</h3><p><span class="chip">${esc(r.tag)}</span></p><p>${esc(r.desc)}</p><details><summary>${r.core.length} core topics</summary><ul style="margin:6px 0 0;padding-left:18px;font-size:.88rem">${r.core.map(id=>`<li><a href="${topicHref(id)}">${esc(topicName(id))}</a></li>`).join('')}</ul></details><span class="meta">${P.bar(pct,r.name+' readiness')}<span>${pct}%</span></span></div>`}).join('')}</div>`;
 
 /* certification map */
 let sel=(location.hash.match(/cert=(\w+)/)||[])[1]||CERTS[0].id;
@@ -31,11 +31,11 @@ function renderCert(){
     ${c.next?`<p class="small muted">Booking after ${dateTxt(c.next.effective)}? ${esc(c.next.changes)}</p>`:`<p class="small muted">${esc(v.changes)}</p>`}
     <p class="small muted">${esc(c.note||'')} <a href="${esc(c.url)}" rel="noopener" target="_blank">Official study guide</a></p>
     <p class="small" style="margin:10px 0 0"><b>Curriculum coverage ${R.coverage}%</b> <span class="ev-tag self">self-assessed</span> · <b>Practice ${R.practice}%</b> <span class="ev-tag verified">verified + recall</span></p><p class="small muted" style="margin:2px 0 0">Weighted by Microsoft's published domain weights (midpoint of each range). Coverage is the share of mapped assignments you ticked; practice is your first-answer accuracy and flashcard mastery on those topics. Neither predicts an exam result.</p>
-    ${(c.next||v).areas.map((a,i)=>{const r=R.areas[i]||{coverage:0,practice:0};return `<div style="border-top:1px solid var(--line);padding:12px 0">
+    ${(c.next||v).areas.map((a,i)=>{const r=R.areas[i]||{coverage:0,practice:0};return `<div style="border-top:1px solid var(--border);padding:12px 0">
       <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap"><b>${esc(a.n)}</b><span class="small muted">${esc(a.w)} of the exam · coverage ${r.coverage}% · practice ${r.practice}%</span></div>
       <div style="margin:6px 0">${P.bar(r.coverage,a.n+' coverage')}</div>
       <div class="small">Practise in: ${a.topics.map(id=>`<a href="${topicHref(id)}">${esc(topicName(id))}</a>`).join(', ')}</div>
-      ${a.skills?`<details style="margin-top:6px"><summary>${a.skills.length} skill groups, ${a.skills.reduce((x,s)=>x+s.items.length,0)} objectives</summary>${a.skills.map(s=>`<div style="margin:8px 0 0"><b style="font-size:.9rem">${esc(s.n)}</b> <span class="small muted">→ ${s.topics.map(id=>`<a href="${topicHref(id)}">${esc(topicName(id))}</a>`).join(', ')}</span><ul style="margin:4px 0 0;padding-left:18px;font-size:.86rem;color:var(--ink-2)">${s.items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`).join('')}</details>`:''}
+      ${a.skills?`<details style="margin-top:6px"><summary>${a.skills.length} skill groups, ${a.skills.reduce((x,s)=>x+s.items.length,0)} objectives</summary>${a.skills.map(s=>`<div style="margin:8px 0 0"><b style="font-size:.9rem">${esc(s.n)}</b> <span class="small muted">→ ${s.topics.map(id=>`<a href="${topicHref(id)}">${esc(topicName(id))}</a>`).join(', ')}</span><ul style="margin:4px 0 0;padding-left:18px;font-size:.86rem;color:var(--text-secondary)">${s.items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`).join('')}</details>`:''}
     </div>`}).join('')}
     ${c.next?`<p class="small muted" style="margin:6px 0 0">Shown: the outline that takes effect on ${dateTxt(c.next.effective)}, because most people booking now will sit it after that date. Your readiness is measured against the topics that map to it.</p>`:''}
   </div>`;

@@ -12,7 +12,7 @@
   "skills": ["modeling", "governance", "dax", "service", "communication", "architecture"],
   "prereq": ["s02"],
   "next": "s06",
-  "ticket": { "id": "BI-1103", "kind": "ticket", "priority": "High", "status": "Open", "reporter": "grace", "opened": "Mon 11 May 2026, 10:02", "due": "Plan by Fri 22 May; migration by end of June", "labels": ["semantic-model", "certification", "governance"] },
+  "ticket": { "id": "BI-1103", "kind": "ticket", "priority": "High", "status": "Open", "reporter": "grace", "opened": "Mon 11 May 2026, 10:02", "due": "Plan by Fri 22 May; migration by end of June", "labels": ["finance", "sales", "marketing", "revenue"] },
   "story": "After the Finance dispute (Sprint 02) the sales dashboard shows both Net Sales and the ledger's Net Revenue. Then the leadership meeting got three different Q1 revenue figures from three different reports.",
   "impact": "When three reports disagree, every meeting starts with an argument about numbers instead of decisions. Each copy of the model also costs refresh time, capacity and maintenance, and each one can drift further.",
   "messages": [

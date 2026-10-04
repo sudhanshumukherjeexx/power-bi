@@ -48,13 +48,12 @@ function scenario(s, all) {
   const persona = k => (all.personas || []).find(p => p.id === k) || { name: k === 'you' ? 'You' : k, role: '' };
   const initials = n => n.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
   const stage = all.stages.find(x => x.id === s.stage) || { n: '', name: s.stage };
-  const skill = k => { const x = all.skills.find(y => y.id === k); return x ? x.name : k; };
   const rep = persona(s.ticket.reporter);
   return `<nav class="crumbs" aria-label="Breadcrumb"><a href="../experience.html">Experience</a><span aria-hidden="true">/</span><a href="../experience.html#stage-${s.stage}">Stage ${stage.n}: ${esc(stage.name)}</a><span aria-hidden="true">/</span><span aria-current="page">${esc(s.ticket.id)}</span></nav>
 <header class="ticket"><div class="tk-top"><span class="tk-kind k-${s.ticket.kind}">${KIND[s.ticket.kind] || 'Ticket'}</span>${s.ticket.severity ? `<span class="sev sev${s.ticket.severity.slice(-1)}">${esc(s.ticket.severity)}</span>` : ''}<span class="tk-id">${esc(s.ticket.id)}</span>${s.type === 'drill' ? '<span class="chip">Drill</span>' : ''}</div>
 <h1>${esc(s.title)}</h1><p class="tk-sum">${esc(s.summary)}</p>
 <dl class="tk-meta"><div><dt>Reported by</dt><dd>${esc(rep.name)}${rep.role ? `, ${esc(rep.role)}` : ''}</dd></div><div><dt>Opened</dt><dd>${esc(s.ticket.opened)}</dd></div>${s.ticket.due ? `<div><dt>Needed by</dt><dd>${esc(s.ticket.due)}</dd></div>` : ''}${s.ticket.priority ? `<div><dt>Priority</dt><dd>${esc(s.ticket.priority)}</dd></div>` : ''}<div><dt>Time box</dt><dd>${Math.round(s.minutes / 60 * 10) / 10} h</dd></div></dl>
-<div class="tk-skills">${s.skills.map(k => `<span class="chip">${esc(skill(k))}</span>`).join('')}</div></header>
+${(s.ticket.labels || []).length ? `<div class="tk-labels"><span class="vh">Labels: </span>${s.ticket.labels.map(l => `<span class="tk-label">${esc(l)}</span>`).join('')}</div>` : ''}</header>
 ${s.story ? `<div class="story"><b>Previously at Northwind</b>${para(s.story)}</div>` : ''}
 <div class="impact"><b>Why the business cares</b> ${fmt(s.impact)}</div>
 <noscript><p class="small muted">Taking the ticket, saving notes and deliverables, hints, the rubric and the model answer need JavaScript. The brief and the files are below.</p></noscript>

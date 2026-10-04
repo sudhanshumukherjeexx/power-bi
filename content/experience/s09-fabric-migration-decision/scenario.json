@@ -13,7 +13,7 @@
   "prereq": ["s05", "s08"],
   "next": "s10",
   "verified": { "date": "2026-10-01", "context": "Direct Lake overview (2026-09-02), How Direct Lake works (2026-09-09), Mirroring SQL Server (updated 2026-07-06), Premium-to-Fabric migration guidance", "review_after_days": 90 },
-  "ticket": { "id": "ARCH-009", "kind": "decision", "priority": "High", "status": "Open", "reporter": "elena", "opened": "Mon 6 Jul 2026, 09:00", "due": "Architecture board, Thu 23 Jul", "labels": ["fabric", "architecture", "direct-lake", "adr"] },
+  "ticket": { "id": "ARCH-009", "kind": "decision", "priority": "High", "status": "Open", "reporter": "elena", "opened": "Mon 6 Jul 2026, 09:00", "due": "Architecture board, Thu 23 Jul", "labels": ["roadmap", "budget", "platform"] },
   "story": "The certified model from Sprint 05 now serves 140 people. Refresh takes 74 minutes and is creeping up; the operations dashboard still uses DirectQuery against the warehouse management system, and Sprint 08 showed how fragile the on-premises chain is.",
   "impact": "This decision fixes the platform, cost and skills the BI team will live with for three to five years. Getting it wrong means either an expensive migration that changes nothing for users, or a cheap one that hits a wall in a year.",
   "messages": [

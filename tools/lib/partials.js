@@ -29,6 +29,9 @@ function nav(active, r = '', page = '') {
 /* canonical URL, Open Graph, Twitter card and the social image: the same block for generated pages and, via
    seoInject, for hand-written ones */
 const OG_IMAGE = 'assets/og/og-default.png';
+/* Cloudflare Web Analytics, only when a site token is configured in content/site.json. The token is public. The
+   loader (assets/js/analytics.js) respects Do Not Track, Global Privacy Control and the opt-out on the progress page. */
+const analytics = () => { const a = site.analytics || {}; return a.provider === 'cloudflare' && /^[a-f0-9]{32}$/.test(a.token || '') ? a.token : null; };
 function seo({ title, description, path: pagePath = '', type = 'website' }) {
   const url = site.url + pagePath;
   return `<link rel="canonical" href="${esc(url)}">
@@ -41,13 +44,15 @@ function seo({ title, description, path: pagePath = '', type = 'website' }) {
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="${esc(site.name)}: ${esc(site.tagline)}">
-<meta name="twitter:card" content="summary_large_image">`;
+<meta name="twitter:card" content="summary_large_image">${analytics() ? `
+<meta name="pbi-analytics" content="cloudflare:${analytics()}">
+<script defer src="${pagePath.split('/').slice(1).map(() => '../').join('')}assets/js/analytics.js"></script>` : ''}`;
 }
 /* structured data: only types that describe the page accurately (Course, LearningResource, TechArticle, BreadcrumbList) */
 const ld = objs => (objs || []).filter(Boolean).map(o => `<script type="application/ld+json">${JSON.stringify(Object.assign({ '@context': 'https://schema.org' }, o)).replace(/</g, '\\u003c')}</script>`).join('\n');
 const crumbsLd = items => ({ '@type': 'BreadcrumbList', itemListElement: items.map(([name, p], i) => ({ '@type': 'ListItem', position: i + 1, name, item: site.url + p })) });
 
-function head({ title, description, path: pagePath = '', r = '', css = ['tokens', 'site', 'pages', 'app'], extra = '', type = 'website', jsonld = null }) {
+function head({ title, description, path: pagePath = '', r = '', css = ['tokens', 'site', 'base', 'pages', 'app'], extra = '', type = 'website', jsonld = null }) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,4 +90,4 @@ function inject(html, r = '', page = '') {
   return html.replace(/<!--nav:([a-z]+)-->[\s\S]*?<!--\/nav-->/g, (_, sec) => `<!--nav:${sec}-->\n${nav(sec, r, page)}\n<!--/nav-->`);
 }
 
-module.exports = { site, esc, nav, head, seo, ld, crumbsLd, footer, inject, SECTIONS, OG_IMAGE };
+module.exports = { site, esc, nav, head, seo, ld, crumbsLd, footer, inject, SECTIONS, OG_IMAGE, analytics };

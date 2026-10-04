@@ -11,7 +11,7 @@
   "minutes": 30,
   "skills": ["governance", "service", "communication"],
   "prereq": ["s05"],
-  "ticket": { "id": "GOV-044", "kind": "ticket", "priority": "Low", "reporter": "elena", "opened": "Mon 25 May 2026, 14:00", "labels": ["governance", "retirement", "lineage"] },
+  "ticket": { "id": "GOV-044", "kind": "ticket", "priority": "Low", "reporter": "elena", "opened": "Mon 25 May 2026, 14:00", "labels": ["usage", "cost-review"] },
   "impact": "Unused content costs refresh, capacity and confusion. Deleting content that something still depends on breaks payroll, a dashboard or a finance spreadsheet, usually on the day it's needed.",
   "messages": [
     { "from": "elena", "to": "you", "via": "chat", "at": "Mon 25 May, 14:00", "body": ["Regional Sales Weekly is down about 70% since Sales Overview launched. Can we delete it and its model to tidy up? Check first, please."] }

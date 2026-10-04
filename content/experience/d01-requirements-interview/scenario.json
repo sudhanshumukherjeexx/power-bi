@@ -10,7 +10,7 @@
   "summary": "Four stakeholders send one-line requests. Pick the questions you'd ask before building anything, then check them against an experienced BI developer's.",
   "minutes": 30,
   "skills": ["communication", "modeling", "governance"],
-  "ticket": { "id": "REQ-301", "kind": "ticket", "priority": "Normal", "reporter": "elena", "opened": "Thu 23 Apr 2026, 10:00", "labels": ["requirements"] },
+  "ticket": { "id": "REQ-301", "kind": "ticket", "priority": "Normal", "reporter": "elena", "opened": "Thu 23 Apr 2026, 10:00", "labels": ["intake", "four-teams"] },
   "impact": "Most BI rework comes from building the right thing to the wrong definition. Ten minutes of questions saves a week of rebuilding, and a dashboard nobody trusts.",
   "messages": [
     { "from": "elena", "to": "you", "via": "chat", "at": "Thu 23 Apr, 10:00", "body": ["Four new requests came in this morning. Before anyone builds anything, I'd like to see the questions you'd ask each requester. Don't ask everything: ask what changes the design."] }

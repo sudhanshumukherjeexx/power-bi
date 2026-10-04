@@ -1,0 +1,49 @@
+name: SQL Server
+
+# Runs the SQL examples on a real SQL Server 2022 (tools/sqlserver-check.js, docs/sql-validation.md):
+# every executed "portable" worked solution must return the same rows as in SQLite, the T-SQL MERGE must be
+# idempotent and load the expected rows, and the T-SQL rewrite must match its portable version.
+# Runs when SQL content or the checker changes, monthly (to catch image updates) and on demand. It doesn't gate
+# deploys: SQLite execution and SQLFluff parsing in "Validate and deploy" already do on every push.
+# The image is pinned to a cumulative update; bump the tag deliberately (list: mcr.microsoft.com/v2/mssql/server/tags/list).
+on:
+  push:
+    branches: [main]
+    paths: ['content/solutions/**', 'content/toolkit/guides/**', 'site/data/**', 'tools/sqlserver-check.js', 'tools/sql-catalog.js', 'tools/lib/sql-tables.js', '.github/workflows/sql-server.yml']
+  pull_request:
+    paths: ['content/solutions/**', 'content/toolkit/guides/**', 'site/data/**', 'tools/sqlserver-check.js', 'tools/sql-catalog.js', 'tools/lib/sql-tables.js', '.github/workflows/sql-server.yml']
+  schedule:
+    - cron: '43 5 3 * *'   # monthly
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sql-server:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # a throwaway password for a container that lives only for this job; not a secret
+      MSSQL_SA_PASSWORD: Ci_Only_${{ github.run_id }}_Aa1!
+      SQLSERVER_HOST: localhost
+      SQLSERVER_PORT: 1433
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-CU27-ubuntu-22.04
+        env:
+          ACCEPT_EULA: 'Y'
+          MSSQL_SA_PASSWORD: Ci_Only_${{ github.run_id }}_Aa1!
+        ports: ['1433:1433']
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$MSSQL_SA_PASSWORD\" -Q 'SELECT 1' -b"
+          --health-interval 10s --health-timeout 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Run the SQL examples on SQL Server
+        run: node tools/sqlserver-check.js

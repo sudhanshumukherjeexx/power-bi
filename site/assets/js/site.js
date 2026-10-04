@@ -37,6 +37,11 @@ PBI.touch=(title,href)=>{
 };
 PBI.toast=msg=>{let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=msg;t.classList.add('show');clearTimeout(PBI.toast._t);PBI.toast._t=setTimeout(()=>t.classList.remove('show'),1800)};
 PBI.cardId={concept:q=>'c'+PBI.hash(q),topic:q=>'t'+PBI.hash(q)};
+/* zero-result searches are the clearest signal of what's missing. Analytics never sees them; instead the learner can
+   choose to suggest the topic in a prefilled GitHub issue (they see and edit it before anything is sent). */
+PBI.REPO='https://github.com/sudhanshumukherjeexx/power-bi';
+PBI.gapLink=(q,where)=>{const t='Content gap: '+String(q).slice(0,80);const b='I searched '+where+' for:\n\n> '+String(q).slice(0,200)+'\n\nand found nothing useful.\n\nWhat I was trying to do:\n\n';
+  return `<a class="gaplink" href="${PBI.REPO}/issues/new?labels=content-gap&title=${encodeURIComponent(t)}&body=${encodeURIComponent(b)}" rel="noopener" target="_blank">Suggest “${PBI.esc(String(q).slice(0,60))}” for the site</a>`};
 
 /* ---------- spaced repetition (Leitner boxes, day intervals) ---------- */
 const SRS=PBI.SRS={
@@ -291,7 +296,7 @@ function initSearch(){
     items=(q||facet)?runSearch(q,type,facet):[];sel=0;
     const toks=q.toLowerCase().split(/\s+/).filter(Boolean);
     if(!q&&!facet){out.innerHTML='<div class="srch-empty">Try <b>CALCULATE</b>, <b>refresh failed</b>, <b>RLS</b>, <b>SCD type 2</b>, <b>window function</b> or <b>postmortem</b>.</div>';return}
-    if(!items.length){out.innerHTML=`<div class="srch-empty">Nothing matches “${PBI.esc(q)}”${facet?' there':''}. Try fewer words${facet?' or search Anywhere':''}.</div>`;return}
+    if(!items.length){out.innerHTML=`<div class="srch-empty">Nothing matches “${PBI.esc(q)}”${facet?' there':''}. Try fewer words${facet?' or search Anywhere':''}.<br>${PBI.gapLink(q,'the whole site')}</div>`;return}
     out.innerHTML=items.map((it,i)=>`<a class="srch-item${i===0?' sel':''}" href="${it.href}" data-i="${i}"><span class="srch-type t-${it.type}">${it.type}</span><span class="srch-main"><span class="srch-title">${hl(it.title,toks)}</span><span class="srch-sub">${PBI.esc(it.sub)}</span><span class="srch-snip">${hl(snippet(it,toks),toks)}</span></span></a>`).join('');
   };
   const move=d=>{const els=out.querySelectorAll('.srch-item');if(!els.length)return;els[sel].classList.remove('sel');sel=(sel+d+els.length)%els.length;els[sel].classList.add('sel');els[sel].scrollIntoView({block:'nearest'})};
