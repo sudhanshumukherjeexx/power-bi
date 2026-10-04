@@ -21,7 +21,7 @@
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
     "@playwright/test": "1.63.0",
-    "html-validate": "9.7.1",
+    "html-validate": "11.16.1",
     "mssql": "12.7.2"
   }
 }
