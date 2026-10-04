@@ -305,6 +305,7 @@ details.tpl>summary>span{display:flex;flex-direction:column;gap:2px}
 .tksearch{margin:18px 0 10px;max-width:760px}
 .tksearch>label{display:block;font-weight:600;font-size:1.05rem;margin-bottom:8px}
 .tkq{display:flex;gap:8px}
+.tkq .btn{min-height:44px}
 .tkq input{flex:1;min-width:0;font:inherit;font-size:1rem;padding:12px 14px;border:1px solid var(--line-2);border-radius:8px;background:var(--panel);color:var(--ink);min-height:48px}
 .tkq input:focus{outline:2px solid var(--gold-line);outline-offset:1px;border-color:var(--gold-line)}
 .tkfilters{margin-top:10px}
@@ -574,3 +575,9 @@ details.explore>summary{list-style:none}
 details.explore>summary::-webkit-details-marker{display:none}
 details.explore>summary::before{content:"";width:7px;height:7px;border-right:1.75px solid currentColor;border-bottom:1.75px solid currentColor;transform:rotate(-45deg);margin-right:4px;transition:transform .15s}
 details.explore[open]>summary::before{transform:rotate(45deg)}
+/* scrollable regions made focusable by site.js show where focus is */
+[data-sr]:focus-visible{outline:2px solid var(--gold-line);outline-offset:2px}
+/* flashcard flip button state */
+#flipBtn[aria-pressed="true"]{border-color:var(--gold-line)}
+/* phones: the primary action on every page is a full-size touch target */
+@media (max-width:560px){.btn.primary{min-height:44px}}

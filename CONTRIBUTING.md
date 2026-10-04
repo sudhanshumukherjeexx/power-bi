@@ -4,15 +4,20 @@ Thanks for helping. This project is used by people teaching themselves Power BI,
 
 ## Quick start
 
-You need Node.js 22.5 or later (for the built-in SQLite used by the SQL tests). There are no npm dependencies.
+You need Node.js 22.5 or later (for the built-in SQLite used by the SQL tests). The website has no runtime dependencies. The development tools (Playwright, axe-core, html-validate) are pinned in `package.json` and `package-lock.json`.
 
 ```bash
-npm run data     # regenerate site/data/ from the seeded generators (only if you changed a generator)
-npm run build    # regenerate the site files in site/ from content/
-npm test         # run every check
+npm ci                              # install the pinned dev tools (once)
+npm run data                        # regenerate site/data/ from the seeded generators (only if you changed a generator)
+npm run build                       # regenerate the site files in site/ from content/
+npm test                            # content, scoring, import safety, leaks, links, SQL… (Node only, a few seconds)
+npm run validate:html               # HTML validity
+npx playwright install chromium     # once, for the browser tests
+npm run test:e2e                    # journeys, accessibility (axe) and responsive layout in a real browser
+npm run serve                       # preview at http://localhost:4173/power-bi/, served like GitHub Pages
 ```
 
-Preview locally by serving the `site/` folder with any static server, for example `npx serve site` or `python -m http.server --directory site`, and open `/index.html`.
+If you already have Edge or Chrome, you can skip the Chromium download: `PW_CHANNEL=msedge npm run test:e2e`. Browser tests live in `tests/e2e/`. A failing run leaves screenshots and a trace in `test-results/`, which you can open with `npx playwright show-trace`.
 
 The repository has three parts: `content/` is what you edit, `site/` is the website GitHub Pages publishes, and `tools/` turns one into the other. On every push to `main`, GitHub Actions runs all the checks and publishes `site/` only if they pass.
 

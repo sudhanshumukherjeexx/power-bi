@@ -7,12 +7,11 @@ The website is the `site/` folder. GitHub Actions publishes it to GitHub Pages a
 ## How a change goes live
 
 1. You push to `main`, or merge a pull request into it.
-2. The **Validate and deploy** workflow (`.github/workflows/validate.yml`) runs the `validate` job:
-   - the data generators and the build reproduce every committed file;
-   - every test passes (content, curriculum, datasets, links, SQL, Experience Mode, Toolkit, catalog);
-   - the HTML is valid.
-3. If, and only if, `validate` passes, the `deploy` job uploads `site/` and publishes it. A failed check means the live site stays on the last good version.
-4. Pull requests run `validate` only; they never deploy.
+2. The **Validate and deploy** workflow (`.github/workflows/validate.yml`) runs two jobs in parallel, each starting with `npm ci` from the lockfile:
+   - **`validate`:** the data generators and the build reproduce every committed file; every Node test passes (content, curriculum, datasets, scoring, import safety, answer leaks, links, SQL, Experience Mode, Toolkit, catalog, design system); the HTML is valid.
+   - **`browser`:** Playwright drives Chromium through the critical journeys, axe-core finds no serious or critical accessibility issues in either theme, and the layout holds at 1440, 1024, 768 and 390px. On failure, the report, screenshots and traces are attached to the run as the `playwright-report` artifact.
+3. If, and only if, both pass, the `deploy` job uploads `site/` and publishes it. A failed check means the live site stays on the last good version.
+4. Pull requests run `validate` and `browser`; they never deploy.
 
 The workflow also runs weekly to flag content whose verification date has expired, and you can run it by hand from the **Actions** tab.
 

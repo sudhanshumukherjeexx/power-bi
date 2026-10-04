@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+### Learner changes: accessibility fixes (Phase 5)
+
+- **Flashcards:** a real **Show answer / Show question** button flips the card, so keyboard and screen-reader users have a proper control. The card is a labelled region instead of a button with buttons inside it, and the hidden face is `inert`, so focus can't land on content you can't see. Tapping the card still flips it.
+- **Skill Mode topic tabs** follow the tab pattern: the arrow keys, Home and End move between Assignments, Interview questions and Assessment, and each tab is tied to its panel.
+- **Scrollable code and tables** that overflow become focusable, labelled regions, so you can scroll them with the keyboard. Short blocks add no extra tab stops.
+- **Touch targets:** the Toolkit search button and every primary button are at least 44px tall on phones.
+
+### Maintainer changes (Phase 5)
+
+- **Pinned dev dependencies** with a committed lockfile: `@playwright/test` 1.63.0, `@axe-core/playwright` 4.13.0, `html-validate` 9.7.1. The site still ships with no runtime dependency. html-validate 11 is available but needs Node 22.22 or later, so it's left for a deliberate upgrade.
+- **`tests/e2e/`** (106 tests): critical journeys (new learner, Skill Mode, Experience Mode, flashcards, search, export and import, Toolkit, theme, phone navigation), axe-core on nine representative pages in both themes (serious or critical issues fail the build), keyboard paths (skip link, focus rings, search dialog focus trap, both tab widgets), one `h1` per page, labelled fields, reduced motion, and layout assertions at four widths in both themes. Layout is checked with assertions (overflow, overlapping controls, touch targets) rather than pixel snapshots, which differ between operating systems. Screenshots are attached to the report.
+- **CI:** `npm ci` everywhere, and a new `browser` job that `deploy` waits for. On failure, the Playwright report is uploaded as an artifact.
+- `tools/serve.js` (`npm run serve`) serves `site/` under `/power-bi/` like GitHub Pages, with a 404 fallback. It's used by the browser tests and for local preview.
+
 ### Learner changes: readable without JavaScript, findable by search engines (Phase 4)
 
 - **Pages show their content before any script runs.** Level and track pages carry every assignment, interview question and quiz question in the HTML, and scenarios carry the ticket, stakeholder messages, tasks, deliverables and evidence list. The Library and the glossary are complete too. Search engines, link previews, reader modes and people with JavaScript off now see the real material. Without JavaScript, the Beginner page went from about 95 words to about 3,000.

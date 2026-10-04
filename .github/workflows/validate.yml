@@ -1,8 +1,9 @@
 name: Validate and deploy
 
 # Every push and pull request is validated: generated files must be current, datasets and expected results
-# must agree with the data, and every link, id and reference must resolve. Pushes to main then publish the
-# site/ folder to GitHub Pages, but only if validation passed, so a broken build never goes live.
+# must agree with the data, every link, id and reference must resolve, and the critical journeys, accessibility
+# and layout must pass in a real browser. Pushes to main then publish the site/ folder to GitHub Pages, but only
+# if both jobs passed, so a broken build never goes live. Dev tools are pinned in package-lock.json.
 # (Repository settings → Pages → Source must be "GitHub Actions".)
 on:
   push:
@@ -24,18 +25,49 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+      - name: Install pinned dev tools (lockfile)
+        run: npm ci
       - name: Generated data is reproducible
         run: node tools/generate-data.js --check
       - name: Generated site files are current
         run: node tools/build.js --check
-      - name: Content, datasets, curriculum, links, SQL and scripts
+      - name: Content, curriculum, scoring, import safety, leaks, links, SQL and scripts
         run: node tests/run.js
       - name: HTML validity
-        run: npx --yes html-validate@9 "site/*.html" "site/experience/*.html" "site/toolkit/*.html"
+        run: npm run validate:html
+
+  browser:
+    # Critical journeys, axe-core accessibility (no serious or critical issues, both themes) and responsive layout
+    # at 1440/1024/768/390, against the generated site/ served as GitHub Pages serves it.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Browser tests
+        run: npm run test:e2e
+        env:
+          CI: 'true'
+      - name: Keep the report when something fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
 
   deploy:
-    # Publish site/ only for main, only after validation passed. Scheduled runs never deploy.
-    needs: validate
+    # Publish site/ only for main, only after validation and the browser tests passed. Scheduled runs never deploy.
+    needs: [validate, browser]
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 10

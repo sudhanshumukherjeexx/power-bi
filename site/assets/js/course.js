@@ -74,19 +74,31 @@ function verifiedHtml(T){
 }
 function topicHtml(T){
   return `<article class="topic" id="${T.id}"><header><h3>${esc(T.name)}</h3><div class="hright"><span class="pathslot"></span>${verifiedHtml(T)}<span data-ready="${T.id}"></span></div>${T.ds.length?`<div class="ds">Data: ${T.ds.map(dsChip).join(' ')}</div>`:''}${whyHtml(T)}</header>
-      <div class="tabs" role="tablist">
-        <button role="tab" aria-selected="true" data-pane="asg">Assignments<span class="n">${T.asg.length}</span></button>
-        <button role="tab" aria-selected="false" data-pane="int">Interview questions<span class="n">${T.int.length}</span></button>
-        <button role="tab" aria-selected="false" data-pane="ass">Assessment<span class="n">${T.ass.length}</span></button>
+      <div class="tabs" role="tablist" aria-label="${esc(T.name)}">
+        <button role="tab" id="${T.id}-tab-asg" aria-controls="${T.id}-pane-asg" aria-selected="true" tabindex="0" data-pane="asg">Assignments<span class="n">${T.asg.length}</span></button>
+        <button role="tab" id="${T.id}-tab-int" aria-controls="${T.id}-pane-int" aria-selected="false" tabindex="-1" data-pane="int">Interview questions<span class="n">${T.int.length}</span></button>
+        <button role="tab" id="${T.id}-tab-ass" aria-controls="${T.id}-pane-ass" aria-selected="false" tabindex="-1" data-pane="ass">Assessment<span class="n">${T.ass.length}</span></button>
       </div>
-      <div class="pane" data-pane="asg">${T.asg.map((a,i)=>asgHtml(T,a,i)).join('')}${refsHtml(T)}</div>
-      <div class="pane" data-pane="int" hidden>${T.int.map(q=>`<details class="qa"><summary>${esc(q.q)}</summary><div class="a">${esc(q.a)}</div></details>`).join('')}<p class="small muted" style="margin-top:12px">Answer each one aloud before opening it. If your answer needs more than 90 seconds, you don't know it yet. <a href="${PBI.ROOT}flashcards.html#deck=topics&cat=${encodeURIComponent(T.name)}">Practise these as flashcards →</a></p></div>
-      <div class="pane" data-pane="ass" hidden>${T.ass.map((q,i)=>{const id=T.id+'-q'+i;if(q.type==='task')return`<div class="quiz"><div class="q">${esc(q.q)}</div><div class="task"><div class="lbl">practical task</div>${esc(q.hint)}</div></div>`;const chosen=state.quiz[id];return`<div class="quiz ${chosen!==undefined?'answered':''}" data-q="${id}" data-a="${q.a}"><div class="q">${esc(q.q)}</div><div class="opts">${q.o.map((o,j)=>`<label class="${chosen!==undefined?(j==q.a?'ok':(j==chosen?'bad':'')):''}"><input type="radio" name="${id}" value="${j}" ${chosen==j?'checked':''}> <span>${esc(o)}</span></label>`).join('')}</div><div class="why">${esc(q.why)}</div></div>`}).join('')}<div class="score" data-score="${T.id}"></div></div>
+      <div class="pane" role="tabpanel" id="${T.id}-pane-asg" aria-labelledby="${T.id}-tab-asg" data-pane="asg">${T.asg.map((a,i)=>asgHtml(T,a,i)).join('')}${refsHtml(T)}</div>
+      <div class="pane" role="tabpanel" id="${T.id}-pane-int" aria-labelledby="${T.id}-tab-int" data-pane="int" hidden>${T.int.map(q=>`<details class="qa"><summary>${esc(q.q)}</summary><div class="a">${esc(q.a)}</div></details>`).join('')}<p class="small muted" style="margin-top:12px">Answer each one aloud before opening it. If your answer needs more than 90 seconds, you don't know it yet. <a href="${PBI.ROOT}flashcards.html#deck=topics&cat=${encodeURIComponent(T.name)}">Practise these as flashcards →</a></p></div>
+      <div class="pane" role="tabpanel" id="${T.id}-pane-ass" aria-labelledby="${T.id}-tab-ass" data-pane="ass" hidden>${T.ass.map((q,i)=>{const id=T.id+'-q'+i;if(q.type==='task')return`<div class="quiz"><div class="q">${esc(q.q)}</div><div class="task"><div class="lbl">practical task</div>${esc(q.hint)}</div></div>`;const chosen=state.quiz[id];return`<div class="quiz ${chosen!==undefined?'answered':''}" data-q="${id}" data-a="${q.a}"><div class="q">${esc(q.q)}</div><div class="opts">${q.o.map((o,j)=>`<label class="${chosen!==undefined?(j==q.a?'ok':(j==chosen?'bad':'')):''}"><input type="radio" name="${id}" value="${j}" ${chosen==j?'checked':''}> <span>${esc(o)}</span></label>`).join('')}</div><div class="why">${esc(q.why)}</div></div>`}).join('')}<div class="score" data-score="${T.id}"></div></div>
       </article>`;
 }
 function datasetsGridHtml(){return Object.entries(DS).map(([k,v])=>`<a href="#ds-${k}">${esc(v.name)}<span>${v.rows.length} rows · ${v.cols.length} cols</span></a>`).join('')}
 function datasetsListHtml(){return Object.entries(DS).map(([k,v])=>`<div class="dataset" id="ds-${k}"><header><h3>${esc(v.name)}</h3><div class="acts"><button class="btn sm primary" data-copy="${k}">Copy CSV</button><button class="btn sm" data-copyheader="${k}">Copy header only</button><a class="btn sm" href="data/${k}.csv" download="${k}.csv">Download .csv</a></div><div class="desc">${esc(v.desc)}</div></header><div class="tblwrap"><table><thead><tr>${v.cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${v.rows.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`).join('')}
 
+/* topic tabs: click or arrow keys (Left/Right/Home/End) select a tab; only the selected tab is in the Tab order */
+function selectTab(tab,focus){
+  const art=tab.closest('.topic');
+  art.querySelectorAll('.tabs [role=tab]').forEach(b=>{const on=b===tab;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});
+  art.querySelectorAll('.pane').forEach(p=>p.hidden=p.dataset.pane!==tab.dataset.pane);
+  if(focus)tab.focus();
+}
+document.addEventListener('keydown',e=>{
+  const t=e.target.closest&&e.target.closest('.topic .tabs [role=tab]');if(!t||!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+  e.preventDefault();const all=[...t.parentElement.querySelectorAll('[role=tab]')];let i=all.indexOf(t);
+  i=e.key==='Home'?0:e.key==='End'?all.length-1:(i+(e.key==='ArrowRight'?1:-1)+all.length)%all.length;selectTab(all[i],true);
+});
 function linkTerms(root){if(root)PBI.linkTerms(root,root.classList&&root.classList.contains('sol')?null:'.topic','.asg ol li, .asg .brief, .asg .req li, .why dd, .expect, .qa .a, .quiz .q, .quiz .why, .task, .sol li, .sol .check, .sol .note')}
 function updateScores(){document.querySelectorAll('[data-score]').forEach(el=>{const tid=el.dataset.score;const qs=[...document.querySelectorAll(`.quiz[data-q^="${tid}-q"]`)];const ans=qs.filter(q=>state.quiz[q.dataset.q]!==undefined);const ok=ans.filter(q=>PBI.store.mcqOk(state,q.dataset.q,q.dataset.a)).length;el.textContent=qs.length?`Multiple choice: ${ok} right first time of ${ans.length} answered (${qs.length} total). Only your first answer counts toward readiness; change it as often as you like to learn. Practical tasks are self-graded against the hint.`:''})}
 
@@ -105,7 +117,7 @@ function scrollToHash(){if(location.hash&&!/:/.test(location.hash)){const el=doc
 addEventListener('hashchange',goHash);
 
 document.addEventListener('click',e=>{
-  const tab=e.target.closest('.topic .tabs button');if(tab){const art=tab.closest('.topic');art.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b===tab));art.querySelectorAll('.pane').forEach(p=>p.hidden=p.dataset.pane!==tab.dataset.pane);return}
+  const tab=e.target.closest('.topic .tabs button');if(tab){selectTab(tab);return}
   const ds=e.target.closest('code[data-ds]');if(ds){if(document.getElementById('ds-'+ds.dataset.ds))location.hash='ds-'+ds.dataset.ds;else location.href=PBI.ROOT+'resources.html#ds-'+ds.dataset.ds;return}
   const cp=e.target.closest('[data-copy]');if(cp){copyText(toCSV(DS[cp.dataset.copy]));return}
   const ch=e.target.closest('[data-copyheader]');if(ch){copyText(DS[ch.dataset.copyheader].cols.join(','));return}

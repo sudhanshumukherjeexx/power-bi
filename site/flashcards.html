@@ -261,11 +261,12 @@ p{margin:0 0 .8em}
     <div id="cardHost"></div>
     <div class="actions" id="actions">
       <button type="button" class="btn" id="prevBtn" aria-label="Previous card">←</button>
+      <button type="button" class="btn" id="flipBtn" aria-pressed="false">Show answer</button>
       <button type="button" class="btn bad" id="againBtn">Review again</button>
       <button type="button" class="btn ok" id="gotBtn">Got it</button>
       <button type="button" class="btn" id="nextBtn" aria-label="Next card">→</button>
     </div>
-    <p class="keys">Tap the card or press <kbd>Space</kbd> to flip · swipe or <kbd>←</kbd> <kbd>→</kbd> to move · <kbd>1</kbd> review again · <kbd>2</kbd> got it · <kbd>/</kbd> search</p>
+    <p class="keys">Tap the card, use <b>Show answer</b> or press <kbd>Space</kbd> to flip · swipe or <kbd>←</kbd> <kbd>→</kbd> to move · <kbd>1</kbd> review again · <kbd>2</kbd> got it · <kbd>/</kbd> search</p>
   </section>
 
   <section class="list" id="list" hidden>
@@ -378,7 +379,7 @@ function renderCard(){
   $('known').textContent=`${learned} of ${p.length} learned`;
   $('bar').style.width=p.length?(100*learned/p.length)+'%':'0';
   const has=order.length>0;
-  ['prevBtn','againBtn','gotBtn','nextBtn'].forEach(id=>$(id).disabled=!has);
+  ['prevBtn','flipBtn','againBtn','gotBtn','nextBtn'].forEach(id=>$(id).disabled=!has);
   if(!has){
     $('count').textContent='0 cards';
     const doneForToday=st.mode==='due'&&p.length;
@@ -388,15 +389,16 @@ function renderCard(){
   if(pos>=order.length)pos=order.length-1;
   const c=order[pos];
   flipped=false;
+  {const fb=$('flipBtn');if(fb){fb.textContent='Show answer';fb.setAttribute('aria-pressed','false')}}
   $('count').textContent=`Card ${pos+1} / ${order.length}`;
-  host.innerHTML=`<div class="card noanim" id="card" tabindex="0" role="button" aria-label="Flashcard. Press to flip.">
+  host.innerHTML=`<div class="card noanim" id="card" role="group" aria-roledescription="flashcard" aria-label="Card ${pos+1} of ${order.length}">
     <div class="flip">
       <div class="face front" aria-hidden="false">
         <div class="tags"><span class="tag lv ${c.l}">${c.l}</span><span class="tag">${esc(c.c)}</span>${statusTag(c)}</div>
         <div class="q">${esc(c.q)}</div>
         <div class="hint">Answer out loud first, then tap to flip ↻</div>
       </div>
-      <div class="face back" aria-hidden="true">
+      <div class="face back" aria-hidden="true" inert>
         <div class="tags"><span class="tag lv ${c.l}">${c.l}</span><span class="tag">${esc(c.c)}</span>${statusTag(c)}</div>
         <div class="q">${esc(c.q)}</div>
         <div class="a">${esc(c.a)}</div>
@@ -412,8 +414,9 @@ function renderCard(){
 function flip(){
   const el=$('card');if(!el)return;
   flipped=!flipped;el.classList.toggle('flipped',flipped);
-  el.querySelector('.front').setAttribute('aria-hidden',flipped);
-  el.querySelector('.back').setAttribute('aria-hidden',!flipped);
+  const fr=el.querySelector('.front'),bk=el.querySelector('.back');
+  fr.setAttribute('aria-hidden',flipped);bk.setAttribute('aria-hidden',!flipped);fr.inert=flipped;bk.inert=!flipped;
+  const fb=$('flipBtn');if(fb){fb.textContent=flipped?'Show question':'Show answer';fb.setAttribute('aria-pressed',flipped)}
   if(flipped)$('live').textContent='Answer: '+order[pos].a;
 }
 function go(d){if(!order.length)return;pos=(pos+d+order.length)%order.length;renderCard()}
@@ -534,6 +537,7 @@ $('viewBtn').addEventListener('click',()=>{st.list=!st.list;rebuild(order[pos]&&
 $('printBtn').addEventListener('click',()=>window.print());
 $('resetBtn').addEventListener('click',()=>{if(confirm('Clear all flashcard progress (schedules, Got it and Review again)?')){st.srs={};save();rebuild();toast('Flashcard progress cleared')}});
 $('prevBtn').addEventListener('click',()=>go(-1));
+$('flipBtn').addEventListener('click',()=>flip());
 $('nextBtn').addEventListener('click',()=>go(1));
 $('gotBtn').addEventListener('click',()=>mark(true));
 $('againBtn').addEventListener('click',()=>mark(false));

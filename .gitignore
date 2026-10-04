@@ -24,3 +24,7 @@ desktop.ini
 # Logs
 *.log
 npm-debug.log*
+
+# browser test output
+playwright-report/
+test-results/

@@ -350,7 +350,25 @@ function initMore(){
   document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const d=document.querySelector('details.navmore[open]');if(d){d.open=false;d.querySelector('summary').focus()}});
 }
 
+/* ---------- scrollable code and tables: keyboard users must be able to scroll them ----------
+   Only containers that actually overflow become focusable regions, so short blocks add no tab stops. */
+function initScrollRegions(){
+  const SEL='pre,.tblwrap,.tblscroll';
+  const label=el=>{const cap=el.querySelector('caption');if(cap)return cap.textContent.trim();const h=el.closest('section,article,.box,.dataset,.ev');const t=h&&h.querySelector('h2,h3,h4');return (el.matches('pre')?'Code':'Table')+(t?': '+t.textContent.trim():'')};
+  const fix=()=>document.querySelectorAll(SEL).forEach(el=>{
+    const over=el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1;
+    if(over&&!el.hasAttribute('tabindex')){el.tabIndex=0;el.setAttribute('role','region');el.setAttribute('aria-label',label(el).slice(0,120));el.dataset.sr='1'}
+    else if(!over&&el.dataset.sr){el.removeAttribute('tabindex');el.removeAttribute('role');el.removeAttribute('aria-label');delete el.dataset.sr}
+  });
+  let t;const soon=()=>{clearTimeout(t);t=setTimeout(fix,120)};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',soon);else soon();
+  addEventListener('load',soon);addEventListener('resize',soon);
+  new MutationObserver(soon).observe(document.documentElement,{childList:true,subtree:true});
+  document.addEventListener('toggle',soon,true);
+}
+
 initSearch();
 initPopover();
 initMore();
+initScrollRegions();
 })();
