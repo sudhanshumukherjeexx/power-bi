@@ -38,14 +38,12 @@
 <link rel="stylesheet" href="assets/css/app.css">
 <style>
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
-h1,h2,h3{line-height:1.2;margin:0 0 .4em;font-weight:600}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 /* top bar */
 .btn.ok{background:var(--success-soft);border-color:var(--success);color:var(--text-primary);font-weight:600}
 .btn.bad{background:var(--danger-soft);border-color:var(--danger);color:var(--text-primary);font-weight:600}
 .btn[aria-pressed="true"]{background:var(--text-primary);color:var(--bg);border-color:var(--text-primary)}
 .btn:disabled{opacity:.45;cursor:default}
-.intro h1{font-size:clamp(1.7rem,4.5vw,2.5rem);letter-spacing:-.02em;font-weight:700}
 .intro p{color:var(--text-secondary);max-width:64ch}
 
 /* controls */
@@ -67,7 +65,7 @@ h1,h2,h3{line-height:1.2;margin:0 0 .4em;font-weight:600}
 .seg button .n{font-family:var(--mono);font-size:.72rem;color:var(--text-muted);margin-left:4px}
 .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
 .chips::-webkit-scrollbar{display:none}
-.chip{flex:none;border:1px solid var(--border-strong);background:var(--surface-1);border-radius:999px;padding:6px 12px;font-size:.84rem;min-height:36px;white-space:nowrap;scroll-snap-align:start;color:var(--text-secondary)}
+.chip{flex:none;border:1px solid var(--border-strong);background:var(--surface-1);border-radius:999px;padding:6px 13px;font-size:.84rem;min-height:36px;white-space:nowrap;scroll-snap-align:start;color:var(--text-secondary)}
 .chip[aria-pressed="true"]{background:var(--text-primary);color:var(--bg);border-color:var(--text-primary)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .row .sp{flex:1}
@@ -113,7 +111,7 @@ h1,h2,h3{line-height:1.2;margin:0 0 .4em;font-weight:600}
 .status.new{display:none}
 
 .actions{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:8px;margin-top:14px}
-.actions .btn{min-height:48px;font-size:.95rem}
+.actions .btn{min-height:46px;font-size:.98rem}
 .keys{font-size:.8rem;color:var(--text-muted);margin-top:10px;text-align:center}
 .keys kbd{font-family:var(--mono);background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r-1);padding:0 5px;font-size:.75rem}
 .empty{background:var(--surface-1);border:1px dashed var(--border-strong);border-radius:var(--r-3);padding:36px 24px;text-align:center}
@@ -156,6 +154,7 @@ h1,h2,h3{line-height:1.2;margin:0 0 .4em;font-weight:600}
   .wrap{padding:0 calc(16px + var(--sar)) 0 calc(16px + var(--sal))}
   .intro{padding:20px 0 4px}
   .brand small{display:none}
+  .chip{min-height:40px}
   .face,.mockcard{padding:18px 18px}
   .face{min-height:min(52vh,360px)}
   /* grading bar sits in thumb reach on phones */
@@ -188,7 +187,7 @@ h1,h2,h3{line-height:1.2;margin:0 0 .4em;font-weight:600}
 <!--nav:interview-->
 <header class="top gnav"><div class="in">
   <a class="brand" href="index.html" aria-label="The Power BI Fellowship: home"><span class="mark" aria-hidden="true">BI</span><span class="bt">The Power BI Fellowship</span></a>
-  <nav class="mainnav" aria-label="Main"><a href="learn.html">Learn</a><a href="experience.html">Experience</a><a href="flashcards.html" aria-current="true">Interview</a><a href="toolkit.html">Toolkit</a><a href="progress.html" class="nav-wide">Progress</a><details class="navmore"><summary>More<span class="vh"> pages</span></summary><div class="navmenu"><a href="progress.html">Progress</a><a href="glossary.html">Glossary</a><a href="resources.html">Library</a><a href="templates.html">Templates</a><hr><button type="button" data-export>Export progress</button><button type="button" data-import>Import progress</button></div></details></nav>
+  <nav class="mainnav" aria-label="Main"><a href="learn.html">Learn</a><a href="experience.html">Experience</a><a href="flashcards.html" aria-current="page">Interview</a><a href="toolkit.html">Toolkit</a><a href="progress.html" class="nav-wide">Progress</a><details class="navmore"><summary>More<span class="vh"> pages</span></summary><div class="navmenu"><a href="progress.html">Progress</a><a href="glossary.html">Glossary</a><a href="resources.html">Library</a><a href="templates.html">Templates</a><hr><button type="button" data-export>Export progress</button><button type="button" data-import>Import progress</button></div></details></nav>
   <span class="sp"></span>
   <button class="btn iconbtn" type="button" data-open-search aria-label="Search (press /)" title="Search (/)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
   <span data-theme-toggle-slot></span>

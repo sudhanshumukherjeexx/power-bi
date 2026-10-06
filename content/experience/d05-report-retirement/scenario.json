@@ -6,7 +6,7 @@
   "stage": "developer",
   "order": 3,
   "title": "Usage dropped 70%. Retire it?",
-  "seo": "Power BI governance drill: a report's usage dropped 70%. Check lineage, subscriptions and dependencies before retiring anything.",
+  "seo": "Power BI governance drill: a report lost 70% of its viewers after a newer certified report launched, and you're asked whether it can be deleted. Decide what is safe to retire and how to do it.",
   "summary": "Regional Sales Weekly lost most of its viewers after the certified Sales Overview launched. Elena asks whether it can be deleted to tidy up.",
   "minutes": 30,
   "skills": ["governance", "service", "communication"],

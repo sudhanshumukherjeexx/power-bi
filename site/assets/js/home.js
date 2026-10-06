@@ -32,8 +32,12 @@ if(started){
   document.getElementById('lead').hidden=true;
   document.getElementById('cta').hidden=true;
   document.getElementById('cont').innerHTML=`<div class="resume"><div class="rlbl">${last?'Continue':'Your next step'}</div>
-<a class="rcard" href="${esc(target.href)}"><span class="rtop">${d.id?`<span class="mono rid">${esc(d.id)}</span>`:''}<span class="rkind">${esc(d.kind)}</span></span><b>${esc(d.title)}</b>${d.meta?`<span class="rmeta">${d.meta}</span>`:''}${d.pct!==null?P.bar(d.pct,d.title):''}<span class="btn primary">Continue</span></a>
+<div class="rcard"><span class="rtop">${d.id?`<span class="mono rid">${esc(d.id)}</span>`:''}<span class="rkind">${esc(d.kind)}</span></span><b><a href="${esc(target.href)}">${esc(d.title)}</a></b>${d.meta?`<span class="rmeta">${d.meta}</span>`:''}${d.pct!==null?P.bar(d.pct,d.title):''}
+<div class="racts"><a class="btn primary" href="${esc(target.href)}" aria-label="Continue: ${esc(d.title)}">Continue</a><button class="btn" type="button" id="startOver">Start from the beginning</button></div></div>
 ${next&&last&&next.href!==last.href?`<p class="small muted">Next on your route: <a href="${esc(next.href)}">${esc(next.t)}</a></p>`:''}</div>`;
+
+  /* clears this browser's progress (with a confirmation and a restorable backup) */
+  document.getElementById('startOver').addEventListener('click',PBI.resetAll);
 
   /* one line instead of a dashboard */
   const due=P.due(cards),stage=P.currentStage(main,cards),comp=P.competency(main,cards);

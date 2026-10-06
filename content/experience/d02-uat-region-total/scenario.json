@@ -6,7 +6,7 @@
   "stage": "analyst",
   "order": 4,
   "title": "\"The Region total doesn't match Excel\"",
-  "seo": "Power BI user acceptance testing drill: a tester reports that region totals don't match Excel. Reproduce, compare definitions and decide whether it's a defect or a requirement mismatch.",
+  "seo": "Power BI user acceptance testing drill: a tester reports that region totals don't match her Excel workbook. Reproduce the numbers, explain the difference and decide whether it's a defect or a requirement mismatch.",
   "summary": "Nina's UAT finding says the report's region totals don't match her Excel. Reproduce it, explain it and decide: defect or requirement mismatch?",
   "minutes": 60,
   "skills": ["testing", "modeling", "communication"],

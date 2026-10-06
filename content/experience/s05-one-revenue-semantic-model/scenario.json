@@ -6,7 +6,7 @@
   "stage": "developer",
   "order": 2,
   "title": "Three models, three Revenues",
-  "seo": "Power BI shared semantic model exercise: Sales, Finance and Operations each have a Revenue measure with a different value. Inventory, standardise, certify and migrate thin reports.",
+  "seo": "Power BI semantic model scenario: Sales, Finance and Operations each report a different Revenue, and the CEO wants one version of the truth. Work out why they differ, recommend the enterprise definition and move the business onto it safely.",
   "summary": "Sales, Finance and Operations each have a model with a measure called Revenue, and all three disagree. The CEO wants one version of the truth.",
   "minutes": 360,
   "skills": ["modeling", "governance", "dax", "service", "communication", "architecture"],

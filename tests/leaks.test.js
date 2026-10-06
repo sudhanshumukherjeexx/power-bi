@@ -31,6 +31,12 @@ module.exports = t => {
     t.ok(s.messages.every(m => !m.subject || pg.text.includes(norm(m.subject))), `${s.id}: static page shows the stakeholder messages`);
     t.ok(s.deliverables.every(d => pg.text.includes(norm(d.t))), `${s.id}: static page lists the deliverables`);
     for (const x of secret) t.ok(!pg.text.includes(x), `${s.id}: static page leaks hidden content: "${x.slice(0, 70)}…"`);
+    /* one description everywhere: meta, Open Graph and structured data say the same symptom-level thing */
+    const meta = (pg.html.match(/<meta name="description" content="([^"]*)"/) || [])[1], og = (pg.html.match(/<meta property="og:description" content="([^"]*)"/) || [])[1];
+    const ldm = pg.html.match(/<script type="application\/ld\+json">(\{[^<]*"LearningResource"[^<]*\})<\/script>/);
+    const ld = ldm && JSON.parse(ldm[1]).description;
+    t.ok(meta && meta.length >= 80, `${s.id}: meta description missing or too short`);
+    t.ok(meta === og && norm(meta) === norm(ld || ''), `${s.id}: meta, og:description and JSON-LD descriptions must match`);
   }
   /* no scenario secret on any other page either (the Library, guides, search-facing pages) */
   for (const p of pages) for (const [id, x] of scenSecrets) if (!p.f.includes(`${path.sep}experience${path.sep}`)) t.ok(!p.text.includes(x), `${rel(p.f)} contains hidden content of scenario ${id}: "${x.slice(0, 60)}…"`);

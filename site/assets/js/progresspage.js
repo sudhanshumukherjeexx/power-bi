@@ -12,7 +12,7 @@ const due=P.due(cards);
 const G=P.GATES;
 const xpHref=s=>`experience/${s.slug}.html`;
 const tpl=id=>(TEMPLATE_INDEX.find(t=>t.id===id)||{title:id}).title;
-const tag=t=>`<span class="ev-tag ${t}">${{verified:'verified',self:'self-assessed',recall:'recall'}[t]}</span>`;
+const tag=t=>`<span class="ev-tag ev-${t}">${{verified:'verified',self:'self-assessed',recall:'recall'}[t]}</span>`;
 const how=(rows,note)=>`<details class="how"><summary>How this is calculated</summary><dl>${rows.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>${note?`<p class="small muted">${note}</p>`:''}</details>`;
 const level=p=>p>=75?'Strong':p>=40?'Developing':p>0?'Needs practice':'Not started';
 const pctOrDash=v=>v===null||v===undefined?'–':v+'%';
@@ -27,7 +27,7 @@ const evHtml=`<section id="evidence"><div class="section-h"><h2>Evidence</h2></d
 ${how([['Verified','Your first answer to each multiple-choice question compared with the answer key. Changing an answer afterwards helps you learn but doesn\'t change this.'],['Self-assessed','Assignments you ticked, scenario deliverables you ticked, and your own rubric ratings. Nothing inspects your work, so these are as accurate as you are honest.'],['Recall','Flashcard boxes: unseen or box 0 = 0%, box 1 = 25%, 2 = 50%, 3 = 75%, 4 or 5 = 100%. Reaching box 4 takes four correct recalls in a row over at least 11 days.']])}</section>`;
 
 /* ---------- professional stages ---------- */
-const gate=(ok,txt)=>`<span class="gate ${ok?'ok':''}">${ok?'✓':'○'} ${txt}</span>`;
+const gate=(ok,txt)=>`<span class="stagegate ${ok?'ok':''}">${ok?'✓':'○'} ${txt}</span>`;
 const stagesHtml=`<section id="stages"><div class="section-h"><h2>Professional stage</h2><a href="experience.html">Experience Mode →</a></div>
 <p class="muted" style="max-width:70ch">Stages are about responsibility, not years. A stage is cleared when its Skill Mode readiness reaches ${G.skill}%, you have finished ${G.completion}% of its scenarios, and their average outcome is ${G.quality}% or more. Finishing a scenario without good work doesn't move you on.</p>
 <ol class="stagelist">${stages.map(s=>`<li class="${s.id===cur.id?'cur':''}${s.cleared?' cleared':''}"><span class="n" aria-hidden="true">${s.n}</span><span><b>${esc(s.name)}${s.id===cur.id?' <span class="chip">you are here</span>':s.cleared?' <span class="chip ok">cleared</span>':''}</b><span>${esc(s.question)} · ${esc(s.challenge)}</span>
@@ -36,7 +36,7 @@ ${how([['Skill readiness',`${s.skillPct}% · mean readiness of the ${s.topics} S
 <span class="pc"><span>${s.pct}%</span>${P.bar(s.pct,s.name)}</span></li>`).join('')}</ol></section>`;
 
 /* ---------- competency matrix ---------- */
-const mini=(v,t)=>`<span class="mini ${t}" title="${{verified:'Verified',self:'Self-assessed',recall:'Recall'}[t]}: ${v===null?'no evidence of this kind':v+'%'}"><span class="vh">${{verified:'Verified',self:'Self-assessed',recall:'Recall'}[t]} ${v===null?'none':v+'%'}</span><i style="width:${v||0}%"></i></span>`;
+const mini=(v,t)=>`<span class="mini ev-${t}" title="${{verified:'Verified',self:'Self-assessed',recall:'Recall'}[t]}: ${v===null?'no evidence of this kind':v+'%'}"><span class="vh">${{verified:'Verified',self:'Self-assessed',recall:'Recall'}[t]} ${v===null?'none':v+'%'}</span><i style="width:${v||0}%"></i></span>`;
 const compHtml=`<section id="competency"><div class="section-h"><h2>Competency matrix</h2></div>
 <p class="muted" style="max-width:70ch">Each skill's share of the evidence available for it, with the three kinds shown separately. Less-guided assignments and finished scenarios count for more than single quiz answers or cards.</p>
 <div class="evkey small">${tag('verified')} ${tag('self')} ${tag('recall')}</div>
@@ -47,7 +47,7 @@ ${how([['Assignments','Ticked = full weight. Weight grows as guidance drops: A 1
 const xpRows=SCENARIO_INDEX.map(s=>{const rec=main.xp[s.id];const st=P.scenarioStatus(main,s.id);const sc=P.scenarioScore(s,rec);
   return `<tr><td><a href="${xpHref(s)}">${esc(s.title)}</a><div class="small muted"><span class="mono">${esc(s.ticket||'')}</span> · stage ${(STAGES.find(x=>x.id===s.stage)||{}).n||''}</div></td><td>${st==='done'?'<span class="chip ok">Done</span>':st==='active'?'<span class="chip">In progress</span>':'<span class="small muted">Not started</span>'}</td><td class="num">${sc?sc.quality+'%':'–'}</td><td class="num">${sc?sc.independence+'%':'–'}</td><td class="num">${rec?rec.hints||0:0}</td><td>${rec&&rec.sol?(rec.solEarly?'early':'after'):'–'}</td></tr>`}).join('');
 const xpHtml=`<section id="experience"><div class="section-h"><h2>Experience Mode</h2><a href="experience.html">All scenarios →</a></div>
-${SCENARIO_INDEX.length?`<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Scenario</th><th scope="col">Status</th><th scope="col">Outcome <span class="ev-tag self">self</span></th><th scope="col">Independence</th><th scope="col">Hints</th><th scope="col">Model answer</th></tr></thead><tbody>${xpRows}</tbody></table></div>
+${SCENARIO_INDEX.length?`<div class="tblscroll"><table class="tbl"><thead><tr><th scope="col">Scenario</th><th scope="col">Status</th><th scope="col">Outcome <span class="ev-tag ev-self">self</span></th><th scope="col">Independence</th><th scope="col">Hints</th><th scope="col">Model answer</th></tr></thead><tbody>${xpRows}</tbody></table></div>
 ${how([['Outcome','Your rubric ratings (0–4 per criterion), weighted by each criterion\'s share. Self-assessed. This is what counts toward competency and stages.'],['Independence','100 − 10 per hint (at most 40) − 30 if you opened the model answer before finishing. Shown on its own; it never reduces the outcome.']])}`:'<div class="empty">No scenarios yet.</div>'}</section>`;
 
 /* ---------- portfolio evidence ---------- */
@@ -105,11 +105,7 @@ document.addEventListener('click',e=>{
   if(!confirm('Put back the backed-up progress? What is in this browser now becomes the backup, so you can switch back.'))return;
   if(PBI.restoreBackup()){PBI.toast('Previous progress restored');setTimeout(()=>location.reload(),500)}
 });
-document.getElementById('resetAll').addEventListener('click',()=>{
-  if(!confirm('Delete all progress in this browser: ticks, quiz answers, scenarios, flashcard history? A backup is kept, so you can restore it from this page.'))return;
-  PBI.backup('reset');
-  Object.values(PBI.KEYS).forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});PBI.toast('Progress reset');setTimeout(()=>location.reload(),500);
-});
+document.getElementById('resetAll').addEventListener('click',PBI.resetAll);
 PBI.initThemeToggles();
 if(location.hash){const el=document.getElementById(location.hash.slice(1));if(el)requestAnimationFrame(()=>el.scrollIntoView())}
 })();

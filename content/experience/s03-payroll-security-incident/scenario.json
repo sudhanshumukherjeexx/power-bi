@@ -6,7 +6,7 @@
   "stage": "developer",
   "order": 1,
   "title": "A regional manager can see other regions' payroll",
-  "seo": "Power BI row-level security incident: a West regional manager can see East payroll. Reproduce, find the RLS weakness, fix it and build an RLS test matrix.",
+  "seo": "Power BI security incident: a regional manager can see payroll outside their assigned region. Investigate the evidence, contain the exposure, repair the model and prove the issue is resolved.",
   "summary": "The West regional manager opened the Sales & Payroll model in Excel and saw salaries for every region. Contain it, find out why, fix it and prove it's fixed.",
   "minutes": 240,
   "skills": ["security", "modeling", "testing", "governance", "communication"],

@@ -42,6 +42,8 @@
   --graphite:#1B1E24;
   --graphite-text:#EDEEEA;
   --graphite-muted:#A9AFB8;
+  /* accents on graphite (the ticket header): the same in both themes, since graphite is always dark */
+  --graphite-danger:#EE8A7E;--graphite-warning:#E0A84A;--graphite-gold:#E2B636;--graphite-gold-text:#E9C557;--graphite-success:#6FBF8E;--on-graphite-gold:#0D0F12;
   /* status: always paired with text */
   --success:#3A7652;--success-soft:#E6F1EA;
   --warning:#93640F;--warning-soft:#FBF0DC;

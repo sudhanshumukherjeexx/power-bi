@@ -23,7 +23,7 @@ function assignment(T, a, i) {
     a.steps && a.steps.length ? `<ol>${a.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol>` : '',
     a.deliverables && a.deliverables.length ? `<div class="reqlbl">Deliver</div><ul class="req dl">${a.deliverables.map(s => `<li>${esc(s)}</li>`).join('')}</ul>` : ''
   ].join('');
-  return `<div class="asg" id="${T.id}-${i}"><h4>${esc(a.t)}</h4><div class="meta"><span class="guide g${g}">${g} · ${GUIDE[g]}</span> ${esc(a.time)} · uses ${esc(a.ds)}</div>${lists}<div class="expect"><b>${g === 'A' || g === 'B' ? 'Expected result' : 'What good looks like'}:</b> ${esc(a.exp)}</div></div>`;
+  return `<div class="asg" id="${T.id}-${i}"><h3>${esc(a.t)}</h3><div class="meta"><span class="guide g${g}">${g} · ${GUIDE[g]}</span> ${esc(a.time)} · uses ${esc(a.ds)}</div>${lists}<div class="expect"><b>${g === 'A' || g === 'B' ? 'Expected result' : 'What good looks like'}:</b> ${esc(a.exp)}</div></div>`;
 }
 function topic(T) {
   const w = T.why;

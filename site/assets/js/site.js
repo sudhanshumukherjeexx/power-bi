@@ -130,6 +130,12 @@ PBI.backup=reason=>{try{localStorage.setItem(KEY_BACKUP,JSON.stringify({at:new D
 PBI.backupInfo=()=>{try{const b=JSON.parse(localStorage.getItem(KEY_BACKUP)||'null');if(!b||typeof b!=='object')return null;
   const r=ST.sanitizeProgress({app:ST.APP,version:ST.EXPORT_VERSION,data:{[KEYS.main]:b.main||{},[KEYS.cards]:b.cards||{}}},KEYS,PBI.knownIds());
   return {at:typeof b.at==='string'?b.at:'',reason:['import','reset','restore'].includes(b.reason)?b.reason:'import',main:r.main,cards:r.cards,sum:ST.summary(r.main,r.cards)}}catch(e){return null}};
+/* start over: one confirmation, a backup of what was there, then a clean slate (Progress page and the home Continue card) */
+PBI.resetAll=()=>{
+  if(!confirm('Delete all progress in this browser: ticks, quiz answers, scenarios, flashcard history? A backup is kept, so you can restore it from the Progress page.'))return false;
+  PBI.backup('reset');
+  Object.values(KEYS).forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});PBI.toast('Progress reset');setTimeout(()=>location.reload(),500);return true;
+};
 PBI.restoreBackup=()=>{const b=PBI.backupInfo();if(!b)return false;PBI.backup('restore');PBI.save(KEYS.main,b.main);PBI.save(KEYS.cards,b.cards);return true};
 const fmtDate=iso=>{if(!iso)return 'unknown date';const d=new Date(iso);return isNaN(d)?'unknown date':d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})+(iso.length>10?', '+d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'}):'')};
 PBI.fmtDate=fmtDate;

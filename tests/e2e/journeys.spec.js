@@ -106,6 +106,22 @@ test('search: open with /, type, pick a result', async ({ page }) => {
   await expect(page).toHaveURL(new RegExp(href.split('#')[0].replace(/^.*\//, '').replace(/\./g, '\\.')));
 });
 
+test('returning learner: start from the beginning asks first, then clears progress and keeps a backup', async ({ page }) => {
+  await seed(page, { schemaVersion: 3, done: { 'b-pq-0': true }, quiz: {}, quizFirst: {}, xp: {}, seen: {} }, { srs: {} });
+  await page.goto('index.html');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Pick up where you left off.');
+  const btn = page.getByRole('button', { name: 'Start from the beginning' });
+  await expect(btn).toBeVisible();
+  page.once('dialog', d => d.dismiss());
+  await btn.click();
+  expect(Object.keys((await read(page)).main.done || {}).length).toBe(1);
+  page.once('dialog', d => d.accept());
+  await btn.click();
+  await page.waitForLoadState('load');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Learn Power BI');
+  expect((await read(page)).backup).toContain('b-pq-0');
+});
+
 test('progress: export, reset, import, restored', async ({ page }) => {
   const main = { schemaVersion: 3, done: { 'b-pq-0': true, 'b-pq-1': true }, quiz: {}, quizFirst: {}, xp: { s01: { st: 'done', done: true, hints: 0, del: {}, rub: { acc: 4 }, notes: 'kept' } }, seen: {} };
   await seed(page, main, { srs: {} });

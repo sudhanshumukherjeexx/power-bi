@@ -42,6 +42,8 @@ p{margin:0 0 .8em}
 .intro h1 .hl{color:var(--text-primary)}
 .intro h1 .tag{font-size:.78rem;letter-spacing:0;font-weight:500}
 .intro p{color:var(--text-secondary);max-width:70ch}
+/* reading width: running prose stops near 72 characters; layout rows, tables and the scenario workspace stay full width */
+section>p,section>details>ol,.stagehead p,.story p,.tkfoot,.asg .brief,.topic>p,details.refs ul,.xcat ul,.tkbody>:is(p,ul,ol,blockquote,.callout,.tree),details.how dl,.tplbody p,.g p{max-width:72ch}
 .foot{padding:30px 0 calc(40px + var(--sab));color:var(--text-muted);font-size:.82rem}
 .foot .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 @media (hover:none){.btn:hover{border-color:var(--border-strong)}}
@@ -49,4 +51,5 @@ p{margin:0 0 .8em}
   .wrap{padding:0 calc(16px + var(--sar)) 0 calc(16px + var(--sal))}
   .intro{padding:20px 0 4px}
   .brand small,.top .clabel{display:none}
+  .btn.sm{min-height:40px}
 }

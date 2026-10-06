@@ -39,7 +39,7 @@ module.exports = (all, { BANNER, J }) => {
     }
   }
   for (const s of all.scenarios || []) {
-    add(s.type === 'drill' ? 'Drill' : 'Scenario', s.title, `${s.ticket ? s.ticket.id + ' · ' : ''}${(all.stages.find(x => x.id === s.stage) || {}).name || ''}`, s.summary + ' ' + (s.skills || []).join(' ') + ' ' + (s.deliverables || []).map(d => d.t).join(' '), `experience/${s.slug}.html`, s.stage);
+    add(s.type === 'drill' ? 'Drill' : 'Scenario', s.title, `${s.ticket ? s.ticket.id + ' · ' : ''}${(all.stages.find(x => x.id === s.stage) || {}).name || ''}`, /* no skills: a scenario must not announce what kind of problem it is (shown after completion instead) */ s.summary + ' ' + (s.deliverables || []).map(d => d.t).join(' '), `experience/${s.slug}.html`, s.stage);
   }
   for (const t of all.templates || []) add('Template', t.title, 'Professional template', t.summary + ' ' + (t.used || []).join(' '), `templates.html#tpl-${t.id}`);
   if (all.toolkit) for (const g of all.toolkit.guides) {

@@ -6,7 +6,7 @@
   "stage": "analyst",
   "order": 3,
   "title": "Four requests, zero requirements",
-  "seo": "BI requirements gathering drill: practise the questions to ask stakeholders before building a Power BI report (definitions, grain, latency, security, reconciliation).",
+  "seo": "BI requirements drill: four stakeholders each send a one-line request. Decide what you need to ask before building anything, then compare your questions with an experienced BI developer's.",
   "summary": "Four stakeholders send one-line requests. Pick the questions you'd ask before building anything, then check them against an experienced BI developer's.",
   "minutes": 30,
   "skills": ["communication", "modeling", "governance"],

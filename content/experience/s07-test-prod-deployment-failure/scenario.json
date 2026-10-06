@@ -6,7 +6,7 @@
   "stage": "engineer",
   "order": 2,
   "title": "Test is right, Production is wrong",
-  "seo": "Power BI deployment pipeline troubleshooting: after promoting from Test to Production the numbers differ. Diagnose deployment rules, parameters, data source bindings and credentials.",
+  "seo": "Power BI deployment incident: Test reports are correct but Production shows different results after Monday's release. Investigate the environment differences and restore a reliable production deployment.",
   "summary": "After Monday's release, Production shows nothing for May and last month's targets, while Test looks perfect. Same model, same report. Find out why.",
   "minutes": 180,
   "skills": ["deployment", "service", "testing", "automation"],

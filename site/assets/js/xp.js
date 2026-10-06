@@ -68,7 +68,7 @@ function show(k,focus){
 
 /* ---------- panes ---------- */
 function brief(){
-  return `<div class="inbox">${S.messages.map(m=>{const p=persona(m.from);return `<article class="msg via-${m.via}"><header><span class="av" aria-hidden="true">${esc(initials(p.name))}</span><span class="who"><b>${esc(p.name)}</b><span>${esc(p.role)}</span></span><span class="when"><span class="via">${esc(m.via)}</span> ${esc(m.at)}</span></header>${m.subject?`<h3>${esc(m.subject)}</h3>`:''}<div class="body">${para(m.body)}</div></article>`}).join('')}</div>
+  return `<h2 class="vh">Messages</h2><div class="inbox">${S.messages.map(m=>{const p=persona(m.from);return `<article class="msg via-${m.via}"><header><span class="av" aria-hidden="true">${esc(initials(p.name))}</span><span class="who"><b>${esc(p.name)}</b><span>${esc(p.role)}</span></span><span class="when"><span class="via">${esc(m.via)}</span> ${esc(m.at)}</span></header>${m.subject?`<h3>${esc(m.subject)}</h3>`:''}<div class="body">${para(m.body)}</div></article>`}).join('')}</div>
   <h2 class="xph">What you are expected to do</h2><ul class="tasks">${S.tasks.map(t=>`<li>${fmt(t)}</li>`).join('')}</ul>
   <p class="small muted">The brief is deliberately incomplete, like real tickets. Part of the work is noticing what is missing and asking for it (write the questions in Your work).</p>`;
 }
@@ -130,7 +130,7 @@ function contextHtml(){
 /* outcome and independence are separate: asking for help is recorded, never held against the outcome */
 function scoreText(sc){
   if(!sc)return 'Rate each criterion to see your result.';
-  return `<span class="sx"><span class="k">Outcome</span><b>${sc.quality}%</b><span class="ev-tag self">self-assessed</span></span><span class="sx"><span class="k">Independence</span><b>${sc.independence}%</b></span><span class="sx small muted">${sc.hints} hint${sc.hints===1?'':'s'} used · model answer ${sc.solEarly?'opened before finishing':'not opened early'}${sc.complete?'':` · ${sc.scored} of ${sc.criteria} criteria rated`}</span>`;
+  return `<span class="sx"><span class="k">Outcome</span><b>${sc.quality}%</b><span class="ev-tag ev-self">self-assessed</span></span><span class="sx"><span class="k">Independence</span><b>${sc.independence}%</b></span><span class="sx small muted">${sc.hints} hint${sc.hints===1?'':'s'} used · model answer ${sc.solEarly?'opened before finishing':'not opened early'}${sc.complete?'':` · ${sc.scored} of ${sc.criteria} criteria rated`}</span>`;
 }
 function review(){
   const r=rec()||{rub:{}};

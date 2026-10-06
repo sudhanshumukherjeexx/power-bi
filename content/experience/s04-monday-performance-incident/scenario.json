@@ -6,7 +6,7 @@
   "stage": "senior",
   "order": 1,
   "title": "The executive dashboard takes 18 seconds",
-  "seo": "Power BI performance tuning scenario: an executive page takes 18 seconds. Use Performance Analyzer, Server Timings and VertiPaq metrics to find formula-engine and storage-engine bottlenecks, then prove the fix.",
+  "seo": "Power BI performance incident: an executive report now takes 18 seconds to load before every Monday leadership meeting. Investigate the evidence, find the bottleneck, improve performance and prove the result without changing any reported number.",
   "summary": "Leadership opens the executive page every Monday at 9:00 and waits 18 seconds. Find out why with evidence, fix it, and prove the improvement.",
   "minutes": 300,
   "skills": ["performance", "dax", "modeling", "testing", "communication"],

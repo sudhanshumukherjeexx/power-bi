@@ -6,7 +6,7 @@
   "stage": "engineer",
   "order": 1,
   "title": "Two developers, one measure",
-  "seo": "Power BI PBIP and TMDL Git merge conflict exercise: resolve a conflict in a semantic model, run Best Practice Analyzer, and write the pull request.",
+  "seo": "Power BI team development scenario: two developers changed the same measure on different branches and Git can't merge the semantic model. Resolve it without losing either change and prepare it for review.",
   "summary": "You and Sam changed the same measure in the shared semantic model on different branches. Git can't merge it. Resolve it without losing either change.",
   "minutes": 180,
   "skills": ["deployment", "testing", "dax", "communication"],

@@ -54,7 +54,7 @@ function asgHtml(T,a,i){
   const body=a.brief
     ?`<p class="brief">${esc(a.brief)}</p>${a.req&&a.req.length?`<div class="reqlbl">${g==='B'?'Requirements':'Work out'}</div><ul class="req">${a.req.map(s=>`<li>${esc(s)}</li>`).join('')}</ul>`:''}${a.steps&&a.steps.length?`<ol>${a.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`:''}${a.deliverables&&a.deliverables.length?`<div class="reqlbl">Deliver</div><ul class="req dl">${a.deliverables.map(s=>`<li>${esc(s)}</li>`).join('')}</ul>`:''}`
     :`<ol>${a.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`;
-  return`<div class="asg"><div class="top"><input type="checkbox" id="${id}" data-asg="${id}" ${state.done[id]?'checked':''}><div style="flex:1;min-width:0"><h4><label for="${id}">${esc(a.t)}</label></h4><div class="meta"><span class="guide g${g}" title="${esc(G[1])}">${g} · ${G[0]}</span> ${esc(a.time)} · uses ${esc(a.ds)}</div>${body}<div class="expect"><b>${g==='A'||g==='B'?'Expected result':'What good looks like'}:</b> ${esc(a.exp)}</div>${solHtml(id)}</div></div></div>`;
+  return`<div class="asg"><div class="top"><input type="checkbox" id="${id}" data-asg="${id}" ${state.done[id]?'checked':''}><div style="flex:1;min-width:0"><h3><label for="${id}">${esc(a.t)}</label></h3><div class="meta"><span class="guide g${g}" title="${esc(G[1])}">${g} · ${G[0]}</span> ${esc(a.time)} · uses ${esc(a.ds)}</div>${body}<div class="expect"><b>${g==='A'||g==='B'?'Expected result':'What good looks like'}:</b> ${esc(a.exp)}</div>${solHtml(id)}</div></div></div>`;
 }
 function whyHtml(T){
   if(!T.why)return '';const w=T.why;
@@ -73,7 +73,7 @@ function verifiedHtml(T){
   return `<span class="verified${due?' due':''}" title="${esc((v.context||'')+(v.cert?' · '+v.cert:''))}">${due?'Review due · ':''}Verified ${dateTxt(v.date)}</span>`;
 }
 function topicHtml(T){
-  return `<article class="topic" id="${T.id}"><header><h3>${esc(T.name)}</h3><div class="hright"><span class="pathslot"></span>${verifiedHtml(T)}<span data-ready="${T.id}"></span></div>${T.ds.length?`<div class="ds">Data: ${T.ds.map(dsChip).join(' ')}</div>`:''}${whyHtml(T)}</header>
+  return `<article class="topic" id="${T.id}"><header><h2>${esc(T.name)}</h2><div class="hright"><span class="pathslot"></span>${verifiedHtml(T)}<span data-ready="${T.id}"></span></div>${T.ds.length?`<div class="ds">Data: ${T.ds.map(dsChip).join(' ')}</div>`:''}${whyHtml(T)}</header>
       <div class="tabs" role="tablist" aria-label="${esc(T.name)}">
         <button role="tab" id="${T.id}-tab-asg" aria-controls="${T.id}-pane-asg" aria-selected="true" tabindex="0" data-pane="asg">Assignments<span class="n">${T.asg.length}</span></button>
         <button role="tab" id="${T.id}-tab-int" aria-controls="${T.id}-pane-int" aria-selected="false" tabindex="-1" data-pane="int">Interview questions<span class="n">${T.int.length}</span></button>

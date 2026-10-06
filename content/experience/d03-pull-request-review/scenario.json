@@ -6,7 +6,7 @@
   "stage": "engineer",
   "order": 3,
   "title": "Review Sam's pull request",
-  "seo": "Power BI code review drill: review a TMDL pull request with calculated columns on a fact table, a bi-directional relationship, duplicate and badly named measures.",
+  "seo": "Power BI code review drill: a colleague's pull request to the shared semantic model is due in today's release. Review the change and decide whether to approve it or request changes, with reasons.",
   "summary": "Sam's PR adds margin to the shared model. It's due in today's release train. Review the diff and decide: approve, or request changes?",
   "minutes": 45,
   "skills": ["deployment", "modeling", "dax", "performance", "communication"],

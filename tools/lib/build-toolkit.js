@@ -160,10 +160,10 @@ ${P.footer(r)}
 <body data-page="toolkit">
 <a class="skip" href="#app">Skip to content</a>
 <!--nav:toolkit-->
-${P.nav('toolkit')}
+${P.nav('toolkit', '', 'toolkit.html')}
 <!--/nav-->
 <main class="wrap tk" id="app" tabindex="-1">
-<header class="home-hero tkhero"><div class="kicker">BI Developer Toolkit</div><h1>${esc(tk.title)}</h1><p class="lead">${esc(tk.tagline)} ${esc(tk.intro.split('. ').slice(1).join('. '))}</p>
+<header class="intro tkhead"><h1>${esc(tk.title)}</h1><p class="lead">${esc(tk.tagline)} ${esc(tk.intro.split('. ').slice(1).join('. '))}</p>
 <form class="tksearch" role="search" id="tkform"><label for="tkq">What are you trying to do?</label><div class="tkq"><input type="search" id="tkq" placeholder="Search DAX, RLS, gateway, deployment, Direct Lake, performance…" autocomplete="off" spellcheck="false" enterkeyhint="search"><button class="btn primary" type="submit">Search</button></div>
 <details class="tkfilters"><summary>Filter by Skill · Stage · Tool · Problem · Certification</summary><div class="tkf">
 ${facetOpts(all.skills.map(s => [s.id, s.name || s.id]), 'Skill')}

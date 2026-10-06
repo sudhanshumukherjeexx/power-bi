@@ -6,7 +6,7 @@
   "stage": "analyst",
   "order": 1,
   "title": "Executive sales dashboard",
-  "seo": "Power BI practice scenario: a VP of Sales needs to know why Q1 revenue growth is slowing before Monday. Messy export, vague requirements, duplicate rows and currency conversion.",
+  "seo": "Power BI practice scenario: a VP of Sales believes Q1 revenue growth is slowing and needs a dashboard and one slide before Monday's leadership meeting. Turn a vague request and a raw export into numbers leadership can trust.",
   "summary": "The VP of Sales thinks Q1 growth is slowing and needs one slide and a dashboard for Monday's leadership meeting.",
   "minutes": 300,
   "skills": ["power-query", "modeling", "dax", "visuals", "testing", "communication"],
